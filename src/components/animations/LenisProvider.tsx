@@ -8,11 +8,14 @@ export function LenisProvider({ children }: { children: ReactNode }) {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    // Tuned for a buttery, premium feel.
+    // lerp mode tracks the wheel more responsively than duration mode.
     const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.085,
       smoothWheel: true,
-      touchMultiplier: 1.2,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.4,
+      syncTouch: false,
     });
 
     let raf = 0;
