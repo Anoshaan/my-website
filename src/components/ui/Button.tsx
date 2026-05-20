@@ -11,6 +11,8 @@ type CommonProps = {
   variant?: Variant;
   className?: string;
   trailingIcon?: ReactNode;
+  /** Show animated rainbow gradient halo under the button. Default true for primary. */
+  rainbow?: boolean;
 };
 
 type ButtonAsButton = CommonProps &
@@ -26,13 +28,11 @@ type ButtonAsLink = CommonProps & {
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const base =
-  "inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-sm font-semibold tracking-tight transition-all duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)] min-h-[44px]";
+  "inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold tracking-tight transition-all duration-[300ms] ease-[cubic-bezier(0.22,1,0.36,1)] min-h-[44px] whitespace-nowrap";
 
 const variants: Record<Variant, string> = {
-  primary:
-    "bg-white text-black hover:bg-white/90 hover:-translate-y-px shadow-[0_8px_24px_rgba(255,255,255,0.08)] hover:shadow-[0_12px_32px_rgba(255,255,255,0.16)]",
-  ghost:
-    "bg-white/[0.03] text-white border border-white/[0.10] hover:bg-white/[0.06] hover:border-white/[0.20] hover:-translate-y-px",
+  primary: "btn-glass",
+  ghost: "btn-glass-ghost",
 };
 
 const ArrowIcon = () => (
@@ -41,7 +41,7 @@ const ArrowIcon = () => (
     width="12"
     height="12"
     aria-hidden="true"
-    className="transition-transform duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-[2px] group-hover:-translate-y-[2px]"
+    className="transition-transform duration-[300ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-[2px] group-hover:-translate-y-[2px]"
   >
     <path
       d="M3 11L11 3M11 3H5M11 3V9"
@@ -61,17 +61,29 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       variant = "primary",
       className,
       trailingIcon,
+      rainbow,
       ...rest
     } = props;
 
+    // Rainbow is default-on for primary, default-off for ghost
+    const showRainbow = rainbow ?? variant === "primary";
+
     const icon = trailingIcon !== undefined ? trailingIcon : <ArrowIcon />;
+
+    const finalClassName = cn(
+      "group",
+      base,
+      variants[variant],
+      showRainbow && "rainbow-shadow",
+      className
+    );
 
     if ("href" in props && props.href) {
       return (
         <Link
           href={props.href}
           target={props.target}
-          className={cn("group", base, variants[variant], className)}
+          className={finalClassName}
         >
           {children}
           {icon}
@@ -82,7 +94,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={cn("group", base, variants[variant], className)}
+        className={finalClassName}
         {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
       >
         {children}
