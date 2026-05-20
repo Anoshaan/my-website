@@ -11,13 +11,13 @@ export function Hero() {
       id="top"
       className="relative pt-[clamp(140px,16vw,220px)] pb-[clamp(96px,12vw,160px)] overflow-hidden"
     >
-      {/* Glow backdrop */}
+      {/* Subtle lavender wash, NOT bright mesh */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(50% 40% at 50% 38%, rgba(139,92,246,0.10) 0%, transparent 70%)",
+            "radial-gradient(50% 40% at 50% 38%, rgba(207, 217, 255, 0.06) 0%, transparent 70%)",
         }}
       />
       <div
@@ -25,7 +25,7 @@ export function Hero() {
         className="pointer-events-none absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 -z-10 w-[850px] h-[400px] rounded-full"
         style={{
           background:
-            "linear-gradient(to top right, rgba(255,255,255,0.05), transparent)",
+            "linear-gradient(to top right, rgba(255,255,255,0.04), transparent)",
           filter: "blur(140px)",
         }}
       />
@@ -65,7 +65,7 @@ export function Hero() {
         </Reveal>
 
         <Reveal delay={0.5} duration={0.9}>
-          <p className="text-eyebrow mt-8 text-white/40">
+          <p className="text-eyebrow mt-8 text-white/45">
             Enterprise UX • Design Systems • AI Experiences
           </p>
         </Reveal>

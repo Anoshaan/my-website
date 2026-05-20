@@ -2,21 +2,24 @@
 
 /* =========================================================
    DESIGN TOKENS — Anoshaan brand system
-   Geist font (no italic). 8px spacing. Premium motion.
+   Geist font (no italic anywhere). Lavender accent. Dark surface.
    ========================================================= */
 @theme {
-  /* Colors */
-  --color-bg: #000000;
+  /* Colors — restored from original site */
+  --color-bg: #050505;
   --color-bg-2: #0a0a0c;
-  --color-surface: #0f1115;
+  --color-surface: rgba(236, 235, 230, 0.025);
+  --color-surface-2: rgba(236, 235, 230, 0.045);
   --color-fg: #ecebe6;
   --color-fg-muted: #87878f;
   --color-fg-subtle: #5a5a62;
   --color-line: rgba(236, 235, 230, 0.08);
   --color-line-2: rgba(236, 235, 230, 0.14);
-  --color-accent: #8b5cf6;
-  --color-accent-2: #ec4899;
-  --color-accent-3: #38bdf8;
+
+  /* Accent — original lavender, NOT bright purple/pink/cyan */
+  --color-accent: #cfd9ff;
+  --color-accent-warm: #ffb89a;
+  --color-accent-cool: #8aa6ff;
 
   /* Typography — Geist only, no italic */
   --font-sans: var(--font-geist-sans), "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -38,9 +41,10 @@
   /* Motion */
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Radius */
-  --radius-card: 28px;
+  --radius-card: 22px;
   --radius-pill: 999px;
 }
 
@@ -65,6 +69,11 @@ body {
   letter-spacing: -0.01em;
   line-height: 1.7;
   min-height: 100vh;
+}
+
+body {
+  /* Canvas handles background — keep body transparent */
+  background: transparent;
 }
 
 /* Kill italics everywhere — brand rule */
@@ -95,16 +104,85 @@ button {
 
 ::selection {
   background: color-mix(in oklab, var(--color-accent) 50%, transparent);
-  color: #fff;
+  color: #0a0a0c;
+}
+
+/* =========================================================
+   CUSTOM CURSOR — mix-blend-mode: difference dot + ring
+   ========================================================= */
+body:has(.cursor) {
+  cursor: none;
+}
+body:has(.cursor) a,
+body:has(.cursor) button,
+body:has(.cursor) [role="button"] {
+  cursor: none;
+}
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 9999;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.cursor-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+}
+
+.cursor-ring {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  transition: width 0.3s ease, height 0.3s ease,
+    border-color 0.3s ease, opacity 0.3s ease;
+}
+
+.cursor.is-hover .cursor-ring {
+  width: 56px;
+  height: 56px;
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.cursor.is-hover .cursor-dot {
+  width: 3px;
+  height: 3px;
+  opacity: 0.6;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cursor {
+    display: none !important;
+  }
+  body:has(.cursor) {
+    cursor: auto;
+  }
+  body:has(.cursor) a,
+  body:has(.cursor) button {
+    cursor: pointer;
+  }
 }
 
 /* =========================================================
    TYPOGRAPHY SCALE
    ========================================================= */
 .text-hero {
-  font-size: clamp(3rem, 7vw, 6rem);
+  font-size: clamp(2.75rem, 7vw, 6rem);
   font-weight: 700;
-  line-height: 0.95;
+  line-height: 0.98;
   letter-spacing: -0.04em;
 }
 
@@ -131,34 +209,30 @@ button {
 .text-supporting {
   font-size: 0.875rem;
   line-height: 1.6;
-  opacity: 0.82;
 }
 
 .text-eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-fg-subtle);
 }
 
-/* =========================================================
-   CONTAINER
-   ========================================================= */
-.container-base {
-  max-width: 1280px;
-  margin-inline: auto;
-  padding-inline: 24px;
-}
-
-@media (max-width: 640px) {
-  .container-base {
-    padding-inline: 20px;
-  }
+/* Accent gradient text — replaces what italic was doing on the original */
+.accent-text {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    color-mix(in oklab, var(--color-accent) 70%, #ffffff) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* =========================================================
-   SECTION RHYTHM — 120 / 96 / 72
+   SECTION RHYTHM
    ========================================================= */
 .section-pad {
   padding-block: 120px;
@@ -177,22 +251,129 @@ button {
 }
 
 /* =========================================================
-   SHINY TEXT
+   CARD — original subtle dark surface with accent hover glow
    ========================================================= */
-.shiny-text {
-  display: inline-block;
-}
-
-/* =========================================================
-   BORDER GLOW BASE
-   ========================================================= */
-.border-glow {
+.card-surface {
   position: relative;
+  padding: clamp(28px, 3vw, 40px);
+  border-radius: 22px;
+  border: 1px solid var(--color-line);
+  background: linear-gradient(
+    140deg,
+    rgba(236, 235, 230, 0.04),
+    rgba(236, 235, 230, 0.01)
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
   isolation: isolate;
+  transition: border-color 0.4s var(--ease-out-expo),
+    transform 0.5s var(--ease-out-expo);
+}
+
+.card-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    140deg,
+    color-mix(in oklab, var(--color-accent) 18%, transparent),
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.card-surface::after {
+  content: "";
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--color-accent) 35%, transparent) 0%,
+    transparent 65%
+  );
+  filter: blur(40px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  transform: translate(var(--mx, -50%), var(--my, -50%)) translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.card-surface:hover {
+  border-color: var(--color-line-2);
+}
+.card-surface:hover::before,
+.card-surface:hover::after {
+  opacity: 1;
+}
+
+/* Optional lift effect on cards */
+.card-lift {
+  transition: transform 0.5s var(--ease-out-expo),
+    border-color 0.4s var(--ease-out-expo);
+}
+.card-lift:hover {
+  transform: translateY(-4px);
 }
 
 /* =========================================================
-   FOCUS RINGS — accessible without ugliness
+   STAT VALUE — original gradient-text big number style
+   ========================================================= */
+.stat-number {
+  font-family: var(--font-sans);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    color-mix(in oklab, var(--color-accent) 30%, #ffffff) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-symbol {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: clamp(3.5rem, 6vw, 5.5rem);
+  line-height: 1;
+}
+
+/* =========================================================
+   TAG / CHIP
+   ========================================================= */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 16px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-fg-muted);
+  letter-spacing: 0.04em;
+  background: var(--color-surface);
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
+}
+.tag:hover {
+  color: var(--color-fg);
+  border-color: var(--color-line-2);
+  background: var(--color-surface-2);
+}
+
+/* =========================================================
+   FOCUS RINGS
    ========================================================= */
 :focus-visible {
   outline: 2px solid color-mix(in oklab, var(--color-accent) 80%, white);
@@ -214,21 +395,18 @@ button {
 }
 
 /* =========================================================
-   SCROLLBAR — minimal premium feel
+   SCROLLBAR
    ========================================================= */
 ::-webkit-scrollbar {
   width: 8px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.16);
 }
@@ -241,12 +419,16 @@ html.lenis body {
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
 .lenis.lenis-stopped {
   overflow: hidden;
 }
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+/* =========================================================
+   SHINY TEXT (kept for hero only)
+   ========================================================= */
+.shiny-text {
+  display: inline-block;
 }

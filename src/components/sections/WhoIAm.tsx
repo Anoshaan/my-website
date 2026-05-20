@@ -21,7 +21,7 @@ export function WhoIAm() {
         className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full -z-10"
         style={{
           background:
-            "radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 60%)",
+            "radial-gradient(circle, rgba(207, 217, 255, 0.05) 0%, transparent 60%)",
         }}
       />
       <Container>
@@ -39,7 +39,7 @@ export function WhoIAm() {
                   className="absolute inset-[12%] rounded-full"
                   style={{
                     background:
-                      "radial-gradient(circle at 30% 30%, color-mix(in oklab, #8b5cf6 70%, #fff) 0%, color-mix(in oklab, #8b5cf6 20%, #2a2f55) 50%, transparent 80%)",
+                      "radial-gradient(circle at 30% 30%, color-mix(in oklab, #cfd9ff 70%, #fff) 0%, color-mix(in oklab, #cfd9ff 20%, #2a2f55) 50%, transparent 80%)",
                     filter: "blur(10px)",
                   }}
                 />

@@ -67,7 +67,7 @@ export function FeaturedWork() {
                       className="absolute inset-0"
                       style={{
                         background:
-                          "radial-gradient(80% 60% at 80% 20%, rgba(139,92,246,0.18), transparent 60%)",
+                          "radial-gradient(80% 60% at 80% 20%, rgba(207, 217, 255, 0.16), transparent 60%)",
                       }}
                     />
                   </div>

@@ -1,33 +1,62 @@
-import BorderGlow, { type BorderGlowProps } from "@/components/animations/BorderGlow";
-import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
+"use client";
 
-type CardProps = Partial<BorderGlowProps> & {
+import { useRef, type ReactNode, type MouseEvent } from "react";
+import { cn } from "@/lib/utils";
+
+type CardProps = {
   children: ReactNode;
   className?: string;
   innerClassName?: string;
-  size?: "default" | "large";
+  /** Adds a lift on hover. */
+  lift?: boolean;
+  /** Padding scale. */
+  size?: "default" | "large" | "compact";
 };
 
 /**
- * Card — standard surface using BorderGlow.
- * Uses unified spacing tokens.
+ * Card — original subtle dark surface with accent hover glow.
+ * Tracks pointer to place a soft accent radial glow under the cursor.
+ * NO mesh gradients, NO bright colors — matches the source aesthetic.
  */
 export function Card({
   children,
   className,
   innerClassName,
+  lift = true,
   size = "default",
-  ...glowProps
 }: CardProps) {
-  const innerPadding =
-    size === "large" ? "p-8 md:p-8" : "p-6 md:p-6";
+  const ref = useRef<HTMLDivElement>(null);
+
+  const padding =
+    size === "large"
+      ? "p-8 md:p-10"
+      : size === "compact"
+      ? "p-5 md:p-6"
+      : "p-6 md:p-8";
+
+  const onMove = (e: MouseEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    el.style.setProperty("--mx", `${x}px`);
+    el.style.setProperty("--my", `${y}px`);
+  };
 
   return (
-    <BorderGlow className={cn("h-full", className)} {...glowProps}>
-      <div className={cn(innerPadding, "h-full flex flex-col gap-6", innerClassName)}>
-        {children}
-      </div>
-    </BorderGlow>
+    <div
+      ref={ref}
+      onMouseMove={onMove}
+      className={cn(
+        "card-surface h-full flex flex-col gap-4",
+        padding,
+        lift && "card-lift",
+        className,
+        innerClassName
+      )}
+    >
+      {children}
+    </div>
   );
 }

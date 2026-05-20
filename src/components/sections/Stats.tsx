@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
-import { Card } from "@/components/ui/Card";
 import { motion, useInView } from "motion/react";
 
 type Stat = {
@@ -40,7 +39,7 @@ function AnimatedNumber({
 
   useEffect(() => {
     if (!inView) return;
-    const duration = 1600;
+    const duration = 1800;
     const start = performance.now();
     let raf = 0;
     const tick = (now: number) => {
@@ -55,7 +54,7 @@ function AnimatedNumber({
 
   return (
     <span ref={ref}>
-      {value}
+      {value.toLocaleString()}
       {suffix}
     </span>
   );
@@ -65,7 +64,7 @@ export function Stats() {
   return (
     <section className="section-pad border-y border-white/[0.06]">
       <Container>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((s, i) => (
             <motion.div
               key={s.label}
@@ -74,20 +73,25 @@ export function Stats() {
               viewport={{ once: true, margin: "0px 0px -10% 0px" }}
               transition={{
                 duration: 0.8,
-                delay: i * 0.08,
+                delay: i * 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
+              className="flex flex-col items-center text-center gap-3 py-7 px-5 rounded-2xl border border-white/[0.06] bg-white/[0.015] hover:border-white/[0.14] hover:bg-white/[0.025] transition-colors duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
             >
-              <Card>
-                <span className="text-[clamp(2.5rem,4.5vw,4rem)] font-light tracking-[-0.04em] leading-none text-white">
-                  {s.countTo !== undefined ? (
-                    <AnimatedNumber target={s.countTo} suffix={s.suffix} />
-                  ) : (
-                    s.value
-                  )}
-                </span>
-                <span className="text-eyebrow text-white/55">{s.label}</span>
-              </Card>
+              <span
+                className={
+                  s.countTo !== undefined ? "stat-number" : "stat-symbol accent-text"
+                }
+              >
+                {s.countTo !== undefined ? (
+                  <AnimatedNumber target={s.countTo} suffix={s.suffix} />
+                ) : (
+                  s.value
+                )}
+              </span>
+              <span className="text-eyebrow text-white/55 max-w-[28ch]">
+                {s.label}
+              </span>
             </motion.div>
           ))}
         </div>

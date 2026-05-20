@@ -49,7 +49,7 @@ export default function AboutPage() {
                   className="absolute inset-[15%] rounded-full"
                   style={{
                     background:
-                      "radial-gradient(circle at 30% 30%, color-mix(in oklab, #8b5cf6 70%, #fff) 0%, color-mix(in oklab, #8b5cf6 20%, #2a2f55) 50%, transparent 80%)",
+                      "radial-gradient(circle at 30% 30%, color-mix(in oklab, #cfd9ff 70%, #fff) 0%, color-mix(in oklab, #cfd9ff 20%, #2a2f55) 50%, transparent 80%)",
                     filter: "blur(10px)",
                   }}
                 />

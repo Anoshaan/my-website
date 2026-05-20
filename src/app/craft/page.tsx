@@ -9,42 +9,42 @@ const sketches = [
     title: "Spatial Layering Studies",
     note: "Z-axis composition for cinematic dashboards.",
     gradient:
-      "radial-gradient(60% 60% at 30% 40%, rgba(139,92,246,0.18), transparent 60%)",
+      "radial-gradient(60% 60% at 30% 40%, rgba(207, 217, 255, 0.14), transparent 60%)",
   },
   {
     tag: "Motion · 2025",
     title: "Easing Library v2",
     note: "Custom timing curves for product interactions.",
     gradient:
-      "radial-gradient(60% 60% at 70% 30%, rgba(236,72,153,0.18), transparent 60%)",
+      "radial-gradient(60% 60% at 70% 30%, rgba(255, 184, 154, 0.12), transparent 60%)",
   },
   {
     tag: "Component · 2024",
     title: "Adaptive Side Panels",
     note: "Responsive layout primitives across breakpoints.",
     gradient:
-      "radial-gradient(60% 60% at 50% 50%, rgba(56,189,248,0.18), transparent 60%)",
+      "radial-gradient(60% 60% at 50% 50%, rgba(138, 166, 255, 0.14), transparent 60%)",
   },
   {
     tag: "Concept · 2024",
     title: "AI Drift Visualization",
     note: "Visual language for prompt evolution.",
     gradient:
-      "radial-gradient(60% 60% at 40% 60%, rgba(139,92,246,0.18), transparent 60%)",
+      "radial-gradient(60% 60% at 40% 60%, rgba(207, 217, 255, 0.14), transparent 60%)",
   },
   {
     tag: "Token · 2024",
     title: "Surface Elevation Map",
     note: "Codified elevation system for dark UI.",
     gradient:
-      "radial-gradient(60% 60% at 60% 40%, rgba(236,72,153,0.18), transparent 60%)",
+      "radial-gradient(60% 60% at 60% 40%, rgba(255, 184, 154, 0.10), transparent 60%)",
   },
   {
     tag: "Sketch · 2023",
     title: "Quiet Forms",
     note: "Studies in negative space and breathing room.",
     gradient:
-      "radial-gradient(60% 60% at 50% 50%, rgba(56,189,248,0.18), transparent 60%)",
+      "radial-gradient(60% 60% at 50% 50%, rgba(138, 166, 255, 0.12), transparent 60%)",
   },
 ];
 
