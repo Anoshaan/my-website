@@ -1,8 +1,31 @@
 {
   "name": "anoshaan-brand-website",
-  "version": "1.0.0",
-  "description": "Designing interfaces with clarity, motion, and intent.",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Anoshaan — Lead UX Engineer / Senior Product Experience Designer",
   "scripts": {
-    "dev": "npx -y live-server --port=3000"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "motion": "^11.15.0",
+    "lenis": "^1.1.16",
+    "geist": "^1.3.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8"
   }
 }

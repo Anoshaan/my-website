@@ -1,0 +1,252 @@
+@import "tailwindcss";
+
+/* =========================================================
+   DESIGN TOKENS — Anoshaan brand system
+   Geist font (no italic). 8px spacing. Premium motion.
+   ========================================================= */
+@theme {
+  /* Colors */
+  --color-bg: #000000;
+  --color-bg-2: #0a0a0c;
+  --color-surface: #0f1115;
+  --color-fg: #ecebe6;
+  --color-fg-muted: #87878f;
+  --color-fg-subtle: #5a5a62;
+  --color-line: rgba(236, 235, 230, 0.08);
+  --color-line-2: rgba(236, 235, 230, 0.14);
+  --color-accent: #8b5cf6;
+  --color-accent-2: #ec4899;
+  --color-accent-3: #38bdf8;
+
+  /* Typography — Geist only, no italic */
+  --font-sans: var(--font-geist-sans), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* 8px spacing scale */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-24: 96px;
+  --spacing-32: 128px;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Radius */
+  --radius-card: 28px;
+  --radius-pill: 999px;
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-style: normal !important;
+  letter-spacing: -0.01em;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* Kill italics everywhere — brand rule */
+em,
+i,
+[style*="italic"] {
+  font-style: normal !important;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-accent) 50%, transparent);
+  color: #fff;
+}
+
+/* =========================================================
+   TYPOGRAPHY SCALE
+   ========================================================= */
+.text-hero {
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.text-section {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.text-card-title {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.text-body {
+  font-size: 1rem;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+.text-supporting {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  opacity: 0.82;
+}
+
+.text-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+}
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+.container-base {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+@media (max-width: 640px) {
+  .container-base {
+    padding-inline: 20px;
+  }
+}
+
+/* =========================================================
+   SECTION RHYTHM — 120 / 96 / 72
+   ========================================================= */
+.section-pad {
+  padding-block: 120px;
+}
+
+@media (max-width: 1024px) {
+  .section-pad {
+    padding-block: 96px;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-pad {
+    padding-block: 72px;
+  }
+}
+
+/* =========================================================
+   SHINY TEXT
+   ========================================================= */
+.shiny-text {
+  display: inline-block;
+}
+
+/* =========================================================
+   BORDER GLOW BASE
+   ========================================================= */
+.border-glow {
+  position: relative;
+  isolation: isolate;
+}
+
+/* =========================================================
+   FOCUS RINGS — accessible without ugliness
+   ========================================================= */
+:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-accent) 80%, white);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.1ms !important;
+  }
+}
+
+/* =========================================================
+   SCROLLBAR — minimal premium feel
+   ========================================================= */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
