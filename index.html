@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Anoshaan</title>
+<meta name="description" content="Designing interfaces with clarity, motion, and intent. UI/UX engineering, interaction design, design systems, and product thinking." />
+<link rel="icon" type="image/png" href="favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://unpkg.com/split-type"></script>
+</head>
+<body data-cursor="custom" data-motion="full" data-page="home">
+
+<!-- ================== CUSTOM CURSOR ================== -->
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+</div>
+
+<!-- Background Interactive Canvas -->
+<canvas id="glow-grid-canvas"></canvas>
+
+<!-- ================== NAV ================== -->
+<header class="nav" id="nav">
+  <div class="nav-pill">
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html" class="nav-link" data-nav="home">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Home</span>
+          <span class="nav-slide-text">Home</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="labs.html" class="nav-link" data-nav="labs">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Labs</span>
+          <span class="nav-slide-text">Labs</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="systems.html" class="nav-link" data-nav="systems">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Systems</span>
+          <span class="nav-slide-text">Systems</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="craft.html" class="nav-link" data-nav="craft">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Craft</span>
+          <span class="nav-slide-text">Craft</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="about.html" class="nav-link" data-nav="about">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">About</span>
+          <span class="nav-slide-text">About</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================== HERO ================== -->
+  <section class="hero relative flex flex-col items-center justify-center text-center px-6 overflow-hidden" data-screen-label="01 Hero">
+    <!-- Dynamic kinetic glow layers behind content -->
+    <div class="hero-glow-radial"></div>
+    <div class="hero-glow-layered"></div>
+
+    <div class="fluid-container flex flex-col items-center w-full select-none">
+      <h1 class="hero-title text-depth max-w-4xl lg:max-w-5xl" id="heroTitle">
+        Designing interfaces with clarity, <em>motion</em>, and intent.
+      </h1>
+
+      <p class="hero-sub reveal text-depth max-w-2xl leading-relaxed font-light" data-reveal data-delay="600">
+        Building thoughtful digital experiences that feel clear, responsive, and emotionally precise.
+      </p>
+
+      <div class="hero-actions hero-cta-group reveal flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full" data-reveal data-delay="800">
+        <a href="labs.html" class="magnetic-btn rainbow-shadow w-full sm:w-auto px-8 py-3.5 rounded-full bg-white hover:bg-neutral-100 text-black font-semibold tracking-wide flex items-center justify-center gap-2 transition-shadow duration-300 text-sm cursor-pointer" data-magnetic>
+          View Labs
+          <span class="btn-arrow inline-flex">
+            <svg viewBox="0 0 14 14" width="12" height="12"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
+        <a href="systems.html" class="magnetic-btn w-full sm:w-auto px-8 py-3.5 rounded-full bg-transparent hover:bg-white/[0.03] text-white border border-white/10 hover:border-white/20 font-semibold tracking-wide flex items-center justify-center gap-2 transition-all duration-300 text-sm cursor-pointer" data-magnetic>
+          Explore Systems
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== WHO I AM ================== -->
+  <section class="who" id="about" data-screen-label="02 Who I Am">
+    <div class="who-grid">
+      <aside class="who-side reveal" data-reveal>
+        <div class="who-portrait" aria-hidden="true">
+          <div class="portrait-orbit"></div>
+          <div class="portrait-frame">
+            <div class="portrait-inner">
+              <div class="portrait-noise"></div>
+              <div class="portrait-shape"></div>
+            </div>
+          </div>
+          <div class="portrait-mark">A</div>
+        </div>
+      </aside>
+
+      <div class="who-body">
+        <h2 class="who-headline reveal" data-reveal data-delay="100">
+          Lead UI/UX Engineer working at the <em>intersection</em> of interface design, interaction systems, and <em>motion architecture</em>.
+        </h2>
+        <p class="who-para reveal" data-reveal data-delay="300">
+          I build digital products that feel structurally sound, visually precise, and behaviorally intelligent — from concept through production code.
+        </p>
+
+        <div class="who-tags reveal" data-reveal data-delay="500" data-stagger="70" data-stagger-base="500">
+          <span class="tag" data-magnetic-soft>Interface design</span>
+          <span class="tag" data-magnetic-soft>Motion architecture</span>
+          <span class="tag" data-magnetic-soft>Design systems</span>
+          <span class="tag" data-magnetic-soft>Production code</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== WHAT I BRING ================== -->
+  <section class="disciplines" data-screen-label="03 What I Bring">
+    <header class="section-head">
+      <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Core Disciplines</span>
+      <h2 class="section-title split-reveal" data-split-reveal>What I Bring</h2>
+    </header>
+
+    <div class="discipline-grid" data-stagger="120">
+      <article class="discipline" data-tilt data-reveal data-delay="0">
+        <div class="d-glow"></div>
+        <div class="d-body">
+          <h3>UI/UX Strategy</h3>
+          <p>Research-driven decisions that reduce friction and guide users through complex product flows.</p>
+          <ul class="d-meta">
+            <li>Cognitive mapping</li>
+            <li>Flow optimization</li>
+            <li>Data-informed design</li>
+          </ul>
+        </div>
+        <svg class="d-icon" viewBox="0 0 60 60" aria-hidden="true">
+          <circle cx="30" cy="30" r="26" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.4"/>
+          <circle cx="30" cy="30" r="16" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.6"/>
+          <circle cx="30" cy="30" r="6" fill="none" stroke="currentColor" stroke-width="0.6"/>
+          <circle cx="30" cy="30" r="2" fill="currentColor"/>
+        </svg>
+      </article>
+
+      <article class="discipline" data-tilt data-reveal data-delay="100">
+        <div class="d-glow"></div>
+        <div class="d-body">
+          <h3>Motion &amp; Interaction</h3>
+          <p>Purposeful animation that communicates state, confirms actions, and guides spatial attention.</p>
+          <ul class="d-meta">
+            <li>GSAP orchestration</li>
+            <li>Spring physics</li>
+            <li>Scroll choreography</li>
+          </ul>
+        </div>
+        <svg class="d-icon" viewBox="0 0 60 60" aria-hidden="true">
+          <path d="M6 42 C 18 42, 22 18, 30 18 C 38 18, 42 42, 54 42" fill="none" stroke="currentColor" stroke-width="0.8"/>
+          <circle cx="6" cy="42" r="2" fill="currentColor"/>
+          <circle cx="54" cy="42" r="2" fill="currentColor"/>
+          <circle cx="30" cy="18" r="2.5" fill="none" stroke="currentColor" stroke-width="0.8"/>
+        </svg>
+      </article>
+
+      <article class="discipline" data-tilt data-reveal data-delay="200">
+        <div class="d-glow"></div>
+        <div class="d-body">
+          <h3>Design Systems</h3>
+          <p>Scalable component architectures with tokens, responsive layouts, and consistent behavior.</p>
+          <ul class="d-meta">
+            <li>Token schemas</li>
+            <li>Component libraries</li>
+            <li>Variant management</li>
+          </ul>
+        </div>
+        <svg class="d-icon" viewBox="0 0 60 60" aria-hidden="true">
+          <rect x="8" y="8" width="18" height="18" fill="none" stroke="currentColor" stroke-width="0.6"/>
+          <rect x="34" y="8" width="18" height="18" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.6"/>
+          <rect x="8" y="34" width="18" height="18" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.6"/>
+          <rect x="34" y="34" width="18" height="18" fill="none" stroke="currentColor" stroke-width="0.6"/>
+          <circle cx="30" cy="30" r="1.5" fill="currentColor"/>
+        </svg>
+      </article>
+
+      <article class="discipline" data-tilt data-reveal data-delay="300">
+        <div class="d-glow"></div>
+        <div class="d-body">
+          <h3>Product Storytelling</h3>
+          <p>Translating complex technical ideas into clear, compelling product narratives that drive adoption.</p>
+          <ul class="d-meta">
+            <li>Interface copywriting</li>
+            <li>Presentation design</li>
+            <li>Visual narrative</li>
+          </ul>
+        </div>
+        <svg class="d-icon" viewBox="0 0 60 60" aria-hidden="true">
+          <path d="M10 14 L50 14 M10 22 L40 22 M10 30 L46 30 M10 38 L34 38 M10 46 L42 46" stroke="currentColor" stroke-width="0.6" stroke-linecap="round" opacity="0.7"/>
+          <circle cx="6" cy="14" r="1.5" fill="currentColor"/>
+          <circle cx="6" cy="30" r="1.5" fill="currentColor"/>
+          <circle cx="6" cy="46" r="1.5" fill="currentColor"/>
+        </svg>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================== FEATURED WORK ================== -->
+  <section class="work" data-screen-label="04 Featured Work">
+    <header class="section-head section-head-split">
+      <div>
+        <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Featured Work</span>
+        <h2 class="section-title split-reveal" data-split-reveal>Recent Lab</h2>
+      </div>
+      <a href="labs.html" class="link-arrow reveal" data-reveal data-magnetic-soft data-cursor-label="All work">
+        <span>View all work</span>
+        <svg viewBox="0 0 14 14" width="12" height="12"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </header>
+
+    <a href="labs.html" class="project" data-project data-cursor-label="View case study" data-reveal>
+      <div class="project-media" data-parallax-media>
+        <div class="project-media-inner">
+          <div class="mock-window">
+            <div class="mock-chrome">
+              <span></span><span></span><span></span>
+              <div class="mock-url">core.platform · trading</div>
+            </div>
+            <div class="mock-body">
+              <div class="mock-side">
+                <div class="mock-side-row active"><span class="dot"></span>Portfolio</div>
+                <div class="mock-side-row"><span class="dot"></span>Watchlist</div>
+                <div class="mock-side-row"><span class="dot"></span>Orders</div>
+                <div class="mock-side-row"><span class="dot"></span>Research</div>
+                <div class="mock-side-row"><span class="dot"></span>Compliance</div>
+              </div>
+              <div class="mock-main">
+                <div class="mock-hero">
+                  <div class="mock-label">Net Asset Value</div>
+                  <div class="mock-value">$ 4,328,917.<small>04</small></div>
+                  <div class="mock-delta">+ 1.84% · today</div>
+                </div>
+                <div class="mock-chart">
+                  <svg viewBox="0 0 300 80" preserveAspectRatio="none">
+                    <path d="M0 60 Q 30 40 50 48 T 100 32 T 150 36 T 200 20 T 250 28 T 300 12" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M0 60 Q 30 40 50 48 T 100 32 T 150 36 T 200 20 T 250 28 T 300 12 L 300 80 L 0 80 Z" fill="url(#chartFill)" opacity="0.5"/>
+                    <defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="currentColor" stop-opacity="0.35"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>
+                  </svg>
+                </div>
+                <div class="mock-grid">
+                  <div class="mock-cell"><span>AAPL</span><b>+ 0.42%</b></div>
+                  <div class="mock-cell"><span>NVDA</span><b>+ 2.14%</b></div>
+                  <div class="mock-cell"><span>EURUSD</span><b>− 0.08%</b></div>
+                  <div class="mock-cell"><span>BTC</span><b>+ 1.92%</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="project-overlay"></div>
+        </div>
+        <div class="project-glow"></div>
+      </div>
+
+      <div class="project-meta">
+        <div class="project-tags">
+          <span>Wealth Management</span>
+          <span class="sep">·</span>
+          <span>Systems</span>
+        </div>
+        <h3 class="project-title">Fintech Core Platform</h3>
+
+        <div class="project-detail">
+          <div class="detail-block">
+            <span class="detail-label">Context</span>
+            <p>A unified wealth management terminal designed for active traders.</p>
+          </div>
+          <div class="detail-block">
+            <span class="detail-label">Result</span>
+            <p>Reduced trader execution errors by 42% and accelerated transaction times by 28%.</p>
+          </div>
+        </div>
+
+        <div class="project-cta">
+          <span class="cta-text">View in Labs</span>
+          <span class="cta-arrow"><svg viewBox="0 0 14 14" width="14" height="14"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </div>
+      </div>
+    </a>
+  </section>
+
+  <!-- ================== PHILOSOPHY ================== -->
+  <section class="philosophy" data-screen-label="05 Philosophy">
+    <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Design Philosophy</span>
+    <div class="philo-lines" id="philoLines">
+      <div class="philo-line" data-philo>
+        <span class="philo-num">01</span>
+        <span class="philo-text">Clarity over clutter.</span>
+      </div>
+      <div class="philo-line" data-philo>
+        <span class="philo-num">02</span>
+        <span class="philo-text">Motion with meaning.</span>
+      </div>
+      <div class="philo-line" data-philo>
+        <span class="philo-num">03</span>
+        <span class="philo-text">Systems over one-offs.</span>
+      </div>
+      <div class="philo-line" data-philo>
+        <span class="philo-num">04</span>
+        <span class="philo-text">Behavior before decoration.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== STATS ================== -->
+  <section class="stats" data-screen-label="06 Stats" data-stagger="110">
+    <div class="stat" data-reveal>
+      <span class="stat-value" data-count data-target="0" data-suffix="+">0</span>
+      <span class="stat-label">Years Experience</span>
+    </div>
+    <div class="stat" data-reveal data-delay="100">
+      <span class="stat-value" data-count data-target="0" data-suffix="+">0</span>
+      <span class="stat-label">Products Shipped</span>
+    </div>
+    <div class="stat" data-reveal data-delay="200">
+      <span class="stat-value" data-count data-target="0">0</span>
+      <span class="stat-label">Core Disciplines</span>
+    </div>
+    <div class="stat" data-reveal data-delay="300">
+      <span class="stat-value stat-infinity">∞</span>
+      <span class="stat-label">Curiosity</span>
+    </div>
+  </section>
+
+  <!-- ================== TESTIMONIALS ================== -->
+  <section class="marquee" data-screen-label="07 Testimonials">
+    <header class="marquee-head">
+      <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Testimonials</span>
+      <h2 class="split-reveal" data-split-reveal>Trusted by founders, design leads, and engineering teams.</h2>
+      <p class="reveal" data-reveal data-delay="200">Selected words from the people I've shipped product with over the last several years.</p>
+    </header>
+
+    <div class="marquee-rows reveal" data-reveal data-delay="400">
+
+      <!-- Row 1 — LTR -->
+      <div class="marquee-row row-1" data-dir="ltr">
+        <div class="marquee-track">
+          <article class="testimonial-card" style="--avatar-a:#cfd9ff;--avatar-b:#8aa6ff;">
+            <div class="t-quote-mark">"</div>
+            <p class="t-quote">Anoshaan understood our trading floor better than half our PM team. The redesign cut alarm fatigue by 30% and shipped in eight weeks.</p>
+            <div class="t-person">
+              <span class="t-avatar">MC</span>
+              <div>
+                <div class="t-name">Maya Chen</div>
+                <div class="t-role">Director of Product · Lumina</div>
+              </div>
+            </div>
+          </article>
+          <article class="testimonial-card" style="--avatar-a:#ffd1a8;--avatar-b:#ffb89a;">
+            <div class="t-quote-mark">"</div>
+            <p class="t-quote">Calm in deep work, sharp in critique. The kind of designer you want on the team three months before launch, not three weeks.</p>
+            <div class="t-person">
+              <span class="t-avatar">SL</span>
+              <div>
+                <div class="t-name">Sara Lindqvist</div>
+                <div class="t-role">CTO · Mira Health</div>
+              </div>
+            </div>
+          </article>
+          <article class="testimonial-card" style="--avatar-a:#c8b8ff;--avatar-b:#a78bfa;">
+            <div class="t-quote-mark">"</div>
+            <p class="t-quote">He pushed back on three of our six requirements and was right every time. The product is better for it and the team learned a lot.</p>
+            <div class="t-person">
+              <span class="t-avatar">IV</span>
+              <div>
+                <div class="t-name">Ines Vidal</div>
+                <div class="t-role">Product Lead · Northwind</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Row 2 — RTL -->
+      <div class="marquee-row row-2" data-dir="rtl">
+        <div class="marquee-track">
+          <article class="testimonial-card" style="--avatar-a:#b8d6ff;--avatar-b:#7dd3fc;">
+            <div class="t-quote-mark">"</div>
+            <p class="t-quote">Rare to find someone who can speak design tokens with engineers and motion language with the marketing team in the same meeting.</p>
+            <div class="t-person">
+              <span class="t-avatar">JK</span>
+              <div>
+                <div class="t-name">Jonas Krueger</div>
+                <div class="t-role">Founder &amp; CEO · Aurora Labs</div>
+              </div>
+            </div>
+          </article>
+          <article class="testimonial-card" style="--avatar-a:#ffe4b8;--avatar-b:#f5d28a;">
+            <div class="t-quote-mark">"</div>
+            <p class="t-quote">He shipped a motion system that finally made our dashboard feel responsive instead of busy. The data didn't change — the experience did.</p>
+            <div class="t-person">
+              <span class="t-avatar">TA</span>
+              <div>
+                <div class="t-name">Tomás Aguirre</div>
+                <div class="t-role">Principal Designer · Forecast</div>
+              </div>
+            </div>
+          </article>
+          <article class="testimonial-card" style="--avatar-a:#d6c8ff;--avatar-b:#9f7aea;">
+            <div class="t-quote-mark">"</div>
+            <p class="t-quote">His prototypes feel like the final thing already shipped. Saved us weeks of clarification meetings with engineering on motion details.</p>
+            <div class="t-person">
+              <span class="t-avatar">RO</span>
+              <div>
+                <div class="t-name">Rafe Ostrowski</div>
+                <div class="t-role">Head of UX · Citadel</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Row 3 — LTR -->
+      <div class="marquee-row row-3" data-dir="ltr">
+        <div class="marquee-track">
+          <article class="testimonial-card" style="--avatar-a:#ffc8b8;--avatar-b:#ff9a78;">
+            <div class="t-quote-mark">"</div>
+            <p class="t-quote">He treats motion as architecture, not decoration. Every transition has a reason and the product feels measurably calmer to use.</p>
+            <div class="t-person">
+              <span class="t-avatar">PR</span>
+              <div>
+                <div class="t-name">Priya Reddy</div>
+                <div class="t-role">Head of Design · Vector</div>
+              </div>
+            </div>
+          </article>
+          <article class="testimonial-card" style="--avatar-a:#cfd9ff;--avatar-b:#a8b8e8;">
+            <div class="t-quote-mark">"</div>
+            <p class="t-quote">We brought him in for a one-week audit and ended up extending for six months. The detail and rigor are what you pay for.</p>
+            <div class="t-person">
+              <span class="t-avatar">NO</span>
+              <div>
+                <div class="t-name">Naomi Okafor</div>
+                <div class="t-role">Design Director · Halcyon</div>
+              </div>
+            </div>
+          </article>
+          <article class="testimonial-card" style="--avatar-a:#ffd8c0;--avatar-b:#ffa68a;">
+            <div class="t-quote-mark">"</div>
+            <p class="t-quote">Quiet, precise, and faster than you'd expect. Delivered a token system and motion library that's still our reference twelve months later.</p>
+            <div class="t-person">
+              <span class="t-avatar">AT</span>
+              <div>
+                <div class="t-name">Aya Tanaka</div>
+                <div class="t-role">Chief Designer · Praxis</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+
+
+    </div>
+  </section>
+
+  <!-- ================== CONTACT ================== -->
+  <section class="contact" id="contact" data-screen-label="07 Contact">
+    <div class="contact-inner">
+      <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Contact</span>
+      <h2 class="contact-title split-reveal" data-split-reveal>Let's build something meaningful.</h2>
+      <p class="contact-sub reveal" data-reveal data-delay="200">
+        Whether you need to scale a design system, refine product interactions, or bring motion intelligence to your interfaces — let's start a conversation.
+      </p>
+
+
+    </div>
+  </section>
+</main>
+
+<!-- ================== FOOTER ================== -->
+<footer class="footer">
+  <div class="footer-row">
+    <div class="footer-mark">
+      <span>Anotion — Senior Lead UI UX Designer</span>
+    </div>
+    <nav class="footer-nav">
+      <a href="labs.html" data-magnetic-soft>Labs</a>
+      <a href="systems.html" data-magnetic-soft>Systems</a>
+      <a href="craft.html" data-magnetic-soft>Craft</a>
+      <a href="about.html" data-magnetic-soft>About</a>
+    </nav>
+    <a href="#top" class="footer-top" data-magnetic-soft data-cursor-label="Back to top">
+      <span>Top</span>
+      <svg viewBox="0 0 14 14" width="12" height="12"><path d="M7 11V3M3 7L7 3L11 7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="footer-row footer-row-bottom">
+    <span class="footer-copy">© 2026 Anotion. All rights reserved.</span>
+    <div class="footer-socials">
+      <a href="https://twitter.com" data-magnetic-soft>X</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.__TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#cfd9ff",
+  "motionIntensity": "full",
+  "cursorMode": "custom",
+  "heroReveal": "blur"
+}/*EDITMODE-END*/;
+</script>
+<script src="grid.js"></script>
+<script src="app.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="tweaks-app.jsx"></script>
+</body>
+</html>

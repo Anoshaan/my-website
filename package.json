@@ -1,0 +1,8 @@
+{
+  "name": "anoshaan-brand-website",
+  "version": "1.0.0",
+  "description": "Designing interfaces with clarity, motion, and intent.",
+  "scripts": {
+    "dev": "npx -y live-server --port=3000"
+  }
+}

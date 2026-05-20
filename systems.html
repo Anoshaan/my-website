@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Systems · Anoshaan</title>
+<meta name="description" content="Designing systems that stay clear, consistent, and scalable." />
+<link rel="icon" type="image/png" href="favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-cursor="custom" data-motion="full" data-page="systems">
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+</div>
+
+<!-- Background Interactive Canvas -->
+<canvas id="glow-grid-canvas"></canvas>
+
+<header class="nav" id="nav">
+  <div class="nav-pill">
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html" class="nav-link" data-nav="home">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Home</span>
+          <span class="nav-slide-text">Home</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="labs.html" class="nav-link" data-nav="labs">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Labs</span>
+          <span class="nav-slide-text">Labs</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="systems.html" class="nav-link" data-nav="systems">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Systems</span>
+          <span class="nav-slide-text">Systems</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="craft.html" class="nav-link" data-nav="craft">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Craft</span>
+          <span class="nav-slide-text">Craft</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="about.html" class="nav-link" data-nav="about">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">About</span>
+          <span class="nav-slide-text">About</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="page-head" data-screen-label="01 Systems intro">
+    <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Systems</span>
+    <h1 class="page-title split-reveal" data-split-reveal>Designing systems that stay clear, consistent, and scalable.</h1>
+    <p class="page-sub reveal" data-reveal data-delay="300">
+      Interfaces grow. Teams change. Design systems are the architecture that holds everything together — from tokens and typography to motion language and interaction patterns.
+    </p>
+  </section>
+
+  <!-- Core Principles -->
+  <section class="beliefs" data-screen-label="02 What I Believe">
+    <header class="section-head">
+      <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Core Principles</span>
+      <h2 class="section-title split-reveal" data-split-reveal>What I Believe</h2>
+    </header>
+
+    <div class="belief-grid" data-stagger="100">
+      <article class="belief" data-reveal data-delay="0">
+        <span class="belief-num">01</span>
+        <h3>Clarity first</h3>
+        <p>Every element should justify its presence. If it doesn't clarify, it clutters.</p>
+      </article>
+      <article class="belief" data-reveal data-delay="80">
+        <span class="belief-num">02</span>
+        <h3>Scale by system, not by luck</h3>
+        <p>Repeatable patterns and token-driven architectures grow without breaking.</p>
+      </article>
+      <article class="belief" data-reveal data-delay="160">
+        <span class="belief-num">03</span>
+        <h3>Motion must support behavior</h3>
+        <p>Animation guides attention, confirms actions, and builds spatial memory.</p>
+      </article>
+      <article class="belief" data-reveal data-delay="240">
+        <span class="belief-num">04</span>
+        <h3>Design should reduce friction</h3>
+        <p>The best interface is the one users don't have to think about.</p>
+      </article>
+      <article class="belief" data-reveal data-delay="320">
+        <span class="belief-num">05</span>
+        <h3>Responsiveness should feel intentional</h3>
+        <p>Layouts adapt not just to screen size, but to context and intent.</p>
+      </article>
+      <article class="belief" data-reveal data-delay="400">
+        <span class="belief-num">06</span>
+        <h3>Details reinforce trust</h3>
+        <p>Consistent spacing, precise alignment, and smooth transitions signal quality.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="process" data-screen-label="03 Process">
+    <header class="section-head">
+      <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Process</span>
+      <h2 class="section-title split-reveal" data-split-reveal>How I Work</h2>
+    </header>
+
+    <div class="process-list">
+      <article class="process-step">
+        <div class="process-num">01</div>
+        <div class="process-body">
+          <span class="process-phase">Phase 01</span>
+          <h3>Discover</h3>
+          <p>Research users, audit existing systems, map cognitive models and pain points. Understand before designing.</p>
+        </div>
+      </article>
+      <article class="process-step">
+        <div class="process-num">02</div>
+        <div class="process-body">
+          <span class="process-phase">Phase 02</span>
+          <h3>Structure</h3>
+          <p>Define information architecture, user flows, component hierarchy, and token systems. Build the blueprint.</p>
+        </div>
+      </article>
+      <article class="process-step">
+        <div class="process-num">03</div>
+        <div class="process-body">
+          <span class="process-phase">Phase 03</span>
+          <h3>Design</h3>
+          <p>Create high-fidelity interfaces with real content, motion prototypes, and responsive variants. Test and iterate.</p>
+        </div>
+      </article>
+      <article class="process-step">
+        <div class="process-num">04</div>
+        <div class="process-body">
+          <span class="process-phase">Phase 04</span>
+          <h3>Refine</h3>
+          <p>Optimize for accessibility, performance, and edge cases. Validate with data. Ship with confidence.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- UX Thinking -->
+  <section class="thinking" data-screen-label="04 UX Thinking">
+    <header class="section-head">
+      <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>UX Thinking</span>
+      <h2 class="section-title split-reveal" data-split-reveal>How I Think About Interfaces</h2>
+    </header>
+
+    <div class="thinking-grid" data-stagger="100">
+      <article class="thinking-item" data-reveal>
+        <div class="thinking-num">01</div>
+        <div class="thinking-body">
+          <h3>Cognitive Load</h3>
+          <p>Minimize the mental effort required to complete any task. Progressive disclosure over information dumping.</p>
+        </div>
+      </article>
+      <article class="thinking-item" data-reveal data-delay="80">
+        <div class="thinking-num">02</div>
+        <div class="thinking-body">
+          <h3>Visual Hierarchy</h3>
+          <p>Size, weight, contrast, and spacing should guide the eye through a clear reading order.</p>
+        </div>
+      </article>
+      <article class="thinking-item" data-reveal>
+        <div class="thinking-num">03</div>
+        <div class="thinking-body">
+          <h3>Interaction Feedback</h3>
+          <p>Every user action deserves an appropriate response — hover, press, load, success, error.</p>
+        </div>
+      </article>
+      <article class="thinking-item" data-reveal data-delay="80">
+        <div class="thinking-num">04</div>
+        <div class="thinking-body">
+          <h3>Spacing Rhythm</h3>
+          <p>Consistent spacing creates visual tempo. Intentional whitespace communicates structure.</p>
+        </div>
+      </article>
+      <article class="thinking-item" data-reveal>
+        <div class="thinking-num">05</div>
+        <div class="thinking-body">
+          <h3>Accessibility</h3>
+          <p>WCAG 2.2 AA compliance isn't optional. Contrast, focus states, screen reader support — built in, not bolted on.</p>
+        </div>
+      </article>
+      <article class="thinking-item" data-reveal data-delay="80">
+        <div class="thinking-num">06</div>
+        <div class="thinking-body">
+          <h3>Responsive Behavior</h3>
+          <p>Layouts should feel native at every breakpoint, not just scaled down from desktop.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Toolkit -->
+  <section class="toolkit" data-screen-label="05 Toolkit">
+    <header class="section-head">
+      <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Toolkit</span>
+      <h2 class="section-title split-reveal" data-split-reveal>What a System Covers</h2>
+    </header>
+    <div class="toolkit-row" data-stagger="70">
+      <span class="chip" data-reveal data-magnetic-soft>Layout Logic</span>
+      <span class="chip" data-reveal data-delay="60" data-magnetic-soft>Component Architecture</span>
+      <span class="chip" data-reveal data-delay="120" data-magnetic-soft>Design Tokens</span>
+      <span class="chip" data-reveal data-delay="180" data-magnetic-soft>Typography Scales</span>
+      <span class="chip" data-reveal data-delay="240" data-magnetic-soft>Spacing Systems</span>
+      <span class="chip" data-reveal data-delay="300" data-magnetic-soft>State &amp; Variant Management</span>
+      <span class="chip" data-reveal data-delay="360" data-magnetic-soft>Interaction Rules</span>
+      <span class="chip" data-reveal data-delay="420" data-magnetic-soft>Motion Choreography</span>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="labs-cta" data-screen-label="06 Systems CTA">
+    <h2 class="split-reveal" data-split-reveal>Systems thinking applied to real products.</h2>
+    <p class="reveal" data-reveal data-delay="200">See how these principles come to life in actual project work.</p>
+    <div class="cta-actions reveal" data-reveal data-delay="400">
+      <a href="labs.html" class="btn btn-primary" data-magnetic data-cursor-label="View Labs">
+        <span class="btn-bg"></span>
+        <span class="btn-label">View Labs</span>
+        <svg viewBox="0 0 14 14" width="12" height="12"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-row">
+    <div class="footer-mark">
+      <span>Anotion — Senior Lead UI UX Designer</span>
+    </div>
+    <nav class="footer-nav">
+      <a href="labs.html" data-magnetic-soft>Labs</a>
+      <a href="systems.html" data-magnetic-soft>Systems</a>
+      <a href="craft.html" data-magnetic-soft>Craft</a>
+      <a href="about.html" data-magnetic-soft>About</a>
+    </nav>
+    <a href="#top" class="footer-top" data-magnetic-soft data-cursor-label="Back to top">
+      <span>Top</span>
+      <svg viewBox="0 0 14 14" width="12" height="12"><path d="M7 11V3M3 7L7 3L11 7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="footer-row footer-row-bottom">
+    <span class="footer-copy">© 2026 Anotion. All rights reserved.</span>
+    <div class="footer-socials">
+      <a href="https://twitter.com" data-magnetic-soft>X</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.__TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#cfd9ff",
+  "motionIntensity": "full",
+  "cursorMode": "custom",
+  "heroReveal": "blur"
+}/*EDITMODE-END*/;
+</script>
+<script src="grid.js"></script>
+<script src="app.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="tweaks-app.jsx"></script>
+</body>
+</html>

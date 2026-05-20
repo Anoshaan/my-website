@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Labs · Anoshaan</title>
+<meta name="description" content="Selected interfaces, systems, and experiments. Work shaped through UX research, motion thinking, and product strategy." />
+<link rel="icon" type="image/png" href="favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-cursor="custom" data-motion="full" data-page="labs">
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+</div>
+
+<!-- Background Interactive Canvas -->
+<canvas id="glow-grid-canvas"></canvas>
+
+<header class="nav" id="nav">
+  <div class="nav-pill">
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html" class="nav-link" data-nav="home">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Home</span>
+          <span class="nav-slide-text">Home</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="labs.html" class="nav-link" data-nav="labs">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Labs</span>
+          <span class="nav-slide-text">Labs</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="systems.html" class="nav-link" data-nav="systems">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Systems</span>
+          <span class="nav-slide-text">Systems</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="craft.html" class="nav-link" data-nav="craft">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Craft</span>
+          <span class="nav-slide-text">Craft</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="about.html" class="nav-link" data-nav="about">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">About</span>
+          <span class="nav-slide-text">About</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="page-head" data-screen-label="01 Labs intro">
+    <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Labs</span>
+    <h1 class="page-title split-reveal" data-split-reveal>Selected interfaces, systems, and experiments.</h1>
+    <p class="page-sub reveal" data-reveal data-delay="300">
+      Work shaped through UX research, motion thinking, and product strategy. Each project is a focused exploration of how design systems meet real user behavior.
+    </p>
+    <div class="chip-row reveal" data-reveal data-delay="500" data-stagger="60" data-stagger-base="500">
+      <span class="chip" data-magnetic-soft>Product Systems</span>
+      <span class="chip" data-magnetic-soft>UX Explorations</span>
+      <span class="chip" data-magnetic-soft>Motion Studies</span>
+      <span class="chip" data-magnetic-soft>Interaction Experiments</span>
+      <span class="chip" data-magnetic-soft>Interface Redesigns</span>
+    </div>
+  </section>
+
+  <section class="labs-list" data-stagger="180">
+
+    <!-- 01 — Fintech Core Platform -->
+    <article class="case" data-reveal data-screen-label="02 Fintech Core Platform">
+      <div class="case-media" data-case-media>
+        <div class="case-media-inner">
+          <div class="cover cover-fintech">
+            <svg class="cover-chart" viewBox="0 0 300 80" preserveAspectRatio="none">
+              <path d="M0 60 Q 30 40 50 48 T 100 32 T 150 36 T 200 20 T 250 28 T 300 12" stroke="currentColor" stroke-width="1.2" fill="none" style="color:#cfd9ff"/>
+            </svg>
+            <div class="cover-rows"><div></div><div></div><div></div><div></div></div>
+            <span class="cover-label">01 / 06 · Fintech</span>
+          </div>
+        </div>
+      </div>
+      <div class="case-meta">
+        <div class="case-tags">
+          <span>Product Systems</span>
+          <span>·</span>
+          <span>Wealth Management &amp; Systems</span>
+        </div>
+        <h2 class="case-title">Fintech Core Platform</h2>
+        <div class="case-rows">
+          <div class="case-row"><span class="case-row-label">Context</span><p>A unified wealth management terminal designed for active traders.</p></div>
+          <div class="case-row"><span class="case-row-label">Challenge</span><p>High operational stress caused by trade terminal visual clutter and cognitive data overload.</p></div>
+          <div class="case-row"><span class="case-row-label">Solution</span><p>Engineered a tokenized data grid that dynamically balances high density with visual breathing room.</p></div>
+          <div class="case-row result"><span class="case-row-label">Result</span><p>Reduced trader execution errors by 42% and accelerated transaction times by 28%.</p></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 02 — AI Design Systems -->
+    <article class="case" data-reveal data-screen-label="03 AI Design Systems">
+      <div class="case-media" data-case-media>
+        <div class="case-media-inner">
+          <div class="cover cover-ds">
+            <div class="ds-grid">
+              <div></div><div></div><div></div><div></div>
+              <div></div><div></div><div></div><div></div>
+              <div></div><div></div><div></div><div></div>
+              <div></div><div></div><div></div><div></div>
+            </div>
+            <span class="cover-label">02 / 06 · AI Systems</span>
+          </div>
+        </div>
+      </div>
+      <div class="case-meta">
+        <div class="case-tags">
+          <span>Product Systems</span>
+          <span>·</span>
+          <span>AI Platform Architectures</span>
+        </div>
+        <h2 class="case-title">AI Design Systems</h2>
+        <div class="case-rows">
+          <div class="case-row"><span class="case-row-label">Context</span><p>A generative, self-healing component framework for autonomous agent workflows.</p></div>
+          <div class="case-row"><span class="case-row-label">Challenge</span><p>Maintaining WCAG 2.2 contrast compliance and design token cohesion across dynamically generated runtimes.</p></div>
+          <div class="case-row"><span class="case-row-label">Solution</span><p>Developed an adaptive runtime token schema that injects responsive layout variables into active React lifecycles.</p></div>
+          <div class="case-row result"><span class="case-row-label">Result</span><p>Achieved 100% automated contrast compliance and cut manual UI development cycles by 60%.</p></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 03 — Cinematic E-Commerce -->
+    <article class="case" data-reveal data-screen-label="04 Cinematic E-Commerce">
+      <div class="case-media" data-case-media>
+        <div class="case-media-inner">
+          <div class="cover cover-ec">
+            <span class="cover-label">03 / 06 · Spatial Commerce</span>
+          </div>
+        </div>
+      </div>
+      <div class="case-meta">
+        <div class="case-tags">
+          <span>Interaction Experiments</span>
+          <span>·</span>
+          <span>Spatial Commerce &amp; 3D Web</span>
+        </div>
+        <h2 class="case-title">Cinematic E-Commerce</h2>
+        <div class="case-rows">
+          <div class="case-row"><span class="case-row-label">Context</span><p>A WebGL spatial digital flagship store built for luxury brands.</p></div>
+          <div class="case-row"><span class="case-row-label">Challenge</span><p>Lack of tactile feedback and depth on standard digital store layout grids, resulting in low checkout engagement.</p></div>
+          <div class="case-row"><span class="case-row-label">Solution</span><p>Crafted a seamless physics-driven WebGL-to-DOM viewport that responds dynamically to scrolling and pointer gesture velocity.</p></div>
+          <div class="case-row result"><span class="case-row-label">Result</span><p>Elevated product interaction times by 64% and boosted checkout completion rates by 18%.</p></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 04 — Nexus OS -->
+    <article class="case" data-reveal data-screen-label="05 Nexus OS">
+      <div class="case-media" data-case-media>
+        <div class="case-media-inner">
+          <div class="cover cover-nexus">
+            <div class="panel"></div>
+            <div class="panel"></div>
+            <div class="panel"></div>
+            <div class="dot-trail"><i></i><i></i><i></i><i></i><i></i></div>
+            <span class="cover-label">04 / 06 · Spatial OS</span>
+          </div>
+        </div>
+      </div>
+      <div class="case-meta">
+        <div class="case-tags">
+          <span>Motion Studies</span>
+          <span>·</span>
+          <span>Operating System &amp; Spatial UI</span>
+        </div>
+        <h2 class="case-title">Nexus OS</h2>
+        <div class="case-rows">
+          <div class="case-row"><span class="case-row-label">Context</span><p>A spatial operating system interface prioritizing panel layers and kinetic motion.</p></div>
+          <div class="case-row"><span class="case-row-label">Challenge</span><p>Rendering layered panel configurations in real-time under a strict 16ms frame rate budget.</p></div>
+          <div class="case-row"><span class="case-row-label">Solution</span><p>Developed a custom velocity-linked pointer tracking engine that optimizes window rendering cycles.</p></div>
+          <div class="case-row result"><span class="case-row-label">Result</span><p>Maintained stable 60FPS fluid multitasking layouts across multiple high-resolution viewports.</p></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 05 — Lumina Dashboard -->
+    <article class="case" data-reveal data-screen-label="06 Lumina Dashboard">
+      <div class="case-media" data-case-media>
+        <div class="case-media-inner">
+          <div class="cover cover-lumina">
+            <div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <span class="cover-label">05 / 06 · Analytics</span>
+          </div>
+        </div>
+      </div>
+      <div class="case-meta">
+        <div class="case-tags">
+          <span>UX Explorations</span>
+          <span>·</span>
+          <span>Analytics &amp; Data Visualization</span>
+        </div>
+        <h2 class="case-title">Lumina Dashboard</h2>
+        <div class="case-rows">
+          <div class="case-row"><span class="case-row-label">Context</span><p>A real-time analytics dashboard for enterprise SaaS monitoring.</p></div>
+          <div class="case-row"><span class="case-row-label">Challenge</span><p>Dense data visualization causing cognitive fatigue during extended monitoring sessions.</p></div>
+          <div class="case-row"><span class="case-row-label">Solution</span><p>Designed an adaptive density system that adjusts chart complexity based on viewport size and user attention patterns.</p></div>
+          <div class="case-row result"><span class="case-row-label">Result</span><p>Increased average session duration by 35% and reduced critical alert response time by 22%.</p></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 06 — Aura AI Interface -->
+    <article class="case" data-reveal data-screen-label="07 Aura AI Interface">
+      <div class="case-media" data-case-media>
+        <div class="case-media-inner">
+          <div class="cover cover-aura">
+            <div class="bubble b1">User intent</div>
+            <div class="bubble b2">Agent thought · 02</div>
+            <div class="bubble b3">Tool call</div>
+            <div class="nodes"></div>
+            <span class="cover-label">06 / 06 · Conversational AI</span>
+          </div>
+        </div>
+      </div>
+      <div class="case-meta">
+        <div class="case-tags">
+          <span>Interface Redesigns</span>
+          <span>·</span>
+          <span>Conversational AI &amp; Agents</span>
+        </div>
+        <h2 class="case-title">Aura AI Interface</h2>
+        <div class="case-rows">
+          <div class="case-row"><span class="case-row-label">Context</span><p>A conversational AI interface for multi-modal agent interactions.</p></div>
+          <div class="case-row"><span class="case-row-label">Challenge</span><p>Traditional chat UI patterns failed to communicate the complexity of multi-step agent reasoning.</p></div>
+          <div class="case-row"><span class="case-row-label">Solution</span><p>Created a layered context panel system that visualizes agent thought chains alongside conversation flow.</p></div>
+          <div class="case-row result"><span class="case-row-label">Result</span><p>Improved user trust scores by 48% and reduced task abandonment by 31%.</p></div>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <section class="labs-cta" data-screen-label="08 Labs CTA">
+    <h2 class="split-reveal" data-split-reveal>Want to see how I think through product interfaces?</h2>
+    <p class="reveal" data-reveal data-delay="200">Explore the systems and methodologies behind each project.</p>
+    <div class="cta-actions reveal" data-reveal data-delay="400">
+      <a href="systems.html" class="btn btn-primary" data-magnetic data-cursor-label="Systems">
+        <span class="btn-bg"></span>
+        <span class="btn-label">Explore Systems</span>
+        <svg viewBox="0 0 14 14" width="12" height="12"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="mailto:hello@anoshaan.design" class="btn btn-ghost" data-magnetic data-cursor-label="Email">
+        <span class="btn-label">Get in Touch</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-row">
+    <div class="footer-mark">
+      <span>Anotion — Senior Lead UI UX Designer</span>
+    </div>
+    <nav class="footer-nav">
+      <a href="labs.html" data-magnetic-soft>Labs</a>
+      <a href="systems.html" data-magnetic-soft>Systems</a>
+      <a href="craft.html" data-magnetic-soft>Craft</a>
+      <a href="about.html" data-magnetic-soft>About</a>
+    </nav>
+    <a href="#top" class="footer-top" data-magnetic-soft data-cursor-label="Back to top">
+      <span>Top</span>
+      <svg viewBox="0 0 14 14" width="12" height="12"><path d="M7 11V3M3 7L7 3L11 7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="footer-row footer-row-bottom">
+    <span class="footer-copy">© 2026 Anotion. All rights reserved.</span>
+    <div class="footer-socials">
+      <a href="https://twitter.com" data-magnetic-soft>X</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.__TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#cfd9ff",
+  "motionIntensity": "full",
+  "cursorMode": "custom",
+  "heroReveal": "blur"
+}/*EDITMODE-END*/;
+</script>
+<script src="grid.js"></script>
+<script src="app.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="tweaks-app.jsx"></script>
+</body>
+</html>

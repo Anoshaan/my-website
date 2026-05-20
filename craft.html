@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Craft · Anoshaan</title>
+<meta name="description" content="Detail studies — typography, motion, micro-interactions, and visual systems." />
+<link rel="icon" type="image/png" href="favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-cursor="custom" data-motion="full" data-page="craft">
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+</div>
+
+<!-- Background Interactive Canvas -->
+<canvas id="glow-grid-canvas"></canvas>
+
+<header class="nav" id="nav">
+  <div class="nav-pill">
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html" class="nav-link" data-nav="home">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Home</span>
+          <span class="nav-slide-text">Home</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="labs.html" class="nav-link" data-nav="labs">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Labs</span>
+          <span class="nav-slide-text">Labs</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="systems.html" class="nav-link" data-nav="systems">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Systems</span>
+          <span class="nav-slide-text">Systems</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="craft.html" class="nav-link" data-nav="craft">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">Craft</span>
+          <span class="nav-slide-text">Craft</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+      <a href="about.html" class="nav-link" data-nav="about">
+        <div class="nav-slide"><div class="nav-slide-inner">
+          <span class="nav-slide-text">About</span>
+          <span class="nav-slide-text">About</span>
+        </div></div>
+        <span class="nav-dot"></span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="page-head" data-screen-label="01 Craft intro">
+    <span class="eyebrow reveal" data-reveal><span class="eyebrow-line"></span>Craft</span>
+    <h1 class="page-title split-reveal" data-split-reveal>Detail studies in motion, type, and interaction.</h1>
+    <p class="page-sub reveal" data-reveal data-delay="300">
+      Small experiments and finished details that don't belong to any one project — sketches, micro-interactions, typographic explorations, and the unglamorous polish that makes interfaces feel inevitable.
+    </p>
+    <div class="chip-row reveal" data-reveal data-delay="500" data-stagger="60" data-stagger-base="500">
+      <span class="chip" data-magnetic-soft>Type</span>
+      <span class="chip" data-magnetic-soft>Motion</span>
+      <span class="chip" data-magnetic-soft>Micro-interactions</span>
+      <span class="chip" data-magnetic-soft>Sketches</span>
+      <span class="chip" data-magnetic-soft>Studies</span>
+    </div>
+  </section>
+
+  <section class="craft-list" data-screen-label="02 Craft grid" data-stagger="100">
+
+    <a href="#" class="craft-card" data-reveal data-cursor-label="Open">
+      <div class="craft-cover"><div class="craft-shape cs-1"></div></div>
+      <div class="craft-meta">
+        <span class="craft-tag">Typography</span>
+        <h3>Variable axis explorations</h3>
+        <p>Optical-size pairing across editorial display and UI body.</p>
+      </div>
+    </a>
+
+    <a href="#" class="craft-card" data-reveal data-delay="80" data-cursor-label="Open">
+      <div class="craft-cover"><div class="craft-shape cs-2"></div></div>
+      <div class="craft-meta">
+        <span class="craft-tag">Motion</span>
+        <h3>Stagger easing studies</h3>
+        <p>How list reveals feel — comparing cubic, exponential, and spring physics.</p>
+      </div>
+    </a>
+
+    <a href="#" class="craft-card" data-reveal data-delay="160" data-cursor-label="Open">
+      <div class="craft-cover"><div class="craft-shape cs-3"></div></div>
+      <div class="craft-meta">
+        <span class="craft-tag">Layout</span>
+        <h3>Asymmetric editorial grids</h3>
+        <p>Designing long-form reading rhythms outside the standard center column.</p>
+      </div>
+    </a>
+
+    <a href="#" class="craft-card" data-reveal data-cursor-label="Open">
+      <div class="craft-cover"><div class="craft-shape cs-4"></div></div>
+      <div class="craft-meta">
+        <span class="craft-tag">Identity</span>
+        <h3>Mark constructions</h3>
+        <p>Symbol sketches built on overlapping circles and grids.</p>
+      </div>
+    </a>
+
+    <a href="#" class="craft-card" data-reveal data-delay="80" data-cursor-label="Open">
+      <div class="craft-cover"><div class="craft-shape cs-5"></div></div>
+      <div class="craft-meta">
+        <span class="craft-tag">Effects</span>
+        <h3>Light, blur, and glow</h3>
+        <p>Layered atmosphere in interfaces — without the noise.</p>
+      </div>
+    </a>
+
+    <a href="#" class="craft-card" data-reveal data-delay="160" data-cursor-label="Open">
+      <div class="craft-cover"><div class="craft-shape cs-6"></div></div>
+      <div class="craft-meta">
+        <span class="craft-tag">Components</span>
+        <h3>Density-aware tables</h3>
+        <p>Data UI that respects information weight, not just row height.</p>
+      </div>
+    </a>
+
+  </section>
+
+  <section class="labs-cta" data-screen-label="03 Craft CTA">
+    <h2 class="split-reveal" data-split-reveal>Detail is a discipline.</h2>
+    <p class="reveal" data-reveal data-delay="200">If you need that level of attention applied to your product — let's talk.</p>
+    <div class="cta-actions reveal" data-reveal data-delay="400">
+      <a href="mailto:hello@anoshaan.design" class="btn btn-primary" data-magnetic data-cursor-label="Email">
+        <span class="btn-bg"></span>
+        <span class="btn-label">Start a Conversation</span>
+        <svg viewBox="0 0 14 14" width="12" height="12"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-row">
+    <div class="footer-mark">
+      <span>Anotion — Senior Lead UI UX Designer</span>
+    </div>
+    <nav class="footer-nav">
+      <a href="labs.html" data-magnetic-soft>Labs</a>
+      <a href="systems.html" data-magnetic-soft>Systems</a>
+      <a href="craft.html" data-magnetic-soft>Craft</a>
+      <a href="about.html" data-magnetic-soft>About</a>
+    </nav>
+    <a href="#top" class="footer-top" data-magnetic-soft data-cursor-label="Back to top">
+      <span>Top</span>
+      <svg viewBox="0 0 14 14" width="12" height="12"><path d="M7 11V3M3 7L7 3L11 7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+  <div class="footer-row footer-row-bottom">
+    <span class="footer-copy">© 2026 Anotion. All rights reserved.</span>
+    <div class="footer-socials">
+      <a href="https://twitter.com" data-magnetic-soft>X</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.__TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#cfd9ff",
+  "motionIntensity": "full",
+  "cursorMode": "custom",
+  "heroReveal": "blur"
+}/*EDITMODE-END*/;
+</script>
+<script src="grid.js"></script>
+<script src="app.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="tweaks-app.jsx"></script>
+</body>
+</html>
