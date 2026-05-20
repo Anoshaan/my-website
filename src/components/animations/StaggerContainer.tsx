@@ -10,16 +10,12 @@ type StaggerContainerProps = {
   stagger?: number;
   /** Delay before first child. */
   delay?: number;
-};
-
-const containerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0,
-    },
-  },
+  /**
+   * Animate once or every time the container enters viewport.
+   * Default: false — animations re-trigger on re-entry.
+   */
+  once?: boolean;
+  amount?: number;
 };
 
 export const staggerItemVariants: Variants = {
@@ -39,13 +35,15 @@ export function StaggerContainer({
   className,
   stagger = 0.08,
   delay = 0,
+  once = false,
+  amount = 0.12,
 }: StaggerContainerProps) {
   return (
     <motion.div
       className={className}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+      viewport={{ once, amount, margin: "0px 0px -5% 0px" }}
       variants={{
         hidden: {},
         visible: {

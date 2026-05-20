@@ -34,11 +34,15 @@ function AnimatedNumber({
   suffix?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "0px 0px -10% 0px" });
+  // No once: true — re-triggers every time it enters viewport
+  const inView = useInView(ref, { amount: 0.3, margin: "0px 0px -5% 0px" });
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView) {
+      setValue(0);
+      return;
+    }
     const duration = 1800;
     const start = performance.now();
     let raf = 0;
@@ -70,13 +74,13 @@ export function Stats() {
               key={s.label}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+              viewport={{ once: false, amount: 0.2, margin: "0px 0px -5% 0px" }}
               transition={{
                 duration: 0.8,
                 delay: i * 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="flex flex-col items-center text-center gap-3 py-7 px-5 rounded-2xl border border-white/[0.06] bg-white/[0.015] hover:border-white/[0.14] hover:bg-white/[0.025] transition-colors duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+              className="flex flex-col items-center text-center gap-3 py-8 px-5 rounded-2xl border border-white/[0.08] bg-white/[0.025] backdrop-blur-md hover:border-white/[0.18] hover:bg-white/[0.04] transition-all duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
             >
               <span
                 className={

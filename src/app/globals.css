@@ -565,6 +565,47 @@ html.lenis body {
 }
 
 /* =========================================================
+   TYPING TEXT — character-by-character with blinking cursor
+   ========================================================= */
+.typing-text {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+.typing-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  font-weight: 300;
+  color: color-mix(in oklab, var(--color-accent) 60%, #ffffff);
+  transform: translateY(-0.05em);
+  /* During typing: solid, no blink. Only blink AFTER typing finishes. */
+  opacity: 1;
+}
+
+.typing-cursor-done {
+  animation: typing-blink 1.05s steps(2, jump-none) infinite;
+}
+
+@keyframes typing-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-cursor,
+  .typing-cursor-done {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* =========================================================
    MARQUEE — three rows of testimonials, infinite scroll
    ========================================================= */
 .marquee-rows {
