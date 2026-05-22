@@ -1,27 +1,44 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
 import { Marquee } from "@/components/animations/Marquee";
 
+type CategoryName = "UI/UX Leads" | "Devs" | "PMs" | "HR" | "Clients";
+
 type Testimonial = {
+  category: CategoryName;
   quote: string;
   name: string;
   role: string;
   initials: string;
-  image?: string;
+  image: string;
   linkedIn: string;
   avatarA: string;
   avatarB: string;
 };
 
+/**
+ * Category display order — the source of truth, matching the testimonials
+ * document. Autoplay walks the flat array below, which is grouped in this
+ * same order, so playback flows category by category for free.
+ */
+const CATEGORY_ORDER: CategoryName[] = [
+  "UI/UX Leads",
+  "Devs",
+  "PMs",
+  "HR",
+  "Clients",
+];
+
 const testimonials: Testimonial[] = [
   {
+    category: "UI/UX Leads",
     quote:
-      "Working with Anoshaan has been a great experience. His attention to detail, creative thinking, and ability to handle multiple tasks under tight timelines truly set him apart. Whether working independently or within a team, he consistently delivers high-quality work. His diverse skill set across UX/UI, web development, and multimedia production adds tremendous value to every project.",
+      "Working with Anoshaan has been a great experience. His attention to detail, creative thinking, and ability to handle multiple tasks under tight timelines truly set him apart.",
     name: "Andre Perera",
     role: "Associate UI Architect · Aeturnum",
     initials: "AP",
@@ -31,30 +48,33 @@ const testimonials: Testimonial[] = [
     avatarB: "#8aa6ff",
   },
   {
+    category: "UI/UX Leads",
     quote:
-      "I've worked closely with Anoshaan across multiple projects and companies, and he consistently stands out as a creative and hardworking UI/UX engineer. His communication skills, attention to detail, and ability to turn ideas into exceptional user experiences make him a valuable asset to any team.",
-    name: "Chandima Dasanayaka",
-    role: "Associate Technical Lead · Aeturnum",
-    initials: "CD",
-    image: "/testimonials/image2.jpeg",
-    linkedIn: "https://www.linkedin.com/in/chandima-dasanayaka-b2470bb0/",
-    avatarA: "#ffd1a8",
-    avatarB: "#ffb89a",
-  },
-  {
-    quote:
-      "Working with Anoshaan was a great experience. His strong UI/UX thinking, attention to detail, and ability to simplify complex ideas into intuitive experiences made collaboration seamless. He consistently brought creativity, ownership, and a strong product mindset to the team.",
+      "His strong UI/UX thinking, attention to detail, and ability to simplify complex ideas into intuitive experiences made collaboration seamless.",
     name: "Ayesh Dilan",
     role: "Lead UI/UX Designer · Elegant Media Australia",
     initials: "AD",
-    image: "/testimonials/image3.jpeg",
+    image: "/testimonials/image2.jpeg",
     linkedIn: "https://www.linkedin.com/in/ayeshdilan/",
     avatarA: "#c8b8ff",
     avatarB: "#a78bfa",
   },
   {
+    category: "Devs",
     quote:
-      "I worked with Anoshaan on several freelance projects, and he consistently delivered clean, minimal, and user-focused UI/UX work. His structured design systems and design tokens greatly improved development efficiency and future scalability.",
+      "One of the most creative and hardworking UI/UX engineers I've worked with.",
+    name: "Chandima Dasanayaka",
+    role: "Associate Technical Lead · Aeturnum",
+    initials: "CD",
+    image: "/testimonials/image3.jpeg",
+    linkedIn: "https://www.linkedin.com/in/chandima-dasanayaka-b2470bb0/",
+    avatarA: "#ffd1a8",
+    avatarB: "#ffb89a",
+  },
+  {
+    category: "Devs",
+    quote:
+      "He consistently delivered clean, minimal, and user-focused UI/UX work.",
     name: "Banujan Balendrakumar",
     role: "Senior Lead Engineer · IFS",
     initials: "BB",
@@ -64,33 +84,104 @@ const testimonials: Testimonial[] = [
     avatarB: "#7dd3fc",
   },
   {
+    category: "Devs",
     quote:
-      "Anoshaan delivered clean and well-structured UI/UX solutions with strong attention to usability and detail. His work is visually consistent, intuitive, and focused on creating meaningful user experiences.",
-    name: "Wije Niroshan",
-    role: "Creative Lead",
-    initials: "WN",
-    image: "/testimonials/image5.jpeg",
-    linkedIn: "https://www.linkedin.com/in/wije-niroshan/",
-    avatarA: "#ffe4b8",
-    avatarB: "#f5d28a",
-  },
-  {
-    quote:
-      "I had the pleasure of working with Anoshaan at Elegant Media Pvt Ltd. He consistently delivered high-quality work with great attention to detail, while maintaining a positive attitude and collaborative approach throughout every project.",
+      "He consistently delivered high-quality work with great attention to detail.",
     name: "Don Nisala Nishad Thalagala",
     role: "Associate Tech Lead",
     initials: "DT",
-    image: "/testimonials/image6.jpeg",
+    image: "/testimonials/image5.jpeg",
     linkedIn: "https://www.linkedin.com/in/nisala-thalagala-b22b94137/",
     avatarA: "#d6c8ff",
     avatarB: "#9f7aea",
   },
+  {
+    category: "PMs",
+    quote:
+      "Highly collaborative, dependable, and proactive in team environments.",
+    name: "Chandana Wijesuriya",
+    role: "Senior Software Project Manager",
+    initials: "CW",
+    image: "/testimonials/image6.jpeg",
+    linkedIn: "https://www.linkedin.com/in/chandana-wijesuriya-328a5b41/",
+    avatarA: "#a8e0d0",
+    avatarB: "#7fd1c0",
+  },
+  {
+    category: "PMs",
+    quote:
+      "He brings thoughtful UI/UX solutions that enhance overall product experiences.",
+    name: "Pumudi Vidanagama",
+    role: "Senior IT Project Manager · Agile Coach",
+    initials: "PV",
+    image: "/testimonials/image7.jpeg",
+    linkedIn: "https://www.linkedin.com/in/pumudi/",
+    avatarA: "#ffc8d6",
+    avatarB: "#f5a8be",
+  },
+  {
+    category: "HR",
+    quote:
+      "He consistently demonstrated professionalism, creativity, and a strong commitment to delivering quality work.",
+    name: "Sabry Ashraff",
+    role: "Lead HR – Human Resources · Aeturnum",
+    initials: "SA",
+    image: "/testimonials/image8.jpeg",
+    linkedIn: "https://www.linkedin.com/in/sabryashraff/",
+    avatarA: "#ffe0a8",
+    avatarB: "#f5c87f",
+  },
+  {
+    category: "HR",
+    quote:
+      "He is a committed professional with a positive attitude and strong work ethic.",
+    name: "Hiruni Withanage",
+    role: "Senior Human Resources Executive",
+    initials: "HW",
+    image: "/testimonials/image9.jpeg",
+    linkedIn: "https://www.linkedin.com/in/hiruni-withanage-42924a105/",
+    avatarA: "#cfe0ff",
+    avatarB: "#9fc0f5",
+  },
+  {
+    category: "Clients",
+    quote:
+      "His work is visually consistent, intuitive, and focused on meaningful user experiences.",
+    name: "Wije Niroshan",
+    role: "Creative Lead",
+    initials: "WN",
+    image: "/testimonials/image10.jpeg",
+    linkedIn: "https://www.linkedin.com/in/wije-niroshan/",
+    avatarA: "#ffe4b8",
+    avatarB: "#f5d28a",
+  },
 ];
 
+type CategoryMeta = {
+  name: CategoryName;
+  start: number;
+  indices: number[];
+};
+
+/** Flat indices grouped per category — built once, drives nav + playback. */
+const categoryMeta: CategoryMeta[] = CATEGORY_ORDER.map((name) => {
+  const indices = testimonials.reduce<number[]>((acc, t, i) => {
+    if (t.category === name) acc.push(i);
+    return acc;
+  }, []);
+  return { name, start: indices[0], indices };
+});
+
+function metaForIndex(index: number): CategoryMeta {
+  return categoryMeta.find((m) => m.indices.includes(index)) ?? categoryMeta[0];
+}
+
 // Short summary cards for the scrolling background marquees.
-const summaryRow1: Testimonial[] = [testimonials[0], testimonials[1], testimonials[2]];
-const summaryRow2: Testimonial[] = [testimonials[3], testimonials[4], testimonials[5]];
-const summaryRow3: Testimonial[] = [testimonials[2], testimonials[0], testimonials[5]];
+const summaryRow1 = [0, 5, 2, 8].map((i) => testimonials[i]);
+const summaryRow2 = [3, 9, 1, 6].map((i) => testimonials[i]);
+const summaryRow3 = [7, 4, 0, 5].map((i) => testimonials[i]);
+
+const PLAY_MS = 5500;
 
 function LinkedInIcon({ size = 14 }: { size?: number }) {
   return (
@@ -184,87 +275,153 @@ function MarqueeCard({ t }: { t: Testimonial }) {
 
 /**
  * Dynamic quote size — longer quotes get a slightly smaller font so the
- * card height stays fixed. Bucketed so we don't fight the clamp() unit.
+ * card height stays stable. Bucketed so we don't fight the clamp() unit.
  */
 function quoteSizeFor(len: number) {
   if (len > 360) return "clamp(15px, 1.18vw, 17px)";
   if (len > 260) return "clamp(16px, 1.32vw, 19px)";
-  if (len > 180) return "clamp(17px, 1.46vw, 20px)";
-  return "clamp(18px, 1.6vw, 22px)";
+  if (len > 160) return "clamp(17px, 1.46vw, 20px)";
+  return "clamp(18px, 1.62vw, 23px)";
 }
 
-function FeaturedTestimonial() {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(
-      () => setIndex((i) => (i + 1) % testimonials.length),
-      6500
-    );
-    return () => clearInterval(id);
-  }, []);
-
+/* The featured card: testimonial content + person only. No progress UI. */
+function FeaturedCard({ index }: { index: number }) {
   const t = testimonials[index];
   const quoteSize = useMemo(() => quoteSizeFor(t.quote.length), [t.quote]);
 
   return (
-    <div className="featured-testimonial-wrap" aria-live="polite">
-      <div className="featured-testimonial" tabIndex={0}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="featured-inner"
-          >
-            <div className="featured-quote-mark" aria-hidden>
-              &ldquo;
-            </div>
-            <p className="featured-quote" style={{ fontSize: quoteSize }}>
-              {t.quote}
-            </p>
-            <div className="featured-person">
-              <Avatar t={t} size={48} />
-              <div className="flex flex-col flex-1 min-w-0">
-                <span className="featured-name">{t.name}</span>
-                <span className="featured-role">{t.role}</span>
-              </div>
-              <a
-                href={t.linkedIn}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Open ${t.name}'s LinkedIn profile`}
-                data-cursor-precise
-                className="featured-linkedin"
-              >
-                <LinkedInIcon size={14} />
-                <span>LinkedIn</span>
-              </a>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        <div
-          className="featured-dots"
-          role="tablist"
-          aria-label="Testimonials"
+    <div className="featured-testimonial" tabIndex={0} aria-live="polite">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10, transition: { duration: 0.28, ease: [0.4, 0, 1, 1] } }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="featured-inner"
         >
-          {testimonials.map((entry, i) => (
-            <button
-              key={entry.name}
-              type="button"
-              role="tab"
-              aria-selected={i === index}
-              aria-label={`Show testimonial from ${entry.name}`}
-              onClick={() => setIndex(i)}
-              className={`featured-dot ${i === index ? "is-active" : ""}`}
+          <div className="featured-quote-mark" aria-hidden>
+            &ldquo;
+          </div>
+          <p className="featured-quote" style={{ fontSize: quoteSize }}>
+            {t.quote}
+          </p>
+          <div className="featured-person">
+            <Avatar t={t} size={48} />
+            <div className="flex flex-col flex-1 min-w-0">
+              <span className="featured-name">{t.name}</span>
+              <span className="featured-role">{t.role}</span>
+            </div>
+            <a
+              href={t.linkedIn}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Open ${t.name}'s LinkedIn profile`}
               data-cursor-precise
-            />
-          ))}
-        </div>
-      </div>
+              className="featured-linkedin"
+            >
+              <LinkedInIcon size={14} />
+              <span>LinkedIn</span>
+            </a>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/**
+ * Secondary card: typography-only category navigation. The active category's
+ * text fills with a soft left-to-right gradient whose duration equals the
+ * full playback time of that category — so the type itself reads as the
+ * progress indicator. Driven entirely by CSS; the only JS touch is
+ * restarting the fill when the live category is clicked again.
+ */
+function CategoryNav({
+  activeCategory,
+  onSelect,
+}: {
+  activeCategory: CategoryName;
+  onSelect: (name: CategoryName) => void;
+}) {
+  return (
+    <div className="cat-nav" role="tablist" aria-label="Testimonial categories">
+      {categoryMeta.map(({ name, indices }) => {
+        const isActive = name === activeCategory;
+        const fillMs = indices.length * PLAY_MS;
+        return (
+          <button
+            key={name}
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            data-cursor-precise
+            className={`cat-nav-item ${isActive ? "is-active" : ""}`}
+            onClick={(e) => {
+              // Re-clicking the already-live category restarts its fill
+              // in place (the class doesn't change, so CSS won't replay).
+              if (isActive) {
+                const sweep = e.currentTarget.querySelector<HTMLElement>(
+                  ".cat-nav-label-sweep"
+                );
+                if (sweep) {
+                  sweep.style.animation = "none";
+                  void sweep.offsetWidth;
+                  sweep.style.animation = "";
+                }
+              }
+              onSelect(name);
+            }}
+          >
+            <span className="cat-nav-label">
+              <span className="cat-nav-label-base">{name}</span>
+              <span
+                className="cat-nav-label-sweep"
+                aria-hidden="true"
+                style={
+                  { "--seg-duration": `${fillMs}ms` } as React.CSSProperties
+                }
+              >
+                {name}
+              </span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Owns playback state for the whole testimonial player. Testimonials autoplay
+ * through the flat array, so they flow category by category automatically.
+ * Clicking a category jumps to its first testimonial and playback continues
+ * naturally into the categories that follow.
+ */
+function TestimonialPlayer() {
+  const [index, setIndex] = useState(0);
+
+  // setTimeout keyed on `index`: a manual jump re-runs the effect, which
+  // clears the pending timer and restarts a full interval from the new spot.
+  useEffect(() => {
+    const id = setTimeout(
+      () => setIndex((i) => (i + 1) % testimonials.length),
+      PLAY_MS
+    );
+    return () => clearTimeout(id);
+  }, [index]);
+
+  const activeMeta = metaForIndex(index);
+
+  const jumpToCategory = useCallback((name: CategoryName) => {
+    const meta = categoryMeta.find((m) => m.name === name);
+    if (meta) setIndex(meta.start);
+  }, []);
+
+  return (
+    <div className="testimonial-player">
+      <FeaturedCard index={index} />
+      <CategoryNav activeCategory={activeMeta.name} onSelect={jumpToCategory} />
     </div>
   );
 }
@@ -275,7 +432,7 @@ export function Testimonials() {
       <Container>
         <Reveal>
           <div className="flex flex-col items-center text-center gap-5 mb-[clamp(56px,6vw,80px)]">
-            <h2 className="text-section text-white max-w-[22ch]">
+            <h2 className="text-section text-white max-w-[26ch]">
               Trusted by founders, design leads, and engineering teams.
             </h2>
             <p className="text-body text-white/60 max-w-[52ch]">
@@ -307,7 +464,9 @@ export function Testimonials() {
 
         <div className="testimonials-mask" aria-hidden />
 
-        <FeaturedTestimonial />
+        <div className="featured-testimonial-wrap">
+          <TestimonialPlayer />
+        </div>
       </div>
     </section>
   );

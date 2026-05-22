@@ -50,10 +50,67 @@ export function BackgroundGrid() {
       dotColor: [160, 160, 165] as const,
       glowColor: [240, 240, 243] as const,
       background: "#050505",
-      // Softer on touch — atmospheric rather than prominent
-      lineAlpha: isTouch ? 0.10 : 0.18,
-      dotAlpha: isTouch ? 0.13 : 0.22,
+      // Very soft on touch — a static, lightweight backdrop
+      lineAlpha: isTouch ? 0.06 : 0.18,
+      dotAlpha: isTouch ? 0.08 : 0.22,
     };
+
+    // ---- Touch devices: draw ONE static grid, then stop. ----
+    // No animation loop and no pointer / scroll / gyro / touch
+    // listeners — the grid is purely a lightweight backdrop so
+    // phones and tablets stay cool and scrolling stays smooth.
+    if (isTouch) {
+      const toRGBA = (c: readonly [number, number, number], a: number) =>
+        `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})`;
+
+      const drawStaticGrid = () => {
+        const w = canvas!.clientWidth;
+        const h = canvas!.clientHeight;
+        canvas!.width = w;
+        canvas!.height = h;
+        ctx!.setTransform(1, 0, 0, 1, 0, 0);
+        ctx!.fillStyle = config.background;
+        ctx!.fillRect(0, 0, w, h);
+
+        const cell = config.cellSize;
+        ctx!.lineWidth = 1;
+        ctx!.strokeStyle = toRGBA(config.lineColor, config.lineAlpha);
+        ctx!.beginPath();
+        for (let x = 0; x <= w; x += cell) {
+          ctx!.moveTo(x + 0.5, 0);
+          ctx!.lineTo(x + 0.5, h);
+        }
+        for (let y = 0; y <= h; y += cell) {
+          ctx!.moveTo(0, y + 0.5);
+          ctx!.lineTo(w, y + 0.5);
+        }
+        ctx!.stroke();
+
+        ctx!.fillStyle = toRGBA(config.dotColor, config.dotAlpha);
+        for (let x = 0; x <= w; x += cell) {
+          for (let y = 0; y <= h; y += cell) {
+            ctx!.beginPath();
+            ctx!.arc(x, y, 1.2, 0, Math.PI * 2);
+            ctx!.fill();
+          }
+        }
+      };
+
+      drawStaticGrid();
+
+      // Redraw once on resize / orientation change — no continuous loop.
+      let resizeRaf = 0;
+      const onResizeStatic = () => {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(drawStaticGrid);
+      };
+      window.addEventListener("resize", onResizeStatic);
+
+      return () => {
+        cancelAnimationFrame(resizeRaf);
+        window.removeEventListener("resize", onResizeStatic);
+      };
+    }
 
     type Point = {
       x: number;

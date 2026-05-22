@@ -1,7 +1,28 @@
 import { Container } from "@/components/ui/Container";
 import { PageHead } from "@/components/ui/PageHead";
 import { Reveal } from "@/components/animations/Reveal";
+import {
+  AnimatedIcon,
+  type AnimatedIconName,
+} from "@/components/icons/AnimatedIcon";
+import { ChronosMockup } from "@/components/mockups/ChronosMockup";
 import { caseStudies } from "@/lib/case-studies";
+
+/** Case study that renders a live animated mockup in its media slot. */
+const CHRONOS_SLUG = "workforce-time-resource-platform";
+
+const labIcons: AnimatedIconName[] = [
+  "network",
+  "scan",
+  "structure",
+  "radar",
+  "flow",
+  "scale",
+  "vector",
+  "collaborate",
+  "motion",
+  "brain",
+];
 
 export default function LabsPage() {
   return (
@@ -26,21 +47,33 @@ export default function LabsPage() {
                   className="lab-case"
                 >
                   <div className="lab-case-media">
-                    <div
-                      aria-hidden
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          "radial-gradient(80% 60% at 80% 20%, rgba(207, 217, 255, 0.16), transparent 60%)",
-                      }}
-                    />
-                    <div className="lab-case-media-index" aria-hidden>
-                      {num}
-                    </div>
-                    <div className="lab-case-media-label">
-                      <span>Video / Mockup</span>
-                      <span aria-hidden>{c.tags[0]}</span>
-                    </div>
+                    {c.slug === CHRONOS_SLUG ? (
+                      <ChronosMockup />
+                    ) : (
+                      <>
+                        <div
+                          aria-hidden
+                          className="absolute inset-0"
+                          style={{
+                            background:
+                              "radial-gradient(80% 60% at 80% 20%, rgba(207, 217, 255, 0.16), transparent 60%)",
+                          }}
+                        />
+                        <div className="lab-case-media-index" aria-hidden>
+                          {num}
+                        </div>
+                        <span className="lab-case-media-glyph">
+                          <AnimatedIcon
+                            name={labIcons[idx % labIcons.length]}
+                            size="lg"
+                          />
+                        </span>
+                        <div className="lab-case-media-label">
+                          <span>Video / Mockup</span>
+                          <span aria-hidden>{c.tags[0]}</span>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   <div className="lab-case-body">

@@ -13,6 +13,12 @@ export function LenisProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Touch devices: skip the JS smooth-scroll loop entirely. Native
+    // momentum scrolling is smoother and far lighter on phones/tablets,
+    // and it removes a permanent requestAnimationFrame loop.
+    if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) {
+      return;
+    }
 
     // Tuned for a buttery, premium feel.
     // lerp mode tracks the wheel more responsively than duration mode.

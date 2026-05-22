@@ -1,6 +1,5 @@
 import { Hero } from "@/components/sections/Hero";
 import { Intro } from "@/components/sections/Intro";
-import { WhoIAm } from "@/components/sections/WhoIAm";
 import { DesignPrinciples } from "@/components/sections/DesignPrinciples";
 import { Process } from "@/components/sections/Process";
 import { Stats } from "@/components/sections/Stats";
@@ -15,9 +14,6 @@ export default function HomePage() {
       <Hero />
       <SectionFade>
         <Intro />
-      </SectionFade>
-      <SectionFade>
-        <WhoIAm />
       </SectionFade>
       <SectionFade>
         <DesignPrinciples />

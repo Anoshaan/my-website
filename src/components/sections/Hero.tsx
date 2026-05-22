@@ -22,7 +22,7 @@ export function Hero() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[850px] max-w-[90vw] h-[400px] rounded-full"
+        className="hero-aura pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[850px] max-w-[90vw] h-[400px] rounded-full"
         style={{
           background:
             "linear-gradient(to top right, rgba(255,255,255,0.04), transparent)",

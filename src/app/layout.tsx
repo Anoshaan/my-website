@@ -10,7 +10,7 @@ import { ScrollToTop } from "@/components/animations/ScrollToTop";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Anoshaan — Lead UX Engineer & Senior Product Experience Designer",
+  title: "Anoshaan",
   description:
     "Lead UX Engineer and Senior Product Experience Designer — enterprise-grade digital experiences across web, mobile, and AI-driven platforms.",
   icons: {

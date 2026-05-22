@@ -32,7 +32,7 @@ export function PageHead({ title, shineWords, intro }: PageHeadProps) {
           </Reveal>
           {intro && (
             <Reveal delay={0.2}>
-              <p className="text-body text-white/65 max-w-[64ch]">{intro}</p>
+              <p className="text-body text-white/65 max-w-[58ch]">{intro}</p>
             </Reveal>
           )}
         </div>

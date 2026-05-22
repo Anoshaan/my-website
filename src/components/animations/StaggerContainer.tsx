@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 type StaggerContainerProps = {
   children: ReactNode;
   className?: string;
-  /** Delay between children in seconds. Default 0.08. */
+  /** Delay between children in seconds. Default 0.15. */
   stagger?: number;
   /** Delay before first child. */
   delay?: number;
@@ -19,12 +19,12 @@ type StaggerContainerProps = {
 };
 
 export const staggerItemVariants: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 28 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.8,
+      duration: 0.7,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -33,10 +33,10 @@ export const staggerItemVariants: Variants = {
 export function StaggerContainer({
   children,
   className,
-  stagger = 0.08,
+  stagger = 0.15,
   delay = 0,
   once = false,
-  amount = 0.12,
+  amount = 0.2,
 }: StaggerContainerProps) {
   return (
     <motion.div

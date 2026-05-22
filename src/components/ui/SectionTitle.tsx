@@ -33,7 +33,7 @@ export function SectionTitle({
       </Reveal>
       {intro && (
         <Reveal delay={0.15}>
-          <p className="text-body text-white/60 max-w-[62ch]">{intro}</p>
+          <p className="text-body text-white/60 max-w-[58ch]">{intro}</p>
         </Reveal>
       )}
     </div>

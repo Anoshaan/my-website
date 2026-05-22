@@ -215,6 +215,7 @@ body:has(.cursor) [role="button"] {
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 
 .text-card-title {
@@ -222,22 +223,27 @@ body:has(.cursor) [role="button"] {
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
+/* Body — fluid: 16px floor (mobile unchanged) up to 18px on large screens. */
 .text-body {
-  font-size: 1rem;
+  font-size: clamp(1rem, 0.97rem + 0.18vw, 1.125rem);
   line-height: 1.7;
   font-weight: 400;
+  text-wrap: pretty;
 }
 
+/* Supporting — fluid: floor bumped from 14px to ~15.2px for readability. */
 .text-supporting {
-  font-size: 0.875rem;
+  font-size: clamp(0.95rem, 0.92rem + 0.16vw, 1.0625rem);
   line-height: 1.6;
+  text-wrap: pretty;
 }
 
 .text-eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: clamp(0.72rem, 0.7rem + 0.06vw, 0.76rem);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-fg-subtle);
@@ -281,15 +287,18 @@ body:has(.cursor) [role="button"] {
   position: relative;
   padding: clamp(28px, 3vw, 40px);
   border-radius: 22px;
-  /* Glass — see-through with frosted blur */
+  /* Frosted glass — opaque enough that the background grid stays
+     behind it, with a stronger blur for clear foreground separation. */
   border: 1px solid rgba(255, 255, 255, 0.10);
-  background: linear-gradient(
-    140deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.02)
-  );
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    ),
+    rgba(17, 17, 22, 0.9);
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
   /* Inner top highlight + soft drop shadow for depth */
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
@@ -305,11 +314,13 @@ body:has(.cursor) [role="button"] {
 
 .card-surface:hover {
   border-color: rgba(255, 255, 255, 0.16);
-  background: linear-gradient(
-    140deg,
-    rgba(255, 255, 255, 0.08),
-    rgba(255, 255, 255, 0.03)
-  );
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.035)
+    ),
+    rgba(21, 21, 27, 0.92);
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
     0 14px 40px 0 rgba(0, 0, 0, 0.35);
@@ -365,6 +376,12 @@ body:has(.cursor) [role="button"] {
   transform: translateY(-4px);
 }
 
+/* Keep card body copy at a readable measure — never edge-to-edge on
+   wide cards / large monitors. */
+.card-surface p {
+  max-width: 54ch;
+}
+
 /* =========================================================
    STAT VALUE — original gradient-text big number style
    ========================================================= */
@@ -389,6 +406,28 @@ body:has(.cursor) [role="button"] {
   font-weight: 300;
   font-size: clamp(3.5rem, 6vw, 5.5rem);
   line-height: 1;
+}
+
+/* Multi-word stat value — sized down from the big numerals so a phrase
+   reads cleanly while keeping the same gradient treatment. */
+.stat-text {
+  font-family: var(--font-sans);
+  font-size: clamp(1.5rem, 1.1rem + 1.55vw, 2.15rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.14;
+  text-wrap: balance;
+}
+
+/* Supporting caption under each stat — sans, higher contrast and
+   line-height than the old mono eyebrow so it is immediately readable. */
+.stat-label {
+  font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.0625rem);
+  line-height: 1.55;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.74);
+  max-width: 30ch;
+  text-wrap: pretty;
 }
 
 /* =========================================================
@@ -725,54 +764,60 @@ html.lenis body {
 }
 
 /* =========================================================
-   SELECTED WORK — viewport-fit horizontal slider on landing.
-   Cards keep the existing landing-card visual identity but are
-   sized so the section heading, supporting text, slider, dots
-   and secondary buttons all fit comfortably on a 1080p display.
+   SELECTED WORK — auto-looping, draggable showcase carousel.
+   The track is translated by requestAnimationFrame; three
+   copies of the list make the loop seamless. Cards keep the
+   landing-card visual identity.
    ========================================================= */
 .featured-work-section {
   padding-block: clamp(72px, 8vw, 120px);
 }
 
-.featured-track-wrap {
+.fw-viewport {
   position: relative;
   margin-inline: calc(-1 * clamp(20px, 3.5vw, 48px));
+  padding-block: 20px;
+  overflow: hidden;
+  cursor: grab;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
 }
 
-.featured-track {
+.fw-viewport:active {
+  cursor: grabbing;
+}
+
+.fw-track {
   display: flex;
   gap: 24px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  padding-inline: clamp(20px, 3.5vw, 48px);
-  padding-block: 12px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
-  cursor: grab;
-}
-
-.featured-track::-webkit-scrollbar {
-  display: none;
+  width: max-content;
+  will-change: transform;
+  /* Horizontal drag is handled in JS; vertical scroll stays native. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .featured-slide {
-  scroll-snap-align: start;
   flex: 0 0 auto;
-  /* Two-up on desktop, one-up on phones. */
-  width: clamp(280px, 44vw, 600px);
-}
-
-@media (min-width: 1280px) {
-  .featured-slide {
-    width: min(560px, 42vw);
-  }
+  width: clamp(280px, 36vw, 470px);
 }
 
 @media (max-width: 720px) {
   .featured-slide {
-    width: 88vw;
+    width: 82vw;
   }
 }
 
@@ -782,13 +827,15 @@ html.lenis body {
   padding: clamp(20px, 1.8vw, 28px);
   border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.10);
-  background: linear-gradient(
-    140deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.02)
-  );
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    ),
+    rgba(17, 17, 22, 0.9);
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
     0 8px 32px 0 rgba(0, 0, 0, 0.25);
@@ -835,11 +882,12 @@ html.lenis body {
   letter-spacing: -0.02em;
   line-height: 1.25;
   color: #ffffff;
+  text-wrap: balance;
 }
 
 .featured-slide-summary {
-  font-size: 0.85rem;
-  line-height: 1.55;
+  font-size: clamp(0.9rem, 0.86rem + 0.2vw, 1rem);
+  line-height: 1.6;
   color: rgba(255, 255, 255, 0.62);
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -855,7 +903,7 @@ html.lenis body {
   padding-top: 14px;
   margin-top: auto;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.92);
 }
 
@@ -875,28 +923,13 @@ html.lenis body {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-.slider-nav-btn {
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.85);
-  transition:
-    background 0.3s var(--ease-out-expo),
-    border-color 0.3s var(--ease-out-expo),
-    color 0.3s var(--ease-out-expo),
-    transform 0.3s var(--ease-out-expo);
-}
-
-.slider-nav-btn:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.22);
-  color: #fff;
-  transform: translateY(-1px);
+/* Animated icon centered inside the slide media placeholder. */
+.featured-slide-glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
 }
 
 /* On large screens, condense the section so heading + slider + dots
@@ -921,13 +954,15 @@ html.lenis body {
   padding: clamp(20px, 2.2vw, 32px);
   border-radius: 26px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(
-    140deg,
-    rgba(255, 255, 255, 0.045),
-    rgba(255, 255, 255, 0.015)
-  );
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.015)
+    ),
+    rgba(17, 17, 22, 0.9);
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
     0 14px 50px 0 rgba(0, 0, 0, 0.32);
@@ -1013,6 +1048,15 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* Animated icon centered in the case-study media placeholder. */
+.lab-case-media-glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
 .lab-case-body {
   display: flex;
   flex-direction: column;
@@ -1027,6 +1071,7 @@ html.lenis body {
   letter-spacing: -0.025em;
   line-height: 1.18;
   color: #ffffff;
+  text-wrap: balance;
 }
 
 .lab-case-summary {
@@ -1052,9 +1097,9 @@ html.lenis body {
 }
 
 .lab-case-meta-value {
-  font-size: 0.875rem;
+  font-size: clamp(0.9rem, 0.87rem + 0.15vw, 1rem);
   color: rgba(255, 255, 255, 0.78);
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 .lab-case-pills {
@@ -1151,13 +1196,15 @@ html.lenis body {
   padding: clamp(20px, 1.5vw, 26px);
   border: 1px solid var(--color-line);
   border-radius: 18px;
-  background: linear-gradient(
-    160deg,
-    rgba(236, 235, 230, 0.04),
-    rgba(236, 235, 230, 0.008)
-  );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background:
+    linear-gradient(
+      160deg,
+      rgba(236, 235, 230, 0.04),
+      rgba(236, 235, 230, 0.008)
+    ),
+    rgba(17, 17, 22, 0.88);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -1186,11 +1233,13 @@ html.lenis body {
 .testimonial-card:hover {
   border-color: var(--color-line-2);
   transform: translateY(-4px) scale(1.02);
-  background: linear-gradient(
-    160deg,
-    rgba(236, 235, 230, 0.06),
-    rgba(236, 235, 230, 0.015)
-  );
+  background:
+    linear-gradient(
+      160deg,
+      rgba(236, 235, 230, 0.06),
+      rgba(236, 235, 230, 0.015)
+    ),
+    rgba(21, 21, 27, 0.9);
 }
 
 .testimonial-card:hover::before {
@@ -1208,8 +1257,8 @@ html.lenis body {
 
 .t-quote {
   font-family: var(--font-sans);
-  font-size: clamp(13px, 1vw, 15px);
-  line-height: 1.55;
+  font-size: clamp(14px, 0.82rem + 0.4vw, 16px);
+  line-height: 1.6;
   color: var(--color-fg);
   letter-spacing: -0.005em;
   margin: 0;
@@ -1259,7 +1308,7 @@ html.lenis body {
 
 .t-name {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--color-fg);
   letter-spacing: -0.01em;
@@ -1268,11 +1317,13 @@ html.lenis body {
 
 .t-role {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  color: var(--color-fg-muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.045em;
+  color: rgba(255, 255, 255, 0.62);
   text-transform: uppercase;
-  margin-top: 3px;
+  margin-top: 4px;
+  line-height: 1.5;
 }
 
 @media (max-width: 640px) {
@@ -1320,12 +1371,22 @@ html.lenis body {
   padding-inline: 16px;
 }
 
+/* Stacks the featured card + category-nav card as one centered unit. */
+.testimonial-player {
+  pointer-events: none;
+  width: min(700px, 92vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 1.3vw, 18px);
+}
+
 .featured-testimonial {
   pointer-events: auto;
   position: relative;
-  width: min(700px, 92vw);
-  /* Fixed total height so dynamic quote sizing never makes the card grow. */
-  min-height: 380px;
+  width: 100%;
+  /* Stable height so dynamic quote sizing never makes the card jump. */
+  min-height: clamp(280px, 30vw, 340px);
   padding: clamp(28px, 3.2vw, 44px);
   border-radius: 28px;
   background: linear-gradient(
@@ -1380,11 +1441,14 @@ html.lenis body {
   font-family: var(--font-sans);
   /* Default; overridden inline per quote length. */
   font-size: clamp(18px, 1.6vw, 22px);
-  line-height: 1.55;
+  line-height: 1.6;
   letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.95);
   margin: 0;
   flex: 1;
+  /* Vertically centers shorter quotes within the flexible card body. */
+  display: flex;
+  align-items: center;
 }
 
 .featured-person {
@@ -1456,42 +1520,653 @@ html.lenis body {
 
 .featured-role {
   font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  color: var(--color-fg-muted);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.045em;
+  color: rgba(255, 255, 255, 0.66);
   text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 5px;
+  line-height: 1.5;
 }
 
-.featured-dots {
+/* =========================================================
+   CATEGORY NAV — secondary card below the featured card.
+   Typography only. The active category's text fills with a
+   soft left-to-right gradient that advances across the whole
+   time its testimonials play — the type itself is the
+   progress indicator. No pills, borders, dots, or bars.
+   ========================================================= */
+.cat-nav {
+  pointer-events: auto;
+  width: 100%;
+  padding: clamp(15px, 1.6vw, 21px) clamp(16px, 2vw, 26px);
+  border-radius: 20px;
+  background: linear-gradient(
+    160deg,
+    rgba(14, 14, 18, 0.88),
+    rgba(7, 7, 10, 0.92)
+  );
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 16px 44px rgba(0, 0, 0, 0.42);
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: clamp(4px, 1.4vw, 14px);
+}
+
+.cat-nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  margin-top: 22px;
-}
-
-.featured-dot {
-  width: 22px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  transition:
-    background-color 0.35s var(--ease-out-expo),
-    width 0.35s var(--ease-out-expo);
+  padding: 5px clamp(6px, 1vw, 12px);
+  border: 0;
+  background: transparent;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.55s var(--ease-out-expo);
 }
 
-.featured-dot.is-active {
-  width: 32px;
-  background: rgba(255, 255, 255, 0.65);
+/* Active category is a touch more prominent — no chrome, just scale. */
+.cat-nav-item.is-active {
+  transform: scale(1.05);
 }
 
-.featured-dot:hover {
-  background: rgba(255, 255, 255, 0.35);
+.cat-nav-label {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: clamp(13px, 0.72rem + 0.4vw, 14.5px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* Base layer — quiet, the only thing inactive items show. It also
+   sits under the fill layer so the active state fading in and out
+   reads as a smooth brighten / dim of the same word. */
+.cat-nav-label-base {
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.5s var(--ease-out-expo);
+}
+
+.cat-nav-item:hover .cat-nav-label-base {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* Fill layer — sits exactly over the base text. For the active
+   category it fades in and a soft gradient front advances
+   left-to-right, reaching the end exactly as the category's last
+   testimonial finishes. The duration is set per category. */
+.cat-nav-label-sweep {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.55s var(--ease-out-expo);
+  background-image: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #ffffff 44%,
+    rgba(255, 255, 255, 0.45) 56%,
+    rgba(255, 255, 255, 0.45) 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  /* Default (no animation) = fully filled, so a finished category
+     never snaps back to empty in the instant before it fades out. */
+  background-position: 0% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.cat-nav-item.is-active .cat-nav-label-sweep {
+  opacity: 1;
+  animation: cat-text-fill var(--seg-duration, 11000ms) linear forwards;
+}
+
+/* 100% position = empty word, 0% = full — the soft front travels
+   through the letters as the category's testimonials play. */
+@keyframes cat-text-fill {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cat-nav-item {
+    transition: none;
+  }
+  .cat-nav-item.is-active .cat-nav-label-sweep {
+    animation: none;
+    background-position: 0% 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .cat-nav {
+    padding: 14px 12px;
+  }
+  .cat-nav-item {
+    padding: 5px 7px;
+  }
 }
 
 @media (max-width: 640px) {
   .featured-quote {
     font-size: 16px;
+  }
+}
+
+/* =========================================================
+   ANIMATED ICONS — one unified, outlined icon language.
+   Each glyph carries a subtle, semantic micro-animation.
+   GPU-friendly (transform / opacity only); the global
+   reduced-motion rule freezes them on a static base state.
+   ========================================================= */
+.anim-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--icon-tone, rgba(255, 255, 255, 0.78));
+  transition:
+    transform 0.45s var(--ease-out-expo),
+    border-color 0.45s var(--ease-out-expo),
+    background-color 0.45s var(--ease-out-expo),
+    box-shadow 0.45s var(--ease-out-expo),
+    color 0.45s var(--ease-out-expo);
+}
+
+.anim-icon svg {
+  width: 60%;
+  height: 60%;
+  overflow: visible;
+}
+
+.anim-icon-md {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+}
+
+.anim-icon-lg {
+  width: 88px;
+  height: 88px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+/* Hover — the parent card lifts the icon: depth, glow, brighten. */
+.card-surface:hover .anim-icon,
+.lab-case:hover .anim-icon,
+.featured-slide-card:hover .anim-icon {
+  transform: translateY(-2px) scale(1.05);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  color: color-mix(in oklab, var(--icon-tone, #ffffff) 55%, #ffffff);
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.34),
+    0 0 28px color-mix(in oklab, var(--icon-tone, var(--color-accent)) 32%, transparent);
+}
+
+/* ---- shared animated parts ---- */
+.ai-dash {
+  stroke-dasharray: 3 5;
+  opacity: 0.72;
+  animation: ai-dash-flow 1.7s linear infinite;
+}
+
+.ai-ring {
+  opacity: 0.5;
+}
+
+.ai-spin {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: ai-spin 17s linear infinite;
+}
+
+.ai-sweep {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: ai-spin 5.5s linear infinite;
+}
+
+.ai-syn,
+.ai-node,
+.ai-blip,
+.ai-anchor {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ai-syn {
+  opacity: 0.7;
+  animation: ai-pulse 2.7s ease-in-out infinite;
+}
+
+.ai-node {
+  opacity: 0.8;
+  animation: ai-pulse 2.9s ease-in-out infinite;
+}
+
+.ai-blip {
+  opacity: 0.85;
+  animation: ai-pulse 2.4s ease-in-out infinite;
+}
+
+.ai-anchor {
+  opacity: 0.9;
+  animation: ai-pulse 2.6s ease-in-out infinite;
+}
+
+.ai-scan {
+  color: color-mix(in oklab, var(--icon-tone, var(--color-accent)) 55%, #ffffff);
+  opacity: 0.95;
+  filter: drop-shadow(
+    0 0 3px color-mix(in oklab, var(--icon-tone, var(--color-accent)) 55%, transparent)
+  );
+  animation: ai-scan-move 3.5s ease-in-out infinite;
+}
+
+.ai-flow {
+  opacity: 0.72;
+  animation: ai-flow-move 2.1s ease-in-out infinite;
+}
+
+.ai-bar {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: ai-bar-grow 2.8s ease-in-out infinite;
+}
+
+.ai-layer {
+  animation: ai-layer-bob 3.6s ease-in-out infinite;
+}
+
+.ai-walk {
+  animation: ai-walk-bob 0.62s ease-in-out infinite;
+}
+
+.ai-arm {
+  transform-box: view-box;
+  transform-origin: 24px 18.5px;
+}
+
+.ai-leg {
+  transform-box: view-box;
+  transform-origin: 24px 27.5px;
+}
+
+.ai-arm-a,
+.ai-arm-b,
+.ai-leg-a,
+.ai-leg-b {
+  animation: ai-swing 1.24s ease-in-out infinite;
+}
+
+.ai-arm-b,
+.ai-leg-a {
+  animation-delay: -0.62s;
+}
+
+@keyframes ai-dash-flow {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+@keyframes ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ai-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes ai-scan-move {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(19px);
+  }
+}
+
+@keyframes ai-flow-move {
+  0% {
+    opacity: 0;
+    transform: translateX(-5px);
+  }
+  35%,
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(7px);
+  }
+}
+
+@keyframes ai-bar-grow {
+  0%,
+  100% {
+    transform: scaleY(0.62);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes ai-layer-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.4px);
+  }
+}
+
+@keyframes ai-swing {
+  0%,
+  100% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes ai-walk-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1.1px);
+  }
+}
+
+/* =========================================================
+   ABOUT PAGE — intro video, career timeline, experiment
+   grid, impact cards and closing CTA. Reuses the global
+   glass + motion language. Continuous float loops are
+   dropped on touch / small screens and under reduced
+   motion so the page stays light on mobile.
+   ========================================================= */
+@keyframes about-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -9px, 0); }
+}
+@keyframes about-float-sm {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -5px, 0); }
+}
+
+.about-float {
+  animation: about-float 7s var(--ease-in-out) infinite;
+  will-change: transform;
+}
+.about-float-sm {
+  animation: about-float-sm 5.5s var(--ease-in-out) infinite;
+  will-change: transform;
+}
+
+/* Continuous loops are atmospheric on desktop only. */
+@media (max-width: 1024px) {
+  .about-float,
+  .about-float-sm {
+    animation: none;
+    will-change: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-float,
+  .about-float-sm {
+    animation: none;
+  }
+}
+
+/* ---- Section 2 — intro video frame ---- */
+.about-video {
+  position: relative;
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(135deg, #0d0d14, #050507);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+    0 24px 70px rgba(0, 0, 0, 0.5);
+  isolation: isolate;
+}
+.about-video video,
+.about-video img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* soft inner vignette so the video settles into the dark theme */
+.about-video::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 70px 8px rgba(5, 5, 7, 0.55);
+}
+/* ambient accent halo behind the frame */
+.about-video-glow {
+  position: absolute;
+  inset: -16% -12% -20% -16%;
+  z-index: -1;
+  border-radius: 999px;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    color-mix(in oklab, var(--color-accent) 28%, transparent),
+    transparent 72%
+  );
+  filter: blur(50px);
+  opacity: 0.55;
+}
+@media (max-width: 768px) {
+  .about-video-glow {
+    filter: blur(26px);
+    opacity: 0.4;
+    inset: -8%;
+  }
+}
+
+/* ---- Section 3 — career timeline ---- */
+.about-timeline {
+  position: relative;
+}
+.about-tl-track,
+.about-tl-fill {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 27px;
+  width: 2px;
+  border-radius: 2px;
+}
+.about-tl-track {
+  background: rgba(255, 255, 255, 0.09);
+}
+.about-tl-fill {
+  transform-origin: top;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-accent) 92%, #ffffff),
+    color-mix(in oklab, var(--color-accent) 40%, transparent)
+  );
+  box-shadow: 0 0 16px color-mix(in oklab, var(--color-accent) 50%, transparent);
+}
+.about-tl-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: clamp(16px, 2vw, 30px);
+}
+.about-tl-item + .about-tl-item {
+  margin-top: clamp(18px, 2.2vw, 32px);
+}
+.about-tl-badge {
+  position: relative;
+  z-index: 1;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: color-mix(in oklab, var(--color-accent) 62%, #ffffff);
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
+    #0b0b11;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+}
+@media (max-width: 540px) {
+  .about-tl-item {
+    grid-template-columns: 44px 1fr;
+    gap: 14px;
+  }
+  .about-tl-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    font-size: 14px;
+  }
+  .about-tl-track,
+  .about-tl-fill {
+    left: 21px;
+  }
+}
+
+/* ---- Section 4 — experiment thumbnail ---- */
+.about-exp-thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(
+      82% 70% at 76% 16%,
+      color-mix(in oklab, var(--color-accent) 20%, transparent),
+      transparent 60%
+    ),
+    linear-gradient(150deg, #14141d, #08080c);
+  display: grid;
+  place-items: center;
+}
+
+/* =========================================================
+   MOBILE / TOUCH PERFORMANCE
+   backdrop-filter, large blurs and animated glows are the
+   main sources of heat and scroll jank on phones and
+   tablets. On coarse-pointer devices the frosted glass is
+   swapped for a solid (still dark, still layered) surface —
+   the visual language is preserved, the GPU cost is not.
+   ========================================================= */
+@media (hover: none) and (pointer: coarse) {
+  .card-surface,
+  .featured-slide-card,
+  .lab-case,
+  .testimonial-card,
+  .featured-testimonial,
+  .cat-nav,
+  .btn-glass-ghost,
+  .btn-secondary,
+  .app-nav {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Solidify the glass surfaces that lost their blur so content
+     behind them never bleeds through. */
+  .card-surface,
+  .featured-slide-card {
+    background:
+      linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0.02)
+      ),
+      #131318;
+  }
+  .lab-case {
+    background:
+      linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.015)
+      ),
+      #131318;
+  }
+  .testimonial-card {
+    background:
+      linear-gradient(
+        160deg,
+        rgba(236, 235, 230, 0.04),
+        rgba(236, 235, 230, 0.01)
+      ),
+      #131318;
+  }
+  .featured-testimonial,
+  .cat-nav {
+    background: linear-gradient(160deg, #15151b, #0b0b0f);
+  }
+
+  /* The pointer-tracking card glow never fires on touch — drop the
+     blurred pseudo-element so it is not in the layer tree at all. */
+  .card-surface::after {
+    display: none;
+  }
+
+  /* Keep the rainbow button halo, but stop it repainting a blurred
+     layer every frame — render it as a static glow instead. */
+  .rainbow-shadow::before {
+    animation: none;
+    filter: blur(16px);
+  }
+
+  /* The heavy hero aura blur is dropped — the radial wash behind
+     it already carries the glow at near-zero cost. */
+  .hero-aura {
+    display: none;
   }
 }

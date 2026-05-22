@@ -67,7 +67,7 @@ export default function CraftPage() {
                     className="aspect-[4/3] rounded-[18px] overflow-hidden border border-white/[0.08] bg-[#0a0a0c]"
                     style={{ background: s.gradient + ", #0a0a0c" }}
                   />
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-2">
                     <span className="text-eyebrow text-white/40">{s.tag}</span>
                     <h3 className="text-card-title text-white">{s.title}</h3>
                     <p className="text-supporting text-white/55">{s.note}</p>

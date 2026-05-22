@@ -1,3 +1,4 @@
 .shiny-text {
   display: inline-block;
+  text-wrap: balance;
 }

@@ -4,26 +4,34 @@ import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { motion, useInView } from "motion/react";
 
-type Stat = {
-  value: string;
-  label: string;
-  countTo?: number;
-  suffix?: string;
-};
+type Stat =
+  | { kind: "count"; countTo: number; suffix: string; label: string }
+  | { kind: "symbol"; value: string; label: string }
+  | { kind: "text"; value: string; label: string };
 
 const stats: Stat[] = [
-  { value: "8+", label: "Years Experience", countTo: 8, suffix: "+" },
   {
-    value: "1200+",
-    label: "Product Screens Designed",
-    countTo: 1200,
+    kind: "count",
+    countTo: 8,
     suffix: "+",
+    label: "Years crafting digital experiences",
   },
   {
-    value: "∞",
-    label: "Enterprise UX • Systems Thinking • Motion",
+    kind: "count",
+    countTo: 120,
+    suffix: "+",
+    label: "Products, platforms & UX systems delivered",
   },
-  { value: "AI", label: "AI-Driven Product Experiences" },
+  {
+    kind: "symbol",
+    value: "AI",
+    label: "AI-driven product experiences",
+  },
+  {
+    kind: "text",
+    value: "Enterprise UX Systems",
+    label: "Design thinking that evolves with user behavior",
+  },
 ];
 
 function AnimatedNumber({
@@ -77,25 +85,23 @@ export function Stats() {
               viewport={{ once: false, amount: 0.2, margin: "0px 0px -5% 0px" }}
               transition={{
                 duration: 0.8,
-                delay: i * 0.1,
+                delay: i * 0.14,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="flex flex-col items-center text-center gap-3 py-8 px-5 rounded-2xl border border-white/[0.08] bg-white/[0.025] backdrop-blur-md hover:border-white/[0.18] hover:bg-white/[0.04] transition-all duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+              className="flex flex-col items-center justify-center text-center gap-4 py-9 px-5 rounded-2xl border border-white/[0.08] bg-[rgba(20,20,25,0.9)] backdrop-blur-xl hover:border-white/[0.18] hover:bg-[rgba(24,24,30,0.92)] transition-all duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
             >
-              <span
-                className={
-                  s.countTo !== undefined ? "stat-number" : "stat-symbol accent-text"
-                }
-              >
-                {s.countTo !== undefined ? (
-                  <AnimatedNumber target={s.countTo} suffix={s.suffix} />
+              <div className="flex items-center justify-center min-h-[clamp(3.25rem,6vw,5rem)]">
+                {s.kind === "count" ? (
+                  <span className="stat-number">
+                    <AnimatedNumber target={s.countTo} suffix={s.suffix} />
+                  </span>
+                ) : s.kind === "symbol" ? (
+                  <span className="stat-symbol accent-text">{s.value}</span>
                 ) : (
-                  s.value
+                  <span className="stat-text accent-text">{s.value}</span>
                 )}
-              </span>
-              <span className="text-eyebrow text-white/55 max-w-[28ch]">
-                {s.label}
-              </span>
+              </div>
+              <span className="stat-label">{s.label}</span>
             </motion.div>
           ))}
         </div>
