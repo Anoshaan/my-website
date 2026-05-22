@@ -11,7 +11,8 @@ type RevealProps = {
   className?: string;
   /**
    * Animate once only, or every time element enters viewport.
-   * Default: false — keeps animating on re-entry as the user scrolls up/down.
+   * Default: true — the element settles after its entrance and never
+   * re-animates, so scrolling back up can't make it glitch or jump.
    */
   once?: boolean;
   /** Custom duration in seconds. */
@@ -39,7 +40,7 @@ export function Reveal({
   delay = 0,
   variant = "up",
   className,
-  once = false,
+  once = true,
   duration = 0.8,
   amount = 0.15,
   as = "div",

@@ -5,15 +5,15 @@ import { Reveal } from "@/components/animations/Reveal";
 
 /**
  * About — Section 2. Two-column introduction directly after the hero.
- * Left: a looping, muted, web-optimized intro video in a glass frame.
- * Right: section label, heading, short paragraphs and floating pills.
+ * Left: a large, looping, web-optimized intro video sized to the
+ * viewport height. Right: section label, heading, short paragraphs
+ * and floating pills. On desktop the whole section fills one viewport.
  */
 
 const paragraphs = [
-  "I work as a UX leader and product thinker — owning the experience from an ambiguous problem all the way to a production-ready interface. I care less about isolated screens and more about whether the whole system holds together.",
-  "Most of my work lives at the systems level: design systems that scale across products, interaction patterns that stay coherent, and architecture decisions that survive as teams and features grow.",
-  "I think in frontend reality — components, state, and performance — so design decisions hold up in implementation. Increasingly that means experimenting with AI-assisted workflows to move from idea to working interface faster.",
-  "I collaborate closely across product, engineering, and leadership, and I'm at my best on hard, fuzzy problems — the ones where the right structure isn't obvious yet.",
+  "I lead UX as a product thinker — owning the experience from an ambiguous problem to a production-ready interface, focused on whether the whole system holds together.",
+  "Most of my work is systems work: design systems that scale across products, and frontend-aware decisions that survive implementation — increasingly powered by AI-assisted workflows.",
+  "I collaborate closely across product, engineering, and leadership, and I do my best work on hard, fuzzy problems where the right structure isn't obvious yet.",
 ];
 
 const pills = [
@@ -29,14 +29,18 @@ const pills = [
 
 export function AboutIntro() {
   return (
-    <section className="pt-[clamp(8px,3vw,48px)] pb-[clamp(76px,9vw,128px)]">
+    <section className="relative pt-[clamp(8px,3vw,48px)] pb-[clamp(72px,9vw,120px)] lg:flex lg:min-h-screen lg:items-center lg:py-10">
       <Container>
-        <div className="grid items-center gap-12 lg:gap-16 lg:grid-cols-[minmax(0,420px)_minmax(0,560px)] lg:justify-center">
-          {/* LEFT — looping intro video */}
-          <Reveal variant="fade" duration={1}>
-            <div className="about-float relative mx-auto w-full max-w-[440px] lg:max-w-none">
+        <div className="flex flex-col gap-12 lg:flex-row lg:items-center lg:gap-[clamp(40px,5vw,84px)]">
+          {/* LEFT — large looping intro video, sized to the viewport */}
+          <Reveal
+            variant="fade"
+            duration={1}
+            className="mx-auto aspect-square w-full max-w-[460px] lg:mx-0 lg:aspect-auto lg:h-[clamp(380px,62vh,680px)] lg:w-[clamp(380px,62vh,680px)] lg:max-w-none lg:flex-shrink-0"
+          >
+            <div className="about-float relative h-full w-full">
               <div aria-hidden className="about-video-glow" />
-              <div className="about-video aspect-square">
+              <div className="about-video h-full w-full">
                 <video
                   autoPlay
                   muted
@@ -52,18 +56,18 @@ export function AboutIntro() {
           </Reveal>
 
           {/* RIGHT — introduction copy */}
-          <div className="flex flex-col">
+          <div className="flex flex-col lg:min-w-0 lg:flex-1">
             <Reveal>
               <span className="text-eyebrow text-white/45">Introduction</span>
             </Reveal>
 
             <Reveal delay={0.08}>
-              <h2 className="text-section text-white mt-4">
+              <h2 className="text-section text-white mt-3 heading-sheen">
                 Systems thinking, product instinct, and craft that ships.
               </h2>
             </Reveal>
 
-            <div className="mt-6 flex flex-col gap-4 max-w-[58ch]">
+            <div className="mt-5 flex flex-col gap-3 max-w-[62ch]">
               {paragraphs.map((p, i) => (
                 <Reveal key={i} delay={0.12 + i * 0.06}>
                   <p className="text-body text-white/62">{p}</p>
@@ -71,8 +75,8 @@ export function AboutIntro() {
               ))}
             </div>
 
-            <Reveal delay={0.22}>
-              <div className="mt-8 pt-7 border-t border-white/[0.07]">
+            <Reveal delay={0.26}>
+              <div className="mt-5 pt-5 border-t border-white/[0.07]">
                 <span className="text-eyebrow text-white/40">What I bring</span>
                 <div className="mt-4 flex flex-wrap gap-2.5">
                   {pills.map((pill, i) => (

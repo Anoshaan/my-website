@@ -13,7 +13,7 @@ export function AboutCTA() {
           <span className="text-eyebrow text-white/45">What&apos;s next</span>
         </Reveal>
         <Reveal delay={0.08}>
-          <h2 className="text-section text-white">
+          <h2 className="text-section text-white heading-sheen">
             Let&apos;s design something that lasts.
           </h2>
         </Reveal>

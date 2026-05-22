@@ -12,7 +12,8 @@ type StaggerContainerProps = {
   delay?: number;
   /**
    * Animate once or every time the container enters viewport.
-   * Default: false — animations re-trigger on re-entry.
+   * Default: true — the grid settles after its entrance and never
+   * re-animates, so scrolling back up can't make cards glitch or jump.
    */
   once?: boolean;
   amount?: number;
@@ -35,7 +36,7 @@ export function StaggerContainer({
   className,
   stagger = 0.15,
   delay = 0,
-  once = false,
+  once = true,
   amount = 0.2,
 }: StaggerContainerProps) {
   return (

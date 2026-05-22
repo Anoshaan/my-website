@@ -5,6 +5,7 @@ import { motion, useScroll } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Reveal } from "@/components/animations/Reveal";
+import { GlowBorder } from "@/components/animations/GlowBorder";
 
 /**
  * About — Section 3. Premium vertical career timeline.
@@ -93,6 +94,7 @@ export function CareerTimeline() {
               <div className="about-tl-badge">{r.badge}</div>
 
               <div className="card-surface card-lift flex flex-col gap-3 p-6 md:p-7">
+                <GlowBorder />
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <span className="text-eyebrow text-white/50">
                     {r.period}

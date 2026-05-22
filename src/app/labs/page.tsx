@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { PageHead } from "@/components/ui/PageHead";
 import { Reveal } from "@/components/animations/Reveal";
+import { GlowBorder } from "@/components/animations/GlowBorder";
 import {
   AnimatedIcon,
   type AnimatedIconName,
@@ -46,6 +47,7 @@ export default function LabsPage() {
                   duration={0.7}
                   className="lab-case"
                 >
+                  <GlowBorder />
                   <div className="lab-case-media">
                     {c.slug === CHRONOS_SLUG ? (
                       <ChronosMockup />

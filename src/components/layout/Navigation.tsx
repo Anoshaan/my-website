@@ -43,7 +43,7 @@ export function Navigation() {
       <nav
         aria-label="Primary"
         className={cn(
-          "app-nav flex items-center gap-2 px-3 py-2 rounded-full transition-all duration-[500ms] ease-[cubic-bezier(0.65,0,0.35,1)]",
+          "app-nav flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-full transition-all duration-[500ms] ease-[cubic-bezier(0.65,0,0.35,1)]",
           scrolled
             ? "bg-black/65 backdrop-blur-[24px] saturate-[140%] border border-white/[0.10] shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
             : "bg-transparent border border-transparent"
@@ -58,7 +58,7 @@ export function Navigation() {
               href={link.href}
               data-cursor-precise
               className={cn(
-                "nav-link group relative inline-flex items-center justify-center px-3 sm:px-4 py-1.5 rounded-full text-sm font-medium tracking-tight transition-colors duration-[250ms] min-h-[40px] min-w-[44px]",
+                "nav-link group relative inline-flex items-center justify-center px-2.5 sm:px-4 py-1.5 rounded-full text-sm font-medium tracking-tight transition-colors duration-[250ms] min-h-[40px] min-w-[44px]",
                 active
                   ? "text-white"
                   : "text-white/55 hover:text-white"

@@ -27,11 +27,19 @@ const expertise = [
  */
 export function Intro() {
   const ref = useRef<HTMLElement>(null);
-  // Re-triggers each time the section enters the viewport.
-  const inView = useInView(ref, { amount: 0.35, margin: "0px 0px -10% 0px" });
+  // Plays once — the intro types itself out a single time and then holds,
+  // so scrolling back through it never restarts or glitches the animation.
+  // amount 0 + a positive bottom margin fires the reveal *as the section
+  // starts entering the viewport* (even slightly before), so on mobile
+  // the heading is never a blank gap waiting to type.
+  const inView = useInView(ref, {
+    once: true,
+    amount: 0,
+    margin: "0px 0px 14% 0px",
+  });
 
-  // "Hello, I'm Anoshaan." ≈ 20 chars · 40ms + 120ms delay ≈ 0.92s.
-  const afterType = 1.05;
+  // "Hello, I'm Anoshaan." ≈ 20 chars · 40ms, no start delay ≈ 0.8s.
+  const afterType = 0.95;
 
   return (
     <section
@@ -66,7 +74,7 @@ export function Intro() {
                 <TypingText
                   text="Hello, I'm Anoshaan."
                   speed={40}
-                  delay={120}
+                  delay={0}
                   active={inView}
                 />
               </span>

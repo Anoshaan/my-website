@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/animations/Reveal";
+import { GlowBorder } from "@/components/animations/GlowBorder";
 import {
   AnimatedIcon,
   type AnimatedIconName,
 } from "@/components/icons/AnimatedIcon";
 import { ChronosMockup } from "@/components/mockups/ChronosMockup";
-import { featuredCaseStudies } from "@/lib/case-studies";
+import { featuredCaseStudies, type CaseStudy } from "@/lib/case-studies";
 
 /** Case study that renders a live animated mockup in its media slot. */
 const CHRONOS_SLUG = "workforce-time-resource-platform";
@@ -19,6 +20,10 @@ const CHRONOS_SLUG = "workforce-time-resource-platform";
 const BASE_SPEED = 34; // px / second — slow, cinematic drift
 const HOVER_SPEED = 11; // px / second — eases down on hover
 const COPIES = 3; // render the list 3× for a seamless modulo loop
+
+/** Mobile snap timing. */
+const HOLD_MS = 3000; // a card stays still
+const SNAP_MS = 560; // matches the CSS snap transition
 
 const cardIcons: AnimatedIconName[] = [
   "structure",
@@ -45,15 +50,77 @@ function ArrowSmall() {
 }
 
 /**
- * Selected Work — an automatic, continuously looping showcase carousel.
+ * FeaturedSlideCard — the landing-card visual identity, shared by the
+ * desktop carousel and the mobile snap slideshow.
+ */
+function FeaturedSlideCard({
+  c,
+  iconIndex,
+  revealGlow = true,
+}: {
+  c: CaseStudy;
+  iconIndex: number;
+  revealGlow?: boolean;
+}) {
+  return (
+    <div className="featured-slide-card">
+      <GlowBorder revealOnce={revealGlow} />
+      <div className="featured-slide-media">
+        {c.slug === CHRONOS_SLUG ? (
+          <ChronosMockup />
+        ) : (
+          <>
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(80% 60% at 80% 20%, rgba(207, 217, 255, 0.16), transparent 60%)",
+              }}
+            />
+            <span className="featured-slide-glyph">
+              <AnimatedIcon
+                name={cardIcons[iconIndex % cardIcons.length]}
+                size="md"
+              />
+            </span>
+            <div className="featured-slide-media-label">Video / Mockup</div>
+          </>
+        )}
+      </div>
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap gap-2 text-eyebrow text-white/55">
+          {c.tags.map((t, ti) => (
+            <span key={t}>
+              {t}
+              {ti < c.tags.length - 1 && (
+                <span className="ml-2 opacity-50">·</span>
+              )}
+            </span>
+          ))}
+        </div>
+        <h3 className="featured-slide-title">{c.title}</h3>
+        <p className="featured-slide-summary">{c.summary}</p>
+        <div className="featured-slide-cta">
+          View Case Study
+          <span className="featured-slide-cta-arrow">
+            <ArrowSmall />
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Desktop — an automatic, continuously looping showcase carousel.
  *
  * The track is translated every frame by requestAnimationFrame and wrapped
- * with a modulo of one list's width, so the loop is seamless with no snap
- * or visible reset. Pointer drag is fully supported (and pauses autoplay);
- * hovering eases the drift speed down. Motion is disabled under
- * prefers-reduced-motion, leaving a static, still-draggable strip.
+ * with a modulo of one list's width, so the loop is seamless. Pointer drag
+ * is supported (and pauses autoplay); hovering eases the drift speed down.
+ * Motion is disabled under prefers-reduced-motion.
  */
-export function FeaturedWork() {
+function FeaturedWorkDesktop() {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const offsetRef = useRef(0);
@@ -181,6 +248,156 @@ export function FeaturedWork() {
   );
 
   return (
+    <div
+      className="fw-viewport"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onClickCapture={onClickCapture}
+      onMouseEnter={() => {
+        targetSpeedRef.current = HOVER_SPEED;
+      }}
+      onMouseLeave={() => {
+        targetSpeedRef.current = BASE_SPEED;
+      }}
+    >
+      <div ref={trackRef} className="fw-track" aria-label="Selected case studies">
+        {slides.map(({ c, i, key }) => (
+          <article key={key} data-fw-card className="featured-slide">
+            <Link
+              href="/labs"
+              className="block h-full"
+              draggable={false}
+              data-cursor-precise
+              aria-hidden={key.startsWith("0-") ? undefined : true}
+              tabIndex={key.startsWith("0-") ? undefined : -1}
+            >
+              <FeaturedSlideCard c={c} iconIndex={i} revealGlow={false} />
+            </Link>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Mobile — a still card that snaps to the next one every few seconds.
+ *
+ * No slow drift: the card holds, then snaps. A trailing clone of the first
+ * card makes the wrap a forward snap rather than a long rewind. Autoplay
+ * pauses while off-screen and is skipped under prefers-reduced-motion.
+ */
+function FeaturedWorkMobile() {
+  const total = featuredCaseStudies.length;
+  const [index, setIndex] = useState(0);
+  const [animate, setAnimate] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const viewportRef = useRef<HTMLDivElement>(null);
+
+  // Pause autoplay while the slideshow is off-screen — and on desktop,
+  // where this block is display:none and never intersects.
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setPaused(!entry.isIntersecting),
+      { threshold: 0.2 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Auto-advance: hold, then snap to the next card.
+  useEffect(() => {
+    if (paused || index >= total) return;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (reduced) return;
+    const t = window.setTimeout(() => setIndex((i) => i + 1), HOLD_MS);
+    return () => window.clearTimeout(t);
+  }, [index, paused, total]);
+
+  // Landed on the trailing clone — once the snap finishes, jump back to
+  // the real first card with the transition off so it's invisible.
+  useEffect(() => {
+    if (index !== total) return;
+    const t = window.setTimeout(() => {
+      setAnimate(false);
+      setIndex(0);
+    }, SNAP_MS);
+    return () => window.clearTimeout(t);
+  }, [index, total]);
+
+  // Re-enable the snap transition the frame after a no-transition reset.
+  useEffect(() => {
+    if (animate) return;
+    const r = requestAnimationFrame(() =>
+      requestAnimationFrame(() => setAnimate(true))
+    );
+    return () => cancelAnimationFrame(r);
+  }, [animate]);
+
+  const activeDot = index % total;
+  const slides = [...featuredCaseStudies, featuredCaseStudies[0]];
+
+  return (
+    <div className="fw-mobile">
+      <div className="fw-mobile-viewport" ref={viewportRef}>
+        <div
+          className="fw-mobile-track"
+          data-animate={animate}
+          style={{ transform: `translate3d(-${index * 100}%, 0, 0)` }}
+        >
+          {slides.map((c, i) => {
+            const isClone = i >= total;
+            return (
+              <div className="fw-mobile-slide" key={`${c.slug}-${i}`}>
+                <Link
+                  href="/labs"
+                  className="block h-full"
+                  data-cursor-precise
+                  aria-hidden={isClone ? true : undefined}
+                  tabIndex={isClone ? -1 : undefined}
+                >
+                  <FeaturedSlideCard c={c} iconIndex={i % total} />
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="fw-dots" role="tablist" aria-label="Selected work">
+        {featuredCaseStudies.map((c, i) => (
+          <button
+            key={c.slug}
+            type="button"
+            role="tab"
+            aria-selected={i === activeDot}
+            aria-label={`Show ${c.title}`}
+            data-cursor-precise
+            className={`fw-dot ${i === activeDot ? "is-active" : ""}`}
+            onClick={() => {
+              setAnimate(true);
+              setIndex(i);
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Selected Work — a continuous carousel on desktop, and a still card that
+ * snaps card-to-card on phones. Both layouts are always rendered; CSS
+ * decides which is visible, and each one's timers idle while hidden.
+ */
+export function FeaturedWork() {
+  return (
     <section className="featured-work-section">
       <Container>
         <div className="flex items-end justify-between gap-6 flex-wrap mb-10 lg:mb-12">
@@ -197,88 +414,14 @@ export function FeaturedWork() {
         </div>
       </Container>
 
-      <Container>
-        <div
-          className="fw-viewport"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-          onClickCapture={onClickCapture}
-          onMouseEnter={() => {
-            targetSpeedRef.current = HOVER_SPEED;
-          }}
-          onMouseLeave={() => {
-            targetSpeedRef.current = BASE_SPEED;
-          }}
-        >
-          <div
-            ref={trackRef}
-            className="fw-track"
-            aria-label="Selected case studies"
-          >
-            {slides.map(({ c, i, key }) => (
-              <article key={key} data-fw-card className="featured-slide">
-                <Link
-                  href="/labs"
-                  className="block h-full"
-                  draggable={false}
-                  data-cursor-precise
-                  aria-hidden={key.startsWith("0-") ? undefined : true}
-                  tabIndex={key.startsWith("0-") ? undefined : -1}
-                >
-                  <div className="featured-slide-card">
-                    <div className="featured-slide-media">
-                      {c.slug === CHRONOS_SLUG ? (
-                        <ChronosMockup />
-                      ) : (
-                        <>
-                          <div
-                            aria-hidden
-                            className="absolute inset-0"
-                            style={{
-                              background:
-                                "radial-gradient(80% 60% at 80% 20%, rgba(207, 217, 255, 0.16), transparent 60%)",
-                            }}
-                          />
-                          <span className="featured-slide-glyph">
-                            <AnimatedIcon
-                              name={cardIcons[i % cardIcons.length]}
-                              size="md"
-                            />
-                          </span>
-                          <div className="featured-slide-media-label">
-                            Video / Mockup
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <div className="flex flex-wrap gap-2 text-eyebrow text-white/55">
-                        {c.tags.map((t, ti) => (
-                          <span key={t}>
-                            {t}
-                            {ti < c.tags.length - 1 && (
-                              <span className="ml-2 opacity-50">·</span>
-                            )}
-                          </span>
-                        ))}
-                      </div>
-                      <h3 className="featured-slide-title">{c.title}</h3>
-                      <p className="featured-slide-summary">{c.summary}</p>
-                      <div className="featured-slide-cta">
-                        View Case Study
-                        <span className="featured-slide-cta-arrow">
-                          <ArrowSmall />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </article>
-            ))}
-          </div>
-        </div>
+      {/* Desktop / tablet — continuous carousel */}
+      <Container className="hidden md:block">
+        <FeaturedWorkDesktop />
+      </Container>
+
+      {/* Phones — still card, snaps to the next */}
+      <Container className="md:hidden">
+        <FeaturedWorkMobile />
       </Container>
     </section>
   );

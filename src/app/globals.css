@@ -815,12 +815,6 @@ html.lenis body {
   width: clamp(280px, 36vw, 470px);
 }
 
-@media (max-width: 720px) {
-  .featured-slide {
-    width: 82vw;
-  }
-}
-
 .featured-slide-card {
   position: relative;
   height: 100%;
@@ -947,6 +941,7 @@ html.lenis body {
    Layout switches to stacked on tablet and below.
    ========================================================= */
 .lab-case {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: clamp(24px, 3.2vw, 48px);
@@ -1667,6 +1662,22 @@ html.lenis body {
   }
 }
 
+/* Phones / small tablets — drop the three scrolling background rows of
+   testimonial cards entirely. Behind a near-full-width featured card they
+   only read as cramped, stacked clutter on a small screen. The featured
+   card + category nav then flow on their own as a clean, focused block. */
+@media (max-width: 768px) {
+  .testimonials-rows,
+  .testimonials-mask {
+    display: none;
+  }
+  .featured-testimonial-wrap {
+    position: relative;
+    inset: auto;
+    padding-inline: 0;
+  }
+}
+
 /* =========================================================
    ANIMATED ICONS — one unified, outlined icon language.
    Each glyph carries a subtle, semantic micro-animation.
@@ -2168,5 +2179,242 @@ html.lenis body {
      it already carries the glow at near-zero cost. */
   .hero-aura {
     display: none;
+  }
+}
+
+/* =========================================================
+   HEADING SHEEN — a slow, soft glint that travels left→right
+   across large section headings. Same idea as the hero's
+   ShinyText, expressed in pure CSS so it works with any
+   heading markup. Subtle: the base stays near-white, a
+   brighter band (with a faint accent tint) sweeps through.
+   ========================================================= */
+.heading-sheen {
+  background-image: linear-gradient(
+    100deg,
+    #f4f4f6 0%,
+    #f4f4f6 38%,
+    #ffffff 47%,
+    color-mix(in oklab, var(--color-accent) 62%, #ffffff) 50%,
+    #ffffff 53%,
+    #f4f4f6 62%,
+    #f4f4f6 100%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: heading-sheen 7.5s var(--ease-in-out) infinite;
+}
+
+@keyframes heading-sheen {
+  0% {
+    background-position: 100% 0;
+  }
+  48%,
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heading-sheen {
+    animation: none;
+    background-position: 100% 0;
+  }
+}
+
+/* =========================================================
+   CARD GLOW BORDER — a thin gradient ring masked to a card's
+   edge. One-shot sweep on entrance, rotating glow on hover.
+   Rendered by <GlowBorder /> as a card's first child.
+   ========================================================= */
+@property --glow-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.glow-border {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  opacity: 0;
+  background: conic-gradient(
+    from var(--glow-angle),
+    transparent 0deg,
+    color-mix(in oklab, var(--color-accent) 96%, #ffffff) 26deg,
+    #ffffff 52deg,
+    color-mix(in oklab, var(--color-accent) 96%, #ffffff) 78deg,
+    transparent 134deg,
+    transparent 226deg,
+    color-mix(in oklab, var(--color-accent) 88%, #ffffff) 304deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: drop-shadow(
+    0 0 7px color-mix(in oklab, var(--color-accent) 60%, transparent)
+  );
+  transition: opacity 0.45s var(--ease-out-expo);
+  will-change: opacity;
+}
+
+/* One-shot entrance sweep — plays once as the card scrolls in. */
+.glow-border.is-revealing {
+  animation: glow-enter 1.5s var(--ease-out-expo);
+}
+
+@keyframes glow-enter {
+  0% {
+    opacity: 0;
+    --glow-angle: 0deg;
+  }
+  28% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    --glow-angle: 300deg;
+  }
+}
+
+@keyframes glow-rotate {
+  to {
+    --glow-angle: 360deg;
+  }
+}
+
+/* Hover glow — the ring lights up and rotates while a card is
+   hovered. Higher specificity (:hover) than the entrance rule,
+   so hovering always wins; only the hovered card animates. */
+.card-surface:hover > .glow-border,
+.featured-slide-card:hover > .glow-border,
+.lab-case:hover > .glow-border,
+.testimonial-card:hover > .glow-border,
+.featured-testimonial:hover > .glow-border,
+.stat-card:hover > .glow-border {
+  opacity: 1;
+  animation: glow-rotate 3.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow-border {
+    transition: none;
+  }
+}
+
+/* =========================================================
+   SELECTED WORK — MOBILE SNAP
+   On phones the auto-drifting carousel is replaced by a single
+   still card that snaps to the next every few seconds.
+   ========================================================= */
+.fw-mobile-viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+}
+
+.fw-mobile-track {
+  display: flex;
+  will-change: transform;
+}
+
+.fw-mobile-track[data-animate="true"] {
+  transition: transform 0.52s cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.fw-mobile-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.fw-mobile-slide .featured-slide-card {
+  height: 100%;
+}
+
+.fw-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+}
+
+.fw-dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    width 0.45s var(--ease-out-expo),
+    background-color 0.45s var(--ease-out-expo);
+}
+
+.fw-dot.is-active {
+  width: 24px;
+  background: color-mix(in oklab, var(--color-accent) 78%, #ffffff);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fw-mobile-track[data-animate="true"] {
+    transition: none;
+  }
+}
+
+/* =========================================================
+   INFINITY MARK — animated lemniscate used as a Stats value.
+   A faint full track with a bright "comet" segment orbiting it.
+   ========================================================= */
+.infinity-mark {
+  width: clamp(6.5rem, 13vw, 10rem);
+  height: auto;
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(
+    0 0 14px color-mix(in oklab, var(--color-accent) 36%, transparent)
+  );
+}
+
+.infinity-track {
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+.infinity-comet {
+  stroke: color-mix(in oklab, var(--color-accent) 55%, #ffffff);
+  stroke-dasharray: 40 320;
+  animation: infinity-orbit 4.6s linear infinite;
+}
+
+@keyframes infinity-orbit {
+  to {
+    stroke-dashoffset: -360;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .infinity-comet {
+    animation: none;
+  }
+}
+
+/* Touch devices: hover glow never fires, so keep the ring out of
+   the layer tree. The one-shot entrance sweep still plays. */
+@media (hover: none) and (pointer: coarse) {
+  .glow-border {
+    will-change: auto;
   }
 }

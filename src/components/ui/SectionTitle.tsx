@@ -29,7 +29,9 @@ export function SectionTitle({
       )}
     >
       <Reveal delay={0.05}>
-        <h2 className="text-section text-white tracking-tight">{title}</h2>
+        <h2 className="text-section text-white tracking-tight heading-sheen">
+          {title}
+        </h2>
       </Reveal>
       {intro && (
         <Reveal delay={0.15}>

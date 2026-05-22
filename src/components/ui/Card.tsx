@@ -2,6 +2,7 @@
 
 import { useRef, type ReactNode, type MouseEvent } from "react";
 import { cn } from "@/lib/utils";
+import { GlowBorder } from "@/components/animations/GlowBorder";
 
 type CardProps = {
   children: ReactNode;
@@ -56,6 +57,7 @@ export function Card({
         innerClassName
       )}
     >
+      <GlowBorder />
       {children}
     </div>
   );

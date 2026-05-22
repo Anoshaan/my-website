@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { motion, useInView } from "motion/react";
+import { GlowBorder } from "@/components/animations/GlowBorder";
 
 type Stat =
   | { kind: "count"; countTo: number; suffix: string; label: string }
   | { kind: "symbol"; value: string; label: string }
-  | { kind: "text"; value: string; label: string };
+  | { kind: "infinity"; label: string };
 
 const stats: Stat[] = [
   {
@@ -28,11 +29,42 @@ const stats: Stat[] = [
     label: "AI-driven product experiences",
   },
   {
-    kind: "text",
-    value: "Enterprise UX Systems",
+    kind: "infinity",
     label: "Design thinking that evolves with user behavior",
   },
 ];
+
+/** A lemniscate with a bright "comet" segment orbiting a faint track. */
+function InfinityMark() {
+  const d =
+    "M50 25 C50 8 22 8 22 25 C22 42 50 42 50 25 C50 8 78 8 78 25 C78 42 50 42 50 25 Z";
+  return (
+    <svg
+      className="infinity-mark"
+      viewBox="0 0 100 50"
+      fill="none"
+      role="img"
+      aria-label="Continuously evolving"
+    >
+      <path
+        className="infinity-track"
+        d={d}
+        pathLength={360}
+        strokeWidth={8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        className="infinity-comet"
+        d={d}
+        pathLength={360}
+        strokeWidth={8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 function AnimatedNumber({
   target,
@@ -42,15 +74,16 @@ function AnimatedNumber({
   suffix?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  // No once: true — re-triggers every time it enters viewport
-  const inView = useInView(ref, { amount: 0.3, margin: "0px 0px -5% 0px" });
+  // once: true — counts up a single time, then holds its final value.
+  const inView = useInView(ref, {
+    once: true,
+    amount: 0.3,
+    margin: "0px 0px -5% 0px",
+  });
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (!inView) {
-      setValue(0);
-      return;
-    }
+    if (!inView) return;
     const duration = 1800;
     const start = performance.now();
     let raf = 0;
@@ -82,14 +115,15 @@ export function Stats() {
               key={s.label}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.2, margin: "0px 0px -5% 0px" }}
+              viewport={{ once: true, amount: 0.2, margin: "0px 0px -5% 0px" }}
               transition={{
                 duration: 0.8,
                 delay: i * 0.14,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="flex flex-col items-center justify-center text-center gap-4 py-9 px-5 rounded-2xl border border-white/[0.08] bg-[rgba(20,20,25,0.9)] backdrop-blur-xl hover:border-white/[0.18] hover:bg-[rgba(24,24,30,0.92)] transition-all duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+              className="stat-card relative flex flex-col items-center justify-center text-center gap-4 py-9 px-5 rounded-2xl border border-white/[0.08] bg-[rgba(20,20,25,0.9)] backdrop-blur-xl hover:border-white/[0.18] hover:bg-[rgba(24,24,30,0.92)] transition-all duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
             >
+              <GlowBorder />
               <div className="flex items-center justify-center min-h-[clamp(3.25rem,6vw,5rem)]">
                 {s.kind === "count" ? (
                   <span className="stat-number">
@@ -98,7 +132,7 @@ export function Stats() {
                 ) : s.kind === "symbol" ? (
                   <span className="stat-symbol accent-text">{s.value}</span>
                 ) : (
-                  <span className="stat-text accent-text">{s.value}</span>
+                  <InfinityMark />
                 )}
               </div>
               <span className="stat-label">{s.label}</span>

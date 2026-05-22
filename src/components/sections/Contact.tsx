@@ -7,7 +7,7 @@ export function Contact() {
     <section className="section-pad text-center" id="contact">
       <Container size="narrow" className="flex flex-col items-center gap-6">
         <Reveal delay={0.1}>
-          <h2 className="text-section text-white">
+          <h2 className="text-section text-white heading-sheen">
             Let&apos;s build something meaningful.
           </h2>
         </Reveal>

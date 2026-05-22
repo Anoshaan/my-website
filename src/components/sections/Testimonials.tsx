@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
 import { Marquee } from "@/components/animations/Marquee";
+import { GlowBorder } from "@/components/animations/GlowBorder";
 
 type CategoryName = "UI/UX Leads" | "Devs" | "PMs" | "HR" | "Clients";
 
@@ -258,6 +259,7 @@ function Avatar({
 function MarqueeCard({ t }: { t: Testimonial }) {
   return (
     <article className="testimonial-card">
+      <GlowBorder revealOnce={false} />
       <div className="t-quote-mark" aria-hidden>
         &ldquo;
       </div>
@@ -291,6 +293,7 @@ function FeaturedCard({ index }: { index: number }) {
 
   return (
     <div className="featured-testimonial" tabIndex={0} aria-live="polite">
+      <GlowBorder />
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
@@ -432,7 +435,7 @@ export function Testimonials() {
       <Container>
         <Reveal>
           <div className="flex flex-col items-center text-center gap-5 mb-[clamp(56px,6vw,80px)]">
-            <h2 className="text-section text-white max-w-[26ch]">
+            <h2 className="text-section text-white max-w-[26ch] heading-sheen">
               Trusted by founders, design leads, and engineering teams.
             </h2>
             <p className="text-body text-white/60 max-w-[52ch]">
