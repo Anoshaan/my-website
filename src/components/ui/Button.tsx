@@ -4,14 +4,14 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-type Variant = "primary" | "ghost";
+type Variant = "primary" | "ghost" | "secondary";
 
 type CommonProps = {
   children: ReactNode;
   variant?: Variant;
   className?: string;
   trailingIcon?: ReactNode;
-  /** Show animated rainbow gradient halo under the button. Default true for primary. */
+  /** Show animated rainbow gradient halo under the button. Default true for primary only. */
   rainbow?: boolean;
 };
 
@@ -33,6 +33,7 @@ const base =
 const variants: Record<Variant, string> = {
   primary: "btn-glass",
   ghost: "btn-glass-ghost",
+  secondary: "btn-secondary",
 };
 
 const ArrowIcon = () => (
@@ -65,41 +66,37 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ...rest
     } = props;
 
-    // Rainbow is default-on for primary, default-off for ghost
+    // Rainbow defaults to on for primary only.
     const showRainbow = rainbow ?? variant === "primary";
 
     const icon = trailingIcon !== undefined ? trailingIcon : <ArrowIcon />;
 
-    const finalClassName = cn(
-      "group",
-      base,
-      variants[variant],
-      showRainbow && "rainbow-shadow",
-      className
-    );
+    const inner = cn("group", base, variants[variant], className);
 
-    if ("href" in props && props.href) {
-      return (
+    const node =
+      "href" in props && props.href ? (
         <Link
           href={props.href}
           target={props.target}
-          className={finalClassName}
+          className={inner}
         >
           {children}
           {icon}
         </Link>
+      ) : (
+        <button
+          ref={ref}
+          className={inner}
+          {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
+        >
+          {children}
+          {icon}
+        </button>
       );
-    }
 
-    return (
-      <button
-        ref={ref}
-        className={finalClassName}
-        {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
-      >
-        {children}
-        {icon}
-      </button>
-    );
+    if (showRainbow) {
+      return <span className="rainbow-shadow">{node}</span>;
+    }
+    return node;
   }
 );

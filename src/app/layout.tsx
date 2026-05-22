@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { LenisProvider } from "@/components/animations/LenisProvider";
 import { BackgroundGrid } from "@/components/animations/BackgroundGrid";
 import { CustomCursor } from "@/components/animations/CustomCursor";
+import { ScrollToTop } from "@/components/animations/ScrollToTop";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RootLayout({
         <BackgroundGrid />
         <CustomCursor />
         <LenisProvider>
+          <ScrollToTop />
           <Navigation />
           <main>{children}</main>
           <Footer />

@@ -33,7 +33,6 @@ export default function AboutPage() {
   return (
     <>
       <PageHead
-        eyebrow="About"
         title="Behavioral UX, motion craft,"
         shineWords="and systems."
         intro="I'm Anoshaan — a Lead UX Engineer and Senior Product Experience Designer with 8+ years across enterprise platforms, fintech, AI products, and design systems."

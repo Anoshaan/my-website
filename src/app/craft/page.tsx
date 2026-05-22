@@ -52,7 +52,6 @@ export default function CraftPage() {
   return (
     <>
       <PageHead
-        eyebrow="Craft"
         title="Sketches, studies, and"
         shineWords="experiments."
         intro="Work-in-progress explorations, design fragments, and ideas that haven't made it into shipped products yet."

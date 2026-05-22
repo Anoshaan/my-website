@@ -3,6 +3,12 @@
 import { useEffect, type ReactNode } from "react";
 import Lenis from "lenis";
 
+declare global {
+  interface Window {
+    __lenis?: Lenis;
+  }
+}
+
 export function LenisProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -17,6 +23,7 @@ export function LenisProvider({ children }: { children: ReactNode }) {
       touchMultiplier: 1.4,
       syncTouch: false,
     });
+    window.__lenis = lenis;
 
     let raf = 0;
     const tick = (time: number) => {
@@ -28,6 +35,7 @@ export function LenisProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelAnimationFrame(raf);
       lenis.destroy();
+      if (window.__lenis === lenis) delete window.__lenis;
     };
   }, []);
 

@@ -4,14 +4,23 @@ import { useEffect, useRef } from "react";
 
 /**
  * Interactive canvas grid background.
- * Ported from the original grid.js — pointer pulls the grid,
- * creates a trailing light tail, supports mobile gyro.
  *
- * Performance optimizations vs. original:
- * - DPR capped at 1 (was 2): halves pixel work on retina
+ * Desktop (hover + fine pointer): pointer pulls the grid, trailing light tail,
+ * device-orientation gyro support — preserved exactly as before.
+ *
+ * Touch (hover: none + coarse pointer): pointer/gyro paths are disabled.
+ * Instead the grid responds with:
+ *   - Scroll-reactive ambient drift (parallax-like Y offset based on scroll velocity)
+ *   - Soft local ripples on touchstart (radial gaussian wave displacing grid points)
+ * Grid visibility is also dimmed slightly for a more atmospheric, less distracting feel.
+ *
+ * Performance:
+ * - DPR capped at 1 (halves pixel work on retina)
  * - Idle-pause: stops the RAF loop entirely when nothing moves
  * - visibility-pause: stops when tab is hidden
- * - Reduced trail decay rate for smoother fade with fewer frames
+ * - Touch path skips trail/glow rendering for cheaper frames
+ * - Scroll listener is rAF-throttled and passive
+ * - Respects prefers-reduced-motion
  */
 export function BackgroundGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,6 +38,10 @@ export function BackgroundGrid() {
       return;
     }
 
+    // Touch detection — coarse pointer + no hover signals a tablet/phone.
+    // Hybrid devices with both mouse and touch keep the desktop experience.
+    const isTouch = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+
     const config = {
       cellSize: 48,
       influenceRadius: 125,
@@ -37,6 +50,9 @@ export function BackgroundGrid() {
       dotColor: [160, 160, 165] as const,
       glowColor: [240, 240, 243] as const,
       background: "#050505",
+      // Softer on touch — atmospheric rather than prominent
+      lineAlpha: isTouch ? 0.10 : 0.18,
+      dotAlpha: isTouch ? 0.13 : 0.22,
     };
 
     type Point = {
@@ -55,6 +71,15 @@ export function BackgroundGrid() {
       force: number;
     };
 
+    type Ripple = {
+      cx: number;
+      cy: number;
+      age: number;       // in frames
+      duration: number;  // in frames
+      maxRadius: number; // px the wavefront expands to
+      amplitude: number; // peak displacement in px
+    };
+
     const pointer = {
       x: window.innerWidth / 2,
       y: window.innerHeight / 2,
@@ -71,6 +96,16 @@ export function BackgroundGrid() {
     };
 
     const gyro = { x: 0, y: 0, tx: 0, ty: 0, energy: 0, targetEnergy: 0 };
+
+    // Touch-only state
+    const scrollDrift = {
+      y: 0,
+      ty: 0,
+      lastY: window.scrollY,
+      lastTime: performance.now(),
+    };
+    const ripples: Ripple[] = [];
+    let scrollRafQueued = false;
 
     let trail: TrailPoint[] = [];
     let width = 0;
@@ -117,7 +152,8 @@ export function BackgroundGrid() {
       wake();
     }
 
-    function warpedPoint(point: Point) {
+    // Desktop magnetic-field warp — pointer pulls, gyro drifts.
+    function warpedPointDesktop(point: Point) {
       const dx = pointer.x - point.x;
       const dy = pointer.y - point.y;
       const distance = Math.hypot(dx, dy);
@@ -169,7 +205,55 @@ export function BackgroundGrid() {
       };
     }
 
-    type Warped = ReturnType<typeof warpedPoint>;
+    // Touch warp — radial ripples (gaussian band around expanding wavefront)
+    // plus a subtle global Y drift driven by scroll velocity.
+    function warpedPointTouch(point: Point) {
+      let dispX = 0;
+      let dispY = 0;
+
+      for (let i = 0; i < ripples.length; i++) {
+        const r = ripples[i];
+        const t = r.age / r.duration;
+        if (t >= 1) continue;
+        const dx = point.x - r.cx;
+        const dy = point.y - r.cy;
+        const d = Math.hypot(dx, dy);
+        const waveR = r.maxRadius * t;
+        const bandwidth = 26;
+        const distFromWave = d - waveR;
+        const gauss = Math.exp(
+          -(distFromWave * distFromWave) / (bandwidth * bandwidth)
+        );
+        const fade = (1 - t) * (1 - t);
+        const force = r.amplitude * gauss * fade;
+        if (d > 0.5 && force > 0.02) {
+          dispX += (dx / d) * force;
+          dispY += (dy / d) * force;
+        }
+      }
+
+      // Ambient scroll drift — applied globally as a soft Y nudge
+      dispY += scrollDrift.y;
+
+      point.vx += (dispX - point.ox) * 0.085;
+      point.vy += (dispY - point.oy) * 0.085;
+      point.vx *= 0.84;
+      point.vy *= 0.84;
+      point.ox += point.vx;
+      point.oy += point.vy;
+
+      return {
+        x: point.x + point.ox,
+        y: point.y + point.oy,
+        glow: 0,
+        lean: 0,
+        angle: 0,
+      };
+    }
+
+    const warpedPoint = isTouch ? warpedPointTouch : warpedPointDesktop;
+
+    type Warped = ReturnType<typeof warpedPointDesktop>;
 
     function segmentGlow(a: Warped, b: Warped) {
       const midX = (a.x + b.x) / 2;
@@ -204,10 +288,13 @@ export function BackgroundGrid() {
         ctx!.moveTo(a.x, a.y);
         ctx!.lineTo(b.x, b.y);
         ctx!.lineWidth = 1;
-        ctx!.strokeStyle = rgba(config.lineColor, 0.18);
+        ctx!.strokeStyle = rgba(config.lineColor, config.lineAlpha);
         ctx!.stroke();
-        const glow = segmentGlow(a, b);
-        if (glow > 0.02) strokeSegment(a, b, glow);
+        // Glow segments only run on desktop (pointer.energy stays 0 on touch)
+        if (!isTouch) {
+          const glow = segmentGlow(a, b);
+          if (glow > 0.02) strokeSegment(a, b, glow);
+        }
       }
     }
 
@@ -293,11 +380,18 @@ export function BackgroundGrid() {
       ctx!.shadowBlur = 0;
       ctx!.beginPath();
       ctx!.arc(p.x, p.y, baseRadius, 0, Math.PI * 2);
-      ctx!.fillStyle = rgba(config.dotColor, 0.22);
+      ctx!.fillStyle = rgba(config.dotColor, config.dotAlpha);
       ctx!.fill();
     }
 
     function isAtRest() {
+      if (isTouch) {
+        return (
+          ripples.length === 0 &&
+          Math.abs(scrollDrift.y) < 0.04 &&
+          Math.abs(scrollDrift.ty) < 0.04
+        );
+      }
       return (
         pointer.energy < 0.005 &&
         pointer.targetEnergy < 0.005 &&
@@ -313,21 +407,32 @@ export function BackgroundGrid() {
     function draw() {
       if (!running || pageHidden) return;
 
-      pointer.x += (pointer.tx - pointer.x) * 0.28;
-      pointer.y += (pointer.ty - pointer.y) * 0.28;
-      pointer.energy *= 0.78;
-      pointer.targetEnergy *= 0.9;
-      pointer.energy += (pointer.targetEnergy - pointer.energy) * 0.085;
-      gyro.x += (gyro.tx - gyro.x) * 0.08;
-      gyro.y += (gyro.ty - gyro.y) * 0.08;
-      gyro.targetEnergy *= 0.94;
-      gyro.energy += (gyro.targetEnergy - gyro.energy) * 0.06;
-      pointer.active = pointer.energy > 0.01 || gyro.energy > 0.01;
+      if (isTouch) {
+        // Ease drift toward target, decay target back to zero when scroll stops
+        scrollDrift.y += (scrollDrift.ty - scrollDrift.y) * 0.12;
+        scrollDrift.ty *= 0.86;
+        // Age ripples; drop expired ones
+        for (let i = ripples.length - 1; i >= 0; i--) {
+          ripples[i].age++;
+          if (ripples[i].age >= ripples[i].duration) ripples.splice(i, 1);
+        }
+      } else {
+        pointer.x += (pointer.tx - pointer.x) * 0.28;
+        pointer.y += (pointer.ty - pointer.y) * 0.28;
+        pointer.energy *= 0.78;
+        pointer.targetEnergy *= 0.9;
+        pointer.energy += (pointer.targetEnergy - pointer.energy) * 0.085;
+        gyro.x += (gyro.tx - gyro.x) * 0.08;
+        gyro.y += (gyro.ty - gyro.y) * 0.08;
+        gyro.targetEnergy *= 0.94;
+        gyro.energy += (gyro.targetEnergy - gyro.energy) * 0.06;
+        pointer.active = pointer.energy > 0.01 || gyro.energy > 0.01;
+      }
 
       ctx!.fillStyle = config.background;
       ctx!.fillRect(0, 0, width, height);
 
-      drawTrail();
+      if (!isTouch) drawTrail();
 
       const warped: Warped[][] = points.map((row) => row.map(warpedPoint));
       for (const row of warped) strokeLine(row);
@@ -414,18 +519,66 @@ export function BackgroundGrid() {
       pointer.targetEnergy = 0;
     }
 
+    function onScroll() {
+      if (scrollRafQueued) return;
+      scrollRafQueued = true;
+      requestAnimationFrame(() => {
+        scrollRafQueued = false;
+        const now = performance.now();
+        const y = window.scrollY;
+        const dt = Math.max(now - scrollDrift.lastTime, 16);
+        const dy = y - scrollDrift.lastY;
+        // px per ms → scaled to a clamped drift target.
+        // Sign: drift opposite the scroll direction for a parallax-like feel.
+        const velocity = dy / dt;
+        const target = Math.max(-6, Math.min(6, -velocity * 28));
+        // Take the larger magnitude so quick flicks don't get smoothed away
+        if (Math.abs(target) > Math.abs(scrollDrift.ty)) {
+          scrollDrift.ty = target;
+        }
+        scrollDrift.lastY = y;
+        scrollDrift.lastTime = now;
+        wake();
+      });
+    }
+
+    function onTouchStart(event: TouchEvent) {
+      const rect = canvas!.getBoundingClientRect();
+      // changedTouches gives us just the new touch points for this event
+      for (let i = 0; i < event.changedTouches.length; i++) {
+        const t = event.changedTouches[i];
+        ripples.push({
+          cx: t.clientX - rect.left,
+          cy: t.clientY - rect.top,
+          age: 0,
+          duration: 42,    // ~700ms at 60fps
+          maxRadius: 110,  // small — stays local
+          amplitude: 7,    // gentle peak displacement
+        });
+      }
+      // Cap concurrent ripples — old ones decay quickly anyway
+      while (ripples.length > 6) ripples.shift();
+      wake();
+    }
+
     function onVisibilityChange() {
       pageHidden = document.hidden;
       if (!pageHidden) wake();
     }
 
     window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", setPointer, { passive: true });
-    window.addEventListener("pointerdown", setPointer, { passive: true });
-    window.addEventListener("pointerleave", onLeave);
-    window.addEventListener("deviceorientation", onTilt, { passive: true });
-    window.addEventListener("devicemotion", onMotion, { passive: true });
     document.addEventListener("visibilitychange", onVisibilityChange);
+
+    if (isTouch) {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("touchstart", onTouchStart, { passive: true });
+    } else {
+      window.addEventListener("pointermove", setPointer, { passive: true });
+      window.addEventListener("pointerdown", setPointer, { passive: true });
+      window.addEventListener("pointerleave", onLeave);
+      window.addEventListener("deviceorientation", onTilt, { passive: true });
+      window.addEventListener("devicemotion", onMotion, { passive: true });
+    }
 
     resize();
     raf = requestAnimationFrame(draw);
@@ -434,12 +587,17 @@ export function BackgroundGrid() {
       cancelAnimationFrame(raf);
       running = false;
       window.removeEventListener("resize", resize);
-      window.removeEventListener("pointermove", setPointer);
-      window.removeEventListener("pointerdown", setPointer);
-      window.removeEventListener("pointerleave", onLeave);
-      window.removeEventListener("deviceorientation", onTilt);
-      window.removeEventListener("devicemotion", onMotion);
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      if (isTouch) {
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("touchstart", onTouchStart);
+      } else {
+        window.removeEventListener("pointermove", setPointer);
+        window.removeEventListener("pointerdown", setPointer);
+        window.removeEventListener("pointerleave", onLeave);
+        window.removeEventListener("deviceorientation", onTilt);
+        window.removeEventListener("devicemotion", onMotion);
+      }
     };
   }, []);
 

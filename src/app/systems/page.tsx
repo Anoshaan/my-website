@@ -31,24 +31,10 @@ const beliefs = [
   },
 ];
 
-const toolkit = [
-  "Figma",
-  "Tokens Studio",
-  "Storybook",
-  "TypeScript",
-  "React",
-  "Next.js",
-  "Tailwind",
-  "Framer Motion",
-  "Linear",
-  "Notion",
-];
-
 export default function SystemsPage() {
   return (
     <>
       <PageHead
-        eyebrow="Systems"
         title="Building scalable design"
         shineWords="foundations."
         intro="Design systems, interaction patterns, and product methodology that supports growth without sacrificing consistency."
@@ -57,7 +43,7 @@ export default function SystemsPage() {
       <section className="pb-24">
         <Container>
           <SectionTitle title="Operating beliefs" />
-          <StaggerContainer className="grid gap-6 mt-12 md:grid-cols-2 lg:grid-cols-3">
+          <StaggerContainer className="grid gap-6 mt-14 md:grid-cols-2 lg:grid-cols-3">
             {beliefs.map((b) => (
               <StaggerItem key={b.title}>
                 <Card>
@@ -67,22 +53,6 @@ export default function SystemsPage() {
               </StaggerItem>
             ))}
           </StaggerContainer>
-        </Container>
-      </section>
-
-      <section className="section-pad border-t border-white/[0.06]">
-        <Container>
-          <SectionTitle eyebrow="Toolkit" title="What I work with" />
-          <div className="flex flex-wrap gap-2 mt-10">
-            {toolkit.map((t) => (
-              <span
-                key={t}
-                className="inline-flex items-center px-4 py-2 rounded-full border border-white/[0.08] bg-white/[0.02] text-supporting text-white/65 hover:text-white hover:border-white/[0.14] hover:bg-white/[0.05] transition-all duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
         </Container>
       </section>
     </>

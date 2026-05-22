@@ -56,14 +56,20 @@ export function Navigation() {
             <Link
               key={link.href}
               href={link.href}
+              data-cursor-precise
               className={cn(
-                "relative inline-flex items-center justify-center px-3 sm:px-4 py-1.5 rounded-full text-sm font-medium tracking-tight transition-colors duration-[250ms] min-h-[40px] min-w-[44px]",
+                "nav-link group relative inline-flex items-center justify-center px-3 sm:px-4 py-1.5 rounded-full text-sm font-medium tracking-tight transition-colors duration-[250ms] min-h-[40px] min-w-[44px]",
                 active
                   ? "text-white"
                   : "text-white/55 hover:text-white"
               )}
             >
-              {link.label}
+              <span className="nav-rollover">
+                <span className="nav-rollover__top">{link.label}</span>
+                <span className="nav-rollover__bottom" aria-hidden="true">
+                  {link.label}
+                </span>
+              </span>
               {active && (
                 <span
                   aria-hidden

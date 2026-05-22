@@ -67,26 +67,6 @@ export function Intro() {
           adaptive design systems, and creating products that balance
           usability, performance, and emotional clarity.
         </motion.p>
-
-        {/* Subtle scroll hint */}
-        <motion.div
-          aria-hidden
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.6, delay: subBase + 1, ease: easeOutExpo }}
-          className="mt-6 flex flex-col items-center gap-2 text-eyebrow text-white/30"
-        >
-          <span>Scroll</span>
-          <motion.span
-            animate={{ y: [0, 6, 0] }}
-            transition={{
-              duration: 1.8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="block w-px h-6 bg-white/30"
-          />
-        </motion.div>
       </Container>
     </section>
   );

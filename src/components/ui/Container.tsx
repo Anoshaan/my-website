@@ -5,16 +5,20 @@ type ContainerProps = HTMLAttributes<HTMLDivElement> & {
   children: ReactNode;
   /**
    * Container width preset.
-   * - narrow: text-heavy sections (~1080px max, smaller on ultrawide)
-   * - default: main content (~2100px on ultrawide)
-   * - wide: edge-to-edge content (~2400px on ultrawide)
+   * - narrow: text-heavy sections
+   * - default: main content
+   * - wide: edge-to-edge content
    */
   size?: "default" | "narrow" | "wide";
 };
 
 /**
  * Container — fluid max-width that scales to use ultrawide / 2K / 4K space.
- * Uses CSS clamp() so the layout breathes at every viewport.
+ *
+ * Uses min() (not clamp with high mins) so it NEVER overflows narrower screens.
+ * - default: 92vw, capped at 2100px on huge screens
+ * - narrow: 72vw, capped at 1100px
+ * - wide:   95vw, capped at 2400px
  */
 export function Container({
   children,
@@ -23,9 +27,9 @@ export function Container({
   ...rest
 }: ContainerProps) {
   const widthByPreset: Record<NonNullable<ContainerProps["size"]>, string> = {
-    narrow: "clamp(720px, 70vw, 1100px)",
-    default: "clamp(1100px, 92vw, 2100px)",
-    wide: "clamp(1200px, 95vw, 2400px)",
+    narrow: "min(1100px, 72vw)",
+    default: "min(2100px, 92vw)",
+    wide: "min(2400px, 95vw)",
   };
 
   return (

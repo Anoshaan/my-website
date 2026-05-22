@@ -1,71 +1,77 @@
+"use client";
+
 import Link from "next/link";
-import { Container } from "@/components/ui/Container";
+import { useCallback } from "react";
 
+const links = [
+  { label: "Labs", href: "/labs" },
+  { label: "Systems", href: "/systems" },
+  { label: "Craft", href: "/craft" },
+  { label: "About", href: "/about" },
+];
+
+/**
+ * Inline page footer — appears at the natural end of each page, not pinned
+ * to the viewport. The pill nav keeps the same visual styling as before;
+ * the wrapper just sits in normal document flow.
+ */
 export function Footer() {
+  const goToTop = useCallback(() => {
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
-    <footer className="border-t border-white/[0.08] mt-24">
-      <Container>
-        <div className="py-12 md:py-16 grid gap-8 md:grid-cols-3 md:items-start">
-          <div className="flex flex-col gap-2">
-            <span className="text-white font-semibold tracking-tight">
-              Anoshaan
-            </span>
-            <span className="text-supporting text-white/55 max-w-[36ch]">
-              Designing scalable human-centered experiences through UX, systems
-              thinking, motion, and emerging technology.
-            </span>
-          </div>
+    <footer
+      aria-label="Site footer"
+      className="relative z-10 flex items-center justify-center pt-16 pb-10 sm:pt-24 sm:pb-14 px-3"
+    >
+      <nav
+        aria-label="Footer"
+        className="flex items-center gap-3 sm:gap-5 px-3 sm:px-5 py-2 rounded-full bg-black/55 backdrop-blur-[24px] saturate-[140%] border border-white/[0.10] shadow-[0_10px_36px_rgba(0,0,0,0.45)] max-w-[calc(100vw-16px)]"
+      >
+        <span className="hidden md:inline-flex items-center text-sm font-medium tracking-tight text-white/85 whitespace-nowrap px-2">
+          Anoshaan&nbsp;—&nbsp;Product Designer
+        </span>
 
-          <nav
-            aria-label="Footer"
-            className="flex flex-wrap gap-x-6 gap-y-3 text-supporting text-white/65 md:justify-center"
-          >
-            <Link href="/labs" className="hover:text-white transition-colors duration-[250ms]">
-              Labs
-            </Link>
-            <Link href="/systems" className="hover:text-white transition-colors duration-[250ms]">
-              Systems
-            </Link>
-            <Link href="/craft" className="hover:text-white transition-colors duration-[250ms]">
-              Craft
-            </Link>
-            <Link href="/about" className="hover:text-white transition-colors duration-[250ms]">
-              About
-            </Link>
-          </nav>
+        <span className="hidden md:inline-block h-3.5 w-px bg-white/[0.14]" aria-hidden />
 
-          <div className="flex md:justify-end items-center gap-3">
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="text-supporting text-white/55 hover:text-white transition-colors duration-[250ms] inline-flex items-center min-h-[44px] px-3"
+        <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="footer-link group inline-flex items-center justify-center px-2.5 sm:px-3 py-1.5 rounded-full text-sm font-medium tracking-tight text-white/60 hover:text-white transition-colors duration-[250ms] min-h-[36px] whitespace-nowrap"
+              data-cursor-precise
             >
-              X / Twitter
-            </a>
-          </div>
+              {link.label}
+            </Link>
+          ))}
         </div>
 
-        <div className="py-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-supporting text-white/40">
-          <span>© {new Date().getFullYear()} Anoshaan. All rights reserved.</span>
-          <a
-            href="#top"
-            className="hover:text-white transition-colors duration-[250ms] inline-flex items-center gap-2"
-          >
-            Back to top
-            <svg viewBox="0 0 14 14" width="12" height="12" aria-hidden="true">
-              <path
-                d="M7 11V3M3 7L7 3L11 7"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </a>
-        </div>
-      </Container>
+        <span className="hidden sm:inline-block h-3.5 w-px bg-white/[0.14]" aria-hidden />
+
+        <button
+          type="button"
+          onClick={goToTop}
+          aria-label="Scroll to top"
+          data-cursor-precise
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium tracking-tight text-white/60 hover:text-white transition-colors duration-[250ms] min-h-[36px] whitespace-nowrap"
+        >
+          <span className="hidden sm:inline">Go to Top</span>
+          <span className="sm:hidden">Top</span>
+          <svg viewBox="0 0 14 14" width="11" height="11" aria-hidden="true">
+            <path
+              d="M7 11V3M3 7L7 3L11 7"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </nav>
     </footer>
   );
 }

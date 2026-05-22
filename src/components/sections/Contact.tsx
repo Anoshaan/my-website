@@ -6,9 +6,6 @@ export function Contact() {
   return (
     <section className="section-pad text-center" id="contact">
       <Container size="narrow" className="flex flex-col items-center gap-6">
-        <Reveal>
-          <span className="text-eyebrow text-white/55">Contact</span>
-        </Reveal>
         <Reveal delay={0.1}>
           <h2 className="text-section text-white">
             Let&apos;s build something meaningful.

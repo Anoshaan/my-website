@@ -4,7 +4,12 @@ import { useEffect, useRef } from "react";
 
 /**
  * Custom cursor — dot + ring with mix-blend-mode: difference.
- * Ported from the original app.js cursor logic.
+ *
+ * - `.is-hover` is added when entering generic interactive elements (a, button, etc.)
+ *   and expands the ring slightly.
+ * - `.is-precise` is added for navigation links and elements marked with
+ *   `data-cursor-precise`. The ring fades out completely, leaving only the
+ *   center dot — a minimal, precise cursor for clickable nav tabs.
  */
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -57,22 +62,36 @@ export function CustomCursor() {
     window.addEventListener("pointerup", onUp);
     raf = requestAnimationFrame(tick);
 
-    // Hover detection on interactive elements
     const onEnter = () => cursor.classList.add("is-hover");
     const onLeave = () => cursor.classList.remove("is-hover");
+    const onPreciseEnter = () => cursor.classList.add("is-precise");
+    const onPreciseLeave = () => cursor.classList.remove("is-precise");
 
     const interactiveSelectors =
       "a, button, [data-magnetic], [data-magnetic-soft], [data-tilt], [data-cursor-hover]";
+    const preciseSelectors = "header nav a, [data-cursor-precise]";
+
+    // Track attached elements so the MutationObserver doesn't stack listeners
+    // on the same node when subtrees update.
+    const attached = new WeakSet<Element>();
+    const preciseAttached = new WeakSet<Element>();
 
     const attach = () => {
       document.querySelectorAll(interactiveSelectors).forEach((el) => {
+        if (attached.has(el)) return;
+        attached.add(el);
         el.addEventListener("pointerenter", onEnter);
         el.addEventListener("pointerleave", onLeave);
+      });
+      document.querySelectorAll(preciseSelectors).forEach((el) => {
+        if (preciseAttached.has(el)) return;
+        preciseAttached.add(el);
+        el.addEventListener("pointerenter", onPreciseEnter);
+        el.addEventListener("pointerleave", onPreciseLeave);
       });
     };
 
     attach();
-    // Re-attach when new elements mount (route changes etc.)
     const observer = new MutationObserver(() => attach());
     observer.observe(document.body, { childList: true, subtree: true });
 
@@ -85,6 +104,10 @@ export function CustomCursor() {
       document.querySelectorAll(interactiveSelectors).forEach((el) => {
         el.removeEventListener("pointerenter", onEnter);
         el.removeEventListener("pointerleave", onLeave);
+      });
+      document.querySelectorAll(preciseSelectors).forEach((el) => {
+        el.removeEventListener("pointerenter", onPreciseEnter);
+        el.removeEventListener("pointerleave", onPreciseLeave);
       });
     };
   }, []);
