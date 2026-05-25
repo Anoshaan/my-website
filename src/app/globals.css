@@ -2227,6 +2227,66 @@ html.lenis body {
   }
 }
 
+/* ---- Career card logo ----
+   Company logo sits where the highlight pill used to live. Bordered
+   glass cell mirrors the .tag chrome so the logos integrate with the
+   existing card language. Logos render desaturated by default and
+   sharpen on hover, in line with the rest of the page's restrained
+   motion vocabulary. */
+.career-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+.career-logo img {
+  display: block;
+  height: 20px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  filter: brightness(1.05) contrast(1.05);
+  opacity: 0.9;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+.career-logo:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+}
+.career-logo:hover img {
+  opacity: 1;
+}
+
+/* ---- Section 4 — interest card image thumbnail ----
+   Replaces the prior animated-icon tile with a real photo of the
+   physical project. Aspect-ratio is locked so all three cards align
+   to the same baseline regardless of body length, and the parent
+   StaggerItem stretches each Card to equal heights. */
+.interest-thumb {
+  position: relative;
+  aspect-ratio: 16 / 11;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0b0b11;
+  isolation: isolate;
+}
+.interest-thumb img {
+  transition: transform 0.6s var(--ease-out-expo);
+}
+.interest-card:hover .interest-thumb img {
+  transform: scale(1.03);
+}
+
 /* ---- Section 4 — experiment thumbnail ---- */
 .about-exp-thumb {
   position: relative;
@@ -2299,67 +2359,91 @@ html.lenis body {
   }
 }
 
-/* ---- Section 6 — personal interests row ----
-   A quiet horizontal cell: scrambled label on the left, a one-line
-   note on the right. Uses the capsule micro-language but rendered
-   wider and flatter so the section reads as restrained, not playful. */
-.interest-row {
+/* ---- Section 6 — beyond the work / sport tiles ----
+   Three icon tiles laid out horizontally on the right side of the
+   section. Bordered glass cells in the same family as .hw-tile,
+   slimmer and centred so the row reads as a single restrained
+   horizontal band. Icons sit above the title with a subtle accent
+   tint and lift on hover. */
+.sport-tile {
+  position: relative;
   display: flex;
-  align-items: baseline;
-  gap: clamp(16px, 2vw, 28px);
-  padding: 14px 22px;
-  border-radius: 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  height: 100%;
+  padding: clamp(20px, 2vw, 26px);
+  border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(255, 255, 255, 0.018);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
-  backdrop-filter: blur(12px) saturate(140%);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
-  min-width: min(420px, 100%);
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.012)
+    ),
+    rgba(13, 13, 18, 0.55);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   transition:
     border-color 0.4s var(--ease-out-expo),
     background 0.4s ease,
-    transform 0.4s var(--ease-out-expo);
-  animation: about-float-sm 6.5s var(--ease-in-out) infinite;
-  will-change: transform;
+    transform 0.5s var(--ease-out-expo);
+  isolation: isolate;
 }
-.interest-row:hover {
+.sport-tile:hover {
   border-color: rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.05);
-  transform: translateY(-2px);
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    ),
+    rgba(17, 17, 22, 0.7);
+  transform: translateY(-3px);
 }
-.interest-row-label {
+.sport-tile:hover .sport-tile-icon {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.045);
+}
+.sport-tile-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: color-mix(in oklab, var(--color-accent) 60%, #ffffff);
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.sport-tile-title {
   font-family: var(--font-sans);
-  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem);
+  font-size: clamp(1.02rem, 0.95rem + 0.3vw, 1.18rem);
   font-weight: 500;
   letter-spacing: -0.015em;
   color: #ffffff;
-  flex-shrink: 0;
-  min-width: 9ch;
+  line-height: 1.3;
 }
-.interest-row-note {
+.sport-tile-label {
   font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  letter-spacing: 0.06em;
   color: rgba(255, 255, 255, 0.55);
-  line-height: 1.55;
-}
-
-@media (max-width: 1024px) {
-  .interest-row {
-    animation: none;
-    will-change: auto;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .interest-row {
-    animation: none;
-  }
+  text-transform: uppercase;
 }
 @media (hover: none) and (pointer: coarse) {
-  .interest-row {
+  .sport-tile {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    background: #111116;
+    background:
+      linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.012)
+      ),
+      #111116;
   }
 }
 

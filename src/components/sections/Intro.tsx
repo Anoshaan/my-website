@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { TypingText } from "@/components/animations/TypingText";
 import { ScrambledText } from "@/components/animations/ScrambledText";
-import { motion, useInView } from "motion/react";
+import { motion } from "motion/react";
 
 const easeOutExpo = [0.22, 1, 0.36, 1] as const;
 
@@ -12,8 +12,8 @@ const easeOutExpo = [0.22, 1, 0.36, 1] as const;
 // bubble backgrounds). Wraps across multiple rows on narrower
 // columns; never feels cluttered because the items have no chrome.
 const expertise = [
-  "Lead UX Engineer",
-  "Enterprise Product Designer",
+  "Product Systems Design",
+  "Associate UI/UX Lead",
   "Design Systems Architecture",
   "AI Experience Systems",
   "Motion & Interaction Design",
@@ -34,31 +34,21 @@ const expertise = [
  *    plays as an intentional, cinematic moment — not on page load.
  */
 export function Intro() {
-  const ref = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
+  // Previously gated on `useInView` so the section + typing waited
+  // for the heading to reach the viewport centre. Under Lenis ×
+  // motion v11 that observer can fail to deliver, leaving the entire
+  // section invisible. Trigger on mount instead; the typing still
+  // plays after a short delay so it reads as deliberate.
+  const sectionInView = true;
+  const [typingInView, setTypingInView] = useState(false);
 
-  // Section reveal — early, so columns/copy/capsules are visible by
-  // the time the user is reading. `once` so it never re-triggers on
-  // scroll-up.
-  const sectionInView = useInView(ref, {
-    once: true,
-    amount: 0,
-    margin: "0px 0px 14% 0px",
-  });
-
-  // Typing reveal — fires only when the heading itself is around the
-  // vertical centre of the viewport. Symmetric negative top/bottom
-  // margins shrink the trigger band to the middle ~40% of the screen,
-  // so the typing plays as a deliberate moment, not on page load.
-  const typingInView = useInView(headingRef, {
-    once: true,
-    amount: 0.5,
-    margin: "-30% 0px -30% 0px",
-  });
+  useEffect(() => {
+    const id = window.setTimeout(() => setTypingInView(true), 280);
+    return () => window.clearTimeout(id);
+  }, []);
 
   return (
     <section
-      ref={ref}
       className="relative overflow-hidden pt-[clamp(32px,5vw,72px)] pb-[clamp(76px,9vw,128px)]"
     >
       <div
@@ -75,7 +65,6 @@ export function Intro() {
           {/* Left — copy, vertically centred against the video on desktop */}
           <div className="flex flex-col justify-center">
             <motion.h2
-              ref={headingRef}
               className="text-section text-white relative"
               // The heading itself is always visible (so the section
               // doesn't look broken until the user scrolls to it) —
@@ -109,7 +98,7 @@ export function Intro() {
               }
               transition={{ duration: 0.7, delay: 0.15, ease: easeOutExpo }}
             >
-              Lead UX Engineer &amp; Senior Product Experience Designer
+              Product Systems Designer • Associate UI/UX Lead
             </motion.p>
 
             <motion.p

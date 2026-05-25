@@ -2,30 +2,19 @@
 
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
-import { ScrambledText } from "@/components/animations/ScrambledText";
+import { Button } from "@/components/ui/Button";
 
 /**
  * About — Section 2. "Beyond Interfaces" — a calm, reflective
  * introduction. The looping intro video anchors the left column;
  * the right column carries a more personal paragraph block and a
- * row of capsules describing how I think and work.
+ * career snapshot CTA that downloads the resume PDF.
  */
 
 const paragraphs = [
   "I think in systems. Most of what I build — interfaces, motion, the small behaviors that make a product feel intentional — comes from looking at the whole structure, not just the surface.",
   "My interest sits where design meets logic: how people behave inside an experience, how interactions are choreographed, and how a system holds together as it scales. I'm drawn to interfaces that feel quietly intelligent rather than loud.",
   "I work across product, motion, and emerging technology — and I keep experimenting outside the screen so the work on it stays sharp.",
-];
-
-const pills = [
-  "Systems Thinking",
-  "Behavioral UX",
-  "Motion Systems",
-  "Interaction Design",
-  "Scalable Experiences",
-  "AI-Assisted Workflows",
-  "Frontend Fluency",
-  "Future Interfaces",
 ];
 
 export function AboutIntro() {
@@ -77,22 +66,24 @@ export function AboutIntro() {
             </div>
 
             <Reveal delay={0.26}>
-              <div className="mt-5 pt-5 border-t border-white/[0.07]">
-                <span className="text-eyebrow text-white/55 eyebrow-strong">
-                  How I think
-                </span>
-                <div className="mt-4 flex flex-wrap gap-2.5">
-                  {pills.map((pill, i) => (
-                    <span
-                      key={pill}
-                      className="about-float-sm capsule capsule-scramble"
-                      style={{ animationDelay: `${(i % 4) * 0.5 + 0.15}s` }}
-                    >
-                      <ScrambledText radius={90} duration={900} speed={36}>
-                        {pill}
-                      </ScrambledText>
-                    </span>
-                  ))}
+              <div className="mt-6 pt-6 border-t border-white/[0.07]">
+                <h3 className="text-card-title text-white">
+                  View My Career Snapshot
+                </h3>
+                <p className="text-body text-white/60 mt-3 max-w-[54ch]">
+                  A complete overview of my experience, product thinking, UI/UX
+                  leadership, systems design, and creative direction.
+                </p>
+                <div className="mt-6">
+                  <Button
+                    href="/resume/Anoshaan-Resume.pdf"
+                    variant="secondary"
+                    rainbow={false}
+                    trailingIcon={null}
+                    download
+                  >
+                    Download Resume
+                  </Button>
                 </div>
               </div>
             </Reveal>

@@ -1,0 +1,252 @@
+/* =========================================================
+   ScrollingImage — renders a real screenshot inside the Labs
+   media slot with a slow vertical pan. Two orientations:
+
+   - web    : image fills the frame width inside a faux browser
+              shell. Vertical pan when the image is taller than
+              the visible area.
+   - mobile : image renders inside a centred phone frame in the
+              slot. Vertical pan when the image is taller than
+              the phone screen.
+
+   All motion is pure CSS. An IntersectionObserver on the host
+   adds `.is-idle` while off-screen, which pauses animations.
+   ========================================================= */
+
+.scroll-mock {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  --loop: 7s;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-mock.is-idle * {
+  animation-play-state: paused !important;
+}
+
+/* Cursor overlay (web) — traveling between two points, clicking. */
+@keyframes scroll-mock-cursor-move {
+  0%   { transform: translate(var(--cx1, 22%), var(--cy1, 70%)); }
+  40%  { transform: translate(var(--cx1, 22%), var(--cy1, 70%)); }
+  55%  { transform: translate(var(--cx2, 72%), var(--cy2, 32%)); }
+  85%  { transform: translate(var(--cx2, 72%), var(--cy2, 32%)); }
+  100% { transform: translate(var(--cx1, 22%), var(--cy1, 70%)); }
+}
+@keyframes scroll-mock-click {
+  0%, 50% { transform: scale(0); opacity: 0; }
+  55%     { transform: scale(0.25); opacity: 0.9; }
+  78%     { transform: scale(2.2); opacity: 0; }
+  100%    { transform: scale(2.2); opacity: 0; }
+}
+
+/* Touch ripple (mobile) — taps a fixed point. */
+@keyframes scroll-mock-touch {
+  0%, 55% { transform: translate(var(--tx, 50%), var(--ty, 60%)) scale(0); opacity: 0; }
+  62%     { transform: translate(var(--tx, 50%), var(--ty, 60%)) scale(0.4); opacity: 0.9; }
+  90%, 100% { transform: translate(var(--tx, 50%), var(--ty, 60%)) scale(2.6); opacity: 0; }
+}
+
+/* =========================================================
+   WEB orientation — faux browser shell
+   ========================================================= */
+.scroll-mock--web {
+  display: grid;
+  place-items: center;
+  padding: clamp(14px, 2vw, 22px);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(207, 217, 255, 0.08), transparent 60%),
+    linear-gradient(160deg, #0e1118 0%, #06080d 100%);
+}
+
+.scroll-mock-browser {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0a0c12;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll-mock-browser-bar {
+  flex: 0 0 auto;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.scroll-mock-browser-bar span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+.scroll-mock-browser-bar span:nth-child(1) { background: #ec6a5e; }
+.scroll-mock-browser-bar span:nth-child(2) { background: #f3bd4f; }
+.scroll-mock-browser-bar span:nth-child(3) { background: #61c554; }
+
+.scroll-mock-browser-screen {
+  flex: 1 1 auto;
+  position: relative;
+  overflow: hidden;
+  background: #06080d;
+}
+
+/* Image pinned at the top of the browser screen. No pan — the
+   cursor overlay carries the interactivity instead. */
+.scroll-mock-img--web {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* =========================================================
+   MOBILE orientation — centred phone frame
+   ========================================================= */
+.scroll-mock--mobile {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(60% 70% at 50% 30%, rgba(138, 166, 255, 0.10), transparent 65%),
+    linear-gradient(160deg, #0e1118 0%, #06080d 100%);
+}
+
+.scroll-mock-stage {
+  position: relative;
+  height: 86%;
+  aspect-ratio: 9 / 19.5;
+  max-width: 78%;
+  display: grid;
+  place-items: center;
+}
+
+.scroll-mock-phone {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 30px;
+  background: linear-gradient(155deg, #1a1d24 0%, #0a0b10 100%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  padding: 8px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 30px 70px -10px rgba(0, 0, 0, 0.7);
+}
+
+.scroll-mock-phone-notch {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30%;
+  height: 14px;
+  border-radius: 999px;
+  background: #050608;
+  z-index: 2;
+}
+
+.scroll-mock-phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #000;
+}
+
+.scroll-mock-img--mobile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* On narrow viewports, give the phone a touch more room. */
+@media (max-width: 900px) {
+  .scroll-mock-stage {
+    height: 90%;
+    max-width: 64%;
+  }
+  .scroll-mock--web {
+    padding: 10px;
+  }
+}
+
+/* ---------- cursor overlay (web) ---------- */
+.scroll-mock-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  z-index: 6;
+  pointer-events: none;
+  animation: scroll-mock-cursor-move var(--loop, 7s) var(--ease-out) infinite;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.55));
+}
+.scroll-mock-cursor svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.scroll-mock-click-host {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  pointer-events: none;
+  animation: scroll-mock-cursor-move var(--loop, 7s) var(--ease-out) infinite;
+}
+.scroll-mock-click {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(207, 217, 255, 0.9);
+  animation: scroll-mock-click var(--loop, 7s) var(--ease-out) infinite;
+}
+
+/* ---------- touch overlay (mobile) ---------- */
+.scroll-mock-tap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.16);
+  z-index: 6;
+  pointer-events: none;
+  animation: scroll-mock-touch var(--loop, 7s) var(--ease-out) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-mock-cursor,
+  .scroll-mock-click-host,
+  .scroll-mock-click,
+  .scroll-mock-tap {
+    animation: none !important;
+    transform: none !important;
+    opacity: 0 !important;
+  }
+}

@@ -1,3 +1,7 @@
+export type CaseStudyMedia =
+  | { kind: "image"; src: string; orientation: "web" | "mobile" }
+  | { kind: "mockup" };
+
 export type CaseStudy = {
   slug: string;
   title: string;
@@ -12,6 +16,10 @@ export type CaseStudy = {
   focusAreas: string[];
   /** Recommended featured-on-landing flag. */
   featured?: boolean;
+  /** Media renderer for the Labs page card. When `mockup`, the Labs page
+   *  looks up a bespoke component keyed by slug; when `image`, the image
+   *  is rendered with a slow vertical pan inside the frame. */
+  media?: CaseStudyMedia;
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -60,6 +68,11 @@ export const caseStudies: CaseStudy[] = [
       "System Scalability",
     ],
     featured: true,
+    media: {
+      kind: "image",
+      src: "/case-studies/predictive-analytics-intelligence.png",
+      orientation: "web",
+    },
   },
   {
     slug: "enterprise-software-website",
@@ -105,6 +118,11 @@ export const caseStudies: CaseStudy[] = [
       "Convenience Design",
     ],
     featured: true,
+    media: {
+      kind: "image",
+      src: "/case-studies/smart-food-court-ordering.png",
+      orientation: "mobile",
+    },
   },
   {
     slug: "cannabis-commerce-wellness",

@@ -1,18 +1,18 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useScroll } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Reveal } from "@/components/animations/Reveal";
 import { GlowBorder } from "@/components/animations/GlowBorder";
-import { ScrambledText } from "@/components/animations/ScrambledText";
 
 /**
  * About — Section 3. Path through experience.
  * Two roles only: Aeturnum and Elegant Media. Spacious, premium,
  * easy to scan. Each card uses three concise high-impact points
- * instead of a long descriptive paragraph.
+ * and shows the employer's logo in the tag area.
  */
 
 type Role = {
@@ -20,7 +20,7 @@ type Role = {
   company: string;
   role: string;
   period: string;
-  highlight: string;
+  logo: { src: string; alt: string; width: number; height: number };
   points: string[];
 };
 
@@ -28,9 +28,14 @@ const roles: Role[] = [
   {
     badge: "AE",
     company: "Aeturnum",
-    role: "Lead UX Engineer",
-    period: "2022 — Now",
-    highlight: "Enterprise product systems",
+    role: "Associate UI/UX Lead",
+    period: "October 2021 — Present",
+    logo: {
+      src: "/logos/aeturnum.png",
+      alt: "Aeturnum",
+      width: 132,
+      height: 24,
+    },
     points: [
       "Lead UX and motion direction across enterprise platforms — design systems, AI-driven workflows, and large-scale product surfaces.",
       "Build scalable interaction frameworks and motion languages that hold up across multiple products and engineering teams.",
@@ -40,9 +45,14 @@ const roles: Role[] = [
   {
     badge: "EM",
     company: "Elegant Media",
-    role: "Senior Product Designer",
-    period: "2017 — 2022",
-    highlight: "200+ digital products",
+    role: "Senior UI/UX Engineer",
+    period: "September 2018 — October 2021",
+    logo: {
+      src: "/logos/elegant-media.png",
+      alt: "Elegant Media",
+      width: 148,
+      height: 24,
+    },
     points: [
       "Designed end-to-end product experiences for clients across fintech, healthcare, logistics, and government platforms.",
       "Established interaction and visual standards that carried consistency across a high-volume agency portfolio.",
@@ -62,8 +72,8 @@ export function CareerTimeline() {
     <section className="section-pad border-t border-white/[0.06]">
       <Container>
         <SectionTitle
-          title="A path through enterprise UX."
-          intro="Eight years across enterprise product, design systems, and motion craft — moving from a high-volume digital studio into deep, long-form product systems work."
+          title="A path through Enterprise User Experience."
+          intro="Eight years across product systems design, design systems, and motion craft — moving from a high-volume digital studio into deep, long-form product systems work."
         />
 
         <div ref={ref} className="about-timeline mt-14 lg:mt-16 max-w-[860px]">
@@ -84,14 +94,18 @@ export function CareerTimeline() {
 
               <div className="card-surface card-lift flex flex-col gap-5 p-7 md:p-8">
                 <GlowBorder />
-                <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-4">
                   <span className="text-eyebrow text-white/50">
                     {r.period}
                   </span>
-                  <span className="lab-case-pill is-accent">
-                    <ScrambledText radius={70} duration={750} speed={40}>
-                      {r.highlight}
-                    </ScrambledText>
+                  <span className="career-logo">
+                    <Image
+                      src={r.logo.src}
+                      alt={r.logo.alt}
+                      width={r.logo.width}
+                      height={r.logo.height}
+                      sizes="160px"
+                    />
                   </span>
                 </div>
 

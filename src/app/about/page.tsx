@@ -4,7 +4,6 @@ import { CareerTimeline } from "@/components/sections/about/CareerTimeline";
 import { Experiments } from "@/components/sections/about/Experiments";
 import { HardwareSystems } from "@/components/sections/about/HardwareSystems";
 import { PersonalInterests } from "@/components/sections/about/PersonalInterests";
-import { SelectedImpact } from "@/components/sections/about/SelectedImpact";
 import { AboutCTA } from "@/components/sections/about/AboutCTA";
 
 export default function AboutPage() {
@@ -21,7 +20,6 @@ export default function AboutPage() {
       <Experiments />
       <HardwareSystems />
       <PersonalInterests />
-      <SelectedImpact />
       <AboutCTA />
     </>
   );

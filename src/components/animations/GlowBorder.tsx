@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useInView } from "motion/react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type GlowBorderProps = {
   className?: string;
   /**
-   * Play a one-shot glow sweep the first time the card scrolls into view.
-   * Set false for cards that don't have a discrete entrance (e.g. an
-   * always-moving carousel) — they keep only the hover glow.
+   * Play a one-shot glow sweep on mount. Set false for cards that
+   * don't have a discrete entrance (e.g. an always-moving carousel) —
+   * they keep only the hover glow.
    */
   revealOnce?: boolean;
 };
@@ -20,35 +19,26 @@ type GlowBorderProps = {
  * Drop it in as the first child of a card surface (`.card-surface`,
  * `.featured-slide-card`, `.lab-case`, `.testimonial-card`, …). It draws
  * a thin gradient ring masked to the card's edge:
- *  - a one-shot glow sweep the first time the card scrolls into view
+ *  - a one-shot glow sweep on mount
  *  - a rotating glow that runs while the card is hovered
  *
- * Each instance owns its own IntersectionObserver, so the entrance glow
- * fires per card with no wiring needed in the parent. Entrance plays
- * once and settles — it never re-triggers on scroll-up.
+ * Originally the entrance fired when the card scrolled into view via
+ * IntersectionObserver. Under Lenis × motion v11 that observer can
+ * fail to deliver, leaving the sweep stuck "off" and the card looking
+ * flat. The sweep now fires on mount and settles after 1.7s.
  */
 export function GlowBorder({ className, revealOnce = true }: GlowBorderProps) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, {
-    once: true,
-    amount: 0.35,
-    margin: "0px 0px -8% 0px",
-  });
   const [revealing, setRevealing] = useState(false);
 
   useEffect(() => {
-    if (!revealOnce || !inView) return;
+    if (!revealOnce) return;
     setRevealing(true);
-    // Class is removed once the entrance sweep is done so it never
-    // collides with the hover glow.
     const t = window.setTimeout(() => setRevealing(false), 1700);
     return () => window.clearTimeout(t);
-  }, [revealOnce, inView]);
+  }, [revealOnce]);
 
   return (
     <span
-      // Only hover-glow cards (revealOnce=false) skip the observer entirely.
-      ref={revealOnce ? ref : undefined}
       aria-hidden
       className={cn("glow-border", revealing && "is-revealing", className)}
     />

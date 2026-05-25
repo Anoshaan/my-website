@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence, useInView } from "motion/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
 import { Marquee } from "@/components/animations/Marquee";
@@ -403,26 +403,22 @@ function CategoryNav({
  * when the section scrolls into view.
  */
 function TestimonialPlayer() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, {
-    once: true,
-    amount: 0.3,
-    margin: "0px 0px -5% 0px",
-  });
   const [index, setIndex] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
 
-  // Start playback from UI/UX Leads when section comes into view
+  // Start playback from UI/UX Leads on mount. Previously gated on
+  // `useInView` so playback waited for the section to scroll into
+  // view, but the observer can fail under Lenis and leave the player
+  // stuck on the wrong testimonial.
   useEffect(() => {
-    if (inView && !hasStarted) {
-      const uiuxLeadsIndex = categoryMeta.find((m) => m.name === "UI/UX Leads")
-        ?.start;
-      if (uiuxLeadsIndex !== undefined) {
-        setIndex(uiuxLeadsIndex);
-        setHasStarted(true);
-      }
+    if (hasStarted) return;
+    const uiuxLeadsIndex = categoryMeta.find((m) => m.name === "UI/UX Leads")
+      ?.start;
+    if (uiuxLeadsIndex !== undefined) {
+      setIndex(uiuxLeadsIndex);
+      setHasStarted(true);
     }
-  }, [inView, hasStarted]);
+  }, [hasStarted]);
 
   // setTimeout keyed on `index`: a manual jump re-runs the effect, which
   // clears the pending timer and restarts a full interval from the new spot.
@@ -443,7 +439,7 @@ function TestimonialPlayer() {
   }, []);
 
   return (
-    <div ref={ref} className="testimonial-player">
+    <div className="testimonial-player">
       <FeaturedCard index={index} />
       <CategoryNav activeCategory={activeMeta.name} onSelect={jumpToCategory} />
     </div>

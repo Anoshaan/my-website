@@ -23,6 +23,7 @@ type ButtonAsButton = CommonProps &
 type ButtonAsLink = CommonProps & {
   href: string;
   target?: string;
+  download?: boolean | string;
 };
 
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
@@ -78,6 +79,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         <Link
           href={props.href}
           target={props.target}
+          download={props.download}
           className={inner}
         >
           {children}

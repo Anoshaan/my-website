@@ -12,7 +12,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Anoshaan",
   description:
-    "Lead UX Engineer and Senior Product Experience Designer — enterprise-grade digital experiences across web, mobile, and AI-driven platforms.",
+    "Product Systems Designer • Associate UI/UX Lead — enterprise-grade digital experiences across web, mobile, and AI-driven platforms.",
   icons: {
     icon: "/favicon.png",
   },

@@ -9,15 +9,9 @@ type RevealProps = {
   /** "up" | "fade" — preset motion shape. */
   variant?: "up" | "fade";
   className?: string;
-  /**
-   * Animate once only, or every time element enters viewport.
-   * Default: true — the element settles after its entrance and never
-   * re-animates, so scrolling back up can't make it glitch or jump.
-   */
+  /** Retained for API compatibility; ignored now that we animate on mount. */
   once?: boolean;
-  /** Custom duration in seconds. */
   duration?: number;
-  /** How much of the element must be visible to trigger. 0-1. */
   amount?: number;
   as?: "div" | "section" | "article" | "header" | "span";
 };
@@ -35,14 +29,20 @@ const variants: Record<string, Variants> = {
   },
 };
 
+/**
+ * Reveal — fade-in (with optional translateY) on mount. Previously used
+ * `whileInView`/`useInView` so the entrance fired when the element
+ * scrolled into view, but under Lenis smooth-scroll the
+ * IntersectionObserver tracker can fail to deliver, leaving entire
+ * sections stuck invisible. Animate on mount guarantees the content
+ * is always reachable.
+ */
 export function Reveal({
   children,
   delay = 0,
   variant = "up",
   className,
-  once = true,
   duration = 0.8,
-  amount = 0.15,
   as = "div",
 }: RevealProps) {
   const MotionTag = motion[as] as typeof motion.div;
@@ -50,8 +50,7 @@ export function Reveal({
     <MotionTag
       className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once, amount, margin: "0px 0px -5% 0px" }}
+      animate="visible"
       variants={variants[variant]}
       transition={{ duration, delay, ease: easeOutExpo }}
     >

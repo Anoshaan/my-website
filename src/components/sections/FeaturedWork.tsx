@@ -8,14 +8,10 @@ import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/animations/Reveal";
 import { GlowBorder } from "@/components/animations/GlowBorder";
 import {
-  AnimatedIcon,
   type AnimatedIconName,
 } from "@/components/icons/AnimatedIcon";
-import { ChronosMockup } from "@/components/mockups/ChronosMockup";
+import { CaseStudyMedia } from "@/components/mockups/CaseStudyMedia";
 import { featuredCaseStudies, type CaseStudy } from "@/lib/case-studies";
-
-/** Case study that renders a live animated mockup in its media slot. */
-const CHRONOS_SLUG = "workforce-time-resource-platform";
 
 const BASE_SPEED = 28; // px / second — slow, cinematic drift (cards are large now)
 const HOVER_SPEED = 9; // px / second — eases down on hover
@@ -66,27 +62,11 @@ function FeaturedSlideCard({
     <div className="featured-slide-card">
       <GlowBorder revealOnce={revealGlow} />
       <div className="featured-slide-media">
-        {c.slug === CHRONOS_SLUG ? (
-          <ChronosMockup />
-        ) : (
-          <>
-            <div
-              aria-hidden
-              className="absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(80% 60% at 80% 20%, rgba(207, 217, 255, 0.16), transparent 60%)",
-              }}
-            />
-            <span className="featured-slide-glyph">
-              <AnimatedIcon
-                name={cardIcons[iconIndex % cardIcons.length]}
-                size="md"
-              />
-            </span>
-            <div className="featured-slide-media-label">Video / Mockup</div>
-          </>
-        )}
+        <CaseStudyMedia
+          caseStudy={c}
+          index={iconIndex}
+          icon={cardIcons[iconIndex % cardIcons.length]}
+        />
       </div>
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap gap-2 text-eyebrow text-white/55">

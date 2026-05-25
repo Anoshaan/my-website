@@ -10,11 +10,7 @@ type StaggerContainerProps = {
   stagger?: number;
   /** Delay before first child. */
   delay?: number;
-  /**
-   * Animate once or every time the container enters viewport.
-   * Default: true — the grid settles after its entrance and never
-   * re-animates, so scrolling back up can't make cards glitch or jump.
-   */
+  /** Retained for API compatibility; ignored now that we animate on mount. */
   once?: boolean;
   amount?: number;
 };
@@ -31,20 +27,24 @@ export const staggerItemVariants: Variants = {
   },
 };
 
+/**
+ * StaggerContainer — orchestrates child entrance with a stagger, on
+ * mount. Previously used `whileInView`/`useInView`, but under Lenis
+ * smooth-scroll the IntersectionObserver tracker fails to deliver
+ * for some users, leaving grids stuck invisible (only the heading
+ * visible). Animate on mount guarantees the content is reachable.
+ */
 export function StaggerContainer({
   children,
   className,
   stagger = 0.15,
   delay = 0,
-  once = true,
-  amount = 0.2,
 }: StaggerContainerProps) {
   return (
     <motion.div
       className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once, amount, margin: "0px 0px -5% 0px" }}
+      animate="visible"
       variants={{
         hidden: {},
         visible: {

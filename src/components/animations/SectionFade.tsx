@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "motion/react";
+import { motion } from "motion/react";
 import { type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -13,16 +13,13 @@ type SectionFadeProps = {
 
 const easeOutExpo = [0.22, 1, 0.36, 1] as const;
 
-const variants: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
 /**
- * One-shot section entrance.
- * The section gently fades in the first time it scrolls into view, then
- * stays put — it never fades back out, so content can't vanish while it
- * is still on screen. The inner sections own their own drift / stagger.
+ * One-shot section entrance — gentle fade in on mount. Previously used
+ * `whileInView`/`useInView`, but under Lenis smooth-scroll +
+ * Next 15 + React 19, the IntersectionObserver `whileInView` relies on
+ * never fires for some users, leaving entire sections invisible. The
+ * fix prioritises content visibility: animate on mount with a small
+ * delay so the entrance still feels intentional.
  */
 export function SectionFade({
   children,
@@ -30,14 +27,11 @@ export function SectionFade({
   as = "div",
 }: SectionFadeProps) {
   const MotionTag = as === "section" ? motion.section : motion.div;
-
   return (
     <MotionTag
       className={cn(className)}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.12, margin: "0px 0px -8% 0px" }}
-      variants={variants}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.8, ease: easeOutExpo }}
     >
       {children}

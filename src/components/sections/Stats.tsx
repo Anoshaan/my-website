@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "@/components/ui/Container";
-import { motion, useInView } from "motion/react";
+import { motion } from "motion/react";
 import { GlowBorder } from "@/components/animations/GlowBorder";
 
 type Stat =
@@ -73,17 +73,13 @@ function AnimatedNumber({
   target: number;
   suffix?: string;
 }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  // once: true — counts up a single time, then holds its final value.
-  const inView = useInView(ref, {
-    once: true,
-    amount: 0.3,
-    margin: "0px 0px -5% 0px",
-  });
+  // Count-up runs on mount. Previously gated on `useInView` so it
+  // started when the card scrolled into view, but Lenis × motion v11
+  // can fail to deliver the IntersectionObserver entry, leaving the
+  // number stuck at 0.
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (!inView) return;
     const duration = 1800;
     const start = performance.now();
     let raf = 0;
@@ -95,10 +91,10 @@ function AnimatedNumber({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView, target]);
+  }, [target]);
 
   return (
-    <span ref={ref}>
+    <span>
       {value.toLocaleString()}
       {suffix}
     </span>
@@ -114,8 +110,7 @@ export function Stats() {
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2, margin: "0px 0px -5% 0px" }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 0.8,
                 delay: i * 0.14,
