@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence, useInView } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
 import { Marquee } from "@/components/animations/Marquee";
@@ -39,7 +39,7 @@ const testimonials: Testimonial[] = [
   {
     category: "UI/UX Leads",
     quote:
-      "Working with Anoshaan has been a great experience. His attention to detail, creative thinking, and ability to handle multiple tasks under tight timelines truly set him apart.",
+      "Anoshaan consistently delivers high-quality UX/UI work with strong creativity, ownership, and attention to detail.",
     name: "Andre Perera",
     role: "Associate UI Architect · Aeturnum",
     initials: "AP",
@@ -51,7 +51,7 @@ const testimonials: Testimonial[] = [
   {
     category: "UI/UX Leads",
     quote:
-      "His strong UI/UX thinking, attention to detail, and ability to simplify complex ideas into intuitive experiences made collaboration seamless.",
+      "His strong UI/UX thinking and ability to simplify complex ideas made collaboration seamless and effective.",
     name: "Ayesh Dilan",
     role: "Lead UI/UX Designer · Elegant Media Australia",
     initials: "AD",
@@ -63,7 +63,7 @@ const testimonials: Testimonial[] = [
   {
     category: "Devs",
     quote:
-      "One of the most creative and hardworking UI/UX engineers I've worked with.",
+      "One of the most creative and hardworking UI/UX engineers I've worked with across multiple projects.",
     name: "Chandima Dasanayaka",
     role: "Associate Technical Lead · Aeturnum",
     initials: "CD",
@@ -75,7 +75,7 @@ const testimonials: Testimonial[] = [
   {
     category: "Devs",
     quote:
-      "He consistently delivered clean, minimal, and user-focused UI/UX work.",
+      "He consistently delivered clean, scalable, and user-focused UI/UX solutions.",
     name: "Banujan Balendrakumar",
     role: "Senior Lead Engineer · IFS",
     initials: "BB",
@@ -87,10 +87,10 @@ const testimonials: Testimonial[] = [
   {
     category: "Devs",
     quote:
-      "He consistently delivered high-quality work with great attention to detail.",
-    name: "Don Nisala Nishad Thalagala",
+      "He delivered high-quality work with great attention to detail and a collaborative mindset.",
+    name: "Nisala Thalagala",
     role: "Associate Tech Lead",
-    initials: "DT",
+    initials: "NT",
     image: "/testimonials/image5.jpeg",
     linkedIn: "https://www.linkedin.com/in/nisala-thalagala-b22b94137/",
     avatarA: "#d6c8ff",
@@ -99,7 +99,7 @@ const testimonials: Testimonial[] = [
   {
     category: "PMs",
     quote:
-      "Highly collaborative, dependable, and proactive in team environments.",
+      "Anoshaan is highly collaborative, dependable, and brings strong UI/UX thinking into every project.",
     name: "Chandana Wijesuriya",
     role: "Senior Software Project Manager",
     initials: "CW",
@@ -111,7 +111,7 @@ const testimonials: Testimonial[] = [
   {
     category: "PMs",
     quote:
-      "He brings thoughtful UI/UX solutions that enhance overall product experiences.",
+      "He works effectively across teams and brings thoughtful UI/UX solutions to product experiences.",
     name: "Pumudi Vidanagama",
     role: "Senior IT Project Manager · Agile Coach",
     initials: "PV",
@@ -123,7 +123,7 @@ const testimonials: Testimonial[] = [
   {
     category: "HR",
     quote:
-      "He consistently demonstrated professionalism, creativity, and a strong commitment to delivering quality work.",
+      "Anoshaan consistently demonstrated professionalism, creativity, and a strong commitment to quality work.",
     name: "Sabry Ashraff",
     role: "Lead HR – Human Resources · Aeturnum",
     initials: "SA",
@@ -135,7 +135,7 @@ const testimonials: Testimonial[] = [
   {
     category: "HR",
     quote:
-      "He is a committed professional with a positive attitude and strong work ethic.",
+      "He is a committed professional with a positive attitude, strong work ethic, and collaborative mindset.",
     name: "Hiruni Withanage",
     role: "Senior Human Resources Executive",
     initials: "HW",
@@ -147,7 +147,7 @@ const testimonials: Testimonial[] = [
   {
     category: "Clients",
     quote:
-      "His work is visually consistent, intuitive, and focused on meaningful user experiences.",
+      "His UI/UX work is intuitive, visually consistent, and strongly focused on user experience.",
     name: "Wije Niroshan",
     role: "Creative Lead",
     initials: "WN",
@@ -399,20 +399,41 @@ function CategoryNav({
  * Owns playback state for the whole testimonial player. Testimonials autoplay
  * through the flat array, so they flow category by category automatically.
  * Clicking a category jumps to its first testimonial and playback continues
- * naturally into the categories that follow.
+ * naturally into the categories that follow. Playback starts from "UI/UX Leads"
+ * when the section scrolls into view.
  */
 function TestimonialPlayer() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, {
+    once: true,
+    amount: 0.3,
+    margin: "0px 0px -5% 0px",
+  });
   const [index, setIndex] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  // Start playback from UI/UX Leads when section comes into view
+  useEffect(() => {
+    if (inView && !hasStarted) {
+      const uiuxLeadsIndex = categoryMeta.find((m) => m.name === "UI/UX Leads")
+        ?.start;
+      if (uiuxLeadsIndex !== undefined) {
+        setIndex(uiuxLeadsIndex);
+        setHasStarted(true);
+      }
+    }
+  }, [inView, hasStarted]);
 
   // setTimeout keyed on `index`: a manual jump re-runs the effect, which
   // clears the pending timer and restarts a full interval from the new spot.
   useEffect(() => {
+    if (!hasStarted) return;
     const id = setTimeout(
       () => setIndex((i) => (i + 1) % testimonials.length),
       PLAY_MS
     );
     return () => clearTimeout(id);
-  }, [index]);
+  }, [index, hasStarted]);
 
   const activeMeta = metaForIndex(index);
 
@@ -422,7 +443,7 @@ function TestimonialPlayer() {
   }, []);
 
   return (
-    <div className="testimonial-player">
+    <div ref={ref} className="testimonial-player">
       <FeaturedCard index={index} />
       <CategoryNav activeCategory={activeMeta.name} onSelect={jumpToCategory} />
     </div>

@@ -142,7 +142,7 @@ export function Intro() {
             </motion.div>
           </div>
 
-          {/* Right — animated visual (placeholder for future globe) */}
+          {/* Right — looping intro video */}
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }}
             animate={
@@ -151,24 +151,20 @@ export function Intro() {
             transition={{ duration: 1, delay: 0.15, ease: easeOutExpo }}
             className="relative aspect-square w-full max-w-[400px] mx-auto lg:ml-auto lg:mr-0"
           >
-            <div
-              aria-hidden
-              className="absolute inset-[-8%] rounded-full border border-white/[0.08]"
-              style={{ animation: "spin 80s linear infinite" }}
-            />
-            <div className="absolute inset-0 rounded-[28px] overflow-hidden border border-white/[0.14] bg-gradient-to-br from-white/[0.06] to-white/[0.01]">
-              <div
-                aria-hidden
-                className="absolute inset-[12%] rounded-full"
-                style={{
-                  background:
-                    "radial-gradient(circle at 30% 30%, color-mix(in oklab, #cfd9ff 70%, #fff) 0%, color-mix(in oklab, #cfd9ff 20%, #2a2f55) 50%, transparent 80%)",
-                  filter: "blur(10px)",
-                }}
-              />
-            </div>
-            <div className="absolute -bottom-2 -right-2 w-[64px] h-[64px] rounded-full bg-black border border-white/[0.14] grid place-items-center text-2xl font-semibold text-white shadow-[0_12px_40px_rgba(0,0,0,0.7)]">
-              A
+            <div className="relative h-full w-full">
+              <div aria-hidden className="about-video-glow absolute inset-0" />
+              <div className="about-video h-full w-full rounded-[28px] overflow-hidden border border-white/[0.14] bg-gradient-to-br from-white/[0.06] to-white/[0.01]">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  poster="/about/intro-poster.jpg"
+                >
+                  <source src="/about/intro.mp4" type="video/mp4" />
+                </video>
+              </div>
             </div>
           </motion.div>
         </div>
