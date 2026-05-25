@@ -3,7 +3,7 @@ import { Reveal } from "@/components/animations/Reveal";
 import { Button } from "@/components/ui/Button";
 
 /**
- * About — Section 6. Calm closing CTA.
+ * About — Section 8. Calm closing CTA.
  */
 export function AboutCTA() {
   return (
@@ -14,14 +14,14 @@ export function AboutCTA() {
         </Reveal>
         <Reveal delay={0.08}>
           <h2 className="text-section text-white heading-sheen">
-            Let&apos;s design something that lasts.
+            Let&apos;s build meaningful digital experiences.
           </h2>
         </Reveal>
         <Reveal delay={0.16}>
           <p className="text-body text-white/60 max-w-[54ch]">
-            If you&apos;re building something complex — an enterprise platform, a
-            design system, or an AI-driven product — I&apos;d love to hear about
-            it.
+            If you&apos;re building something complex — an enterprise platform,
+            an AI-driven product, a system that has to think — I&apos;d like to
+            hear about it.
           </p>
         </Reveal>
         <Reveal delay={0.24}>

@@ -14,13 +14,15 @@ import {
 import { ScrambledText } from "@/components/animations/ScrambledText";
 
 /**
- * About — Section 4. Experimental projects and side builds.
- * A lightly staggered grid of floating glass cards — a creative
- * lab of technical experiments. Cards lift and glow on hover.
+ * About — Section 4. Experimental systems.
+ * Three mature, technology-focused cards positioning the work
+ * I do *beyond* product design — signal experimentation, IoT
+ * hardware integration, and cybersecurity / emerging-tech work.
  */
 
 type Experiment = {
   icon: AnimatedIconName;
+  eyebrow: string;
   title: string;
   body: string;
   tags: string[];
@@ -28,40 +30,28 @@ type Experiment = {
 
 const experiments: Experiment[] = [
   {
-    icon: "motion",
-    title: "Live Dashboard Mockups",
-    body: "Coded, self-animating product mockups — looping dashboards built in pure CSS and SVG instead of exported video.",
-    tags: ["CSS", "SVG", "Motion"],
-  },
-  {
-    icon: "brain",
-    title: "Prompt-to-Prototype",
-    body: "An AI workflow experiment that turns plain-language prompts into structured, working UI scaffolds.",
-    tags: ["Claude API", "Next.js", "Tooling"],
-  },
-  {
-    icon: "structure",
-    title: "Token Pipeline",
-    body: "A small engine that syncs design tokens straight into production CSS variables — one source of truth.",
-    tags: ["Design Tokens", "CSS", "Automation"],
+    icon: "radar",
+    eyebrow: "Wireless & RF",
+    title: "Signal Experimentation Systems",
+    body:
+      "Localized exploration of wireless behavior — antenna design, propagation testing, and small communication-system builds. Hardware-level curiosity about how signal actually moves through space.",
+    tags: ["RF", "Antennas", "Propagation"],
   },
   {
     icon: "network",
-    title: "Magnetic Grid",
-    body: "An interactive canvas field that warps to pointer, scroll, and device tilt — ambient, GPU-friendly motion.",
-    tags: ["Canvas", "RAF", "Interaction"],
+    eyebrow: "IoT & Automation",
+    title: "IoT Aeroponic System",
+    body:
+      "A custom aeroponic tower with full IoT instrumentation — humidity, water level, and nutrient sensors feeding a dashboard I built to monitor and automate the grow cycle end-to-end. Hardware, firmware, software, all integrated.",
+    tags: ["Sensors", "Dashboard", "Automation", "Hardware"],
   },
   {
-    icon: "flow",
-    title: "Scroll Choreography",
-    body: "Studies in scroll-linked storytelling — pinned scenes, progress-driven reveals, and timeline easing.",
-    tags: ["Scroll", "Timeline", "Easing"],
-  },
-  {
-    icon: "vector",
-    title: "Cursor & Micro-States",
-    body: "A playground of custom cursors, hover physics, and the small feedback moments that make an interface feel alive.",
-    tags: ["Micro-UX", "States", "Feedback"],
+    icon: "structure",
+    eyebrow: "Cybersecurity & Emerging Tech",
+    title: "Security & Systems Research",
+    body:
+      "Ongoing work in cybersecurity, automation pipelines, and AI-assisted tooling — exploring how software, hardware, and emerging models converge. The questions that pull me forward are usually a generation ahead of the brief.",
+    tags: ["Security", "AI Workflows", "Tooling", "Research"],
   },
 ];
 
@@ -70,8 +60,8 @@ export function Experiments() {
     <section className="section-pad border-t border-white/[0.06]">
       <Container>
         <SectionTitle
-          title="Experiments & side builds"
-          intro="A running lab of technical experiments — interaction studies, tooling, and creative explorations that feed back into the production work."
+          title="Built beyond design."
+          intro="A lab of technical work that sits outside traditional product design — wireless systems, IoT, hardware integrations, and emerging-tech research. Curiosity is the through-line."
         />
 
         <StaggerContainer className="mt-14 grid items-start gap-6 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3">
@@ -88,6 +78,9 @@ export function Experiments() {
                   <div className="about-exp-thumb">
                     <AnimatedIcon name={e.icon} size="md" />
                   </div>
+                  <span className="text-eyebrow text-white/45">
+                    {e.eyebrow}
+                  </span>
                   <h3 className="text-card-title text-white">{e.title}</h3>
                   <p className="text-supporting text-white/58">{e.body}</p>
                   <div className="flex flex-wrap gap-2 pt-1">

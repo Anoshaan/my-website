@@ -5,27 +5,27 @@ import { Reveal } from "@/components/animations/Reveal";
 import { ScrambledText } from "@/components/animations/ScrambledText";
 
 /**
- * About — Section 2. Two-column introduction directly after the hero.
- * Left: a large, looping, web-optimized intro video sized to the
- * viewport height. Right: section label, heading, short paragraphs
- * and floating pills. On desktop the whole section fills one viewport.
+ * About — Section 2. "Beyond Interfaces" — a calm, reflective
+ * introduction. The looping intro video anchors the left column;
+ * the right column carries a more personal paragraph block and a
+ * row of capsules describing how I think and work.
  */
 
 const paragraphs = [
-  "I lead UX as a product thinker — owning the experience from an ambiguous problem to a production-ready interface, focused on whether the whole system holds together.",
-  "Most of my work is systems work: design systems that scale across products, and frontend-aware decisions that survive implementation — increasingly powered by AI-assisted workflows.",
-  "I collaborate closely across product, engineering, and leadership, and I do my best work on hard, fuzzy problems where the right structure isn't obvious yet.",
+  "I think in systems. Most of what I build — interfaces, motion, the small behaviors that make a product feel intentional — comes from looking at the whole structure, not just the surface.",
+  "My interest sits where design meets logic: how people behave inside an experience, how interactions are choreographed, and how a system holds together as it scales. I'm drawn to interfaces that feel quietly intelligent rather than loud.",
+  "I work across product, motion, and emerging technology — and I keep experimenting outside the screen so the work on it stays sharp.",
 ];
 
 const pills = [
-  "UX Leadership",
-  "Product Thinking",
   "Systems Thinking",
+  "Behavioral UX",
+  "Motion Systems",
+  "Interaction Design",
+  "Scalable Experiences",
+  "AI-Assisted Workflows",
   "Frontend Fluency",
-  "AI Workflows",
-  "Design Systems",
-  "Cross-Functional",
-  "Problem Solving",
+  "Future Interfaces",
 ];
 
 export function AboutIntro() {
@@ -56,15 +56,15 @@ export function AboutIntro() {
             </div>
           </Reveal>
 
-          {/* RIGHT — introduction copy */}
+          {/* RIGHT — personal introduction */}
           <div className="flex flex-col lg:min-w-0 lg:flex-1">
             <Reveal>
-              <span className="text-eyebrow text-white/45">Introduction</span>
+              <span className="text-eyebrow text-white/45">Beyond interfaces</span>
             </Reveal>
 
             <Reveal delay={0.08}>
               <h2 className="text-section text-white mt-3 heading-sheen">
-                Systems thinking, product instinct, and craft that ships.
+                The person behind the systems.
               </h2>
             </Reveal>
 
@@ -79,7 +79,7 @@ export function AboutIntro() {
             <Reveal delay={0.26}>
               <div className="mt-5 pt-5 border-t border-white/[0.07]">
                 <span className="text-eyebrow text-white/55 eyebrow-strong">
-                  What I bring
+                  How I think
                 </span>
                 <div className="mt-4 flex flex-wrap gap-2.5">
                   {pills.map((pill, i) => (
