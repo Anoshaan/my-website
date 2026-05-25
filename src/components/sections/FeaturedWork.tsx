@@ -17,8 +17,8 @@ import { featuredCaseStudies, type CaseStudy } from "@/lib/case-studies";
 /** Case study that renders a live animated mockup in its media slot. */
 const CHRONOS_SLUG = "workforce-time-resource-platform";
 
-const BASE_SPEED = 34; // px / second — slow, cinematic drift
-const HOVER_SPEED = 11; // px / second — eases down on hover
+const BASE_SPEED = 28; // px / second — slow, cinematic drift (cards are large now)
+const HOVER_SPEED = 9; // px / second — eases down on hover
 const COPIES = 3; // render the list 3× for a seamless modulo loop
 
 /** Mobile snap timing. */

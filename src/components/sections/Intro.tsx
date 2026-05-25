@@ -8,15 +8,13 @@ import { motion, useInView } from "motion/react";
 
 const easeOutExpo = [0.22, 1, 0.36, 1] as const;
 
+// Three focus areas — kept tight so the row stays on a single line on
+// desktop and never wraps awkwardly on tablet. These are the headline
+// disciplines; the longer list lives on the About page.
 const expertise = [
-  "Lead UX Engineering",
-  "Enterprise Product Design",
+  "Lead UX Engineer",
+  "Enterprise Product Designer",
   "Design Systems Architecture",
-  "AI Experience Systems",
-  "Motion & Interaction Design",
-  "Frontend Experience Strategy",
-  "UX Research",
-  "Behavioral Design",
 ];
 
 /**
@@ -68,9 +66,9 @@ export function Intro() {
       />
 
       <Container>
-        <div className="grid gap-12 lg:gap-20 lg:grid-cols-[1.6fr_1fr] items-stretch">
-          {/* Left — copy */}
-          <div className="flex flex-col">
+        <div className="grid gap-12 lg:gap-16 lg:grid-cols-[1.35fr_1fr] items-center">
+          {/* Left — copy, vertically centred against the video on desktop */}
+          <div className="flex flex-col justify-center">
             <motion.h2
               ref={headingRef}
               className="text-section text-white relative"
@@ -135,7 +133,7 @@ export function Intro() {
               <span className="text-eyebrow text-white/55 eyebrow-strong">
                 Areas of Expertise
               </span>
-              <div className="flex flex-wrap gap-2 mt-4">
+              <div className="mt-5 flex flex-wrap items-center gap-x-[clamp(18px,2vw,32px)] gap-y-3">
                 {expertise.map((tag, i) => (
                   <motion.span
                     key={tag}
@@ -147,10 +145,10 @@ export function Intro() {
                     }
                     transition={{
                       duration: 0.5,
-                      delay: 0.55 + i * 0.05,
+                      delay: 0.55 + i * 0.08,
                       ease: easeOutExpo,
                     }}
-                    className="capsule capsule-scramble"
+                    className="expertise-item"
                   >
                     <ScrambledText radius={90} duration={900} speed={36}>
                       {tag}
@@ -171,7 +169,7 @@ export function Intro() {
                 : { opacity: 0, scale: 0.94 }
             }
             transition={{ duration: 1, delay: 0.15, ease: easeOutExpo }}
-            className="intro-video-frame mx-auto w-full max-w-[460px] aspect-square lg:max-w-none lg:aspect-auto lg:h-full lg:mx-0"
+            className="intro-video-frame mx-auto w-full max-w-[520px] aspect-square lg:max-w-none lg:aspect-auto lg:h-full lg:mx-0"
           >
             <div className="relative h-full w-full">
               <div aria-hidden className="about-video-glow absolute inset-0" />

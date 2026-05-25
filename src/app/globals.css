@@ -883,7 +883,7 @@ html.lenis body {
 
 .fw-track {
   display: flex;
-  gap: 24px;
+  gap: clamp(20px, 2vw, 36px);
   width: max-content;
   will-change: transform;
   /* Horizontal drag is handled in JS; vertical scroll stays native. */
@@ -894,14 +894,17 @@ html.lenis body {
 
 .featured-slide {
   flex: 0 0 auto;
-  width: clamp(280px, 36vw, 470px);
+  /* Two cards fill the viewport with a gentle peek of the third
+     on the right edge. At a 1440px viewport, ~720px maxes out so
+     a pair sits side-by-side with ~24px gap. */
+  width: clamp(300px, 48vw, 720px);
 }
 
 .featured-slide-card {
   position: relative;
   height: 100%;
-  padding: clamp(20px, 1.8vw, 28px);
-  border-radius: 22px;
+  padding: clamp(24px, 2.4vw, 40px);
+  border-radius: 26px;
   border: 1px solid rgba(255, 255, 255, 0.10);
   background:
     linear-gradient(
@@ -935,10 +938,11 @@ html.lenis body {
 .featured-slide-media {
   position: relative;
   aspect-ratio: 16 / 9;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: linear-gradient(135deg, #0d0d14, #050507);
+  margin-bottom: clamp(18px, 1.8vw, 26px);
 }
 
 .featured-slide-media-label {
@@ -953,18 +957,19 @@ html.lenis body {
 }
 
 .featured-slide-title {
-  font-size: clamp(1.05rem, 1.35vw, 1.35rem);
+  /* Larger, presence-forward — these cards now anchor the section. */
+  font-size: clamp(1.3rem, 1.85vw, 1.95rem);
   font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  letter-spacing: -0.024em;
+  line-height: 1.18;
   color: #ffffff;
   text-wrap: balance;
 }
 
 .featured-slide-summary {
-  font-size: clamp(0.9rem, 0.86rem + 0.2vw, 1rem);
+  font-size: clamp(0.96rem, 0.9rem + 0.26vw, 1.12rem);
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.66);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   line-clamp: 3;
@@ -975,11 +980,11 @@ html.lenis body {
 .featured-slide-cta {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-top: 14px;
+  gap: 12px;
+  padding-top: clamp(16px, 1.6vw, 22px);
   margin-top: auto;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 0.9rem;
+  font-size: clamp(0.92rem, 0.88rem + 0.18vw, 1rem);
   color: rgba(255, 255, 255, 0.92);
 }
 
@@ -2526,13 +2531,16 @@ html.lenis body {
    while still scaling up to feel proportional.
    ========================================================= */
 .intro-video-frame {
-  /* Cap at a tasteful max so an extremely tall left column on
-     ultra-wide screens doesn't blow the video out of scale. */
-  max-height: 640px;
+  /* Scales up generously on large screens but stays within a
+     calm cap so it never dwarfs the copy. */
+  max-height: 720px;
 }
 @media (min-width: 1024px) {
   .intro-video-frame {
-    min-height: 380px;
+    /* Tall, premium framing for desktop. Anchors the section
+       and balances the now-centred left column. */
+    height: clamp(440px, 58vh, 640px);
+    min-height: 440px;
   }
 }
 
@@ -2543,6 +2551,29 @@ html.lenis body {
 .intro-video-flip video {
   transform: scaleX(-1);
   transform-origin: center;
+}
+
+/* =========================================================
+   EXPERTISE ITEM — plain typographic label (no bubble bg, no
+   border). Calmer, more premium than three pills. Sized so all
+   three fit on one line on desktop, wrap cleanly on tablet/phone.
+   ========================================================= */
+.expertise-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: clamp(0.95rem, 0.9rem + 0.18vw, 1.05rem);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: color 0.3s var(--ease-out-expo);
+}
+.expertise-item:hover {
+  color: #ffffff;
 }
 
 /* =========================================================
