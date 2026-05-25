@@ -245,7 +245,11 @@ body:has(.cursor) [role="button"] {
 .text-eyebrow {
   font-family: var(--font-mono);
   font-size: clamp(0.72rem, 0.7rem + 0.06vw, 0.76rem);
-  font-weight: 500;
+  /* Heavier than the original 500 — the eyebrow type was reading
+     too thin against the dark surface, especially in tag rows
+     ("ANALYTICS · SAAS") and section labels. 600 keeps the mono
+     character but strengthens legibility. */
+  font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-fg-subtle);
@@ -437,13 +441,21 @@ body:has(.cursor) [role="button"] {
    ========================================================= */
 .tag {
   display: inline-flex;
+  /* Vertically *and* horizontally centre everything inside the
+     capsule. With a nested scrambled-text span (line-height 1.4)
+     the text was sitting top-aligned against the pill's 9px top
+     padding — flex centering pulls it back to the middle. */
   align-items: center;
+  justify-content: center;
+  line-height: 1;
   padding: 9px 16px;
   border: 1px solid var(--color-line);
   border-radius: 999px;
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--color-fg-muted);
+  /* 500 reads as a controlled mono weight — clean but not thin. */
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.78);
   letter-spacing: 0.04em;
   background: rgba(236, 235, 230, 0.035);
   /* Subtle frosted layer — soft, not opaque, preserves the canvas
@@ -474,18 +486,25 @@ body:has(.cursor) [role="button"] {
    ========================================================= */
 .capsule {
   display: inline-flex;
+  /* Lock the text optically to the centre of the pill. With a
+     nested .scrambled-text span the natural line-height was
+     pulling the glyphs up; line-height: 1 + items-center +
+     justify-content: center now pins them to the optical middle. */
   align-items: center;
+  justify-content: center;
   gap: 0.5ch;
-  padding: 9px 16px;
+  padding: 10px 18px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.09);
   background: rgba(255, 255, 255, 0.025);
   -webkit-backdrop-filter: blur(12px) saturate(150%);
   backdrop-filter: blur(12px) saturate(150%);
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.78);
   font-size: clamp(0.95rem, 0.92rem + 0.16vw, 1.0625rem);
-  font-weight: 500;
-  line-height: 1.4;
+  /* 600 — strong enough to read at small sizes inside the
+     blurred pill background, still minimal. */
+  font-weight: 600;
+  line-height: 1;
   letter-spacing: -0.005em;
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
@@ -509,8 +528,16 @@ body:has(.cursor) [role="button"] {
 
 /* When a capsule wraps a <ScrambledText>, the inner span carries the
    text — make sure the layout doesn't double-pad or wrap awkwardly. */
+/* The scrambled-text span inside any pill — flatten its line-height
+   so it inherits the parent's optical centring, and force it to
+   align as a single inline-flex box so the dots/digits don't push
+   it off-centre. Used by .tag, .lab-case-pill, and .capsule. */
+.tag .scrambled-text,
+.lab-case-pill .scrambled-text,
 .capsule .scrambled-text {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
   white-space: nowrap;
 }
 
@@ -529,9 +556,11 @@ body:has(.cursor) [role="button"] {
    important label (Areas of Expertise, What I bring). The base
    eyebrow stays at 500; this variant nudges to 600 — one weight
    bolder, still mono, still minimal. */
+/* The base .text-eyebrow is now 600; this variant bumps to 700 so
+   it still reads one tier heavier than a regular eyebrow label. */
 .eyebrow-strong {
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 /* =========================================================
@@ -1158,8 +1187,11 @@ html.lenis body {
 
 .lab-case-summary {
   font-size: clamp(0.95rem, 1vw, 1.05rem);
+  /* Bumped from default 400 — the long summary was reading too
+     thin and washing out next to the heading sheen. */
+  font-weight: 450;
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.78);
   max-width: 56ch;
 }
 
@@ -1180,7 +1212,8 @@ html.lenis body {
 
 .lab-case-meta-value {
   font-size: clamp(0.9rem, 0.87rem + 0.15vw, 1rem);
-  color: rgba(255, 255, 255, 0.78);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
 }
 
@@ -1192,13 +1225,17 @@ html.lenis body {
 
 .lab-case-pill {
   display: inline-flex;
+  /* See .tag — pin the scrambled-text span to the optical centre. */
   align-items: center;
-  padding: 6px 12px;
+  justify-content: center;
+  line-height: 1;
+  padding: 7px 13px;
   border-radius: 999px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11px;
+  font-weight: 500;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.85);
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.08);
   -webkit-backdrop-filter: blur(10px) saturate(140%);
@@ -2206,6 +2243,124 @@ html.lenis body {
     linear-gradient(150deg, #14141d, #08080c);
   display: grid;
   place-items: center;
+}
+
+/* ---- Section 5 — hardware-aware tile ----
+   Lighter than .card-surface — no full frosted card, just a soft
+   bordered cell so four of them read as a related cluster instead
+   of four separate full cards. Still uses the brand glass language. */
+.hw-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: clamp(22px, 2.2vw, 30px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.012)
+    ),
+    rgba(13, 13, 18, 0.55);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  transition:
+    border-color 0.4s var(--ease-out-expo),
+    background 0.4s ease,
+    transform 0.5s var(--ease-out-expo);
+  isolation: isolate;
+}
+.hw-tile:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    ),
+    rgba(17, 17, 22, 0.7);
+  transform: translateY(-3px);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .hw-tile {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background:
+      linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.012)
+      ),
+      #111116;
+  }
+}
+
+/* ---- Section 6 — personal interests row ----
+   A quiet horizontal cell: scrambled label on the left, a one-line
+   note on the right. Uses the capsule micro-language but rendered
+   wider and flatter so the section reads as restrained, not playful. */
+.interest-row {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(16px, 2vw, 28px);
+  padding: 14px 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.018);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  min-width: min(420px, 100%);
+  transition:
+    border-color 0.4s var(--ease-out-expo),
+    background 0.4s ease,
+    transform 0.4s var(--ease-out-expo);
+  animation: about-float-sm 6.5s var(--ease-in-out) infinite;
+  will-change: transform;
+}
+.interest-row:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+.interest-row-label {
+  font-family: var(--font-sans);
+  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: #ffffff;
+  flex-shrink: 0;
+  min-width: 9ch;
+}
+.interest-row-note {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.55;
+}
+
+@media (max-width: 1024px) {
+  .interest-row {
+    animation: none;
+    will-change: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .interest-row {
+    animation: none;
+  }
+}
+@media (hover: none) and (pointer: coarse) {
+  .interest-row {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: #111116;
+  }
 }
 
 /* =========================================================

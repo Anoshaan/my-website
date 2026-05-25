@@ -96,14 +96,14 @@ export default function LabsPage() {
 
                     <div className="lab-case-meta">
                       <div className="lab-case-meta-row">
-                        <span className="text-eyebrow text-white/40">
+                        <span className="text-eyebrow eyebrow-strong text-white/60">
                           Domain
                         </span>
                         <span className="lab-case-meta-value">{c.domain}</span>
                       </div>
 
                       <div className="lab-case-meta-row">
-                        <span className="text-eyebrow text-white/40">
+                        <span className="text-eyebrow eyebrow-strong text-white/60">
                           Highlights
                         </span>
                         <div className="lab-case-pills">
@@ -118,7 +118,7 @@ export default function LabsPage() {
                       </div>
 
                       <div className="lab-case-meta-row">
-                        <span className="text-eyebrow text-white/40">
+                        <span className="text-eyebrow eyebrow-strong text-white/60">
                           Focus Areas
                         </span>
                         <div className="lab-case-pills">

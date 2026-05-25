@@ -8,13 +8,18 @@ import { motion, useInView } from "motion/react";
 
 const easeOutExpo = [0.22, 1, 0.36, 1] as const;
 
-// Three focus areas — kept tight so the row stays on a single line on
-// desktop and never wraps awkwardly on tablet. These are the headline
-// disciplines; the longer list lives on the About page.
+// Full discipline list — rendered as plain typographic labels (no
+// bubble backgrounds). Wraps across multiple rows on narrower
+// columns; never feels cluttered because the items have no chrome.
 const expertise = [
   "Lead UX Engineer",
   "Enterprise Product Designer",
   "Design Systems Architecture",
+  "AI Experience Systems",
+  "Motion & Interaction Design",
+  "Frontend Experience Strategy",
+  "UX Research",
+  "Behavioral Design",
 ];
 
 /**

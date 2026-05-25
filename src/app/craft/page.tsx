@@ -1,50 +1,67 @@
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { PageHead } from "@/components/ui/PageHead";
 import { StaggerContainer, StaggerItem } from "@/components/animations/StaggerContainer";
 
-const sketches = [
+type CraftEffect =
+  | "scroll-sweep"
+  | "parallax-depth"
+  | "soft-float"
+  | "pulse-glow"
+  | "shimmer"
+  | "silk-flow";
+
+type Sketch = {
+  tag: string;
+  title: string;
+  note: string;
+  image: string;
+  effect: CraftEffect;
+};
+
+const sketches: Sketch[] = [
   {
-    tag: "Sketch · 2025",
-    title: "Spatial Layering Studies",
-    note: "Z-axis composition for cinematic dashboards.",
-    gradient:
-      "radial-gradient(60% 60% at 30% 40%, rgba(207, 217, 255, 0.14), transparent 60%)",
+    tag: "Motion",
+    title: "GSAP & Lottie Experiences",
+    note: "Advanced motion systems using GSAP and Lottie for scroll-triggered storytelling, smooth transitions, and interactive digital experiences.",
+    image: "/craft-lab/1.png",
+    effect: "scroll-sweep",
   },
   {
-    tag: "Motion · 2025",
-    title: "Easing Library v2",
-    note: "Custom timing curves for product interactions.",
-    gradient:
-      "radial-gradient(60% 60% at 70% 30%, rgba(255, 184, 154, 0.12), transparent 60%)",
+    tag: "3D",
+    title: "Immersive 3D Web Design",
+    note: "Exploring cinematic web experiences with depth, 3D environments, spatial layouts, and modern interactive visuals.",
+    image: "/craft-lab/2.png",
+    effect: "parallax-depth",
   },
   {
-    tag: "Component · 2024",
-    title: "Adaptive Side Panels",
-    note: "Responsive layout primitives across breakpoints.",
-    gradient:
-      "radial-gradient(60% 60% at 50% 50%, rgba(138, 166, 255, 0.14), transparent 60%)",
+    tag: "UX",
+    title: "Minimal UX, Maximum Clarity",
+    note: "Designing interfaces focused on simplicity, clarity, and intentional user experiences without unnecessary complexity.",
+    image: "/craft-lab/3.png",
+    effect: "soft-float",
   },
   {
-    tag: "Concept · 2024",
-    title: "AI Drift Visualization",
-    note: "Visual language for prompt evolution.",
-    gradient:
-      "radial-gradient(60% 60% at 40% 60%, rgba(207, 217, 255, 0.14), transparent 60%)",
+    tag: "Behavior",
+    title: "Behavior-Driven Interfaces",
+    note: "Using psychology, attention flow, and interaction behavior to craft intuitive and emotionally engaging experiences.",
+    image: "/craft-lab/4.png",
+    effect: "pulse-glow",
   },
   {
-    tag: "Token · 2024",
-    title: "Surface Elevation Map",
-    note: "Codified elevation system for dark UI.",
-    gradient:
-      "radial-gradient(60% 60% at 60% 40%, rgba(255, 184, 154, 0.10), transparent 60%)",
+    tag: "AI",
+    title: "AI-Powered User Experiences",
+    note: "Blending AI assistance, personalization, and adaptive workflows into seamless modern interfaces.",
+    image: "/craft-lab/5.png",
+    effect: "shimmer",
   },
   {
-    tag: "Sketch · 2023",
-    title: "Quiet Forms",
-    note: "Studies in negative space and breathing room.",
-    gradient:
-      "radial-gradient(60% 60% at 50% 50%, rgba(138, 166, 255, 0.12), transparent 60%)",
+    tag: "Storytelling",
+    title: "Motion-Led Product Storytelling",
+    note: "Creating emotionally engaging product experiences through motion design, transitions, and cinematic interaction systems.",
+    image: "/craft-lab/6.png",
+    effect: "silk-flow",
   },
 ];
 
@@ -64,13 +81,23 @@ export default function CraftPage() {
               <StaggerItem key={s.title}>
                 <Card>
                   <div
-                    className="aspect-[4/3] rounded-[18px] overflow-hidden border border-white/[0.08] bg-[#0a0a0c]"
-                    style={{ background: s.gradient + ", #0a0a0c" }}
-                  />
+                    className={`craft-thumb craft-thumb--${s.effect} aspect-[4/3] rounded-[18px] overflow-hidden border border-white/[0.08] bg-[#0a0a0c]`}
+                  >
+                    <Image
+                      src={s.image}
+                      alt={s.title}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                      className="craft-thumb__img object-cover"
+                    />
+                    <span className="craft-thumb__fx" aria-hidden />
+                  </div>
                   <div className="flex flex-col gap-2">
-                    <span className="text-eyebrow text-white/40">{s.tag}</span>
+                    <span className="text-eyebrow eyebrow-strong text-white/60">
+                      {s.tag}
+                    </span>
                     <h3 className="text-card-title text-white">{s.title}</h3>
-                    <p className="text-supporting text-white/55">{s.note}</p>
+                    <p className="text-supporting text-white/65">{s.note}</p>
                   </div>
                 </Card>
               </StaggerItem>
