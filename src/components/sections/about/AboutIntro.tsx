@@ -2,6 +2,7 @@
 
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
+import { ScrambledText } from "@/components/animations/ScrambledText";
 
 /**
  * About — Section 2. Two-column introduction directly after the hero.
@@ -77,15 +78,19 @@ export function AboutIntro() {
 
             <Reveal delay={0.26}>
               <div className="mt-5 pt-5 border-t border-white/[0.07]">
-                <span className="text-eyebrow text-white/40">What I bring</span>
+                <span className="text-eyebrow text-white/55 eyebrow-strong">
+                  What I bring
+                </span>
                 <div className="mt-4 flex flex-wrap gap-2.5">
                   {pills.map((pill, i) => (
                     <span
                       key={pill}
-                      className="about-float-sm inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.02] px-4 py-2 text-supporting text-white/65 transition-[color,border-color,background-color] duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-white/[0.16] hover:bg-white/[0.05] hover:text-white"
+                      className="about-float-sm capsule capsule-scramble"
                       style={{ animationDelay: `${(i % 4) * 0.5 + 0.15}s` }}
                     >
-                      {pill}
+                      <ScrambledText radius={90} duration={900} speed={36}>
+                        {pill}
+                      </ScrambledText>
                     </span>
                   ))}
                 </div>

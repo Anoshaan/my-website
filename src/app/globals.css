@@ -433,7 +433,7 @@ body:has(.cursor) [role="button"] {
 }
 
 /* =========================================================
-   TAG / CHIP
+   TAG / CHIP — soft glassmorphism, premium minimal
    ========================================================= */
 .tag {
   display: inline-flex;
@@ -445,13 +445,93 @@ body:has(.cursor) [role="button"] {
   font-size: 11px;
   color: var(--color-fg-muted);
   letter-spacing: 0.04em;
-  background: var(--color-surface);
-  transition: color 0.3s, border-color 0.3s, background 0.3s;
+  background: rgba(236, 235, 230, 0.035);
+  /* Subtle frosted layer — soft, not opaque, preserves the canvas
+     grid behind while creating clear foreground separation. */
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 2px 14px rgba(0, 0, 0, 0.18);
+  transition: color 0.3s ease, border-color 0.3s ease,
+    background 0.3s ease, box-shadow 0.3s ease;
 }
 .tag:hover {
   color: var(--color-fg);
   border-color: var(--color-line-2);
-  background: var(--color-surface-2);
+  background: rgba(236, 235, 230, 0.06);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.09),
+    0 4px 22px rgba(0, 0, 0, 0.28);
+}
+
+/* =========================================================
+   CAPSULE — shared pill component (Intro, About, hover-scramble)
+   Replaces the long Tailwind class strings on .about-float-sm /
+   .text-supporting pills so all capsule UI shares one source of
+   truth: glassmorphism background, soft inner highlight, readable
+   typography.
+   ========================================================= */
+.capsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5ch;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.025);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(0.95rem, 0.92rem + 0.16vw, 1.0625rem);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 2px 18px rgba(0, 0, 0, 0.2);
+  transition: color 0.3s var(--ease-out-expo),
+    border-color 0.3s var(--ease-out-expo),
+    background 0.3s var(--ease-out-expo),
+    box-shadow 0.3s var(--ease-out-expo),
+    transform 0.4s var(--ease-out-expo);
+  will-change: transform;
+}
+.capsule:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    0 6px 26px rgba(0, 0, 0, 0.32);
+  transform: translateY(-1px);
+}
+
+/* When a capsule wraps a <ScrambledText>, the inner span carries the
+   text — make sure the layout doesn't double-pad or wrap awkwardly. */
+.capsule .scrambled-text {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Per-character spans inside ScrambledText. Using contain so the
+   layout never reflows when characters switch glyphs (otherwise the
+   varying widths of "." vs ":" would jitter the capsule). */
+.scrambled-text [data-scramble-char] {
+  display: inline-block;
+  min-width: 0.55ch;
+  text-align: center;
+  contain: layout;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Slightly heavier weight for the eyebrow when it carries an
+   important label (Areas of Expertise, What I bring). The base
+   eyebrow stays at 500; this variant nudges to 600 — one weight
+   bolder, still mono, still minimal. */
+.eyebrow-strong {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* =========================================================
@@ -1113,15 +1193,31 @@ html.lenis body {
   font-family: var(--font-mono);
   font-size: 10.5px;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.72);
-  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  transition: color 0.3s ease, border-color 0.3s ease,
+    background 0.3s ease, box-shadow 0.3s ease,
+    transform 0.4s var(--ease-out-expo);
+}
+.lab-case-pill:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
 }
 
 .lab-case-pill.is-accent {
   color: color-mix(in oklab, var(--color-accent) 78%, #ffffff);
-  background: color-mix(in oklab, var(--color-accent) 10%, transparent);
+  background: color-mix(in oklab, var(--color-accent) 12%, rgba(255, 255, 255, 0.02));
   border-color: color-mix(in oklab, var(--color-accent) 24%, transparent);
+}
+.lab-case-pill.is-accent:hover {
+  background: color-mix(in oklab, var(--color-accent) 18%, rgba(255, 255, 255, 0.04));
+  border-color: color-mix(in oklab, var(--color-accent) 38%, transparent);
 }
 
 /* =========================================================
@@ -2419,4 +2515,257 @@ html.lenis body {
   .glow-border {
     will-change: auto;
   }
+}
+
+
+/* =========================================================
+   INTRO VIDEO FRAME — sized to match the left column height
+   on desktop and a square on mobile/tablet. Capping at the
+   text-column height (via lg:h-full + items-stretch on the
+   grid) keeps the video from ever exceeding the content area
+   while still scaling up to feel proportional.
+   ========================================================= */
+.intro-video-frame {
+  /* Cap at a tasteful max so an extremely tall left column on
+     ultra-wide screens doesn't blow the video out of scale. */
+  max-height: 640px;
+}
+@media (min-width: 1024px) {
+  .intro-video-frame {
+    min-height: 380px;
+  }
+}
+
+/* The face direction in /about/intro.mp4 points toward the viewer's
+   left. On the Intro section the video sits on the *right* column,
+   so flipping it horizontally makes the subject face inward — toward
+   the copy on the left — which reads as a much more natural composition. */
+.intro-video-flip video {
+  transform: scaleX(-1);
+  transform-origin: center;
+}
+
+/* =========================================================
+   CRAFT LAB — per-card image-driven motion
+   Each thumb gets a subtle, image-aware loop tuned to the
+   content of its picture. Effects are always-on but very
+   restrained, and lift slightly on card hover. The image
+   itself does a gentle slow zoom on hover, common to all
+   variants. prefers-reduced-motion disables all of them.
+   ========================================================= */
+.craft-thumb {
+  position: relative;
+  isolation: isolate;
+}
+.craft-thumb__img {
+  transform: scale(1.02);
+  transition: transform 1.1s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
+    filter 0.8s ease;
+  will-change: transform;
+}
+.card-surface:hover .craft-thumb__img {
+  transform: scale(1.06);
+}
+.craft-thumb__fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+/* 1 — Scroll Sweep (GSAP & Lottie) ------------------------- */
+/* A thin diagonal sheen sweeps left→right like a scroll-trigger
+   progress line, plus a faint bottom progress bar that fills. */
+.craft-thumb--scroll-sweep .craft-thumb__fx {
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 42%,
+      rgba(167, 139, 250, 0.18) 50%,
+      transparent 58%,
+      transparent 100%
+    );
+  background-size: 220% 100%;
+  background-position: 120% 0;
+  animation: craft-sweep 6.5s cubic-bezier(0.65, 0.04, 0.35, 1) infinite;
+  mix-blend-mode: screen;
+}
+.craft-thumb--scroll-sweep::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 8%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(167, 139, 250, 0.55),
+    rgba(167, 139, 250, 0.05)
+  );
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: craft-progress 6.5s cubic-bezier(0.65, 0.04, 0.35, 1) infinite;
+  z-index: 2;
+}
+@keyframes craft-sweep {
+  0%   { background-position: 120% 0; }
+  60%  { background-position: -120% 0; }
+  100% { background-position: -120% 0; }
+}
+@keyframes craft-progress {
+  0%   { transform: scaleX(0); opacity: 0; }
+  10%  { opacity: 1; }
+  60%  { transform: scaleX(1); opacity: 0.9; }
+  85%  { transform: scaleX(1); opacity: 0; }
+  100% { transform: scaleX(0); opacity: 0; }
+}
+
+/* 2 — Parallax Depth (3D Web) ----------------------------- */
+/* Slow ken-burns drift accentuates the arched-portal depth. */
+.craft-thumb--parallax-depth .craft-thumb__img {
+  animation: craft-kenburns 16s ease-in-out infinite alternate;
+}
+.craft-thumb--parallax-depth .craft-thumb__fx {
+  background: radial-gradient(
+    120% 80% at 70% 30%,
+    rgba(255, 184, 154, 0.08),
+    transparent 60%
+  );
+  opacity: 0.7;
+}
+@keyframes craft-kenburns {
+  0%   { transform: scale(1.04) translate3d(0, 0, 0); }
+  100% { transform: scale(1.10) translate3d(-2%, -1.5%, 0); }
+}
+.card-surface:hover .craft-thumb--parallax-depth .craft-thumb__img {
+  transform: scale(1.08) translate3d(-1%, -0.5%, 0);
+}
+
+/* 3 — Soft Float (Minimal UX) ----------------------------- */
+/* Tiny vertical drift + faint sheen — calm, like the image. */
+.craft-thumb--soft-float .craft-thumb__img {
+  animation: craft-drift 9s ease-in-out infinite;
+}
+.craft-thumb--soft-float .craft-thumb__fx {
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  animation: craft-sheen 7s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+@keyframes craft-drift {
+  0%, 100% { transform: scale(1.02) translate3d(0, 0, 0); }
+  50%      { transform: scale(1.03) translate3d(0, -4px, 0); }
+}
+@keyframes craft-sheen {
+  0%   { background-position: 110% 0; opacity: 0; }
+  30%  { opacity: 1; }
+  60%  { background-position: -110% 0; opacity: 0; }
+  100% { background-position: -110% 0; opacity: 0; }
+}
+
+/* 4 — Pulse Glow (Behavior / Brain) ----------------------- */
+/* Two staggered radial pulses simulate neural firing. */
+.craft-thumb--pulse-glow .craft-thumb__fx {
+  background:
+    radial-gradient(
+      28% 28% at 30% 42%,
+      rgba(196, 142, 255, 0.45),
+      transparent 70%
+    ),
+    radial-gradient(
+      22% 22% at 70% 55%,
+      rgba(255, 178, 200, 0.30),
+      transparent 70%
+    );
+  opacity: 0.0;
+  animation: craft-pulse 4.8s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+@keyframes craft-pulse {
+  0%, 100% { opacity: 0.0; }
+  45%      { opacity: 0.9; }
+  55%      { opacity: 0.7; }
+}
+
+/* 5 — Shimmer (AI) ---------------------------------------- */
+/* Soft cyan/white twinkles around the image's interface bubbles. */
+.craft-thumb--shimmer .craft-thumb__fx {
+  background:
+    radial-gradient(
+      6% 6% at 22% 32%,
+      rgba(180, 220, 255, 0.85),
+      transparent 70%
+    ),
+    radial-gradient(
+      5% 5% at 78% 42%,
+      rgba(200, 230, 255, 0.75),
+      transparent 70%
+    ),
+    radial-gradient(
+      5% 5% at 70% 70%,
+      rgba(180, 220, 255, 0.65),
+      transparent 70%
+    ),
+    radial-gradient(
+      4% 4% at 30% 75%,
+      rgba(220, 240, 255, 0.7),
+      transparent 70%
+    );
+  opacity: 0.0;
+  animation: craft-twinkle 5.2s ease-in-out infinite;
+  mix-blend-mode: screen;
+  filter: blur(0.5px);
+}
+@keyframes craft-twinkle {
+  0%, 100% { opacity: 0.15; transform: translate3d(0, 0, 0); }
+  25%      { opacity: 0.85; }
+  50%      { opacity: 0.35; transform: translate3d(0, -2px, 0); }
+  75%      { opacity: 0.95; }
+}
+
+/* 6 — Silk Flow (Motion-Led Storytelling) ----------------- */
+/* A slow conic sheen rotates over the silk drape in the image
+   — feels like fabric catching light. */
+.craft-thumb--silk-flow .craft-thumb__fx {
+  background: conic-gradient(
+    from 0deg at 55% 50%,
+    transparent 0deg,
+    rgba(255, 210, 180, 0.20) 60deg,
+    transparent 140deg,
+    transparent 260deg,
+    rgba(255, 220, 200, 0.15) 320deg,
+    transparent 360deg
+  );
+  animation: craft-silk 14s linear infinite;
+  mix-blend-mode: screen;
+  opacity: 0.65;
+}
+@keyframes craft-silk {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Reduced motion — kill all loops; keep static framing. */
+@media (prefers-reduced-motion: reduce) {
+  .craft-thumb__img,
+  .craft-thumb--parallax-depth .craft-thumb__img,
+  .craft-thumb--soft-float .craft-thumb__img,
+  .craft-thumb--scroll-sweep .craft-thumb__fx,
+  .craft-thumb--scroll-sweep::after,
+  .craft-thumb--soft-float .craft-thumb__fx,
+  .craft-thumb--pulse-glow .craft-thumb__fx,
+  .craft-thumb--shimmer .craft-thumb__fx,
+  .craft-thumb--silk-flow .craft-thumb__fx {
+    animation: none !important;
+  }
+  .craft-thumb__img { transform: scale(1.02); }
 }

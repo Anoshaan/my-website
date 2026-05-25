@@ -2,6 +2,7 @@ import { Container } from "@/components/ui/Container";
 import { PageHead } from "@/components/ui/PageHead";
 import { Reveal } from "@/components/animations/Reveal";
 import { GlowBorder } from "@/components/animations/GlowBorder";
+import { ScrambledText } from "@/components/animations/ScrambledText";
 import {
   AnimatedIcon,
   type AnimatedIconName,
@@ -82,7 +83,9 @@ export default function LabsPage() {
                     <div className="flex flex-wrap gap-2">
                       {c.tags.map((t) => (
                         <span key={t} className="tag">
-                          {t}
+                          <ScrambledText radius={80} duration={800} speed={38}>
+                            {t}
+                          </ScrambledText>
                         </span>
                       ))}
                     </div>
@@ -106,7 +109,9 @@ export default function LabsPage() {
                         <div className="lab-case-pills">
                           {c.highlights.map((h) => (
                             <span key={h} className="lab-case-pill">
-                              {h}
+                              <ScrambledText radius={70} duration={750} speed={40}>
+                                {h}
+                              </ScrambledText>
                             </span>
                           ))}
                         </div>
@@ -119,7 +124,9 @@ export default function LabsPage() {
                         <div className="lab-case-pills">
                           {c.focusAreas.map((f) => (
                             <span key={f} className="lab-case-pill is-accent">
-                              {f}
+                              <ScrambledText radius={70} duration={750} speed={40}>
+                                {f}
+                              </ScrambledText>
                             </span>
                           ))}
                         </div>

@@ -19,7 +19,7 @@ const stats: Stat[] = [
   },
   {
     kind: "count",
-    countTo: 120,
+    countTo: 200,
     suffix: "+",
     label: "Products, platforms & UX systems delivered",
   },

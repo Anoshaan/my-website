@@ -11,6 +11,7 @@ import {
   AnimatedIcon,
   type AnimatedIconName,
 } from "@/components/icons/AnimatedIcon";
+import { ScrambledText } from "@/components/animations/ScrambledText";
 
 /**
  * About — Section 4. Experimental projects and side builds.
@@ -92,7 +93,9 @@ export function Experiments() {
                   <div className="flex flex-wrap gap-2 pt-1">
                     {e.tags.map((t) => (
                       <span key={t} className="tag">
-                        {t}
+                        <ScrambledText radius={80} duration={800} speed={38}>
+                          {t}
+                        </ScrambledText>
                       </span>
                     ))}
                   </div>

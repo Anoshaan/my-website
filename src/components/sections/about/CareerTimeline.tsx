@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Reveal } from "@/components/animations/Reveal";
 import { GlowBorder } from "@/components/animations/GlowBorder";
+import { ScrambledText } from "@/components/animations/ScrambledText";
 
 /**
  * About — Section 3. Premium vertical career timeline.
@@ -100,7 +101,9 @@ export function CareerTimeline() {
                     {r.period}
                   </span>
                   <span className="lab-case-pill is-accent">
-                    {r.highlight}
+                    <ScrambledText radius={70} duration={750} speed={40}>
+                      {r.highlight}
+                    </ScrambledText>
                   </span>
                 </div>
 
