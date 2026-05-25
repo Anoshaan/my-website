@@ -543,7 +543,7 @@ export function WorkplaceSafetyMockup() {
               Hayward Plaza
             </span>
           </Stack>
-          <Chip accent size="sm" className="">
+          <Chip accent size="sm">
             Active
           </Chip>
         </Row>

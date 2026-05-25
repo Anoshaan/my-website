@@ -156,13 +156,11 @@ export function Row({
       style={{
         gap,
         alignItems:
-          align === "between"
-            ? "center"
-            : align === "start"
-              ? "flex-start"
-              : align === "end"
-                ? "flex-end"
-                : align,
+          align === "start"
+            ? "flex-start"
+            : align === "end"
+              ? "flex-end"
+              : align,
         justifyContent:
           justify === "between"
             ? "space-between"
