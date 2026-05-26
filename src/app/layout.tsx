@@ -10,11 +10,41 @@ import { ScrollToTop } from "@/components/animations/ScrollToTop";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Anoshaan",
+  title: {
+    default: "Anoshaan — Product Designer & UI/UX Designer",
+    template: "%s | Anoshaan",
+  },
   description:
-    "Product Systems Designer • Associate UI/UX Lead — enterprise-grade digital experiences across web, mobile, and AI-driven platforms.",
+    "Product designer focused on UI/UX, spatial interfaces, digital experiences, and interactive product design. Explore selected work, case studies, and creative experiments by Anoshaan.",
+  metadataBase: new URL("https://anoshaan.design"),
   icons: {
-    icon: "/favicon.png",
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
+  openGraph: {
+    title: "Anoshaan — Product Designer & UI/UX Designer",
+    description:
+      "Product designer focused on UI/UX, spatial interfaces, digital experiences, and interactive product design.",
+    url: "https://anoshaan.design",
+    siteName: "Anoshaan",
+    images: [
+      {
+        url: "/icon.png",
+        width: 1200,
+        height: 1200,
+        alt: "Anoshaan Portfolio",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Anoshaan — Product Designer & UI/UX Designer",
+    description:
+      "Product designer focused on UI/UX, spatial interfaces, digital experiences, and interactive product design.",
+    images: ["/icon.png"],
   },
 };
 
