@@ -116,7 +116,7 @@ export function Stats() {
                 delay: i * 0.14,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="stat-card relative flex flex-col items-center justify-center text-center gap-4 py-9 px-5 rounded-2xl border border-white/[0.08] bg-[rgba(20,20,25,0.9)] backdrop-blur-xl hover:border-white/[0.18] hover:bg-[rgba(24,24,30,0.92)] transition-all duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+              className="stat-card relative flex flex-col items-center justify-center text-center gap-4 py-9 px-5 rounded-2xl border border-[var(--color-card-border)] bg-[var(--color-card)] hover:border-[var(--color-card-border-hover)] hover:bg-[var(--color-card-hover)] transition-all duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
             >
               <GlowBorder />
               <div className="flex items-center justify-center min-h-[clamp(3.25rem,6vw,5rem)]">
