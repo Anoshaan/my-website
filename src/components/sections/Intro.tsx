@@ -16,6 +16,7 @@ import { motion } from "motion/react";
 function LazyIntroVideo() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -31,9 +32,12 @@ function LazyIntroVideo() {
     io.observe(el);
     return () => io.disconnect();
   }, []);
+  // Defensive: any image or video error becomes a quiet state change
+  // (falls back to the poster) instead of a window 'error' event that
+  // the Next dev overlay surfaces as "[object Event]".
   return (
     <div ref={wrapRef} className="h-full w-full">
-      {ready ? (
+      {ready && !failed ? (
         <video
           autoPlay
           muted
@@ -41,6 +45,7 @@ function LazyIntroVideo() {
           playsInline
           preload="metadata"
           poster="/about/intro-poster.jpg"
+          onError={() => setFailed(true)}
         >
           <source src="/about/intro.mp4" type="video/mp4" />
         </video>
@@ -52,6 +57,9 @@ function LazyIntroVideo() {
           aria-hidden
           loading="lazy"
           decoding="async"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).style.display = "none";
+          }}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       )}

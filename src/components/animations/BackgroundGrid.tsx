@@ -29,19 +29,26 @@ export function BackgroundGrid() {
     // Defer all canvas init + the rAF loop until after first paint
     // (and after the browser is idle, if available). The grid is
     // background chrome — it must not compete with LCP.
-    let started = false;
     let cancelled = false;
     let cleanup: (() => void) | undefined;
-    const start = () => {
-      if (started || cancelled) return;
-      started = true;
-      cleanup = init();
+    const init = (): (() => void) | undefined => {
+      if (cancelled) return;
+      try {
+        return doInit();
+      } catch {
+        // Canvas init failed (very old browser, headless quirks).
+        // Background just stays blank — never throws into React.
+        return;
+      }
     };
     const w = window as Window & {
       requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
       cancelIdleCallback?: (id: number) => void;
     };
     let idleId = 0;
+    const start = () => {
+      cleanup = init();
+    };
     if (typeof w.requestIdleCallback === "function") {
       idleId = w.requestIdleCallback(start, { timeout: 1500 });
     } else {
@@ -53,7 +60,7 @@ export function BackgroundGrid() {
       cleanup?.();
     };
 
-    function init(): (() => void) | undefined {
+    function doInit(): (() => void) | undefined {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d", { alpha: false });
@@ -717,7 +724,7 @@ export function BackgroundGrid() {
         window.removeEventListener("devicemotion", onMotion);
       }
     };
-    } // end init
+    } // end doInit
   }, []);
 
   return (
