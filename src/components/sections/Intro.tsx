@@ -1,10 +1,63 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { TypingText } from "@/components/animations/TypingText";
 import { ScrambledText } from "@/components/animations/ScrambledText";
 import { motion } from "motion/react";
+
+/**
+ * Lazy intro video — keeps a poster image up until the section
+ * is within ~one viewport of being visible, then mounts the
+ * <video>. Avoids fetching the mp4 (and its decode cost) during
+ * the LCP window, which makes the hero text paint sooner on a
+ * cold load.
+ */
+function LazyIntroVideo() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setReady(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div ref={wrapRef} className="h-full w-full">
+      {ready ? (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="/about/intro-poster.jpg"
+        >
+          <source src="/about/intro.mp4" type="video/mp4" />
+        </video>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src="/about/intro-poster.jpg"
+          alt=""
+          aria-hidden
+          loading="lazy"
+          decoding="async"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      )}
+    </div>
+  );
+}
 
 const easeOutExpo = [0.22, 1, 0.36, 1] as const;
 
@@ -168,16 +221,7 @@ export function Intro() {
             <div className="relative h-full w-full">
               <div aria-hidden className="about-video-glow absolute inset-0" />
               <div className="about-video intro-video-flip h-full w-full">
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  poster="/about/intro-poster.jpg"
-                >
-                  <source src="/about/intro.mp4" type="video/mp4" />
-                </video>
+                <LazyIntroVideo />
               </div>
             </div>
           </motion.div>

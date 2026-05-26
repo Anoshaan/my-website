@@ -42,9 +42,19 @@ export function ScrambledText({
 }: ScrambledTextProps) {
   const rootRef = useRef<HTMLElement>(null);
   // One bookkeeping entry per character span — tracks the timer that
-  // restores it, plus the original glyph so settle is exact.
+  // restores it, plus the original glyph and a cached centre point
+  // so pointermove doesn't have to call getBoundingClientRect for
+  // every character on every event (each call forces layout — for
+  // ~20 instances × ~20 chars that's a major desktop scroll-jank
+  // source on its own).
   const charRefs = useRef<
-    Array<{ el: HTMLSpanElement; original: string; until: number }>
+    Array<{
+      el: HTMLSpanElement;
+      original: string;
+      until: number;
+      cx: number;
+      cy: number;
+    }>
   >([]);
   const rafRef = useRef<number | null>(null);
 
@@ -66,42 +76,99 @@ export function ScrambledText({
       el,
       original: el.dataset.original ?? el.textContent ?? "",
       until: 0,
+      cx: 0,
+      cy: 0,
     }));
 
+    // Cache char rects + the root's bounding rect once. Re-cache on
+    // resize / scroll (passive) and invalidate when the root itself
+    // moves (motion entrances). Each cache pass is one layout flush
+    // shared across all chars, vs. one per char per move event.
+    let rootRect: DOMRect | null = null;
+    const cacheRects = () => {
+      rootRect = root.getBoundingClientRect();
+      for (const c of charRefs.current) {
+        const r = c.el.getBoundingClientRect();
+        c.cx = r.left + r.width / 2;
+        c.cy = r.top + r.height / 2;
+      }
+    };
+    cacheRects();
+    let cacheRaf = 0;
+    const scheduleCache = () => {
+      if (cacheRaf) return;
+      cacheRaf = requestAnimationFrame(() => {
+        cacheRaf = 0;
+        cacheRects();
+      });
+    };
+    window.addEventListener("scroll", scheduleCache, { passive: true });
+    window.addEventListener("resize", scheduleCache);
+
     let lastFrame = 0;
+    // Idle by default — the rAF loop only runs while at least one
+    // character is mid-scramble. With ~20 instances on the page, a
+    // permanent rAF per instance was a measurable desktop CPU drain.
     const tick = (now: number) => {
-      // ~24fps swap cadence for the glyphs — cheaper than every frame
-      // and reads as a controlled flicker rather than noise.
       if (now - lastFrame >= speed) {
         lastFrame = now;
+        let anyActive = false;
         for (const c of charRefs.current) {
           if (c.until > now) {
+            anyActive = true;
             const i = Math.floor(Math.random() * scrambleChars.length);
             c.el.textContent = scrambleChars[i] ?? c.original;
           } else if (c.el.textContent !== c.original) {
             c.el.textContent = c.original;
           }
         }
+        if (!anyActive) {
+          rafRef.current = null;
+          return; // settle — wait for next pointermove to wake us
+        }
       }
       rafRef.current = requestAnimationFrame(tick);
     };
-    rafRef.current = requestAnimationFrame(tick);
+
+    const wake = () => {
+      if (rafRef.current == null) {
+        rafRef.current = requestAnimationFrame(tick);
+      }
+    };
 
     const handleMove = (e: PointerEvent) => {
+      // Cheap pre-check: bail entirely if the pointer is outside the
+      // root's bounding box + radius. This is the common case on a
+      // big page with many instances and skips all per-char math.
+      if (!rootRect) return;
+      if (
+        e.clientX < rootRect.left - radius ||
+        e.clientX > rootRect.right + radius ||
+        e.clientY < rootRect.top - radius ||
+        e.clientY > rootRect.bottom + radius
+      ) {
+        return;
+      }
+      const r2 = radius * radius;
       const now = performance.now();
-      for (const c of charRefs.current) {
-        const rect = c.el.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-        if (dist < radius) {
-          // Closer characters scramble for longer — gives the field
-          // a feeling of "depth" rather than a uniform flip.
-          const factor = 1 - dist / radius;
+      let touched = false;
+      const chars = charRefs.current;
+      for (let i = 0; i < chars.length; i++) {
+        const c = chars[i];
+        const dx = e.clientX - c.cx;
+        const dy = e.clientY - c.cy;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < r2) {
+          // Skip the sqrt — convert to a linear factor at the end.
+          const factor = 1 - Math.sqrt(d2) / radius;
           const end = now + duration * factor;
-          if (end > c.until) c.until = end;
+          if (end > c.until) {
+            c.until = end;
+            touched = true;
+          }
         }
       }
+      if (touched) wake();
     };
 
     const handleLeave = () => {
@@ -114,6 +181,9 @@ export function ScrambledText({
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (cacheRaf) cancelAnimationFrame(cacheRaf);
+      window.removeEventListener("scroll", scheduleCache);
+      window.removeEventListener("resize", scheduleCache);
       root.removeEventListener("pointermove", handleMove);
       root.removeEventListener("pointerleave", handleLeave);
       // Restore original glyphs on unmount so React's reconciliation

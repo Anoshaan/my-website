@@ -28,7 +28,7 @@ type Experiment = {
 const experiments: Experiment[] = [
   {
     image: {
-      src: "/interests/rf-jamming.png",
+      src: "/interests/rf-jamming.webp",
       alt: "Radio frequency experimentation hardware on a breadboard",
     },
     title: "Radio Frequency (RF) Jamming",
@@ -38,7 +38,7 @@ const experiments: Experiment[] = [
   },
   {
     image: {
-      src: "/interests/deauth.png",
+      src: "/interests/deauth.webp",
       alt: "Wi-Fi deauthentication research device with antenna and display",
     },
     title: "Protocol Deauthentication (Deauth)",
@@ -48,7 +48,7 @@ const experiments: Experiment[] = [
   },
   {
     image: {
-      src: "/interests/aeroponic.png",
+      src: "/interests/aeroponic.webp",
       alt: "Smart aeroponic tower system growing lettuce on a rooftop",
     },
     title: "Smart Aeroponic Tower System",

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { type CSSProperties, useEffect, useRef } from "react";
 import "./ScrollingImage.css";
 
@@ -63,12 +64,14 @@ export function ScrollingImage({
           <div className="scroll-mock-phone">
             <div className="scroll-mock-phone-notch" />
             <div className="scroll-mock-phone-screen">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 className="scroll-mock-img scroll-mock-img--mobile"
                 src={src}
                 alt={alt}
+                fill
+                sizes="(max-width: 768px) 90vw, 420px"
                 draggable={false}
+                style={{ objectFit: "cover" }}
               />
               <span className="scroll-mock-tap" style={style} />
             </div>
@@ -98,12 +101,14 @@ export function ScrollingImage({
           <span />
         </div>
         <div className="scroll-mock-browser-screen">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             className="scroll-mock-img scroll-mock-img--web"
             src={src}
             alt={alt}
+            fill
+            sizes="(max-width: 1024px) 92vw, 720px"
             draggable={false}
+            style={{ objectFit: "cover" }}
           />
           <div className="scroll-mock-click-host" style={cursorStyle}>
             <span className="scroll-mock-click" />

@@ -70,7 +70,7 @@ export const caseStudies: CaseStudy[] = [
     featured: true,
     media: {
       kind: "image",
-      src: "/case-studies/predictive-analytics-intelligence.png",
+      src: "/case-studies/predictive-analytics-intelligence.webp",
       orientation: "web",
     },
   },
@@ -120,7 +120,7 @@ export const caseStudies: CaseStudy[] = [
     featured: true,
     media: {
       kind: "image",
-      src: "/case-studies/smart-food-court-ordering.png",
+      src: "/case-studies/smart-food-court-ordering.webp",
       orientation: "mobile",
     },
   },
