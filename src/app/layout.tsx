@@ -4,7 +4,6 @@ import { GeistMono } from "geist/font/mono";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { LenisProvider } from "@/components/animations/LenisProvider";
-import { BackgroundGrid } from "@/components/animations/BackgroundGrid";
 import { CustomCursor } from "@/components/animations/CustomCursor";
 import { ScrollToTop } from "@/components/animations/ScrollToTop";
 import "./globals.css";
@@ -56,7 +55,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
-        <BackgroundGrid />
         <CustomCursor />
         <LenisProvider>
           <ScrollToTop />

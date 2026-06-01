@@ -6,7 +6,6 @@ import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/animations/Reveal";
-import { GlowBorder } from "@/components/animations/GlowBorder";
 import {
   type AnimatedIconName,
 } from "@/components/icons/AnimatedIcon";
@@ -52,7 +51,6 @@ function ArrowSmall() {
 function FeaturedSlideCard({
   c,
   iconIndex,
-  revealGlow = true,
 }: {
   c: CaseStudy;
   iconIndex: number;
@@ -60,7 +58,6 @@ function FeaturedSlideCard({
 }) {
   return (
     <div className="featured-slide-card">
-      <GlowBorder revealOnce={revealGlow} />
       <div className="featured-slide-media">
         <CaseStudyMedia
           caseStudy={c}
@@ -253,7 +250,7 @@ function FeaturedWorkDesktop() {
               aria-hidden={key.startsWith("0-") ? undefined : true}
               tabIndex={key.startsWith("0-") ? undefined : -1}
             >
-              <FeaturedSlideCard c={c} iconIndex={i} revealGlow={false} />
+              <FeaturedSlideCard c={c} iconIndex={i} />
             </Link>
           </article>
         ))}

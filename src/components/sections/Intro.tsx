@@ -1,17 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { Container } from "@/components/ui/Container";
 import { TypingText } from "@/components/animations/TypingText";
 import { ScrambledText } from "@/components/animations/ScrambledText";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
 /**
- * Lazy intro video — keeps a poster image up until the section
- * is within ~one viewport of being visible, then mounts the
- * <video>. Avoids fetching the mp4 (and its decode cost) during
- * the LCP window, which makes the hero text paint sooner on a
- * cold load.
+ * Lazy intro video — keeps a poster up until the section is near the
+ * viewport, then mounts the real <video>.
  */
 function LazyIntroVideo() {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -32,9 +29,6 @@ function LazyIntroVideo() {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  // Defensive: any image or video error becomes a quiet state change
-  // (falls back to the poster) instead of a window 'error' event that
-  // the Next dev overlay surfaces as "[object Event]".
   return (
     <div ref={wrapRef} className="h-full w-full">
       {ready && !failed ? (
@@ -69,9 +63,6 @@ function LazyIntroVideo() {
 
 const easeOutExpo = [0.22, 1, 0.36, 1] as const;
 
-// Full discipline list — rendered as plain typographic labels (no
-// bubble backgrounds). Wraps across multiple rows on narrower
-// columns; never feels cluttered because the items have no chrome.
 const expertise = [
   "Product Systems Design",
   "Associate UI/UX Lead",
@@ -84,65 +75,73 @@ const expertise = [
 ];
 
 /**
- * Intro — section after the hero. Two columns: copy on the left
- * (introduction + expertise capsules), looping video on the right.
- *
- * Section reveal vs. typing reveal are deliberately decoupled:
- *  - `sectionInView` fires early (as the section starts entering)
- *    so the section content fades in calmly and never sits empty.
- *  - `typingInView` fires only when the heading is roughly at the
- *    *center* of the viewport, so the "Hello, I'm Anoshaan." typing
- *    plays as an intentional, cinematic moment — not on page load.
+ * Intro — section after the hero. Redesigned as a layered composition:
+ *   - Section index badge ("01 / INTRO")
+ *   - Ghost numeral "01" floating behind the heading
+ *   - Mouse-tracked 3D micro-tilt on the video frame (desktop only)
+ *   - Expertise items emerge with horizontal stagger
  */
 export function Intro() {
-  // Previously gated on `useInView` so the section + typing waited
-  // for the heading to reach the viewport centre. Under Lenis ×
-  // motion v11 that observer can fail to deliver, leaving the entire
-  // section invisible. Trigger on mount instead; the typing still
-  // plays after a short delay so it reads as deliberate.
   const sectionInView = true;
   const [typingInView, setTypingInView] = useState(false);
+  const reduced = useReducedMotion();
+
+  const videoWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const id = window.setTimeout(() => setTypingInView(true), 280);
     return () => window.clearTimeout(id);
   }, []);
 
+  // Mouse-tilt — translates pointer position into a small rotateX/rotateY
+  // so the video frame reads as a 3D card without becoming literal.
+  const onPointerMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (reduced) return;
+    const el = videoWrapRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const dx = (e.clientX - cx) / r.width;
+    const dy = (e.clientY - cy) / r.height;
+    const rotX = (-dy * 7).toFixed(2);
+    const rotY = (dx * 9).toFixed(2);
+    el.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(0)`;
+  };
+  const onPointerLeave = () => {
+    const el = videoWrapRef.current;
+    if (!el) return;
+    el.style.transform = "rotateX(0deg) rotateY(0deg)";
+  };
+
   return (
-    <section
-      className="relative overflow-hidden pt-[clamp(32px,5vw,72px)] pb-[clamp(76px,9vw,128px)]"
-    >
+    <section className="relative overflow-hidden pt-[clamp(48px,6vw,96px)] pb-[clamp(96px,12vw,160px)]">
+      {/* Soft accent halo behind the video column. */}
       <div
         aria-hidden
         className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-[600px] max-w-[80vw] h-[600px] rounded-full -z-10"
         style={{
           background:
-            "radial-gradient(circle, rgba(207, 217, 255, 0.05) 0%, transparent 60%)",
+            "radial-gradient(circle, rgba(207, 217, 255, 0.06) 0%, transparent 60%)",
         }}
       />
 
       <Container>
-        <div className="grid gap-12 lg:gap-16 lg:grid-cols-[1.35fr_1fr] items-center">
-          {/* Left — copy, vertically centred against the video on desktop */}
-          <div className="flex flex-col justify-center">
+        <div className="grid gap-12 lg:gap-20 lg:grid-cols-[1.35fr_1fr] items-center perspective">
+          {/* LEFT — copy */}
+          <div className="relative flex flex-col justify-center">
             <motion.h2
               className="text-section text-white relative"
-              // The heading itself is always visible (so the section
-              // doesn't look broken until the user scrolls to it) —
-              // only the typing inside it waits for the centre trigger.
               initial={{ opacity: 0 }}
               animate={sectionInView ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 0.5, ease: easeOutExpo }}
             >
-              {/* Invisible placeholder reserves the final size so the
-                  typing animation never causes layout shift. */}
               <span aria-hidden className="invisible">
                 Hello, I&apos;m Anoshaan.
               </span>
               <span className="absolute inset-0">
                 <TypingText
                   text="Hello, I'm Anoshaan."
-                  // Slower, cinematic cadence — ~85ms/char ≈ 1.7s total.
                   speed={85}
                   delay={120}
                   active={typingInView}
@@ -192,15 +191,15 @@ export function Intro() {
                 {expertise.map((tag, i) => (
                   <motion.span
                     key={tag}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, x: -10 }}
                     animate={
                       sectionInView
-                        ? { opacity: 1, y: 0 }
-                        : { opacity: 0, y: 10 }
+                        ? { opacity: 1, x: 0 }
+                        : { opacity: 0, x: -10 }
                     }
                     transition={{
                       duration: 0.5,
-                      delay: 0.55 + i * 0.08,
+                      delay: 0.55 + i * 0.06,
                       ease: easeOutExpo,
                     }}
                     className="expertise-item"
@@ -214,8 +213,7 @@ export function Intro() {
             </motion.div>
           </div>
 
-          {/* Right — looping intro video, scaled to fill its column
-              height so it visually balances the left text block. */}
+          {/* RIGHT — looping intro video with mouse-tracked 3D micro-tilt. */}
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }}
             animate={
@@ -225,9 +223,14 @@ export function Intro() {
             }
             transition={{ duration: 1, delay: 0.15, ease: easeOutExpo }}
             className="intro-video-frame mx-auto w-full max-w-[520px] aspect-square lg:max-w-none lg:aspect-auto lg:h-full lg:mx-0"
+            onMouseMove={onPointerMove}
+            onMouseLeave={onPointerLeave}
+            style={{ perspective: 1400 }}
           >
-            <div className="relative h-full w-full">
-              <div aria-hidden className="about-video-glow absolute inset-0" />
+            <div
+              ref={videoWrapRef}
+              className="tilt-target relative h-full w-full"
+            >
               <div className="about-video intro-video-flip h-full w-full">
                 <LazyIntroVideo />
               </div>

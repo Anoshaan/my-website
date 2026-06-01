@@ -83,8 +83,28 @@ body {
 }
 
 body {
-  /* Canvas handles background — keep body transparent */
-  background: transparent;
+  /* Static, layered gradient — provides depth without any animation.
+     Two soft accent washes (cool top-left, warm bottom-right) sit
+     under a near-black base. No canvas, no rAF — zero runtime cost. */
+  background-color: #050505;
+  background-image:
+    radial-gradient(
+      62% 48% at 12% 8%,
+      rgba(207, 217, 255, 0.07) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      55% 45% at 88% 92%,
+      rgba(255, 184, 154, 0.045) 0%,
+      transparent 65%
+    ),
+    radial-gradient(
+      90% 70% at 50% 50%,
+      rgba(20, 20, 28, 0.55) 0%,
+      rgba(5, 5, 7, 0.95) 80%
+    );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 /* Kill italics everywhere — brand rule */
@@ -298,93 +318,350 @@ body:has(.cursor) [role="button"] {
 }
 
 /* =========================================================
-   CARD — original subtle dark surface with accent hover glow
+   COMPOSITION UTILITIES — layered, perspective, editorial
+   typography. These are the depth language now that card
+   chrome is gone: ghost numerals, hanging indices, vertical
+   hairlines, perspective containers and gentle 3D micro-tilt.
+   ========================================================= */
+
+/* Perspective wrapper — any child with transform-style:preserve-3d
+   inside this container will receive a perspective. Pair with the
+   `.tilt-target` class (or inline transform) for 3D micro-motion. */
+.perspective {
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.tilt-target {
+  transition: transform 0.6s var(--ease-out-expo);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .tilt-target {
+    transform: none !important;
+  }
+}
+
+/* Big ghost numeral — sits behind a heading as a quiet, oversized
+   index marker. Used by sections that benefit from a numbered hook:
+   Design Principles, Process, Stats. The numeral is rendered as
+   stroke-only text so it never competes with the foreground copy. */
+.ghost-numeral {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(7rem, 18vw, 18rem);
+  line-height: 0.82;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.07);
+  text-stroke: 1px rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Compact ghost numeral — for inline "01" tags ahead of a list item. */
+.ghost-numeral-sm {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(2.8rem, 5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.22);
+  text-stroke: 1px rgba(255, 255, 255, 0.22);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    transparent 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  pointer-events: none;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+}
+
+/* Section index — small "·  01  /  08  ·" eyebrow shown above section
+   titles so the document gains a sense of progression. */
+.section-index {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+.section-index::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.22);
+}
+.section-index-current {
+  color: #ffffff;
+}
+.section-index-divider {
+  opacity: 0.35;
+}
+
+/* Vertical hairline — thin column divider used between stat columns
+   and in editorial layouts. */
+.v-hair {
+  position: relative;
+}
+.v-hair::before {
+  content: "";
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.10) 18%,
+    rgba(255, 255, 255, 0.10) 82%,
+    transparent 100%
+  );
+}
+@media (max-width: 640px) {
+  .v-hair::before {
+    display: none;
+  }
+}
+
+/* Display headline — one notch bigger than .text-section, for
+   moments that should feel like a closing scene (Contact). */
+.text-display {
+  font-size: clamp(3rem, 9vw, 7.5rem);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+/* Numbered-row layout used by the Design Principles redesign. Two
+   columns: ghost numeral on the left, copy on the right. The grid
+   collapses cleanly on phones. */
+.numbered-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.32fr) minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 56px);
+  align-items: start;
+  padding-block: clamp(28px, 4vw, 56px);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+.numbered-row:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.numbered-row.is-shifted {
+  /* Every other row is nudged right so the column rhythm reads
+     as a deliberate composition, not a static list. */
+  padding-left: clamp(0px, 6vw, 96px);
+}
+@media (max-width: 720px) {
+  .numbered-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .numbered-row.is-shifted {
+    padding-left: 0;
+  }
+}
+
+/* Process step — zig-zag editorial timeline. Items alternate sides;
+   a vertical center hairline ties them together on desktop. */
+.process-track {
+  position: relative;
+}
+.process-track::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.10) 8%,
+    rgba(255, 255, 255, 0.10) 92%,
+    transparent 100%
+  );
+  transform: translateX(-0.5px);
+}
+@media (max-width: 860px) {
+  .process-track::before {
+    left: 24px;
+  }
+}
+
+.process-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 5vw, 80px);
+  align-items: center;
+  position: relative;
+  padding-block: clamp(36px, 5vw, 72px);
+}
+.process-row.is-right > .process-row-body {
+  grid-column: 2 / 3;
+  text-align: left;
+}
+.process-row.is-left > .process-row-body {
+  grid-column: 1 / 2;
+  text-align: right;
+}
+.process-row.is-left > .process-row-numeral {
+  grid-column: 2 / 3;
+  justify-self: start;
+}
+.process-row.is-right > .process-row-numeral {
+  grid-column: 1 / 2;
+  justify-self: end;
+}
+.process-row-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 48ch;
+}
+.process-row.is-right > .process-row-body {
+  margin-left: clamp(20px, 3vw, 48px);
+}
+.process-row.is-left > .process-row-body {
+  margin-left: auto;
+  margin-right: clamp(20px, 3vw, 48px);
+  align-items: flex-end;
+}
+.process-row-numeral {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(3.5rem, 7vw, 6rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.22);
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  padding-inline: clamp(12px, 2vw, 24px);
+}
+/* Dot anchored on the centre hairline beside each step's numeral. */
+.process-row-numeral::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  top: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.45),
+    0 0 0 4px rgba(255, 255, 255, 0.06);
+}
+.process-row.is-left > .process-row-numeral::after {
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+.process-row.is-right > .process-row-numeral::after {
+  right: 0;
+  transform: translate(50%, -50%);
+}
+@media (max-width: 860px) {
+  .process-row {
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    padding-block: 28px;
+  }
+  .process-row.is-right > .process-row-body,
+  .process-row.is-left > .process-row-body {
+    grid-column: 2 / 3;
+    text-align: left;
+    margin: 0;
+    align-items: flex-start;
+  }
+  .process-row.is-right > .process-row-numeral,
+  .process-row.is-left > .process-row-numeral {
+    grid-column: 1 / 2;
+    justify-self: start;
+    font-size: clamp(2.5rem, 8vw, 3.4rem);
+    padding-inline: 0;
+  }
+  .process-row.is-right > .process-row-numeral::after,
+  .process-row.is-left > .process-row-numeral::after {
+    left: -24px;
+    right: auto;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Giant outlined quotation-mark backdrop for the Testimonials
+   section — readable as a quiet brand mark, never competes with
+   the featured quote. */
+.giant-quote {
+  position: absolute;
+  top: -0.18em;
+  left: -0.05em;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(14rem, 28vw, 28rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* =========================================================
+   CARD SURFACE — typographic only. No border, no fill, no
+   shadow. Content flows directly on the page. A whisper-soft
+   accent halo on hover keeps interactive feedback without
+   reintroducing an outlined box.
    ========================================================= */
 .card-surface {
   position: relative;
-  padding: clamp(28px, 3vw, 40px);
-  border-radius: 22px;
-  /* Solid near-black surface — sits barely a notch above the body
-     bg. No backdrop-filter, no translucent layer over the grid:
-     the card looks the same on every display. The hover sheen
-     (::before / ::after) still adds the accent-tinted glow on
-     pointer interaction. */
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
-    0 8px 32px 0 rgba(0, 0, 0, 0.25);
-  overflow: hidden;
+  padding: clamp(8px, 1.2vw, 16px) 0;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   isolation: isolate;
-  transition: border-color 0.4s var(--ease-out-expo),
-    transform 0.5s var(--ease-out-expo),
-    box-shadow 0.4s var(--ease-out-expo),
-    background-color 0.4s ease;
-  contain: layout paint;
+  transition: transform 0.5s var(--ease-out-expo);
 }
 
 .card-surface:hover {
-  border-color: var(--color-card-border-hover);
-  background: var(--color-card-hover);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.10),
-    0 14px 40px 0 rgba(0, 0, 0, 0.35);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
-.card-surface::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    140deg,
-    color-mix(in oklab, var(--color-accent) 18%, transparent),
-    transparent 50%
-  );
-  opacity: 0;
-  transition: opacity 0.6s ease;
-  pointer-events: none;
-  z-index: -1;
-}
-
+.card-surface::before,
 .card-surface::after {
-  content: "";
-  position: absolute;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in oklab, var(--color-accent) 35%, transparent) 0%,
-    transparent 65%
-  );
-  filter: blur(40px);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  transform: translate(var(--mx, -50%), var(--my, -50%)) translate(-50%, -50%);
-  top: 0;
-  left: 0;
-  z-index: -1;
+  content: none;
 }
 
-.card-surface:hover::before,
-.card-surface:hover::after {
-  opacity: 1;
-}
-
-/* Optional lift effect on cards */
+/* Optional lift effect on cards — kept as a subtle vertical nudge. */
 .card-lift {
-  transition: transform 0.5s var(--ease-out-expo),
-    border-color 0.4s var(--ease-out-expo);
+  transition: transform 0.5s var(--ease-out-expo);
 }
 .card-lift:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 
 /* Keep card body copy at a readable measure — never edge-to-edge on
    wide cards / large monitors. */
 .card-surface p {
-  max-width: 54ch;
+  max-width: 60ch;
 }
 
 /* =========================================================
@@ -692,14 +969,10 @@ html.lenis body {
 }
 
 /* =========================================================
-   AMBIENT RAINBOW GLOW — wraps a primary button as a sibling
-   pseudo-element that sits BEHIND the button surface.
-
-   The button itself stays a pure white pill (.btn-glass); the
-   glow is a soft, blurred, animated gradient on the wrapper's
-   ::before. Wrapper has no background and no isolation, so the
-   button (painted later in the DOM) covers the glow within its
-   own bounds — leaving only a soft halo around the edges.
+   PRIMARY BUTTON UNDERGLOW — a narrow, blurred horizontal wash
+   that sits BELOW the button only (not all around). The colour
+   slowly drifts left-to-right so the glow reads as alive without
+   becoming a full halo.
    ========================================================= */
 .rainbow-shadow {
   position: relative;
@@ -710,30 +983,29 @@ html.lenis body {
 .rainbow-shadow::before {
   content: "";
   position: absolute;
-  left: -8px;
-  right: -8px;
-  top: -6px;
-  bottom: -14px;
-  border-radius: 9999px;
+  /* Bottom-only — narrower than the button on the left/right so the
+     glow tapers off at the edges, and sits BELOW the button so the
+     top and sides have no halo. */
+  left: 14%;
+  right: 14%;
+  top: 65%;
+  bottom: -22px;
+  border-radius: 50%;
   background: linear-gradient(
     90deg,
-    #ffb1c2,
-    #c4b1ff,
-    #9ddcff,
-    #b1ffd6,
-    #ffe5b1,
-    #ffb1c2
+    #c084fc 0%,
+    #a78bfa 30%,
+    #818cf8 55%,
+    #b794f6 80%,
+    #c084fc 100%
   );
-  background-size: 400% 100%;
-  opacity: 0.5;
-  filter: blur(22px);
-  animation: rainbow-shadow-anim 9s linear infinite;
+  background-size: 220% 100%;
+  opacity: 0.55;
+  filter: blur(18px);
+  animation: rainbow-shadow-anim 7s linear infinite;
   transition:
     opacity 0.4s var(--ease-out-expo),
     filter 0.4s var(--ease-out-expo),
-    left 0.4s var(--ease-out-expo),
-    right 0.4s var(--ease-out-expo),
-    top 0.4s var(--ease-out-expo),
     bottom 0.4s var(--ease-out-expo);
   pointer-events: none;
   will-change: filter, opacity;
@@ -746,12 +1018,9 @@ html.lenis body {
 }
 
 .rainbow-shadow:hover::before {
-  left: -12px;
-  right: -12px;
-  top: -8px;
-  bottom: -18px;
-  filter: blur(30px);
-  opacity: 0.72;
+  bottom: -26px;
+  filter: blur(22px);
+  opacity: 0.78;
 }
 
 @keyframes rainbow-shadow-anim {
@@ -759,7 +1028,7 @@ html.lenis body {
     background-position: 0% 50%;
   }
   100% {
-    background-position: 400% 50%;
+    background-position: 220% 50%;
   }
 }
 
@@ -931,30 +1200,19 @@ html.lenis body {
 .featured-slide-card {
   position: relative;
   height: 100%;
-  padding: clamp(24px, 2.4vw, 40px);
-  border-radius: 26px;
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
-    0 8px 32px 0 rgba(0, 0, 0, 0.25);
+  padding: clamp(8px, 1vw, 14px) clamp(4px, 0.6vw, 10px);
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
-  gap: clamp(16px, 1.6vw, 22px);
-  transition:
-    border-color 0.4s var(--ease-out-expo),
-    transform 0.5s var(--ease-out-expo),
-    box-shadow 0.4s var(--ease-out-expo),
-    background-color 0.4s ease;
+  gap: clamp(14px, 1.4vw, 20px);
+  transition: transform 0.5s var(--ease-out-expo);
 }
 
 .featured-slide-card:hover {
-  border-color: var(--color-card-border-hover);
-  background: var(--color-card-hover);
   transform: translateY(-3px);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.10),
-    0 14px 40px 0 rgba(0, 0, 0, 0.35);
 }
 
 .featured-slide-media {
@@ -962,9 +1220,9 @@ html.lenis body {
   aspect-ratio: 16 / 9;
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 0;
   background: linear-gradient(135deg, #0d0d14, #050507);
-  margin-bottom: clamp(18px, 1.8vw, 26px);
+  margin-bottom: clamp(14px, 1.4vw, 20px);
 }
 
 .featured-slide-media-label {
@@ -1053,29 +1311,25 @@ html.lenis body {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: clamp(24px, 3.2vw, 48px);
+  gap: clamp(28px, 3.5vw, 56px);
   align-items: stretch;
-  padding: clamp(20px, 2.2vw, 32px);
-  border-radius: 26px;
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
-    0 14px 50px 0 rgba(0, 0, 0, 0.32);
-  transition:
-    border-color 0.4s var(--ease-out-expo),
-    transform 0.5s var(--ease-out-expo),
-    box-shadow 0.4s var(--ease-out-expo),
-    background-color 0.4s ease;
+  padding: clamp(24px, 3vw, 48px) 0;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: transform 0.5s var(--ease-out-expo);
+  /* Hairline divider between cases — gives rhythm without making
+     each row read as an outlined card. */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.lab-case:last-child {
+  border-bottom: 0;
 }
 
 .lab-case:hover {
-  border-color: var(--color-card-border-hover);
-  background: var(--color-card-hover);
-  transform: translateY(-2px);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.10),
-    0 22px 60px 0 rgba(0, 0, 0, 0.40);
+  transform: none;
 }
 
 @media (max-width: 900px) {
@@ -1091,10 +1345,10 @@ html.lenis body {
      height. aspect-ratio is intentionally NOT used here — combined with
      grid stretch it derives width from height and overflows the card. */
   align-self: stretch;
-  min-height: 320px;
+  min-height: 360px;
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 0;
   background: linear-gradient(135deg, #0d0d14, #050507);
 }
 
@@ -1180,6 +1434,38 @@ html.lenis body {
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.78);
   max-width: 56ch;
+}
+
+/* Detail paragraphs — expanded copy below the summary on the Labs page. */
+.lab-case-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lab-case-detail-p {
+  font-size: clamp(0.92rem, 0.88rem + 0.22vw, 1rem);
+  line-height: 1.7;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 60ch;
+}
+
+/* Secondary PNG image area on the Labs page. PNG drop-in path:
+   /case-studies/<slug>-detail.png — sits below the meta block and
+   stretches to the body column width. */
+.lab-case-detail-image {
+  position: relative;
+  width: 100%;
+  margin-top: 6px;
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+.lab-case-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .lab-case-meta {
@@ -1316,43 +1602,23 @@ html.lenis body {
   width: clamp(280px, 22vw, 360px);
   margin-right: clamp(14px, 1.4vw, 20px);
   padding: clamp(20px, 1.5vw, 26px);
-  border: 1px solid var(--color-card-border);
-  border-radius: 18px;
-  background: var(--color-card);
-  -webkit-backdrop-filter: blur(22px);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  transition: border-color 0.4s var(--ease-out-expo),
-    transform 0.5s var(--ease-out-expo), background 0.4s ease;
   position: relative;
-  overflow: hidden;
   isolation: isolate;
 }
 
 .testimonial-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    60% 80% at 0% 0%,
-    color-mix(in oklab, var(--color-accent) 14%, transparent),
-    transparent
-  );
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-  z-index: -1;
+  content: none;
 }
 
 .testimonial-card:hover {
-  border-color: var(--color-card-border-hover);
-  transform: translateY(-4px) scale(1.02);
-  background: var(--color-card-hover);
-}
-
-.testimonial-card:hover::before {
-  opacity: 1;
+  transform: none;
+  background: transparent;
 }
 
 .t-quote-mark {
@@ -1442,42 +1708,237 @@ html.lenis body {
 }
 
 /* =========================================================
-   TESTIMONIALS STAGE — featured center card sits on top of
-   continuously-scrolling rows. Mask gradient dims the rows
-   around the card so focus stays on the featured quote.
+   TESTIMONIALS LAYOUT — left column carries the featured
+   testimonial (portrait → quote → LinkedIn), right column
+   carries the section heading + description. Category nav
+   spans full width below the left column. Stacks vertically
+   on tablet and below.
    ========================================================= */
-.testimonials-stage {
+.testimonials-section {
   position: relative;
+}
+
+.testimonials-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(40px, 6vw, 88px);
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .testimonials-layout {
+    grid-template-columns: 1fr;
+    gap: clamp(32px, 5vw, 48px);
+  }
+  /* On stacked layout, lead with the heading column. */
+  .testimonials-heading-col {
+    order: 1;
+  }
+  .testimonials-card-col {
+    order: 2;
+  }
+}
+
+/* LEFT — heading column. Heading + body + category nav, all
+   left-aligned and sharing the same left edge. Children stretch to
+   the column width so the nav can span its full width; the heading
+   and body use their own max-width to stay readable. */
+.testimonials-heading-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  text-align: left;
+  padding-block: clamp(8px, 2vw, 32px);
+  gap: 0;
+}
+.testimonials-heading-col > * {
+  /* Each Reveal wrapper takes the full column width — its inner
+     content (heading, body, nav) controls its own max-width. */
+  width: 100%;
+}
+
+/* RIGHT — testimonial card column. All contents horizontally centered. */
+.testimonials-card-col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 3vw, 40px);
+  align-items: center;
+  text-align: center;
+}
+
+.testimonials-rows,
+.testimonials-mask {
+  display: none !important;
+}
+
+/* Category nav lives in the LEFT column, under the body text.
+   Width capped to roughly the heading's measure so the row doesn't
+   feel like it sprints past the title. */
+.testimonials-cat-nav-wrap {
+  margin-top: clamp(32px, 5vw, 64px);
+  padding-top: clamp(18px, 2.4vw, 28px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  width: 100%;
+  /* Capped to roughly match the heading's rendered width so the row
+     stays under the title and doesn't sprint past it. */
+  max-width: 28rem;
+}
+@media (max-width: 720px) {
+  .testimonials-cat-nav-wrap {
+    max-width: none;
+  }
+}
+
+/* Portrait — circular, with an animated soft white halo behind it.
+   The halo is a sibling pseudo-element on a wrapper so it can bleed
+   beyond the circle's overflow:hidden clip. */
+.testimonial-portrait {
+  position: relative;
+  width: clamp(160px, 16vw, 220px);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 1;
+  /* Subtle inner stroke gives the circle a clean edge against the
+     dark background. */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 12px 40px rgba(0, 0, 0, 0.35);
+}
+.testimonial-portrait::after {
+  /* Soft animated halo — sits OUTSIDE the clipped circle by anchoring
+     to the wrapper element below. Here we just give the circle a
+     gentle inner highlight to lift the face from the background. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    60% 50% at 30% 25%,
+    rgba(255, 255, 255, 0.18),
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+.testimonial-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Halo wrapper — sits BEHIND the portrait via z-index, glows out
+   from underneath with a slow breathing animation. Rendered by the
+   PortraitImage React component (.testimonial-portrait-wrap). */
+.testimonial-portrait-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(18px, 2vw, 28px);
   isolation: isolate;
 }
-
-.testimonials-rows {
-  position: relative;
-  z-index: 1;
-}
-
-.testimonials-mask {
+/* Soft purple halo — a conic gradient rotating slowly behind the
+   circle. Heavy blur eliminates any hard edge so the motion reads as
+   atmospheric, not as a visible disc. */
+.testimonial-portrait-wrap::before {
+  content: "";
   position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: radial-gradient(
-    62% 78% at 50% 50%,
-    rgba(5, 5, 7, 0.94) 0%,
-    rgba(5, 5, 7, 0.80) 32%,
-    rgba(5, 5, 7, 0.45) 58%,
-    rgba(5, 5, 7, 0) 82%
+  inset: -8%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(192, 132, 252, 0.55) 0deg,
+    rgba(167, 139, 250, 0.18) 80deg,
+    rgba(129, 140, 248, 0.45) 160deg,
+    rgba(192, 132, 252, 0.15) 240deg,
+    rgba(216, 180, 254, 0.55) 320deg,
+    rgba(192, 132, 252, 0.55) 360deg
   );
+  filter: blur(34px);
+  z-index: 0;
+  opacity: 0.85;
+  animation: portrait-halo-rotate 14s linear infinite,
+    portrait-halo-breathe 6.5s ease-in-out infinite;
+  pointer-events: none;
 }
 
-.featured-testimonial-wrap {
+/* Second pass — a tighter, brighter purple wash that pulses in/out
+   to give the halo its dark-then-light character without revealing a
+   ring outline. */
+.testimonial-portrait-wrap::after {
+  content: "";
   position: absolute;
-  inset: 0;
-  z-index: 3;
-  display: grid;
-  place-items: center;
+  width: clamp(220px, 22vw, 320px);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(167, 139, 250, 0.4) 0%,
+    rgba(129, 140, 248, 0.15) 45%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  z-index: 0;
+  opacity: 0.7;
+  animation: portrait-halo-pulse 7.2s ease-in-out infinite;
   pointer-events: none;
-  padding-inline: 16px;
+}
+
+@keyframes portrait-halo-breathe {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes portrait-halo-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes portrait-halo-pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-portrait-wrap::before,
+  .testimonial-portrait-wrap::after {
+    animation: none;
+  }
+}
+
+.featured-quote-block {
+  position: relative;
+}
+
+/* Disabled category nav state — for a category with no testimonials
+   yet. The label sits dim and is not interactive. */
+.cat-nav-item.is-empty {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+.cat-nav-item.is-empty .cat-nav-label-base {
+  color: rgba(255, 255, 255, 0.28);
+}
+.cat-nav-item.is-empty:hover .cat-nav-label-base {
+  color: rgba(255, 255, 255, 0.28);
 }
 
 /* Stacks the featured card + category-nav card as one centered unit. */
@@ -1494,41 +1955,52 @@ html.lenis body {
   pointer-events: auto;
   position: relative;
   width: 100%;
-  /* Stable height so dynamic quote sizing never makes the card jump. */
-  min-height: clamp(280px, 30vw, 340px);
-  padding: clamp(28px, 3.2vw, 44px);
-  border-radius: 28px;
-  background: var(--color-card);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 24px 80px rgba(0, 0, 0, 0.55),
-    0 0 60px rgba(207, 217, 255, 0.04);
-  transition:
-    border-color 0.4s var(--ease-out-expo),
-    box-shadow 0.4s var(--ease-out-expo),
-    transform 0.4s var(--ease-out-expo);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   outline: none;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 22px;
+  gap: clamp(14px, 1.6vw, 22px);
+}
+.featured-testimonial.is-centered {
+  align-items: center;
+  text-align: center;
 }
 
 .featured-inner {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: clamp(14px, 1.6vw, 22px);
   flex: 1;
+  width: 100%;
+}
+.featured-inner.is-centered {
+  align-items: center;
+  text-align: center;
+}
+
+/* Name + role block — tight stack, slightly increased name presence. */
+.featured-name-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+/* Bump the name / role one notch for legibility against the quote. */
+.featured-name {
+  font-size: clamp(15px, 1.05vw, 17px);
+}
+.featured-role {
+  font-size: clamp(11.5px, 0.85vw, 12.5px);
 }
 
 .featured-testimonial:hover,
 .featured-testimonial:focus-visible {
-  border-color: rgba(255, 255, 255, 0.18);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.10),
-    0 28px 90px rgba(0, 0, 0, 0.60),
-    0 0 80px rgba(207, 217, 255, 0.06);
+  border: 0;
+  box-shadow: none;
 }
 
 .featured-quote-mark {
@@ -1544,56 +2016,91 @@ html.lenis body {
   font-family: var(--font-sans);
   /* Default; overridden inline per quote length. */
   font-size: clamp(18px, 1.6vw, 22px);
-  line-height: 1.6;
+  line-height: 1.55;
   letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.95);
   margin: 0;
-  flex: 1;
-  /* Vertically centers shorter quotes within the flexible card body. */
-  display: flex;
-  align-items: center;
+  /* Trimmed measure — keeps lines short and readable, no wide stretches. */
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+.featured-quote.is-centered {
+  text-align: center;
+  margin-inline: auto;
+}
+
+/* Inline opening quotation mark — sits before the first word of the
+   quote, slightly enlarged, in a quieter tone so it reads as a mark
+   rather than a heavy character. */
+.featured-quote-mark-inline {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  margin-right: 0.18em;
+  color: color-mix(in oklab, #ffffff 55%, var(--color-fg-subtle));
+  font-size: 1.15em;
+  line-height: 0;
+  vertical-align: -0.18em;
 }
 
 .featured-person {
   display: flex;
   align-items: center;
-  gap: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 18px;
+  gap: 16px;
+  padding-top: 0;
+  flex-wrap: wrap;
+}
+.featured-person.is-centered {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: clamp(10px, 1.2vw, 14px);
+  width: 100%;
+  max-width: 32rem;
+  margin-inline: auto;
 }
 
 .featured-linkedin {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 9px;
   flex-shrink: 0;
-  padding: 7px 13px;
+  padding: 10px 18px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  color: #ffffff;
   font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 6px 24px color-mix(in oklab, var(--color-accent) 18%, transparent);
   transition:
     background 0.3s var(--ease-out-expo),
     border-color 0.3s var(--ease-out-expo),
-    color 0.3s var(--ease-out-expo);
+    color 0.3s var(--ease-out-expo),
+    transform 0.3s var(--ease-out-expo),
+    box-shadow 0.3s var(--ease-out-expo);
 }
 
 .featured-linkedin:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.4);
   color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 10px 32px color-mix(in oklab, var(--color-accent) 28%, transparent);
 }
 
 @media (max-width: 520px) {
-  .featured-linkedin span {
-    display: none;
-  }
   .featured-linkedin {
-    padding: 8px;
+    padding: 8px 12px;
   }
 }
 
@@ -1642,26 +2149,32 @@ html.lenis body {
 .cat-nav {
   pointer-events: auto;
   width: 100%;
-  padding: clamp(15px, 1.6vw, 21px) clamp(16px, 2vw, 26px);
-  border-radius: 20px;
-  background: var(--color-card);
-  border: 1px solid var(--color-card-border);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 16px 44px rgba(0, 0, 0, 0.42);
+  padding: clamp(10px, 1.2vw, 16px) 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: clamp(4px, 1.4vw, 14px);
+  align-items: flex-start;
+  /* First tab anchors to the left edge (matches the heading), then
+     the remaining five spread across the rest of the column. */
+  justify-content: space-between;
+  gap: clamp(6px, 1.4vw, 16px);
 }
 
 .cat-nav-item {
   position: relative;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px clamp(6px, 1vw, 12px);
+  flex-direction: column;
+  /* Tabs anchor left so labels and progress bars start aligned with
+     each tab's own column slot — reads as a tidy row rather than
+     centred chips. */
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+  flex: 0 0 auto;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -1669,9 +2182,64 @@ html.lenis body {
   transition: transform 0.55s var(--ease-out-expo);
 }
 
-/* Active category is a touch more prominent — no chrome, just scale. */
+/* Per-tab progress bar — entire bar (track + fill) is HIDDEN unless
+   the tab is the active one. When a category starts playing, its bar
+   fades in; when playback moves on, the bar fades out. */
+.cat-nav-progress {
+  position: relative;
+  width: 100%;
+  max-width: 64px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.10);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-out-expo);
+}
+.cat-nav-item.is-active .cat-nav-progress {
+  opacity: 1;
+}
+.cat-nav-progress-fill {
+  position: absolute;
+  inset: 0;
+  /* Cyber-purple fill — matches the active label gradient. */
+  background: linear-gradient(
+    90deg,
+    #c084fc 0%,
+    #a78bfa 50%,
+    #818cf8 100%
+  );
+  transform: scaleX(0);
+  transform-origin: left center;
+  box-shadow:
+    0 0 12px rgba(167, 139, 250, 0.7),
+    0 0 4px rgba(192, 132, 252, 0.5);
+}
+.cat-nav-item.is-active .cat-nav-progress-fill {
+  animation: cat-progress-fill var(--seg-duration, 11000ms) linear forwards;
+}
+@keyframes cat-progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cat-nav-progress-fill {
+    transform: scaleX(0);
+  }
+  .cat-nav-item.is-active .cat-nav-progress-fill {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
+/* Active category — no scale (would misalign the left-anchored row);
+   the purple gradient + glow on the label is the only emphasis. */
 .cat-nav-item.is-active {
-  transform: scale(1.05);
+  transform: none;
 }
 
 .cat-nav-label {
@@ -1684,9 +2252,7 @@ html.lenis body {
   white-space: nowrap;
 }
 
-/* Base layer — quiet, the only thing inactive items show. It also
-   sits under the fill layer so the active state fading in and out
-   reads as a smooth brighten / dim of the same word. */
+/* Base layer — quiet for inactive items. */
 .cat-nav-label-base {
   color: rgba(255, 255, 255, 0.4);
   transition: color 0.5s var(--ease-out-expo);
@@ -1697,30 +2263,31 @@ html.lenis body {
 }
 
 /* Fill layer — sits exactly over the base text. For the active
-   category it fades in and a soft gradient front advances
+   category it fades in and a soft purple-to-white gradient advances
    left-to-right, reaching the end exactly as the category's last
-   testimonial finishes. The duration is set per category. */
+   testimonial finishes. */
 .cat-nav-label-sweep {
   position: absolute;
   inset: 0;
   opacity: 0;
   transition: opacity 0.55s var(--ease-out-expo);
+  /* Cyber-purple gradient — a more saturated, vibrant palette than
+     the brand lavender. Reads as the "active / playing" state. */
   background-image: linear-gradient(
     90deg,
-    #ffffff 0%,
-    #ffffff 44%,
-    rgba(255, 255, 255, 0.45) 56%,
-    rgba(255, 255, 255, 0.45) 100%
+    #e9d5ff 0%,
+    #c084fc 32%,
+    #a78bfa 58%,
+    #818cf8 100%
   );
   background-repeat: no-repeat;
   background-size: 200% 100%;
-  /* Default (no animation) = fully filled, so a finished category
-     never snaps back to empty in the instant before it fades out. */
   background-position: 0% 0;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+  filter: drop-shadow(0 0 10px rgba(167, 139, 250, 0.6));
 }
 
 .cat-nav-item.is-active .cat-nav-label-sweep {
@@ -1781,26 +2348,21 @@ html.lenis body {
 }
 
 /* =========================================================
-   ANIMATED ICONS — one unified, outlined icon language.
-   Each glyph carries a subtle, semantic micro-animation.
-   GPU-friendly (transform / opacity only); the global
-   reduced-motion rule freezes them on a static base state.
+   ANIMATED ICONS — un-boxed glyphs. No surrounding tile, just
+   the icon itself sitting on the section background.
    ========================================================= */
 .anim-icon {
   display: inline-grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--icon-tone, rgba(255, 255, 255, 0.78));
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  color: var(--icon-tone, color-mix(in oklab, var(--color-accent) 50%, #ffffff));
   transition:
     transform 0.45s var(--ease-out-expo),
-    border-color 0.45s var(--ease-out-expo),
-    background-color 0.45s var(--ease-out-expo),
-    box-shadow 0.45s var(--ease-out-expo),
     color 0.45s var(--ease-out-expo);
 }
 
@@ -1817,23 +2379,18 @@ html.lenis body {
 }
 
 .anim-icon-lg {
-  width: 88px;
-  height: 88px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.035);
+  width: 80px;
+  height: 80px;
+  border-radius: 0;
+  background: transparent;
 }
 
-/* Hover — the parent card lifts the icon: depth, glow, brighten. */
+/* Hover — the parent card lifts the icon: a small nudge + brighten. */
 .card-surface:hover .anim-icon,
 .lab-case:hover .anim-icon,
 .featured-slide-card:hover .anim-icon {
   transform: translateY(-2px) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.06);
-  color: color-mix(in oklab, var(--icon-tone, #ffffff) 55%, #ffffff);
-  box-shadow:
-    0 10px 26px rgba(0, 0, 0, 0.34),
-    0 0 28px color-mix(in oklab, var(--icon-tone, var(--color-accent)) 32%, transparent);
+  color: #ffffff;
 }
 
 /* ---- shared animated parts ---- */
@@ -2069,13 +2626,11 @@ html.lenis body {
 /* ---- Section 2 — intro video frame ---- */
 .about-video {
   position: relative;
-  border-radius: 26px;
+  border-radius: 22px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: linear-gradient(135deg, #0d0d14, #050507);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
-    0 24px 70px rgba(0, 0, 0, 0.5);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   isolation: isolate;
 }
 .about-video video,
@@ -2085,36 +2640,14 @@ html.lenis body {
   object-fit: cover;
   display: block;
 }
-/* soft inner vignette so the video settles into the dark theme */
+/* Vignette removed — the profile/intro media now sits naked on the
+   page, no inner shadow ring, no chrome. */
 .about-video::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  border-radius: inherit;
-  box-shadow: inset 0 0 70px 8px rgba(5, 5, 7, 0.55);
+  content: none;
 }
-/* ambient accent halo behind the frame */
+/* Accent halo dropped — keeps the surrounding area calm. */
 .about-video-glow {
-  position: absolute;
-  inset: -16% -12% -20% -16%;
-  z-index: -1;
-  border-radius: 999px;
-  background: radial-gradient(
-    50% 50% at 50% 50%,
-    color-mix(in oklab, var(--color-accent) 28%, transparent),
-    transparent 72%
-  );
-  filter: blur(50px);
-  opacity: 0.55;
-}
-@media (max-width: 768px) {
-  .about-video-glow {
-    filter: blur(26px);
-    opacity: 0.4;
-    inset: -8%;
-  }
+  display: none;
 }
 
 /* ---- Section 3 — career timeline ---- */
@@ -2156,21 +2689,17 @@ html.lenis body {
   z-index: 1;
   width: 56px;
   height: 56px;
-  border-radius: 16px;
+  border-radius: 0;
   display: grid;
   place-items: center;
   font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 500;
   letter-spacing: -0.02em;
   color: color-mix(in oklab, var(--color-accent) 62%, #ffffff);
-  background:
-    linear-gradient(150deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
-    #0b0b11;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 8px 24px rgba(0, 0, 0, 0.4);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 @media (max-width: 540px) {
   .about-tl-item {
@@ -2199,16 +2728,12 @@ html.lenis body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.025);
-  -webkit-backdrop-filter: blur(10px) saturate(140%);
-  backdrop-filter: blur(10px) saturate(140%);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-  transition:
-    border-color 0.3s ease,
-    background 0.3s ease;
+  padding: 0;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: none;
 }
 .career-logo img {
   display: block;
@@ -2219,10 +2744,6 @@ html.lenis body {
   filter: brightness(1.05) contrast(1.05);
   opacity: 0.9;
   transition: opacity 0.3s ease, filter 0.3s ease;
-}
-.career-logo:hover {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.05);
 }
 .career-logo:hover img {
   opacity: 1;
@@ -2238,7 +2759,7 @@ html.lenis body {
   aspect-ratio: 16 / 11;
   border-radius: 14px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 0;
   background: #0b0b11;
   isolation: isolate;
 }
@@ -2255,11 +2776,11 @@ html.lenis body {
   aspect-ratio: 16 / 10;
   border-radius: 14px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 0;
   background:
     radial-gradient(
       82% 70% at 76% 16%,
-      color-mix(in oklab, var(--color-accent) 20%, transparent),
+      color-mix(in oklab, var(--color-accent) 18%, transparent),
       transparent 60%
     ),
     linear-gradient(150deg, #14141d, #08080c);
@@ -2276,21 +2797,16 @@ html.lenis body {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: clamp(22px, 2.2vw, 30px);
-  border-radius: 20px;
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
-  transition:
-    border-color 0.4s var(--ease-out-expo),
-    background-color 0.4s ease,
-    transform 0.5s var(--ease-out-expo);
+  padding: clamp(8px, 1.2vw, 16px) 0;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: transform 0.5s var(--ease-out-expo);
   isolation: isolate;
 }
 .hw-tile:hover {
-  border-color: var(--color-card-border-hover);
-  background: var(--color-card-hover);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 /* ---- Section 6 — beyond the work / sport tiles ----
@@ -2306,37 +2822,31 @@ html.lenis body {
   align-items: flex-start;
   gap: 16px;
   height: 100%;
-  padding: clamp(20px, 2vw, 26px);
-  border-radius: 18px;
-  border: 1px solid var(--color-card-border);
-  background: var(--color-card);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
-  transition:
-    border-color 0.4s var(--ease-out-expo),
-    background-color 0.4s ease,
-    transform 0.5s var(--ease-out-expo);
+  padding: clamp(8px, 1vw, 14px) 0;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: transform 0.5s var(--ease-out-expo);
   isolation: isolate;
 }
 .sport-tile:hover {
-  border-color: var(--color-card-border-hover);
-  background: var(--color-card-hover);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 .sport-tile:hover .sport-tile-icon {
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.045);
+  color: #ffffff;
 }
 .sport-tile-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.02);
+  width: 44px;
+  height: 44px;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
   color: color-mix(in oklab, var(--color-accent) 60%, #ffffff);
-  transition: border-color 0.3s ease, background 0.3s ease;
+  transition: color 0.3s ease;
 }
 .sport-tile-title {
   font-family: var(--font-sans);
@@ -2376,58 +2886,11 @@ html.lenis body {
    the visual language is preserved, the GPU cost is not.
    ========================================================= */
 @media (hover: none) and (pointer: coarse) {
-  .card-surface,
-  .featured-slide-card,
-  .lab-case,
-  .testimonial-card,
-  .featured-testimonial,
-  .cat-nav,
   .btn-glass-ghost,
   .btn-secondary,
   .app-nav {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-  }
-
-  /* Solidify the glass surfaces that lost their blur so content
-     behind them never bleeds through. */
-  .card-surface,
-  .featured-slide-card {
-    background:
-      linear-gradient(
-        140deg,
-        rgba(255, 255, 255, 0.05),
-        rgba(255, 255, 255, 0.02)
-      ),
-      #131318;
-  }
-  .lab-case {
-    background:
-      linear-gradient(
-        140deg,
-        rgba(255, 255, 255, 0.04),
-        rgba(255, 255, 255, 0.015)
-      ),
-      #131318;
-  }
-  .testimonial-card {
-    background:
-      linear-gradient(
-        160deg,
-        rgba(236, 235, 230, 0.04),
-        rgba(236, 235, 230, 0.01)
-      ),
-      #131318;
-  }
-  .featured-testimonial,
-  .cat-nav {
-    background: linear-gradient(160deg, #15151b, #0b0b0f);
-  }
-
-  /* The pointer-tracking card glow never fires on touch — drop the
-     blurred pseudo-element so it is not in the layer tree at all. */
-  .card-surface::after {
-    display: none;
   }
 
   /* Keep the rainbow button halo, but stop it repainting a blurred
@@ -2500,35 +2963,9 @@ html.lenis body {
   initial-value: 0deg;
 }
 
+/* GlowBorder is no longer rendered — cards have no outlined ring. */
 .glow-border {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  padding: 2px;
-  pointer-events: none;
-  opacity: 0;
-  background: conic-gradient(
-    from var(--glow-angle),
-    transparent 0deg,
-    color-mix(in oklab, var(--color-accent) 96%, #ffffff) 26deg,
-    #ffffff 52deg,
-    color-mix(in oklab, var(--color-accent) 96%, #ffffff) 78deg,
-    transparent 134deg,
-    transparent 226deg,
-    color-mix(in oklab, var(--color-accent) 88%, #ffffff) 304deg,
-    transparent 360deg
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  filter: drop-shadow(
-    0 0 7px color-mix(in oklab, var(--color-accent) 60%, transparent)
-  );
-  transition: opacity 0.45s var(--ease-out-expo);
-  will-change: opacity;
+  display: none !important;
 }
 
 /* One-shot entrance sweep — plays once as the card scrolls in. */

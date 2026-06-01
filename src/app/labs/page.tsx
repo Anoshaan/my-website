@@ -1,7 +1,7 @@
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { PageHead } from "@/components/ui/PageHead";
 import { Reveal } from "@/components/animations/Reveal";
-import { GlowBorder } from "@/components/animations/GlowBorder";
 import { ScrambledText } from "@/components/animations/ScrambledText";
 import { type AnimatedIconName } from "@/components/icons/AnimatedIcon";
 import { CaseStudyMedia } from "@/components/mockups/CaseStudyMedia";
@@ -20,6 +20,13 @@ const labIcons: AnimatedIconName[] = [
   "brain",
 ];
 
+/**
+ * Per-case-study detail copy + secondary PNG image. The PNG can be
+ * dropped into /public/case-studies/<slug>-detail.png and it will be
+ * picked up automatically. Detail paragraphs are short, scannable, and
+ * sit below the headline summary in the expanded body.
+ */
+
 export default function LabsPage() {
   return (
     <>
@@ -30,7 +37,7 @@ export default function LabsPage() {
       />
       <section className="pb-32">
         <Container size="wide">
-          <div className="flex flex-col gap-10 lg:gap-14">
+          <div className="flex flex-col">
             {caseStudies.map((c, idx) => (
               <Reveal
                 key={c.slug}
@@ -40,7 +47,6 @@ export default function LabsPage() {
                 duration={0.7}
                 className="lab-case"
               >
-                <GlowBorder />
                 <div className="lab-case-media">
                   <CaseStudyMedia
                     caseStudy={c}
@@ -64,7 +70,35 @@ export default function LabsPage() {
 
                   <p className="lab-case-summary">{c.summary}</p>
 
+                  {c.detail && c.detail.length > 0 && (
+                    <div className="lab-case-detail">
+                      {c.detail.map((p, i) => (
+                        <p key={i} className="lab-case-detail-p">
+                          {p}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+
                   <div className="lab-case-meta">
+                    {c.role && (
+                      <div className="lab-case-meta-row">
+                        <span className="text-eyebrow eyebrow-strong text-white/60">
+                          Role
+                        </span>
+                        <span className="lab-case-meta-value">{c.role}</span>
+                      </div>
+                    )}
+
+                    {c.timeline && (
+                      <div className="lab-case-meta-row">
+                        <span className="text-eyebrow eyebrow-strong text-white/60">
+                          Timeline
+                        </span>
+                        <span className="lab-case-meta-value">{c.timeline}</span>
+                      </div>
+                    )}
+
                     <div className="lab-case-meta-row">
                       <span className="text-eyebrow eyebrow-strong text-white/60">
                         Domain
@@ -102,6 +136,19 @@ export default function LabsPage() {
                       </div>
                     </div>
                   </div>
+
+                  {c.detailImage && (
+                    <div className="lab-case-detail-image">
+                      <Image
+                        src={c.detailImage}
+                        alt={`${c.title} — detail`}
+                        width={1600}
+                        height={1000}
+                        sizes="(min-width: 900px) 50vw, 100vw"
+                        priority={idx === 0}
+                      />
+                    </div>
+                  )}
                 </div>
               </Reveal>
             ))}

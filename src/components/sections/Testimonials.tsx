@@ -5,10 +5,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
-import { Marquee } from "@/components/animations/Marquee";
-import { GlowBorder } from "@/components/animations/GlowBorder";
 
-type CategoryName = "UI/UX Leads" | "Devs" | "PMs" | "HR" | "Clients";
+type CategoryName =
+  | "Founder"
+  | "UX Lead"
+  | "Dev"
+  | "PM"
+  | "HR"
+  | "Client";
 
 type Testimonial = {
   category: CategoryName;
@@ -22,22 +26,31 @@ type Testimonial = {
   avatarB: string;
 };
 
-/**
- * Category display order — the source of truth, matching the testimonials
- * document. Autoplay walks the flat array below, which is grouped in this
- * same order, so playback flows category by category for free.
- */
+/** Category order in the nav and in playback. */
 const CATEGORY_ORDER: CategoryName[] = [
-  "UI/UX Leads",
-  "Devs",
-  "PMs",
+  "Founder",
+  "UX Lead",
+  "Dev",
+  "PM",
   "HR",
-  "Clients",
+  "Client",
 ];
 
 const testimonials: Testimonial[] = [
   {
-    category: "UI/UX Leads",
+    category: "Founder",
+    quote:
+      "Anoshaan is an incredibly talented, technically savvy engineer who tackled everything from UI/UX revamps to podcast production with total dedication. If you want someone creative who you can always rely on to deliver, he's your guy.",
+    name: "Menuke de Silva",
+    role: "CEO · Aeturnum",
+    initials: "MD",
+    image: "/testimonials/menuke-de-silva.jpg",
+    linkedIn: "https://www.linkedin.com/in/menuke/",
+    avatarA: "#cfd9ff",
+    avatarB: "#a8b8ff",
+  },
+  {
+    category: "UX Lead",
     quote:
       "Anoshaan consistently delivers high-quality UX/UI work with strong creativity, ownership, and attention to detail.",
     name: "Andre Perera",
@@ -49,7 +62,7 @@ const testimonials: Testimonial[] = [
     avatarB: "#8aa6ff",
   },
   {
-    category: "UI/UX Leads",
+    category: "UX Lead",
     quote:
       "His strong UI/UX thinking and ability to simplify complex ideas made collaboration seamless and effective.",
     name: "Ayesh Dilan",
@@ -61,7 +74,7 @@ const testimonials: Testimonial[] = [
     avatarB: "#a78bfa",
   },
   {
-    category: "Devs",
+    category: "Dev",
     quote:
       "One of the most creative and hardworking UI/UX engineers I've worked with across multiple projects.",
     name: "Chandima Dasanayaka",
@@ -73,7 +86,7 @@ const testimonials: Testimonial[] = [
     avatarB: "#ffb89a",
   },
   {
-    category: "Devs",
+    category: "Dev",
     quote:
       "He consistently delivered clean, scalable, and user-focused UI/UX solutions.",
     name: "Banujan Balendrakumar",
@@ -85,7 +98,7 @@ const testimonials: Testimonial[] = [
     avatarB: "#7dd3fc",
   },
   {
-    category: "Devs",
+    category: "Dev",
     quote:
       "He delivered high-quality work with great attention to detail and a collaborative mindset.",
     name: "Nisala Thalagala",
@@ -97,7 +110,7 @@ const testimonials: Testimonial[] = [
     avatarB: "#9f7aea",
   },
   {
-    category: "PMs",
+    category: "PM",
     quote:
       "Anoshaan is highly collaborative, dependable, and brings strong UI/UX thinking into every project.",
     name: "Chandana Wijesuriya",
@@ -109,7 +122,7 @@ const testimonials: Testimonial[] = [
     avatarB: "#7fd1c0",
   },
   {
-    category: "PMs",
+    category: "PM",
     quote:
       "He works effectively across teams and brings thoughtful UI/UX solutions to product experiences.",
     name: "Pumudi Vidanagama",
@@ -145,7 +158,7 @@ const testimonials: Testimonial[] = [
     avatarB: "#9fc0f5",
   },
   {
-    category: "Clients",
+    category: "Client",
     quote:
       "His UI/UX work is intuitive, visually consistent, and strongly focused on user experience.",
     name: "Wije Niroshan",
@@ -160,11 +173,10 @@ const testimonials: Testimonial[] = [
 
 type CategoryMeta = {
   name: CategoryName;
-  start: number;
+  start: number | undefined;
   indices: number[];
 };
 
-/** Flat indices grouped per category — built once, drives nav + playback. */
 const categoryMeta: CategoryMeta[] = CATEGORY_ORDER.map((name) => {
   const indices = testimonials.reduce<number[]>((acc, t, i) => {
     if (t.category === name) acc.push(i);
@@ -176,11 +188,6 @@ const categoryMeta: CategoryMeta[] = CATEGORY_ORDER.map((name) => {
 function metaForIndex(index: number): CategoryMeta {
   return categoryMeta.find((m) => m.indices.includes(index)) ?? categoryMeta[0];
 }
-
-// Short summary cards for the scrolling background marquees.
-const summaryRow1 = [0, 5, 2, 8].map((i) => testimonials[i]);
-const summaryRow2 = [3, 9, 1, 6].map((i) => testimonials[i]);
-const summaryRow3 = [7, 4, 0, 5].map((i) => testimonials[i]);
 
 const PLAY_MS = 5500;
 
@@ -198,135 +205,128 @@ function LinkedInIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-function Avatar({
-  t,
-  size,
-  className,
-}: {
-  t: Testimonial;
-  size: number;
-  className?: string;
-}) {
-  if (t.image) {
-    return (
-      <span
-        className={className}
-        style={{
-          width: size,
-          height: size,
-          borderRadius: "50%",
-          overflow: "hidden",
-          position: "relative",
-          flexShrink: 0,
-          boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.18)",
-        }}
-      >
-        <Image
-          src={t.image}
-          alt={t.name}
-          width={size * 2}
-          height={size * 2}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          sizes={`${size}px`}
-        />
-      </span>
-    );
-  }
+function PortraitImage({ t }: { t: Testimonial }) {
+  // The wrapper hosts the animated halo (radial glow + slow rotating
+  // accent ring) so the glow can bleed BEYOND the circle's overflow
+  // clip. The inner `.testimonial-portrait` is the clipped circle.
   return (
-    <span
-      className={className}
-      style={
-        {
-          width: size,
-          height: size,
-          borderRadius: "50%",
-          flexShrink: 0,
-          display: "grid",
-          placeItems: "center",
-          fontWeight: 500,
-          color: "rgba(0,0,0,0.75)",
-          background: `linear-gradient(135deg, ${t.avatarA}, ${t.avatarB})`,
-          boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.2)",
-          fontSize: size * 0.36,
-        } as React.CSSProperties
-      }
-    >
-      {t.initials}
-    </span>
+    <div className="testimonial-portrait-wrap">
+      {t.image ? (
+        <div className="testimonial-portrait">
+          <Image
+            src={t.image}
+            alt={t.name}
+            width={520}
+            height={520}
+            sizes="(min-width: 1024px) 240px, 180px"
+            priority={false}
+          />
+        </div>
+      ) : (
+        <div
+          className="testimonial-portrait"
+          style={{
+            background: `linear-gradient(135deg, ${t.avatarA}, ${t.avatarB})`,
+            color: "rgba(0,0,0,0.75)",
+            display: "grid",
+            placeItems: "center",
+            fontSize: "clamp(2rem, 4vw, 3rem)",
+            fontWeight: 500,
+          }}
+        >
+          {t.initials}
+        </div>
+      )}
+    </div>
   );
 }
 
-function MarqueeCard({ t }: { t: Testimonial }) {
-  return (
-    <article className="testimonial-card">
-      <GlowBorder revealOnce={false} />
-      <div className="t-quote-mark" aria-hidden>
-        &ldquo;
-      </div>
-      <p className="t-quote">{t.quote}</p>
-      <div className="t-person">
-        <Avatar t={t} size={40} />
-        <div>
-          <div className="t-name">{t.name}</div>
-          <div className="t-role">{t.role}</div>
-        </div>
-      </div>
-    </article>
-  );
+function quoteSizeFor(len: number) {
+  // Reduced one notch — short quotes used to read at ~26px; that felt
+  // shouty next to the heading and the name/role. Cap held at 21px.
+  if (len > 360) return "clamp(14px, 1vw, 16px)";
+  if (len > 260) return "clamp(15px, 1.1vw, 17px)";
+  if (len > 160) return "clamp(16px, 1.2vw, 19px)";
+  return "clamp(17px, 1.3vw, 21px)";
 }
 
 /**
- * Dynamic quote size — longer quotes get a slightly smaller font so the
- * card height stays stable. Bucketed so we don't fight the clamp() unit.
+ * Featured testimonial — fully center-aligned column. Portrait sits at
+ * the top, the quote below, and the meta row (name, role, LinkedIn) at
+ * the bottom, all centered horizontally.
  */
-function quoteSizeFor(len: number) {
-  if (len > 360) return "clamp(15px, 1.18vw, 17px)";
-  if (len > 260) return "clamp(16px, 1.32vw, 19px)";
-  if (len > 160) return "clamp(17px, 1.46vw, 20px)";
-  return "clamp(18px, 1.62vw, 23px)";
-}
-
-/* The featured card: testimonial content + person only. No progress UI. */
 function FeaturedCard({ index }: { index: number }) {
   const t = testimonials[index];
-  const quoteSize = useMemo(() => quoteSizeFor(t.quote.length), [t.quote]);
+  const quoteSize = useMemo(
+    () => (t ? quoteSizeFor(t.quote.length) : "clamp(18px, 1.4vw, 21px)"),
+    [t]
+  );
+
+  if (!t) {
+    return (
+      <div
+        className="featured-testimonial is-centered"
+        tabIndex={0}
+        aria-live="polite"
+      >
+        <p className="text-body text-white/45 text-center">
+          Testimonials for this group are coming soon.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="featured-testimonial" tabIndex={0} aria-live="polite">
-      <GlowBorder />
+    <div
+      className="featured-testimonial is-centered"
+      tabIndex={0}
+      aria-live="polite"
+    >
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10, transition: { duration: 0.28, ease: [0.4, 0, 1, 1] } }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="featured-inner"
+          exit={{
+            opacity: 0,
+            y: -10,
+            transition: { duration: 0.28, ease: [0.4, 0, 1, 1] },
+          }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="featured-inner is-centered"
         >
-          <div className="featured-quote-mark" aria-hidden>
-            &ldquo;
+          {/* 1. Portrait */}
+          <PortraitImage t={t} />
+
+          {/* 2. Name + role */}
+          <div className="featured-name-block">
+            <span className="featured-name">{t.name}</span>
+            <span className="featured-role">{t.role}</span>
           </div>
-          <p className="featured-quote" style={{ fontSize: quoteSize }}>
+
+          {/* 3. Quote */}
+          <p
+            className="featured-quote is-centered"
+            style={{ fontSize: quoteSize }}
+          >
+            <span className="featured-quote-mark-inline" aria-hidden>
+              &ldquo;
+            </span>
             {t.quote}
           </p>
-          <div className="featured-person">
-            <Avatar t={t} size={48} />
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="featured-name">{t.name}</span>
-              <span className="featured-role">{t.role}</span>
-            </div>
-            <a
-              href={t.linkedIn}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Open ${t.name}'s LinkedIn profile`}
-              data-cursor-precise
-              className="featured-linkedin"
-            >
-              <LinkedInIcon size={14} />
-              <span>LinkedIn</span>
-            </a>
-          </div>
+
+          {/* 4. LinkedIn — bottom of the card. */}
+          <a
+            href={t.linkedIn}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${t.name}'s LinkedIn profile`}
+            data-cursor-precise
+            className="featured-linkedin"
+          >
+            <LinkedInIcon size={14} />
+            <span>LinkedIn Profile</span>
+          </a>
         </motion.div>
       </AnimatePresence>
     </div>
@@ -334,11 +334,10 @@ function FeaturedCard({ index }: { index: number }) {
 }
 
 /**
- * Secondary card: typography-only category navigation. The active category's
- * text fills with a soft left-to-right gradient whose duration equals the
- * full playback time of that category — so the type itself reads as the
- * progress indicator. Driven entirely by CSS; the only JS touch is
- * restarting the fill when the live category is clicked again.
+ * Category nav — typography tabs with a thin progress bar under each
+ * one. The active tab's bar fills from left to right over the duration
+ * of that category's testimonials, so the bar doubles as a playback
+ * timeline indicator.
  */
 function CategoryNav({
   activeCategory,
@@ -351,6 +350,7 @@ function CategoryNav({
     <div className="cat-nav" role="tablist" aria-label="Testimonial categories">
       {categoryMeta.map(({ name, indices }) => {
         const isActive = name === activeCategory;
+        const isEmpty = indices.length === 0;
         const fillMs = indices.length * PLAY_MS;
         return (
           <button
@@ -358,19 +358,30 @@ function CategoryNav({
             type="button"
             role="tab"
             aria-selected={isActive}
+            aria-disabled={isEmpty || undefined}
+            disabled={isEmpty}
             data-cursor-precise
-            className={`cat-nav-item ${isActive ? "is-active" : ""}`}
+            className={`cat-nav-item ${isActive ? "is-active" : ""} ${
+              isEmpty ? "is-empty" : ""
+            }`}
             onClick={(e) => {
-              // Re-clicking the already-live category restarts its fill
-              // in place (the class doesn't change, so CSS won't replay).
+              if (isEmpty) return;
               if (isActive) {
                 const sweep = e.currentTarget.querySelector<HTMLElement>(
                   ".cat-nav-label-sweep"
+                );
+                const bar = e.currentTarget.querySelector<HTMLElement>(
+                  ".cat-nav-progress-fill"
                 );
                 if (sweep) {
                   sweep.style.animation = "none";
                   void sweep.offsetWidth;
                   sweep.style.animation = "";
+                }
+                if (bar) {
+                  bar.style.animation = "none";
+                  void bar.offsetWidth;
+                  bar.style.animation = "";
                 }
               }
               onSelect(name);
@@ -378,15 +389,26 @@ function CategoryNav({
           >
             <span className="cat-nav-label">
               <span className="cat-nav-label-base">{name}</span>
-              <span
-                className="cat-nav-label-sweep"
-                aria-hidden="true"
-                style={
-                  { "--seg-duration": `${fillMs}ms` } as React.CSSProperties
-                }
-              >
-                {name}
-              </span>
+              {!isEmpty && (
+                <span
+                  className="cat-nav-label-sweep"
+                  aria-hidden="true"
+                  style={
+                    { "--seg-duration": `${fillMs}ms` } as React.CSSProperties
+                  }
+                >
+                  {name}
+                </span>
+              )}
+            </span>
+            <span
+              className="cat-nav-progress"
+              aria-hidden="true"
+              style={
+                { "--seg-duration": `${fillMs}ms` } as React.CSSProperties
+              }
+            >
+              <span className="cat-nav-progress-fill" />
             </span>
           </button>
         );
@@ -395,33 +417,22 @@ function CategoryNav({
   );
 }
 
-/**
- * Owns playback state for the whole testimonial player. Testimonials autoplay
- * through the flat array, so they flow category by category automatically.
- * Clicking a category jumps to its first testimonial and playback continues
- * naturally into the categories that follow. Playback starts from "UI/UX Leads"
- * when the section scrolls into view.
- */
-function TestimonialPlayer() {
+export function Testimonials() {
   const [index, setIndex] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
 
-  // Start playback from UI/UX Leads on mount. Previously gated on
-  // `useInView` so playback waited for the section to scroll into
-  // view, but the observer can fail under Lenis and leave the player
-  // stuck on the wrong testimonial.
+  // Start at the first category that has testimonials.
   useEffect(() => {
     if (hasStarted) return;
-    const uiuxLeadsIndex = categoryMeta.find((m) => m.name === "UI/UX Leads")
-      ?.start;
-    if (uiuxLeadsIndex !== undefined) {
-      setIndex(uiuxLeadsIndex);
+    const firstWithData = categoryMeta.find((m) => m.start !== undefined);
+    if (firstWithData && firstWithData.start !== undefined) {
+      setIndex(firstWithData.start);
       setHasStarted(true);
     }
   }, [hasStarted]);
 
-  // setTimeout keyed on `index`: a manual jump re-runs the effect, which
-  // clears the pending timer and restarts a full interval from the new spot.
+  // Autoplay — advance one testimonial every PLAY_MS. Reset by clicks
+  // (which re-set `index` and therefore re-run this effect).
   useEffect(() => {
     if (!hasStarted) return;
     const id = setTimeout(
@@ -435,59 +446,42 @@ function TestimonialPlayer() {
 
   const jumpToCategory = useCallback((name: CategoryName) => {
     const meta = categoryMeta.find((m) => m.name === name);
-    if (meta) setIndex(meta.start);
+    if (meta && meta.start !== undefined) setIndex(meta.start);
   }, []);
 
   return (
-    <div className="testimonial-player">
-      <FeaturedCard index={index} />
-      <CategoryNav activeCategory={activeMeta.name} onSelect={jumpToCategory} />
-    </div>
-  );
-}
-
-export function Testimonials() {
-  return (
-    <section className="marquee-section py-[clamp(80px,10vw,140px)]">
+    <section className="testimonials-section py-[clamp(80px,10vw,140px)] relative">
       <Container>
-        <Reveal>
-          <div className="flex flex-col items-center text-center gap-5 mb-[clamp(56px,6vw,80px)]">
-            <h2 className="text-section text-white max-w-[26ch] heading-sheen">
-              Trusted by founders, design leads, and engineering teams.
-            </h2>
-            <p className="text-body text-white/60 max-w-[52ch]">
-              Selected words from the people I&apos;ve shipped product with
-              over the last several years.
-            </p>
+        <div className="testimonials-layout">
+          {/* LEFT — heading + body + category nav */}
+          <div className="testimonials-heading-col">
+            <Reveal>
+              <h2 className="text-section text-white max-w-[18ch] heading-sheen">
+                Trusted by founders, design leads, and engineering teams.
+              </h2>
+            </Reveal>
+            <Reveal delay={0.15}>
+              <p className="text-body text-white/60 max-w-[44ch] mt-6">
+                Selected words from the people I&apos;ve shipped product with
+                over the last several years.
+              </p>
+            </Reveal>
+            <Reveal delay={0.28}>
+              <div className="testimonials-cat-nav-wrap">
+                <CategoryNav
+                  activeCategory={activeMeta.name}
+                  onSelect={jumpToCategory}
+                />
+              </div>
+            </Reveal>
           </div>
-        </Reveal>
+
+          {/* RIGHT — featured testimonial card */}
+          <Reveal className="testimonials-card-col">
+            <FeaturedCard index={index} />
+          </Reveal>
+        </div>
       </Container>
-
-      <div className="testimonials-stage">
-        <div className="marquee-rows testimonials-rows" aria-hidden="true">
-          <Marquee duration={78} direction="ltr" pauseOnHover={false}>
-            {summaryRow1.map((t, i) => (
-              <MarqueeCard key={`r1-${t.name}-${i}`} t={t} />
-            ))}
-          </Marquee>
-          <Marquee duration={92} direction="rtl" pauseOnHover={false}>
-            {summaryRow2.map((t, i) => (
-              <MarqueeCard key={`r2-${t.name}-${i}`} t={t} />
-            ))}
-          </Marquee>
-          <Marquee duration={70} direction="ltr" pauseOnHover={false}>
-            {summaryRow3.map((t, i) => (
-              <MarqueeCard key={`r3-${t.name}-${i}`} t={t} />
-            ))}
-          </Marquee>
-        </div>
-
-        <div className="testimonials-mask" aria-hidden />
-
-        <div className="featured-testimonial-wrap">
-          <TestimonialPlayer />
-        </div>
-      </div>
     </section>
   );
 }

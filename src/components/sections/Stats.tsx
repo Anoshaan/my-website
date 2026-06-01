@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { motion } from "motion/react";
-import { GlowBorder } from "@/components/animations/GlowBorder";
 
 type Stat =
   | { kind: "count"; countTo: number; suffix: string; label: string }
@@ -73,12 +72,7 @@ function AnimatedNumber({
   target: number;
   suffix?: string;
 }) {
-  // Count-up runs on mount. Previously gated on `useInView` so it
-  // started when the card scrolled into view, but Lenis × motion v11
-  // can fail to deliver the IntersectionObserver entry, leaving the
-  // number stuck at 0.
   const [value, setValue] = useState(0);
-
   useEffect(() => {
     const duration = 1800;
     const start = performance.now();
@@ -92,7 +86,6 @@ function AnimatedNumber({
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [target]);
-
   return (
     <span>
       {value.toLocaleString()}
@@ -103,36 +96,41 @@ function AnimatedNumber({
 
 export function Stats() {
   return (
-    <section className="section-pad border-y border-white/[0.06]">
+    <section className="section-pad border-y border-white/[0.05] relative">
       <Container>
-        <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((s, i) => (
-            <motion.div
-              key={s.label}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.8,
-                delay: i * 0.14,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="stat-card relative flex flex-col items-center justify-center text-center gap-4 py-9 px-5 rounded-2xl border border-[var(--color-card-border)] bg-[var(--color-card)] hover:border-[var(--color-card-border-hover)] hover:bg-[var(--color-card-hover)] transition-all duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
-            >
-              <GlowBorder />
-              <div className="flex items-center justify-center min-h-[clamp(3.25rem,6vw,5rem)]">
-                {s.kind === "count" ? (
-                  <span className="stat-number">
-                    <AnimatedNumber target={s.countTo} suffix={s.suffix} />
-                  </span>
-                ) : s.kind === "symbol" ? (
-                  <span className="stat-symbol accent-text">{s.value}</span>
-                ) : (
-                  <InfinityMark />
-                )}
-              </div>
-              <span className="stat-label">{s.label}</span>
-            </motion.div>
-          ))}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((s, i) => {
+            return (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{
+                  duration: 0.85,
+                  delay: i * 0.12,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className={`stat-card relative flex flex-col items-start text-left gap-5 py-10 px-6 sm:px-8 ${
+                  i > 0 ? "v-hair lg:v-hair" : ""
+                }`}
+              >
+                <div className="flex items-center justify-start min-h-[clamp(3.25rem,6vw,5rem)]">
+                  {s.kind === "count" ? (
+                    <span className="stat-number">
+                      <AnimatedNumber target={s.countTo} suffix={s.suffix} />
+                    </span>
+                  ) : s.kind === "symbol" ? (
+                    <span className="stat-symbol accent-text">{s.value}</span>
+                  ) : (
+                    <InfinityMark />
+                  )}
+                </div>
+
+                <span className="stat-label">{s.label}</span>
+              </motion.div>
+            );
+          })}
         </div>
       </Container>
     </section>

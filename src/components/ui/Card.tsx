@@ -1,8 +1,5 @@
-"use client";
-
-import { useRef, type ReactNode, type MouseEvent } from "react";
+import { type ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { GlowBorder } from "@/components/animations/GlowBorder";
 
 type CardProps = {
   children: ReactNode;
@@ -10,14 +7,13 @@ type CardProps = {
   innerClassName?: string;
   /** Adds a lift on hover. */
   lift?: boolean;
-  /** Padding scale. */
+  /** Padding scale (kept for API compatibility; minimal vertical padding now). */
   size?: "default" | "large" | "compact";
 };
 
 /**
- * Card — original subtle dark surface with accent hover glow.
- * Tracks pointer to place a soft accent radial glow under the cursor.
- * NO mesh gradients, NO bright colors — matches the source aesthetic.
+ * Card — typographic content block. No border, no fill, no shadow.
+ * Spacing only. Keeps the same API so callers don't have to change.
  */
 export function Card({
   children,
@@ -26,29 +22,15 @@ export function Card({
   lift = true,
   size = "default",
 }: CardProps) {
-  const ref = useRef<HTMLDivElement>(null);
-
   const padding =
     size === "large"
-      ? "p-8 md:p-10"
+      ? "py-3 md:py-4"
       : size === "compact"
-      ? "p-5 md:p-6"
-      : "p-6 md:p-8";
-
-  const onMove = (e: MouseEvent<HTMLDivElement>) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    el.style.setProperty("--mx", `${x}px`);
-    el.style.setProperty("--my", `${y}px`);
-  };
+      ? "py-2 md:py-3"
+      : "py-2 md:py-3";
 
   return (
     <div
-      ref={ref}
-      onMouseMove={onMove}
       className={cn(
         "card-surface h-full flex flex-col gap-4",
         padding,
@@ -57,7 +39,6 @@ export function Card({
         innerClassName
       )}
     >
-      <GlowBorder />
       {children}
     </div>
   );

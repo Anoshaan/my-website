@@ -28,8 +28,7 @@ export function AboutIntro() {
             duration={1}
             className="mx-auto aspect-square w-full max-w-[460px] lg:mx-0 lg:aspect-auto lg:h-[clamp(380px,62vh,680px)] lg:w-[clamp(380px,62vh,680px)] lg:max-w-none lg:flex-shrink-0"
           >
-            <div className="about-float relative h-full w-full">
-              <div aria-hidden className="about-video-glow" />
+            <div className="relative h-full w-full">
               <div className="about-video h-full w-full">
                 <video
                   autoPlay

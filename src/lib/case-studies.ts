@@ -20,6 +20,15 @@ export type CaseStudy = {
    *  looks up a bespoke component keyed by slug; when `image`, the image
    *  is rendered with a slow vertical pan inside the frame. */
   media?: CaseStudyMedia;
+  /** Extended detail copy shown on the Labs page below the summary. */
+  detail?: string[];
+  /** Optional secondary PNG image rendered in the detail area. The Labs
+   *  page expects a PNG drop-in at /case-studies/<slug>-detail.png. */
+  detailImage?: string;
+  /** Role / responsibilities for the project. */
+  role?: string;
+  /** Year / timeline label. */
+  timeline?: string;
 };
 
 export const caseStudies: CaseStudy[] = [

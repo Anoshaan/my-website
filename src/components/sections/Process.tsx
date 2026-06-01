@@ -1,10 +1,9 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useInView } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { Card } from "@/components/ui/Card";
-import {
-  StaggerContainer,
-  StaggerItem,
-} from "@/components/animations/StaggerContainer";
 import {
   AnimatedIcon,
   type AnimatedIconName,
@@ -43,22 +42,74 @@ const steps: { icon: AnimatedIconName; title: string; body: string }[] = [
   },
 ];
 
+const easeOutExpo = [0.22, 1, 0.36, 1] as const;
+
+function Step({
+  index,
+  icon,
+  title,
+  body,
+}: {
+  index: number;
+  icon: AnimatedIconName;
+  title: string;
+  body: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.4 });
+  const isRight = index % 2 === 0;
+  const num = String(index + 1).padStart(2, "0");
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{
+        opacity: 0,
+        x: isRight ? 50 : -50,
+        rotateY: isRight ? -8 : 8,
+      }}
+      animate={
+        inView
+          ? { opacity: 1, x: 0, rotateY: 0 }
+          : { opacity: 0, x: isRight ? 50 : -50, rotateY: isRight ? -8 : 8 }
+      }
+      transition={{ duration: 0.9, ease: easeOutExpo }}
+      className={`process-row ${isRight ? "is-right" : "is-left"}`}
+      style={{ transformStyle: "preserve-3d" }}
+    >
+      <div className="process-row-numeral">{num}</div>
+      <div className="process-row-body">
+        <div className="flex items-center gap-3">
+          <AnimatedIcon name={icon} />
+          <h3 className="text-card-title text-white text-[clamp(1.3rem,2.2vw,1.8rem)]">
+            {title}
+          </h3>
+        </div>
+        <p className="text-body text-white/62 max-w-[44ch]">{body}</p>
+      </div>
+    </motion.div>
+  );
+}
+
 export function Process() {
   return (
-    <section className="section-pad">
+    <section className="section-pad relative">
       <Container>
-        <SectionTitle title="How I Approach Product Design" />
-        <StaggerContainer className="grid gap-6 mt-16 sm:grid-cols-2 lg:grid-cols-3">
-          {steps.map((s) => (
-            <StaggerItem key={s.title}>
-              <Card>
-                <AnimatedIcon name={s.icon} />
-                <h3 className="text-card-title text-white">{s.title}</h3>
-                <p className="text-body text-white/60">{s.body}</p>
-              </Card>
-            </StaggerItem>
+        <div className="mb-[clamp(40px,5vw,80px)]">
+          <SectionTitle title="How I Approach Product Design" />
+        </div>
+
+        <div className="process-track perspective">
+          {steps.map((s, i) => (
+            <Step
+              key={s.title}
+              index={i}
+              icon={s.icon}
+              title={s.title}
+              body={s.body}
+            />
           ))}
-        </StaggerContainer>
+        </div>
       </Container>
     </section>
   );

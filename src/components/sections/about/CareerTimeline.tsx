@@ -6,7 +6,6 @@ import { motion, useScroll } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { Reveal } from "@/components/animations/Reveal";
-import { GlowBorder } from "@/components/animations/GlowBorder";
 
 /**
  * About — Section 3. Path through experience.
@@ -93,7 +92,6 @@ export function CareerTimeline() {
               <div className="about-tl-badge">{r.badge}</div>
 
               <div className="card-surface card-lift flex flex-col gap-5 p-7 md:p-8">
-                <GlowBorder />
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <span className="text-eyebrow text-white/50">
                     {r.period}
