@@ -1,157 +1,119 @@
-import Image from "next/image";
+import type { CSSProperties } from "react";
+import ShinyText from "@/components/animations/ShinyText";
 import { Container } from "@/components/ui/Container";
-import { PageHead } from "@/components/ui/PageHead";
 import { Reveal } from "@/components/animations/Reveal";
-import { ScrambledText } from "@/components/animations/ScrambledText";
-import { type AnimatedIconName } from "@/components/icons/AnimatedIcon";
-import { CaseStudyMedia } from "@/components/mockups/CaseStudyMedia";
-import { caseStudies } from "@/lib/case-studies";
+import { LabEntryVisual } from "@/components/labs/LabEntryVisual";
+import { labEntries } from "@/lib/labs-entries";
 
-const labIcons: AnimatedIconName[] = [
-  "network",
-  "scan",
-  "structure",
-  "radar",
-  "flow",
-  "scale",
-  "vector",
-  "collaborate",
-  "motion",
-  "brain",
-];
+export const metadata = {
+  title: "Design Labs",
+  description:
+    "Real-world product challenges, design decisions, and lessons learned across enterprise systems, analytics, commerce, and emerging technology.",
+};
 
 /**
- * Per-case-study detail copy + secondary PNG image. The PNG can be
- * dropped into /public/case-studies/<slug>-detail.png and it will be
- * picked up automatically. Detail paragraphs are short, scannable, and
- * sit below the headline summary in the expanded body.
+ * Labs — a design journal rather than a portfolio gallery. Each project is
+ * one large editorial spread (visual-dominant, alternating sides) that
+ * frames a challenge, tells a short story, and lands on a single takeaway.
+ * The page itself is the case-study experience — no cards, no per-project
+ * "view case study" buttons.
  */
-
 export default function LabsPage() {
   return (
     <>
-      <PageHead
-        title="Case studies in"
-        shineWords="enterprise UX."
-        intro="Selected enterprise platforms, AI systems, and digital experiences focused on usability, scalability, and interaction quality."
-      />
-      <section className="pb-32">
-        <Container size="wide">
-          <div className="flex flex-col">
-            {caseStudies.map((c, idx) => (
-              <Reveal
-                key={c.slug}
-                as="article"
-                variant="up"
-                amount={0.12}
-                duration={0.7}
-                className="lab-case"
-              >
-                <div className="lab-case-media">
-                  <CaseStudyMedia
-                    caseStudy={c}
-                    index={idx}
-                    icon={labIcons[idx % labIcons.length]}
-                  />
-                </div>
+      {/* ── Editorial header ─────────────────────────────── */}
+      <section className="pt-[clamp(140px,16vw,200px)] pb-[clamp(48px,7vw,88px)]">
+        <Container>
+          <div className="flex flex-col gap-6 max-w-[940px]">
+            <Reveal delay={0.05}>
+              <span className="text-eyebrow eyebrow-strong text-accent-soft">
+                Design Labs
+              </span>
+            </Reveal>
+            <Reveal delay={0.12}>
+              <h1 className="text-hero text-white labs-head-title">
+                <ShinyText
+                  text="Lessons learned through building digital products."
+                  color="#d6d6da"
+                  shineColor="#ffffff"
+                  speed={6}
+                  spread={115}
+                  delay={1.6}
+                />
+              </h1>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <p className="text-body text-white/65 max-w-[62ch]">
+                Real-world challenges, design decisions, and product thinking
+                across enterprise systems, analytics, commerce, and emerging
+                technology.
+              </p>
+            </Reveal>
+          </div>
+        </Container>
+      </section>
 
-                <div className="lab-case-body">
-                  <div className="flex flex-wrap gap-2">
-                    {c.tags.map((t) => (
-                      <span key={t} className="tag">
-                        <ScrambledText radius={80} duration={800} speed={38}>
-                          {t}
-                        </ScrambledText>
-                      </span>
-                    ))}
+      {/* ── Editorial spreads ────────────────────────────── */}
+      <section className="pb-[clamp(96px,12vw,176px)]">
+        <Container size="wide">
+          <div className="labs-entries">
+            {labEntries.map((entry, i) => {
+              const reversed = i % 2 === 1;
+              return (
+                <Reveal
+                  key={entry.title}
+                  as="article"
+                  variant="up"
+                  amount={0.12}
+                  duration={0.7}
+                  className={`lab-entry${reversed ? " is-reversed" : ""}`}
+                >
+                  <div
+                    className="lab-entry-visual"
+                    style={{ "--entry-accent": entry.accent } as CSSProperties}
+                  >
+                    <LabEntryVisual visual={entry.visual} title={entry.title} />
                   </div>
 
-                  <h2 className="lab-case-title">{c.title}</h2>
+                  <div
+                    className="lab-entry-content"
+                    style={{ "--entry-accent": entry.accent } as CSSProperties}
+                  >
+                    <span className="lab-entry-kicker">Lab {entry.index}</span>
 
-                  <p className="lab-case-summary">{c.summary}</p>
+                    <p className="lab-challenge">{entry.challenge}</p>
 
-                  {c.detail && c.detail.length > 0 && (
-                    <div className="lab-case-detail">
-                      {c.detail.map((p, i) => (
-                        <p key={i} className="lab-case-detail-p">
-                          {p}
-                        </p>
+                    <h2 className="lab-entry-title">{entry.title}</h2>
+
+                    <div className="lab-story">
+                      {entry.story.map((p, j) => (
+                        <p key={j}>{p}</p>
                       ))}
                     </div>
-                  )}
 
-                  <div className="lab-case-meta">
-                    {c.role && (
-                      <div className="lab-case-meta-row">
-                        <span className="text-eyebrow eyebrow-strong text-white/60">
-                          Role
-                        </span>
-                        <span className="lab-case-meta-value">{c.role}</span>
+                    <div className="lab-bottom">
+                      <div className="lab-col">
+                        <span className="lab-col-label">What Changed</span>
+                        <ul className="lab-changed-list">
+                          {entry.whatChanged.map((c) => (
+                            <li key={c}>{c}</li>
+                          ))}
+                        </ul>
                       </div>
-                    )}
 
-                    {c.timeline && (
-                      <div className="lab-case-meta-row">
-                        <span className="text-eyebrow eyebrow-strong text-white/60">
-                          Timeline
-                        </span>
-                        <span className="lab-case-meta-value">{c.timeline}</span>
-                      </div>
-                    )}
-
-                    <div className="lab-case-meta-row">
-                      <span className="text-eyebrow eyebrow-strong text-white/60">
-                        Domain
-                      </span>
-                      <span className="lab-case-meta-value">{c.domain}</span>
-                    </div>
-
-                    <div className="lab-case-meta-row">
-                      <span className="text-eyebrow eyebrow-strong text-white/60">
-                        Highlights
-                      </span>
-                      <div className="lab-case-pills">
-                        {c.highlights.map((h) => (
-                          <span key={h} className="lab-case-pill">
-                            <ScrambledText radius={70} duration={750} speed={40}>
-                              {h}
-                            </ScrambledText>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="lab-case-meta-row">
-                      <span className="text-eyebrow eyebrow-strong text-white/60">
-                        Focus Areas
-                      </span>
-                      <div className="lab-case-pills">
-                        {c.focusAreas.map((f) => (
-                          <span key={f} className="lab-case-pill is-accent">
-                            <ScrambledText radius={70} duration={750} speed={40}>
-                              {f}
-                            </ScrambledText>
-                          </span>
-                        ))}
+                      <div className="lab-col">
+                        <span className="lab-col-label">Key Insight</span>
+                        <div className="lab-insight">
+                          {entry.keyInsight.map((line, k) => (
+                            <p key={k}>{line}</p>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  {c.detailImage && (
-                    <div className="lab-case-detail-image">
-                      <Image
-                        src={c.detailImage}
-                        alt={`${c.title} — detail`}
-                        width={1600}
-                        height={1000}
-                        sizes="(min-width: 900px) 50vw, 100vw"
-                        priority={idx === 0}
-                      />
-                    </div>
-                  )}
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              );
+            })}
           </div>
         </Container>
       </section>

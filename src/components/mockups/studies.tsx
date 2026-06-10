@@ -973,6 +973,134 @@ export function DigitalPublishingMockup() {
   );
 }
 
+/* AI-Assisted Product Experience — an AI copilot woven into a familiar
+   workflow. Signature is the suggestion card: confidence chip, reasoning
+   bars, and Apply / Dismiss / Why this? controls that keep the user in
+   charge. */
+export function AIAssistedMockup() {
+  return (
+    <MidFiShell
+      orientation="web"
+      accent="#9f8aff"
+      title="atlas.workspace"
+      meta="AI Copilot"
+    >
+      <Section pad="sm">
+        <Row justify="between" align="center">
+          <Row gap={12} align="center">
+            <span
+              style={{
+                fontSize: 11,
+                color: "var(--ink)",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+              }}
+            >
+              ATLAS
+            </span>
+            <Chip size="xs" accent>
+              ✦ Copilot
+            </Chip>
+          </Row>
+          <Row gap={6} align="center">
+            <Chip size="xs">Docs</Chip>
+            <Avatar initials="MK" size={20} tone="accent" />
+          </Row>
+        </Row>
+      </Section>
+
+      <Section>
+        <Card pad={12}>
+          <Stack gap={8}>
+            <Row justify="between" align="center">
+              <Row gap={8} align="center">
+                <span
+                  style={{
+                    width: 13,
+                    height: 13,
+                    borderRadius: "50%",
+                    background:
+                      "radial-gradient(circle at 34% 30%, #ffffff, var(--accent) 58%, transparent)",
+                    boxShadow:
+                      "0 0 10px 1px color-mix(in oklab, var(--accent) 60%, transparent)",
+                  }}
+                />
+                <Eyebrow>AI SUGGESTION</Eyebrow>
+              </Row>
+              <Chip size="xs" accent>
+                92% confidence
+              </Chip>
+            </Row>
+            <span
+              style={{
+                fontSize: 12,
+                color: "var(--ink)",
+                fontWeight: 500,
+                lineHeight: 1.4,
+              }}
+            >
+              Rebalance this sprint — reassign 3 overdue tasks to free capacity.
+            </span>
+            <Stack gap={5}>
+              <Bar width="88%" height={5} dim={0.42} />
+              <Bar width="64%" height={5} dim={0.26} />
+            </Stack>
+            <Row gap={6}>
+              <Chip size="sm" accent>
+                Apply
+              </Chip>
+              <Chip size="sm">Dismiss</Chip>
+              <Chip size="sm">Why this?</Chip>
+            </Row>
+          </Stack>
+        </Card>
+      </Section>
+
+      <Section pad="sm">
+        <Eyebrow>IN YOUR WORKFLOW</Eyebrow>
+        <Stack gap={5}>
+          <ListRow
+            icon="✦"
+            primary="Draft release notes"
+            secondary="AI prepared · review before publish"
+            trailing="Review"
+          />
+          <ListRow
+            icon="◐"
+            primary="Summarize 14 tickets"
+            secondary="Grouped by theme · editable"
+            trailing="Open"
+          />
+        </Stack>
+      </Section>
+
+      <Section pad="sm">
+        <Row gap={10} align="stretch">
+          <StatTile
+            label="Time Saved"
+            value={
+              <>
+                <Counter to={6} />
+                .4h
+              </>
+            }
+            trend="This week"
+            accent
+          />
+          <StatTile
+            label="Suggestions"
+            value={<Counter to={28} />}
+            trend="18 applied"
+          />
+          <StatTile label="Control" value="Manual" trend="You decide" />
+        </Row>
+      </Section>
+
+      <Cursor from={[18, 33]} to={[34, 31]} />
+    </MidFiShell>
+  );
+}
+
 /* 16 — Endless Runner Mobile Game */
 export function EndlessRunnerMockup() {
   return (
