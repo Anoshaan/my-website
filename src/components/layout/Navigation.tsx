@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { PCStatus } from "./PCStatus";
 
 const links = [
   { label: "Home", href: "/" },
@@ -40,6 +41,9 @@ export function Navigation() {
         hidden && "-translate-y-[140%]"
       )}
     >
+      <div className="absolute right-4 sm:right-6 top-4 sm:top-5">
+        <PCStatus />
+      </div>
       <nav
         aria-label="Primary"
         className={cn(
