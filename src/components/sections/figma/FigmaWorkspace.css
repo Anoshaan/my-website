@@ -1,0 +1,505 @@
+/* =========================================================
+   FIGMA WORKSPACE — a faithful, self-contained recreation of a
+   dark Figma editor window used as the cinematic visual for
+   Section 2 ("The Problem"). Built at a FIXED design size
+   (1100 × 680) and scaled to fit by the parent, so the internal
+   pixel layout always stays crisp and never reflows. All classes
+   are `fw-` prefixed to avoid colliding with the global system.
+   ========================================================= */
+.fw-card {
+  /* Authentic dark Figma palette — intentionally its own world
+     (it's "an app"), but framed with the site's card language. */
+  --fw-bg: #1e1e1e;
+  --fw-panel: #2c2c2c;
+  --fw-border: #444444;
+  --fw-canvas-bg: #141414;
+  --fw-text: #e0e0e0;
+  --fw-muted: #9e9e9e;
+  --fw-accent: #0d99ff;
+  --fw-active: rgba(13, 153, 255, 0.15);
+
+  width: 1100px;
+  height: 680px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--fw-bg);
+  color: var(--fw-text);
+  font-family: "Inter", var(--font-sans), system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 1.4;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 50px 130px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 80px rgba(167, 139, 250, 0.12);
+  user-select: none;
+}
+.fw-card * {
+  box-sizing: border-box;
+}
+
+/* Window titlebar */
+.fw-titlebar {
+  height: 40px;
+  flex: none;
+  background: var(--fw-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--fw-border);
+  padding: 0 16px;
+}
+.fw-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--fw-muted);
+}
+.fw-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: var(--fw-panel);
+  border: 1px solid var(--fw-border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  color: #fff;
+}
+.fw-tab-dot {
+  color: var(--fw-accent);
+}
+.fw-win-dots {
+  display: flex;
+  gap: 16px;
+  color: var(--fw-muted);
+  font-size: 12px;
+}
+
+/* Header / toolbar */
+.fw-header {
+  height: 48px;
+  flex: none;
+  background: var(--fw-panel);
+  border-bottom: 1px solid var(--fw-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 40;
+}
+.fw-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.fw-burger {
+  font-size: 15px;
+  color: var(--fw-muted);
+}
+.fw-project-title {
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+}
+.fw-project-sub {
+  font-size: 10px;
+  color: var(--fw-muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fw-badge {
+  background: #444;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+}
+.fw-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.fw-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--fw-accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 9px;
+}
+.fw-share {
+  background: var(--fw-accent);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+/* Body grid */
+.fw-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 240px 1fr 240px;
+  min-height: 0;
+}
+
+/* Sidebars */
+.fw-sidebar {
+  background: var(--fw-panel);
+  border-right: 1px solid var(--fw-border);
+  overflow: hidden;
+}
+.fw-sidebar.fw-right {
+  border-right: none;
+  border-left: 1px solid var(--fw-border);
+}
+.fw-sb-section {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--fw-border);
+}
+.fw-sb-header {
+  padding: 0 16px 8px;
+  font-weight: 600;
+  color: var(--fw-muted);
+}
+.fw-layer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 4px;
+}
+.fw-layer.is-active {
+  background: var(--fw-active);
+  color: var(--fw-accent);
+  font-weight: 500;
+}
+.fw-layer-icon {
+  min-width: 14px;
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  color: var(--fw-muted);
+}
+.fw-i1 { padding-left: 32px; }
+.fw-i2 { padding-left: 48px; }
+.fw-i3 { padding-left: 64px; }
+.fw-i4 { padding-left: 80px; }
+
+/* Highlight applied when the cursor "selects" a layer */
+.fw-layer.is-editing {
+  outline: 1.5px solid var(--fw-accent);
+  outline-offset: -1px;
+  background: var(--fw-active);
+  color: var(--fw-accent);
+}
+
+/* Right panel rows */
+.fw-tabs-row {
+  display: flex;
+  gap: 16px;
+  padding: 12px 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--fw-border);
+}
+.fw-tabs-row .is-on {
+  color: #fff;
+  border-bottom: 2px solid #fff;
+  padding-bottom: 4px;
+}
+.fw-tabs-row .is-off {
+  color: var(--fw-muted);
+}
+.fw-prop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+}
+.fw-prop-label {
+  color: var(--fw-muted);
+}
+.fw-prop-strong {
+  font-weight: 600;
+  color: #fff;
+}
+.fw-box {
+  background: #111;
+  border: 1px solid #444;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #fff;
+  text-align: right;
+  transition: border-color 0.2s ease;
+}
+.fw-box.is-flash {
+  border-color: var(--fw-accent);
+  box-shadow: 0 0 0 2px rgba(13, 153, 255, 0.25);
+}
+.fw-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid #555;
+  transition: background 0.3s ease;
+}
+
+/* Canvas */
+.fw-canvas {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--fw-canvas-bg);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* The framed "website" being designed */
+.fw-web {
+  width: 720px;
+  height: 470px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.fw-web-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 32px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.fw-web-logo {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.fw-web-links {
+  display: flex;
+  gap: 24px;
+  color: #888;
+}
+.fw-web-links .is-on { color: #fff; }
+.fw-web-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 32px;
+}
+.fw-web-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.fw-web-tag {
+  align-self: flex-start;
+  background: rgba(13, 153, 255, 0.1);
+  color: var(--fw-accent);
+  border: 1px solid rgba(13, 153, 255, 0.2);
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.fw-web-title {
+  font-size: 40px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.05;
+  letter-spacing: -1.2px;
+  transition: font-size 0.4s var(--ease-out-expo, cubic-bezier(0.22, 1, 0.36, 1));
+}
+.fw-web-desc {
+  font-size: 12px;
+  color: #a0a0a0;
+  line-height: 1.6;
+  max-width: 340px;
+}
+.fw-web-desc strong { color: #e0e0e0; font-weight: 600; }
+.fw-btn-group { display: flex; gap: 12px; margin-top: 4px; }
+.fw-btn-primary {
+  background: #fff;
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+}
+.fw-btn-secondary {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* Edit selection box on canvas elements */
+.fw-edit {
+  position: relative;
+}
+.fw-edit::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1.5px solid transparent;
+  border-radius: 3px;
+  pointer-events: none;
+  transition: border-color 0.2s ease;
+}
+.fw-edit.is-editing::after {
+  border-color: var(--fw-accent);
+}
+
+/* Animated character graphic */
+.fw-graphic {
+  width: 210px;
+  height: 210px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.fw-char {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  animation: fw-float 4s ease-in-out infinite;
+}
+.fw-char-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+  border: 2px solid #333;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(13, 153, 255, 0.1);
+  transition: border-color 0.3s ease;
+}
+.fw-char-screen {
+  position: absolute;
+  inset: 12px;
+  background: #050505;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.fw-eye {
+  width: 20px;
+  height: 10px;
+  border-radius: 10px;
+  background: var(--fw-accent);
+  box-shadow: 0 0 14px var(--fw-accent);
+  animation: fw-blink 4s infinite, fw-scan 6s infinite;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.fw-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 180px;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: fw-spin 10s linear infinite;
+}
+.fw-particle {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px #fff;
+}
+
+@keyframes fw-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes fw-blink {
+  0%, 96%, 100% { transform: scaleY(1); }
+  98% { transform: scaleY(0.1); }
+}
+@keyframes fw-scan {
+  0%, 100% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+}
+@keyframes fw-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* The "You" collaborator cursor */
+.fw-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  pointer-events: none;
+  will-change: transform;
+}
+.fw-cursor svg {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+  overflow: visible;
+}
+.fw-cursor-tag {
+  position: absolute;
+  top: 18px;
+  left: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--fw-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fw-char,
+  .fw-eye,
+  .fw-orbit {
+    animation: none;
+  }
+}

@@ -1,37 +1,25 @@
 import { Hero } from "@/components/sections/Hero";
-import { Intro } from "@/components/sections/Intro";
-import { DesignPrinciples } from "@/components/sections/DesignPrinciples";
-import { Process } from "@/components/sections/Process";
-import { Stats } from "@/components/sections/Stats";
-import { FeaturedWork } from "@/components/sections/FeaturedWork";
+import { Section2Problem } from "@/components/sections/Section2Problem";
+import { Section3Approach } from "@/components/sections/Section3Approach";
+import { Section4StayAhead } from "@/components/sections/Section4StayAhead";
+import { CaseStudyFeature } from "@/components/sections/CaseStudyFeature";
 import { Testimonials } from "@/components/sections/Testimonials";
-import { Contact } from "@/components/sections/Contact";
+import { NextMission } from "@/components/sections/NextMission";
 import { SectionFade } from "@/components/animations/SectionFade";
 
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <SectionFade>
-        <Intro />
-      </SectionFade>
-      <SectionFade>
-        <DesignPrinciples />
-      </SectionFade>
-      <SectionFade>
-        <Process />
-      </SectionFade>
-      <SectionFade>
-        <Stats />
-      </SectionFade>
-      <SectionFade>
-        <FeaturedWork />
-      </SectionFade>
+      <Section2Problem />
+      <Section3Approach />
+      <Section4StayAhead />
+      <CaseStudyFeature />
       <SectionFade>
         <Testimonials />
       </SectionFade>
       <SectionFade>
-        <Contact />
+        <NextMission />
       </SectionFade>
     </>
   );

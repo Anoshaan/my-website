@@ -3,15 +3,15 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import ShinyText from "@/components/animations/ShinyText";
-import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
 
 /**
- * Hero — layered scroll parallax. The title moves slower than the body
- * copy, which moves slower than the CTAs, creating a sense of depth as
- * the user begins to scroll. A faint outlined word sits in the
- * background as a brand mark.
+ * Hero — a quiet, centered first impression. No imagery, no calls to
+ * action: just the statement and a single line of intent, with a slow
+ * silver shine drifting across the title for a premium, restrained feel.
+ * A faint scroll parallax lets the title drift up slower than the body
+ * copy, giving a subtle sense of depth as the user begins to scroll.
  */
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -21,56 +21,45 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
 
-  // Parallax — title drifts up slowest, ctas fastest. Magnitudes are
+  // Parallax — title drifts up slower than the body copy. Magnitudes are
   // intentionally small so the effect reads as depth, never as motion.
   const titleY = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -60]);
-  const bodyY = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -110]);
-  const ctaY = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -160]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 1, 0.55]);
+  const bodyY = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -100]);
+  // Fade the hero out as it lifts away — gone by the time it's ~halfway
+  // scrolled, handing the frame over to the rising workspace below.
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, reduced ? 1 : 0]);
 
   return (
     <section
       ref={ref}
       id="top"
-      className="relative min-h-[100svh] flex items-center justify-center overflow-hidden perspective"
+      className="relative min-h-[100svh] flex items-center overflow-hidden perspective"
     >
-      {/* Layered depth — three radial washes at different scales. */}
+      {/* Layered depth — a centered radial wash behind the title. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(50% 40% at 50% 55%, rgba(207, 217, 255, 0.07) 0%, transparent 70%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="hero-aura pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[850px] max-w-[90vw] h-[400px] rounded-full"
-        style={{
-          background:
-            "linear-gradient(to top right, rgba(255,255,255,0.05), transparent)",
-          filter: "blur(140px)",
+            "radial-gradient(60% 50% at 50% 45%, rgba(207, 217, 255, 0.06) 0%, transparent 70%)",
         }}
       />
 
-      <motion.div
-        style={{ opacity: heroOpacity }}
-        className="w-full"
-      >
+      <motion.div style={{ opacity: heroOpacity }} className="w-full relative z-10">
         <Container
           size="default"
-          className="flex flex-col items-center text-center py-24"
+          className="flex flex-col items-center text-center py-14 md:py-20"
         >
           <motion.div style={{ y: titleY }}>
             <Reveal duration={0.9}>
-              <h1 className="text-hero text-white max-w-[22ch] mx-auto">
+              <h1 className="hero-title text-white max-w-[30ch] mx-auto">
                 <ShinyText
-                  text="Designing Product Experiences That Scale With Human Behavior"
-                  color="#d6d6da"
+                  text="Designing Product Experiences Shaped by Human Behavior"
+                  color="#b9b9c2"
                   shineColor="#ffffff"
-                  speed={6}
-                  spread={115}
-                  delay={1.6}
+                  speed={5}
+                  spread={100}
+                  delay={1}
                 />
               </h1>
             </Reveal>
@@ -78,35 +67,13 @@ export function Hero() {
 
           <motion.div style={{ y: bodyY }}>
             <Reveal delay={0.18} duration={0.9}>
-              <p className="text-body text-white/65 max-w-[58ch] mx-auto mt-6">
-                I design enterprise-grade digital experiences across web,
-                mobile, and AI-driven platforms — combining behavioral UX,
-                scalable systems, motion, and frontend thinking to create
-                products that feel intuitive, fast, and deeply human.
+              <p className="text-body text-white/65 max-w-[52ch] mx-auto mt-6">
+                Every product tells a story. This is where I share mine.
               </p>
-            </Reveal>
-          </motion.div>
-
-          <motion.div style={{ y: ctaY }}>
-            <Reveal delay={0.32} duration={0.9}>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-10">
-                <Button href="/labs" variant="primary">
-                  View Case Studies
-                </Button>
-                <Button
-                  href="/systems"
-                  variant="ghost"
-                  trailingIcon={null}
-                  rainbow={false}
-                >
-                  Explore Systems
-                </Button>
-              </div>
             </Reveal>
           </motion.div>
         </Container>
       </motion.div>
-
     </section>
   );
 }

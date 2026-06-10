@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence, motionValue, useReducedMotion } from "motion/react";
 import { Container } from "@/components/ui/Container";
-import { Reveal } from "@/components/animations/Reveal";
 
 type CategoryName =
   | "Founder"
@@ -205,38 +204,162 @@ function LinkedInIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-function PortraitImage({ t }: { t: Testimonial }) {
-  // The wrapper hosts the animated halo (radial glow + slow rotating
-  // accent ring) so the glow can bleed BEYOND the circle's overflow
-  // clip. The inner `.testimonial-portrait` is the clipped circle.
+/* ----------------------------------------------------------------
+   ORBIT FIELD — a slow "solar system" of the testimonial avatars.
+   The active avatar sits large in the centre; the rest orbit on
+   three rings and are clickable. Selecting one flies it to the
+   centre while the previous centre eases back to its orbit slot.
+   ---------------------------------------------------------------- */
+
+const ORBIT_SCALE = 0.26; // orbit avatar size relative to the centre avatar
+
+// Ring assignment per testimonial index (3 + 4 + 4 = 11).
+const RINGS = [
+  { rf: 0.25, dir: 1, spd: 0.9, offset: 0 },
+  { rf: 0.36, dir: -1, spd: 0.62, offset: Math.PI / 4 },
+  { rf: 0.44, dir: 1, spd: 0.46, offset: Math.PI / 8 },
+];
+const RING_INDEX = [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2];
+const RING_COUNT = [3, 4, 4];
+const RING_START = [0, 3, 7];
+
+function baseAngleFor(i: number) {
+  const ring = RING_INDEX[i];
+  const pos = i - RING_START[ring];
+  return (pos / RING_COUNT[ring]) * Math.PI * 2 + RINGS[ring].offset;
+}
+
+function OrbitField({
+  active,
+  onSelect,
+}: {
+  active: number;
+  onSelect: (i: number) => void;
+}) {
+  const reduced = useReducedMotion();
+  const stageRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef(active);
+  activeRef.current = active;
+
+  const [nodeSize, setNodeSize] = useState(180);
+  const dims = useRef({ radii: [120, 180, 230] });
+
+  // One persistent set of motion values per avatar (no re-render on tick).
+  const nodes = useRef(
+    testimonials.map(() => ({
+      x: motionValue(0),
+      y: motionValue(0),
+      s: motionValue(ORBIT_SCALE),
+    }))
+  );
+  const curT = useRef(testimonials.map((_, i) => (i === active ? 1 : 0)));
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const measure = () => {
+      const S = Math.min(el.clientWidth, el.clientHeight);
+      setNodeSize(S * 0.34);
+      dims.current.radii = RINGS.map((r) => r.rf * S);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const place = (phase: number) => {
+      for (let i = 0; i < testimonials.length; i++) {
+        const ring = RINGS[RING_INDEX[i]];
+        const R = dims.current.radii[RING_INDEX[i]];
+        const ang = baseAngleFor(i) + phase * ring.dir * ring.spd;
+        const ox = Math.cos(ang) * R;
+        const oy = Math.sin(ang) * R;
+        const t = curT.current[i];
+        nodes.current[i].x.set(ox * (1 - t));
+        nodes.current[i].y.set(oy * (1 - t));
+        nodes.current[i].s.set(ORBIT_SCALE + (1 - ORBIT_SCALE) * t);
+      }
+    };
+
+    if (reduced) {
+      // Static: snap to targets, no animation loop.
+      for (let i = 0; i < testimonials.length; i++) {
+        curT.current[i] = i === active ? 1 : 0;
+      }
+      place(0);
+      return;
+    }
+
+    let raf = 0;
+    let phase = 0;
+    let last = performance.now();
+    const loop = () => {
+      const now = performance.now();
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      phase += dt * 0.16; // slow, premium drift
+      for (let i = 0; i < testimonials.length; i++) {
+        const target = i === activeRef.current ? 1 : 0;
+        curT.current[i] += (target - curT.current[i]) * 0.06;
+      }
+      place(phase);
+      raf = requestAnimationFrame(loop);
+    };
+    loop();
+    return () => cancelAnimationFrame(raf);
+  }, [reduced, active]);
+
   return (
-    <div className="testimonial-portrait-wrap">
-      {t.image ? (
-        <div className="testimonial-portrait">
-          <Image
-            src={t.image}
-            alt={t.name}
-            width={520}
-            height={520}
-            sizes="(min-width: 1024px) 240px, 180px"
-            priority={false}
-          />
-        </div>
-      ) : (
-        <div
-          className="testimonial-portrait"
-          style={{
-            background: `linear-gradient(135deg, ${t.avatarA}, ${t.avatarB})`,
-            color: "rgba(0,0,0,0.75)",
-            display: "grid",
-            placeItems: "center",
-            fontSize: "clamp(2rem, 4vw, 3rem)",
-            fontWeight: 500,
-          }}
-        >
-          {t.initials}
-        </div>
-      )}
+    <div ref={stageRef} className="orbit-stage" style={{ ["--node-size" as string]: `${nodeSize}px` }}>
+      {/* Faint orbit rings for depth. */}
+      {RINGS.map((r, k) => (
+        <span
+          key={k}
+          className="orbit-ring"
+          aria-hidden
+          style={{ width: `${r.rf * 200}%`, height: `${r.rf * 200}%` }}
+        />
+      ))}
+      {testimonials.map((t, i) => {
+        const isActive = i === active;
+        return (
+          <motion.button
+            key={i}
+            type="button"
+            data-cursor-precise
+            aria-label={`Show testimonial from ${t.name}`}
+            aria-pressed={isActive}
+            onClick={() => onSelect(i)}
+            className={`orbit-node ${isActive ? "is-active" : ""}`}
+            style={{
+              x: nodes.current[i].x,
+              y: nodes.current[i].y,
+              scale: nodes.current[i].s,
+              zIndex: isActive ? 40 : 12,
+            }}
+          >
+            {t.image ? (
+              <Image
+                src={t.image}
+                alt={t.name}
+                width={300}
+                height={300}
+                sizes="240px"
+                priority={false}
+              />
+            ) : (
+              <span
+                className="orbit-node-initials"
+                style={{ background: `linear-gradient(135deg, ${t.avatarA}, ${t.avatarB})` }}
+              >
+                {t.initials}
+              </span>
+            )}
+          </motion.button>
+        );
+      })}
     </div>
   );
 }
@@ -251,11 +374,12 @@ function quoteSizeFor(len: number) {
 }
 
 /**
- * Featured testimonial — fully center-aligned column. Portrait sits at
- * the top, the quote below, and the meta row (name, role, LinkedIn) at
- * the bottom, all centered horizontally.
+ * Featured testimonial content — name, role, quote, and a LinkedIn-blue
+ * button. The portrait now lives in the orbit field (centre avatar), so
+ * this column is content only. Wording + type are unchanged; the column
+ * is left-aligned to match the new split layout.
  */
-function FeaturedCard({ index }: { index: number }) {
+function FeaturedContent({ index }: { index: number }) {
   const t = testimonials[index];
   const quoteSize = useMemo(
     () => (t ? quoteSizeFor(t.quote.length) : "clamp(18px, 1.4vw, 21px)"),
@@ -264,12 +388,8 @@ function FeaturedCard({ index }: { index: number }) {
 
   if (!t) {
     return (
-      <div
-        className="featured-testimonial is-centered"
-        tabIndex={0}
-        aria-live="polite"
-      >
-        <p className="text-body text-white/45 text-center">
+      <div className="featured-testimonial" tabIndex={0} aria-live="polite">
+        <p className="text-body text-white/45">
           Testimonials for this group are coming soon.
         </p>
       </div>
@@ -277,11 +397,7 @@ function FeaturedCard({ index }: { index: number }) {
   }
 
   return (
-    <div
-      className="featured-testimonial is-centered"
-      tabIndex={0}
-      aria-live="polite"
-    >
+    <div className="featured-testimonial" tabIndex={0} aria-live="polite">
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
@@ -293,40 +409,34 @@ function FeaturedCard({ index }: { index: number }) {
             transition: { duration: 0.28, ease: [0.4, 0, 1, 1] },
           }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="featured-inner is-centered"
+          className="featured-inner"
         >
-          {/* 1. Portrait */}
-          <PortraitImage t={t} />
-
-          {/* 2. Name + role */}
-          <div className="featured-name-block">
-            <span className="featured-name">{t.name}</span>
-            <span className="featured-role">{t.role}</span>
+          {/* Name + role, with the LinkedIn button beside it. */}
+          <div className="orbit-meta-row">
+            <div className="featured-name-block orbit-name-block">
+              <span className="featured-name">{t.name}</span>
+              <span className="featured-role">{t.role}</span>
+            </div>
+            <a
+              href={t.linkedIn}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Open ${t.name}'s LinkedIn profile`}
+              data-cursor-precise
+              className="orbit-linkedin-btn"
+            >
+              <LinkedInIcon size={16} />
+              <span>LinkedIn</span>
+            </a>
           </div>
 
-          {/* 3. Quote */}
-          <p
-            className="featured-quote is-centered"
-            style={{ fontSize: quoteSize }}
-          >
+          {/* Quote */}
+          <p className="featured-quote" style={{ fontSize: quoteSize }}>
             <span className="featured-quote-mark-inline" aria-hidden>
               &ldquo;
             </span>
             {t.quote}
           </p>
-
-          {/* 4. LinkedIn — bottom of the card. */}
-          <a
-            href={t.linkedIn}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Open ${t.name}'s LinkedIn profile`}
-            data-cursor-precise
-            className="featured-linkedin"
-          >
-            <LinkedInIcon size={14} />
-            <span>LinkedIn Profile</span>
-          </a>
         </motion.div>
       </AnimatePresence>
     </div>
@@ -451,35 +561,25 @@ export function Testimonials() {
 
   return (
     <section className="testimonials-section py-[clamp(80px,10vw,140px)] relative">
-      <Container>
-        <div className="testimonials-layout">
-          {/* LEFT — heading + body + category nav */}
-          <div className="testimonials-heading-col">
-            <Reveal>
-              <h2 className="text-section text-white max-w-[18ch] heading-sheen">
-                Trusted by founders, design leads, and engineering teams.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.15}>
-              <p className="text-body text-white/60 max-w-[44ch] mt-6">
-                Selected words from the people I&apos;ve shipped product with
-                over the last several years.
-              </p>
-            </Reveal>
-            <Reveal delay={0.28}>
-              <div className="testimonials-cat-nav-wrap">
-                <CategoryNav
-                  activeCategory={activeMeta.name}
-                  onSelect={jumpToCategory}
-                />
-              </div>
-            </Reveal>
+      <Container size="wide">
+        <div className="orbit-layout">
+          {/* LEFT — galaxy / orbit of avatars, active in the centre */}
+          <div className="orbit-stage-col">
+            <OrbitField active={index} onSelect={setIndex} />
           </div>
 
-          {/* RIGHT — featured testimonial card */}
-          <Reveal className="testimonials-card-col">
-            <FeaturedCard index={index} />
-          </Reveal>
+          {/* RIGHT — testimonial content (name, role, quote, LinkedIn) */}
+          <div className="orbit-content-col">
+            <FeaturedContent index={index} />
+          </div>
+        </div>
+
+        {/* BOTTOM — category nav / progress bar (unchanged, repositioned) */}
+        <div className="orbit-nav-wrap">
+          <CategoryNav
+            activeCategory={activeMeta.name}
+            onSelect={jumpToCategory}
+          />
         </div>
       </Container>
     </section>

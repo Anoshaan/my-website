@@ -83,28 +83,143 @@ body {
 }
 
 body {
-  /* Static, layered gradient — provides depth without any animation.
-     Two soft accent washes (cool top-left, warm bottom-right) sit
-     under a near-black base. No canvas, no rAF — zero runtime cost. */
+  /* Near-black base. The atmospheric depth now lives in the fixed
+     <GalaxyBackground /> layer so it spans the whole page uniformly. */
   background-color: #050505;
-  background-image:
+}
+
+/* =========================================================
+   GALAXY BACKGROUND — one fixed, full-page deep-space backdrop.
+   Layered nebula washes + three parallax star layers drifting
+   very slowly. Deliberately subtle: low opacity, soft motion,
+   never competes with foreground content.
+   ========================================================= */
+.galaxy-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  /* Sits above the body base color, below all page content. */
+  background-color: transparent;
+}
+
+/* Nebula — large, very soft colored clouds. Two of them breathe in
+   and out of phase so the field feels alive without obvious motion. */
+.galaxy-nebula {
+  position: absolute;
+  inset: -10%;
+  background:
     radial-gradient(
-      62% 48% at 12% 8%,
-      rgba(207, 217, 255, 0.07) 0%,
-      transparent 60%
+      40% 34% at 16% 20%,
+      rgba(138, 104, 224, 0.18) 0%,
+      transparent 70%
     ),
     radial-gradient(
-      55% 45% at 88% 92%,
-      rgba(255, 184, 154, 0.045) 0%,
-      transparent 65%
+      44% 38% at 84% 28%,
+      rgba(96, 124, 224, 0.15) 0%,
+      transparent 72%
     ),
     radial-gradient(
-      90% 70% at 50% 50%,
-      rgba(20, 20, 28, 0.55) 0%,
-      rgba(5, 5, 7, 0.95) 80%
+      52% 42% at 62% 86%,
+      rgba(168, 116, 230, 0.14) 0%,
+      transparent 75%
+    ),
+    radial-gradient(
+      60% 50% at 50% 50%,
+      rgba(124, 92, 200, 0.06) 0%,
+      transparent 80%
     );
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+  filter: blur(14px);
+  animation: galaxy-nebula-drift 60s ease-in-out infinite alternate;
+}
+
+/* Star layers — each is a repeating tile of tiny radial-gradient dots.
+   Different tile sizes, brightnesses and drift speeds create parallax
+   depth. Drift uses background-position so there's never an edge seam. */
+.galaxy-stars {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+}
+
+.galaxy-stars-far {
+  /* Dimmest, smallest, densest — the deep field. */
+  background-image:
+    radial-gradient(1px 1px at 40px 60px, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(1px 1px at 130px 180px, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 220px 90px, rgba(207, 217, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 300px 250px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 360px 40px, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 80px 320px, rgba(255, 255, 255, 0.3), transparent);
+  background-size: 400px 400px;
+  opacity: 0.5;
+  animation: galaxy-drift-far 240s linear infinite;
+}
+
+.galaxy-stars-mid {
+  background-image:
+    radial-gradient(1.4px 1.4px at 60px 120px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1.4px 1.4px at 280px 60px, rgba(214, 224, 255, 0.55), transparent),
+    radial-gradient(1.2px 1.2px at 200px 300px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1.4px 1.4px at 420px 220px, rgba(255, 255, 255, 0.5), transparent);
+  background-size: 520px 520px;
+  opacity: 0.55;
+  animation: galaxy-drift-mid 180s linear infinite;
+}
+
+.galaxy-stars-near {
+  /* Sparse, brightest — a few foreground stars that twinkle faintly. */
+  background-image:
+    radial-gradient(1.8px 1.8px at 120px 200px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1.6px 1.6px at 520px 380px, rgba(224, 214, 255, 0.8), transparent),
+    radial-gradient(2px 2px at 700px 120px, rgba(255, 255, 255, 0.85), transparent);
+  background-size: 820px 820px;
+  opacity: 0.6;
+  animation: galaxy-drift-near 130s linear infinite,
+    galaxy-twinkle 8s ease-in-out infinite;
+}
+
+/* Edge vignette — keeps the corners dark so content never fights the
+   field, and the whole thing reads as depth rather than texture. */
+.galaxy-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 100% at 50% 40%,
+    transparent 35%,
+    rgba(5, 5, 7, 0.55) 100%
+  );
+}
+
+@keyframes galaxy-drift-far {
+  from { background-position: 0 0; }
+  to { background-position: 400px 200px; }
+}
+@keyframes galaxy-drift-mid {
+  from { background-position: 0 0; }
+  to { background-position: -520px 320px; }
+}
+@keyframes galaxy-drift-near {
+  from { background-position: 0 0; }
+  to { background-position: 820px -420px; }
+}
+@keyframes galaxy-nebula-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(2%, -1.5%, 0) scale(1.06); }
+}
+@keyframes galaxy-twinkle {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.38; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .galaxy-nebula,
+  .galaxy-stars-far,
+  .galaxy-stars-mid,
+  .galaxy-stars-near {
+    animation: none;
+  }
 }
 
 /* Kill italics everywhere — brand rule */
@@ -241,6 +356,794 @@ body:has(.cursor) [role="button"] {
   letter-spacing: -0.04em;
 }
 
+/* Homepage hero — intentionally more restrained than .text-hero so it
+   reads as minimal copy over the background video rather than filling
+   the frame. */
+.hero-title {
+  font-size: clamp(2.5rem, 5.8vw, 7rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+/* =========================================================
+   SECTION 2 — THE PROBLEM. One scroll-driven scene: the
+   workspace screen rises from the bottom as the Hero fades,
+   settles dead-centre, then slides to the RIGHT and scales
+   down while the heading (then body + principles) reveal on
+   the LEFT. Transforms live in the component; this styles the
+   pinned stage and the split layout.
+   ========================================================= */
+.problem-section {
+  position: relative;
+  isolation: isolate;
+}
+
+.problem-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  /* Perspective so the rising card's rotateX reads as depth. */
+  perspective: 1600px;
+  perspective-origin: 50% 50%;
+}
+
+/* Workspace layer — fills the stage and centres the scaled card. */
+.problem-figma {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+.problem-fit {
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 60px 120px rgba(0, 0, 0, 0.55));
+}
+
+/* Copy — left column on desktop (the card parks to the right). */
+.problem-content {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  gap: clamp(18px, 2vw, 30px);
+  padding-left: clamp(36px, 7vw, 140px);
+  padding-right: 48%;
+  pointer-events: none;
+}
+.problem-content-group {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.4vw, 20px);
+  width: 100%;
+}
+
+.problem-eyebrow {
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 0.7rem + 0.1vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(236, 235, 230, 0.5);
+}
+
+/* Lighter + smaller than .text-section so the line wraps to two and
+   reads as quiet, thoughtful copy beside the workspace. */
+.problem-title {
+  font-family: var(--font-sans);
+  color: #ffffff;
+  font-size: clamp(1.6rem, 2.5vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  max-width: 18ch;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.problem-body {
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 46ch;
+  margin: 0;
+}
+
+/* Stacked layout — card parks UP, copy sits centred below it. */
+@media (max-width: 900px) {
+  .problem-content {
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+    padding-left: clamp(20px, 6vw, 40px);
+    padding-right: clamp(20px, 6vw, 40px);
+    padding-bottom: clamp(48px, 9vh, 110px);
+  }
+  .problem-title {
+    max-width: 22ch;
+  }
+  .problem-body {
+    max-width: 52ch;
+    margin-inline: auto;
+  }
+}
+
+/* =========================================================
+   SECTION 3 — HOW I THINK BEFORE I DESIGN. A pinned, scroll-
+   driven chapter. A fixed Canvas-2D particle field re-forms
+   through four stages; the left narrative (primary content)
+   crossfades, and the right timeline lights up via a travelling
+   neon glow. No cards.
+   ========================================================= */
+.approach-section {
+  position: relative;
+  isolation: isolate;
+}
+
+.approach-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: stretch;
+}
+
+/* Particle canvas — fixed to the viewport so it can build up across the
+   section boundary while the previous section is still fading. */
+.approach-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* Soft brand aura behind the field for depth. */
+.approach-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    42% 40% at 55% 52%,
+    rgba(167, 139, 250, 0.1) 0%,
+    transparent 70%
+  );
+}
+
+.approach-overlay {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-block: clamp(48px, 8vh, 96px);
+  pointer-events: none;
+}
+
+.approach-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.approach-eyebrow {
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 0.7rem + 0.1vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(236, 235, 230, 0.5);
+  margin-bottom: clamp(10px, 1vw, 16px);
+}
+.approach-title {
+  color: #ffffff;
+  margin: 0 auto;
+  max-width: 18ch;
+}
+
+/* Split row: narrative left (primary, roomy), timeline right; particles
+   sit in the central gap between them. */
+.approach-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+}
+
+/* Primary reading content — given room and emphasis. */
+.approach-narrative {
+  max-width: 34ch;
+  pointer-events: auto;
+  text-shadow: 0 2px 24px rgba(5, 5, 7, 0.55);
+}
+.approach-subject {
+  font-family: var(--font-sans);
+  font-size: clamp(1.8rem, 3.1vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  color: #ffffff;
+  margin: 0 0 clamp(10px, 1.1vw, 16px);
+}
+.approach-question {
+  font-family: var(--font-sans);
+  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+  color: color-mix(in oklab, var(--color-accent) 60%, #ffffff);
+  margin: 0 0 clamp(12px, 1.3vw, 18px);
+  text-wrap: balance;
+}
+.approach-body {
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 42ch;
+  margin: 0;
+}
+
+/* Right timeline — refined, regular-weight labels with a travelling
+   neon light instead of a static progress line. */
+.approach-menu {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 clamp(26px, 3vw, 46px);
+  justify-self: end;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(30px, 3.6vw, 56px);
+  pointer-events: auto;
+}
+/* Faint base track. */
+.approach-rail {
+  position: absolute;
+  left: 5px;
+  top: 0.6em;
+  bottom: 0.6em;
+  width: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+/* Illuminated trail behind the head — sweeps the journey's neon colours. */
+.approach-rail-trail {
+  position: absolute;
+  left: 5px;
+  top: 0.6em;
+  height: calc(100% - 1.2em);
+  width: 2px;
+  border-radius: 2px;
+  transform-origin: top;
+  background: linear-gradient(180deg, #b15cff 0%, #ff5ccd 36%, #4dff9e 70%, #f2ff4d 100%);
+  box-shadow: 0 0 12px rgba(150, 120, 255, 0.55);
+}
+/* The glowing comet head that travels from stage to stage. */
+.approach-rail-head {
+  position: absolute;
+  left: 6px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: background 0.5s var(--ease-out-expo), box-shadow 0.5s var(--ease-out-expo);
+}
+
+.approach-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.approach-item-label {
+  font-family: var(--font-sans);
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.34);
+  transform-origin: left center;
+  transition:
+    color 0.5s var(--ease-out-expo),
+    transform 0.5s var(--ease-out-expo),
+    text-shadow 0.5s var(--ease-out-expo);
+}
+.approach-item.is-past .approach-item-label {
+  color: rgba(255, 255, 255, 0.52);
+}
+/* Active label — enlarged for emphasis (Change 1). */
+.approach-item.is-active .approach-item-label {
+  color: #ffffff;
+  font-weight: 600;
+  transform: translateX(8px) scale(1.22);
+  text-shadow: 0 0 22px var(--neon, rgba(167, 139, 250, 0.5));
+}
+
+/* Stacked layout — header top, particles middle, copy below. */
+@media (max-width: 900px) {
+  .approach-overlay {
+    justify-content: space-between;
+  }
+  .approach-grid {
+    grid-template-columns: 1fr;
+    align-items: end;
+    align-content: end;
+    gap: clamp(20px, 4vw, 32px);
+  }
+  .approach-narrative {
+    max-width: 100%;
+    text-align: center;
+    margin-inline: auto;
+  }
+  .approach-body {
+    margin-inline: auto;
+  }
+  .approach-menu {
+    justify-self: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px 22px;
+    padding-left: 0;
+  }
+  .approach-rail,
+  .approach-rail-trail,
+  .approach-rail-head {
+    display: none;
+  }
+  .approach-item.is-active .approach-item-label {
+    transform: scale(1.12);
+  }
+  .approach-item-label {
+    font-size: clamp(1.05rem, 5vw, 1.3rem);
+  }
+}
+
+/* =========================================================
+   SECTION 4 — THIS IS HOW I STAY AHEAD. Pinned, cinematic.
+   The header settles centre, then three premium floating
+   "object" cards reveal one-by-one with 3D depth and a
+   bespoke inner animation each (explore / control / motion).
+   ========================================================= */
+.evolve-section {
+  position: relative;
+  isolation: isolate;
+}
+.evolve-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+}
+.evolve-aura {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 45% at 50% 38%,
+    rgba(167, 139, 250, 0.12) 0%,
+    transparent 72%
+  );
+}
+.evolve-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(28px, 4vh, 56px);
+}
+
+.evolve-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.evolve-eyebrow {
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 0.7rem + 0.1vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(236, 235, 230, 0.5);
+  margin-bottom: clamp(10px, 1vw, 16px);
+}
+.evolve-title {
+  color: #ffffff;
+  margin: 0 auto;
+  max-width: 16ch;
+}
+.evolve-body {
+  color: rgba(255, 255, 255, 0.66);
+  max-width: 58ch;
+  margin: clamp(12px, 1.4vw, 20px) auto 0;
+}
+
+/* Card row — 3D stage. */
+.evolve-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 2vw, 32px);
+  width: 100%;
+  max-width: 1140px;
+  perspective: 1400px;
+}
+.evolve-card-slot {
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+}
+.evolve-card-float {
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: evolve-float 6.5s ease-in-out infinite;
+}
+
+/* The floating object itself — glassy slab with real depth. */
+.evolve-card {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(20px, 1.8vw, 28px);
+  border-radius: 20px;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.055) 0%,
+    rgba(255, 255, 255, 0.018) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    0 34px 80px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transform-style: preserve-3d;
+  overflow: hidden;
+  transition: border-color 0.5s var(--ease-out-expo), box-shadow 0.5s var(--ease-out-expo);
+}
+.evolve-card:hover {
+  border-color: rgba(167, 139, 250, 0.35);
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.55),
+    0 0 50px rgba(167, 139, 250, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.evolve-card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(80% 50% at 50% -10%, rgba(207, 217, 255, 0.16), transparent 60%);
+}
+.evolve-card-visual {
+  position: relative;
+  height: clamp(92px, 11vh, 124px);
+  margin-bottom: clamp(14px, 1.6vw, 22px);
+  border-radius: 14px;
+  background: radial-gradient(120% 100% at 50% 0%, rgba(167, 139, 250, 0.1), rgba(255, 255, 255, 0.015));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transform: translateZ(28px);
+}
+.evolve-card-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: color-mix(in oklab, var(--color-accent) 75%, #ffffff);
+  transform: translateZ(20px);
+}
+.evolve-card-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #ffffff;
+  margin: 6px 0 4px;
+  transform: translateZ(20px);
+}
+.evolve-card-tag {
+  font-family: var(--font-sans);
+  font-size: clamp(0.92rem, 1vw, 1.02rem);
+  font-weight: 500;
+  line-height: 1.4;
+  color: color-mix(in oklab, var(--color-accent) 55%, #ffffff);
+  margin: 0 0 10px;
+}
+.evolve-card-body {
+  font-size: clamp(0.88rem, 0.95vw, 0.98rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.62);
+  margin: 0;
+}
+
+@keyframes evolve-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Card-visual animation primitives. */
+.evx { width: 90%; height: 84%; display: block; overflow: visible; }
+
+/* 01 — Exploration */
+.evx1-seed { fill: var(--color-accent); filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.9)); animation: evx-pulse 2.4s ease-in-out infinite; }
+.evx1-line { stroke: rgba(207, 217, 255, 0.5); stroke-width: 1; stroke-dasharray: 60; stroke-dashoffset: 60; animation: evx-draw 3.4s ease-in-out infinite; }
+.evx1-thumb { fill: rgba(255, 255, 255, 0.05); stroke: rgba(207, 217, 255, 0.55); stroke-width: 1; transform-box: fill-box; transform-origin: center; opacity: 0; animation: evx-pop 3.4s ease-in-out infinite; }
+.evx1-streaks line { stroke: rgba(255, 255, 255, 0.16); stroke-width: 1; animation: evx-streak 1.6s linear infinite; }
+.evx1-streaks line:nth-child(2) { animation-delay: 0.3s; }
+.evx1-streaks line:nth-child(3) { animation-delay: 0.6s; }
+
+/* 02 — Control */
+.evx2-dots circle { fill: rgba(255, 255, 255, 0.2); }
+.evx2-guide-v { stroke: var(--color-accent-cool); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.7; animation: evx-guide-v 4s ease-in-out infinite; }
+.evx2-guide-h { stroke: var(--color-accent-cool); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.7; animation: evx-guide-h 4s ease-in-out infinite; }
+.evx2-block { fill: rgba(167, 139, 250, 0.18); stroke: var(--color-accent); stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: evx-snap 4s ease-in-out infinite; }
+.evx2-handle line { stroke: rgba(207, 217, 255, 0.5); stroke-width: 1; }
+.evx2-handle circle { fill: var(--color-accent); }
+.evx2-handle { animation: evx-pulse 2.8s ease-in-out infinite; }
+
+/* 03 — Motion */
+.evx3-ripple circle { fill: none; stroke: var(--color-accent); stroke-width: 1.4; transform-box: fill-box; transform-origin: center; opacity: 0; animation: evx-ripple 3.3s ease-out infinite; }
+.evx3-core { fill: #ffffff; filter: drop-shadow(0 0 6px rgba(207, 217, 255, 0.9)); }
+.evx3-wave { stroke: var(--color-accent-cool); stroke-width: 1.6; fill: none; stroke-dasharray: 14 10; animation: evx-flow 1.6s linear infinite; }
+.evx3-track { fill: rgba(255, 255, 255, 0.08); stroke: rgba(255, 255, 255, 0.15); stroke-width: 1; }
+.evx3-knob { fill: var(--color-accent); filter: drop-shadow(0 0 5px rgba(167, 139, 250, 0.8)); animation: evx-slide 2.6s ease-in-out infinite; }
+
+@keyframes evx-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@keyframes evx-draw { 0%, 12% { stroke-dashoffset: 60; } 45%, 75% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; } }
+@keyframes evx-pop { 0%, 14% { opacity: 0; transform: scale(0.4); } 42%, 78% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.7); } }
+@keyframes evx-streak { 0% { opacity: 0; transform: translateX(-6px); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateX(8px); } }
+@keyframes evx-guide-v { 0%, 100% { transform: translateX(-14px); opacity: 0.2; } 40%, 70% { transform: translateX(0); opacity: 0.8; } }
+@keyframes evx-guide-h { 0%, 100% { transform: translateY(12px); opacity: 0.2; } 40%, 70% { transform: translateY(0); opacity: 0.8; } }
+@keyframes evx-snap { 0%, 25% { transform: scale(0.2); opacity: 0; } 55%, 85% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.2); opacity: 0; } }
+@keyframes evx-ripple { 0% { transform: scale(0.5); opacity: 0.8; } 100% { transform: scale(3.4); opacity: 0; } }
+@keyframes evx-flow { to { stroke-dashoffset: -24; } }
+@keyframes evx-slide { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(26px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .evolve-card-float,
+  .evx1-seed, .evx1-line, .evx1-thumb, .evx1-streaks line,
+  .evx2-guide-v, .evx2-guide-h, .evx2-block, .evx2-handle,
+  .evx3-ripple circle, .evx3-wave, .evx3-knob {
+    animation: none;
+  }
+  .evx1-thumb { opacity: 1; }
+}
+
+/* Mobile — unpin and stack the cards into the normal flow. */
+@media (max-width: 900px) {
+  .evolve-sticky {
+    position: static;
+    height: auto;
+    padding-block: clamp(64px, 12vh, 120px);
+  }
+  .evolve-cards {
+    grid-template-columns: 1fr;
+    max-width: 460px;
+    perspective: none;
+  }
+}
+
+/* =========================================================
+   FEATURED CASE STUDY — split layout. The animated workforce
+   dashboard is the hero visual, anchored to the left edge and
+   suspended in space (float + floor glow + slight perspective).
+   Right column carries the copy. No cards.
+   ========================================================= */
+.cs-section {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: clip;
+  isolation: isolate;
+  padding-block: clamp(64px, 10vh, 120px);
+}
+.cs-inner {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 56px);
+}
+
+/* Left — dashboard hero */
+.cs-dash-col {
+  position: relative;
+  display: flex;
+  align-items: center;
+  will-change: transform, opacity;
+  animation: cs-enter-left 1s var(--ease-out-expo) both;
+}
+.cs-content {
+  animation: cs-enter-up 0.9s var(--ease-out-expo) 0.15s both;
+}
+
+@keyframes cs-enter-left {
+  from { opacity: 0; transform: translateX(-56px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cs-enter-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-dash-col,
+  .cs-content {
+    animation: none;
+  }
+}
+.cs-dash-stage {
+  position: relative;
+  width: 100%;
+}
+/* Soft blurred floor glow beneath the dashboard. */
+.cs-dash-glow {
+  position: absolute;
+  left: 8%;
+  bottom: 4%;
+  width: 80%;
+  height: 46%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(167, 139, 250, 0.3) 0%,
+    rgba(138, 166, 255, 0.14) 45%,
+    transparent 78%
+  );
+  filter: blur(60px);
+  opacity: 0.55;
+}
+/* Absolutely positioned so the dashboard's intrinsic 1180px width never
+   dictates the grid cell width. */
+.cs-dash-float {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  animation: cs-float 7s ease-in-out infinite;
+}
+.cs-dash-fit {
+  transform-origin: left top;
+  will-change: transform;
+}
+/* A whisper of perspective for depth — readability preserved. */
+.cs-dash-tilt {
+  transform: perspective(2400px) rotateY(2.2deg) rotateX(0.6deg);
+  transform-style: preserve-3d;
+}
+
+@keyframes cs-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-dash-float { animation: none; }
+  .cs-dash-tilt { transform: none; }
+}
+
+/* Right — content */
+.cs-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(16px, 1.7vw, 26px);
+  max-width: 560px;
+  padding-right: clamp(28px, 6vw, 120px);
+  padding-left: clamp(20px, 2.5vw, 48px);
+}
+.cs-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 0.7rem + 0.1vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-accent-cool) 70%, #ffffff);
+}
+.cs-heading {
+  color: #ffffff;
+  max-width: 18ch;
+  margin: 0;
+}
+.cs-desc {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1vw, 14px);
+  max-width: 48ch;
+  color: rgba(255, 255, 255, 0.66);
+}
+.cs-desc p {
+  margin: 0;
+  font-size: clamp(1rem, 0.97rem + 0.18vw, 1.125rem);
+  line-height: 1.7;
+}
+.cs-learned {
+  border-left: 2px solid color-mix(in oklab, var(--color-accent) 70%, transparent);
+  padding-left: clamp(16px, 1.4vw, 22px);
+  max-width: 46ch;
+}
+.cs-learned-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(236, 235, 230, 0.5);
+  margin-bottom: 8px;
+}
+.cs-learned p {
+  margin: 0;
+  font-size: clamp(1.02rem, 1vw + 0.2rem, 1.18rem);
+  line-height: 1.55;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-wrap: balance;
+}
+.cs-tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+.cs-tags li {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 6px 13px;
+  border: 1px solid var(--color-line-2);
+  border-radius: 999px;
+}
+.cs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: clamp(6px, 1vw, 12px);
+}
+
+/* Stacked layout — dashboard on top, copy below. */
+@media (max-width: 1024px) {
+  .cs-section {
+    min-height: auto;
+  }
+  .cs-inner {
+    grid-template-columns: 1fr;
+    gap: clamp(40px, 7vw, 72px);
+  }
+  .cs-content {
+    max-width: 640px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 6vw, 48px);
+    align-items: flex-start;
+  }
+}
+
 .text-section {
   font-size: clamp(2.15rem, 4.2vw, 3.75rem);
   font-weight: 600;
@@ -315,6 +1218,1103 @@ body:has(.cursor) [role="button"] {
   .section-pad {
     padding-block: 88px;
   }
+}
+
+/* =========================================================
+   NEXT MISSION — calm closing. Soft purple atmosphere, sparse
+   stars, no hard shapes. Standard section heading style; no moon.
+   ========================================================= */
+.next-mission-section {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding-block: clamp(120px, 16vw, 200px);
+}
+
+/* Soft, edge-faded atmospheric wash — fades to transparent at every
+   edge so there's no visible boundary anywhere. */
+.next-mission-aura {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      55% 45% at 50% 70%,
+      rgba(167, 139, 250, 0.22) 0%,
+      rgba(167, 139, 250, 0.08) 35%,
+      transparent 75%
+    ),
+    radial-gradient(
+      80% 60% at 50% 30%,
+      rgba(192, 132, 252, 0.08) 0%,
+      transparent 65%
+    );
+  filter: blur(8px);
+  /* Soft top/bottom feather so the section meets adjacent sections
+     without any visible seam. */
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+}
+
+.next-mission-stars {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.next-mission-stars svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.nm-star {
+  animation: nm-twinkle 6s ease-in-out infinite;
+}
+.nm-star-big {
+  animation-duration: 9s;
+}
+.nm-star:nth-child(3n) { animation-delay: -2s; }
+.nm-star:nth-child(5n) { animation-delay: -4s; }
+@keyframes nm-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.85; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nm-star {
+    animation: none;
+  }
+}
+
+/* CONTENT — centered composition */
+.next-mission-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(18px, 2vw, 28px);
+}
+
+.next-mission-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Heading uses the standard .text-section style — the overrides
+   below only constrain max-width / centering so it doesn't wrap to
+   four lines. */
+.next-mission-title {
+  text-wrap: balance;
+  max-width: 22ch;
+  margin: 0 auto;
+}
+
+.next-mission-body {
+  max-width: 58ch;
+  margin: clamp(8px, 1vw, 16px) auto 0;
+}
+
+.next-mission-cta-wrap {
+  margin-top: clamp(20px, 2.5vw, 36px);
+}
+
+.next-mission-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 32px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: clamp(0.98rem, 1.05vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: #0a0a0c;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+.next-mission-cta svg {
+  transition: transform 0.4s var(--ease-out-expo);
+}
+.next-mission-cta:hover svg {
+  transform: translate(3px, -3px);
+}
+
+/* =========================================================
+   STORIES FROM THE REAL WORLD — Section 5: editorial portfolio
+   layout. First row is a full-width feature; subsequent rows
+   alternate media-left / media-right with generous whitespace.
+   ========================================================= */
+.stories-section {
+  position: relative;
+  isolation: isolate;
+}
+
+/* HERO — featured animation backdrop with the section title centered
+   over it. The animation is blurred + dimmed so the title stays the
+   focus; the band fades into the page at top and bottom (no hard edge). */
+.stories-hero {
+  position: relative;
+  width: 100%;
+  min-height: clamp(360px, 52vh, 560px);
+  margin-bottom: clamp(64px, 8vw, 128px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  overflow: hidden;
+}
+.stories-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  filter: blur(7px) saturate(115%);
+  transform: scale(1.08);
+  opacity: 0.55;
+  /* Feather every edge so the animation melts into the galaxy bg. */
+  -webkit-mask-image: radial-gradient(
+    120% 100% at 50% 50%,
+    #000 45%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    120% 100% at 50% 50%,
+    #000 45%,
+    transparent 100%
+  );
+}
+.stories-hero-media > * {
+  width: 100%;
+  height: 100%;
+}
+/* Scrim — darkens the blurred animation so the title reads cleanly. */
+.stories-hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      70% 70% at 50% 50%,
+      rgba(5, 5, 7, 0.55) 0%,
+      rgba(5, 5, 7, 0.78) 70%,
+      rgba(5, 5, 7, 0.92) 100%
+    );
+}
+.stories-hero-overlay {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.stories-stack {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(72px, 10vw, 160px);
+}
+
+.story-row {
+  display: grid;
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+
+/* Alternating rows — two columns. */
+.story-row-alt {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+}
+.story-row-alt.is-media-right {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+}
+.story-row-alt.is-media-right .story-media {
+  order: 2;
+}
+.story-row-alt.is-media-right .story-alt-meta {
+  order: 1;
+}
+@media (max-width: 900px) {
+  .story-row-alt {
+    grid-template-columns: 1fr;
+  }
+  .story-row-alt.is-media-right .story-media,
+  .story-row-alt.is-media-right .story-alt-meta {
+    order: initial;
+  }
+}
+
+.story-media {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 22px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #0d0d14, #050507);
+  will-change: transform;
+  transition: transform 0.6s var(--ease-out-expo);
+}
+
+.story-alt-meta {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.6vw, 22px);
+  max-width: 56ch;
+}
+
+/* Typography */
+.story-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.48);
+}
+.story-title-alt {
+  font-family: var(--font-sans);
+  font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: #ffffff;
+  text-wrap: balance;
+}
+.story-summary {
+  font-size: clamp(1rem, 1.1vw, 1.18rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.68);
+  max-width: 56ch;
+}
+.story-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.55);
+}
+.story-tags span:not(:last-child)::after {
+  content: " · ";
+  margin-left: 12px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.story-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1vw, 1.05rem);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: #ffffff;
+  margin-top: clamp(8px, 1vw, 14px);
+  transition:
+    color 0.3s var(--ease-out-expo),
+    gap 0.3s var(--ease-out-expo);
+}
+.story-cta svg {
+  transition: transform 0.4s var(--ease-out-expo);
+}
+
+/* Hover — image lifts + zooms gently; CTA brightens; arrow nudges. */
+.story-row:hover .story-media {
+  transform: translateY(-4px) scale(1.015);
+}
+.story-row:hover .story-cta {
+  gap: 14px;
+  color: color-mix(in oklab, #c084fc 60%, #ffffff);
+}
+.story-row:hover .story-cta svg {
+  transform: translate(3px, -3px);
+}
+
+/* Inner media zoom (case-study mockup / image inside .story-media) */
+.story-media > * {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s var(--ease-out-expo);
+}
+.story-row:hover .story-media > * {
+  transform: scale(1.04);
+}
+
+/* =========================================================
+   INSIDE MY MIND — Section 4: 3D perspective card stack.
+   Cards float in z-space, the active one sits forward and the
+   rest recede. Mouse-tilt parallax on the whole stack. Six
+   principle chips orbit around the stack and drift gently.
+   ========================================================= */
+.mind-section {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      55% 45% at 50% 50%,
+      rgba(167, 139, 250, 0.05) 0%,
+      transparent 70%
+    );
+}
+
+.mind-head {
+  margin-bottom: clamp(48px, 6vw, 96px);
+  max-width: 880px;
+}
+
+/* Two-column layout: left = 3D stage, right = step picker. */
+.mind-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: clamp(40px, 6vw, 96px);
+  align-items: center;
+}
+@media (max-width: 960px) {
+  .mind-layout {
+    grid-template-columns: 1fr;
+    gap: clamp(32px, 4vw, 56px);
+  }
+}
+
+/* LEFT — 3D stage. The stage hosts the perspective container; the
+   stack inside it carries the cards and the orbiting chips. */
+.mind-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 640px;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: crosshair;
+}
+
+.mind-stack {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Each card sits at the same origin; motion's animate translates it
+   along Z and Y based on its delta from the active index. */
+.mind-card {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 100%;
+  max-width: 380px;
+  height: 260px;
+  padding: clamp(20px, 2.4vw, 28px) clamp(24px, 2.8vw, 32px);
+  border-radius: 22px;
+  background: linear-gradient(
+    160deg,
+    rgba(167, 139, 250, 0.12) 0%,
+    rgba(167, 139, 250, 0.04) 100%
+  );
+  border: 1px solid rgba(167, 139, 250, 0.18);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(14px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(167, 139, 250, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  color: #ffffff;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+.mind-card.is-active {
+  border-color: rgba(192, 132, 252, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 32px 80px rgba(0, 0, 0, 0.55),
+    0 0 48px rgba(167, 139, 250, 0.35);
+}
+
+.mind-card-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.48);
+}
+.mind-card.is-active .mind-card-num {
+  color: color-mix(in oklab, #c084fc 70%, #ffffff);
+}
+.mind-card-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+.mind-card-body {
+  font-size: clamp(0.92rem, 0.95vw, 1.02rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.mind-card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    80% 60% at 20% 0%,
+    rgba(192, 132, 252, 0.25),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out-expo);
+  pointer-events: none;
+}
+.mind-card.is-active .mind-card-glow {
+  opacity: 1;
+}
+
+/* Soft floor — a blurred elliptical wash beneath the stack so the
+   cards feel like they're floating over something rather than nothing. */
+.mind-floor {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 60px;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(167, 139, 250, 0.32),
+    transparent 70%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+/* Orbiting principle chips around the stack. */
+.mind-orbits {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+.mind-principle-chip {
+  position: absolute;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  max-width: 160px;
+  font-size: 11px;
+  line-height: 1.35;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.mind-principle-label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  color: color-mix(in oklab, #c084fc 70%, #ffffff);
+  letter-spacing: -0.005em;
+}
+.mind-principle-body {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.4;
+}
+
+@media (max-width: 720px) {
+  .mind-orbits {
+    display: none;
+  }
+}
+
+/* RIGHT — step picker list */
+.mind-picker {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 2.4vw, 32px);
+}
+.mind-picker-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mind-picker-btn {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 10px 0;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.42);
+  transition: color 0.4s var(--ease-out-expo);
+}
+.mind-picker-btn:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+.mind-picker-btn.is-active {
+  color: #ffffff;
+}
+.mind-picker-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  color: inherit;
+  opacity: 0.62;
+}
+.mind-picker-btn.is-active .mind-picker-num {
+  color: color-mix(in oklab, #c084fc 78%, #ffffff);
+  opacity: 1;
+}
+.mind-picker-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.mind-picker-body {
+  margin-top: clamp(8px, 1.2vw, 16px);
+  padding-top: clamp(12px, 1.6vw, 20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: clamp(0.95rem, 1.05vw, 1.08rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.68);
+  max-width: 48ch;
+}
+
+/* Legacy constellation rules — kept harmless. The new stack doesn't
+   render any of these classes. */
+.mind-constellation,
+.mind-svg,
+.mind-stars circle {
+  display: none;
+}
+.mind-constellation {
+  animation: mind-twinkle 6s ease-in-out infinite;
+}
+.mind-stars circle:nth-child(3n) { animation-duration: 7.5s; animation-delay: -2s; }
+.mind-stars circle:nth-child(5n) { animation-duration: 9s; animation-delay: -3.5s; }
+@keyframes mind-twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.9; }
+}
+
+/* MAIN PATH NODES — quiet by default, illuminate when active.
+   Driven by the wrapper's [data-active="N"] which is updated by the
+   scroll subscription. Each node activates once depth >= its index. */
+.mind-node-halo {
+  fill: rgba(167, 139, 250, 0.1);
+  transition: fill 0.6s var(--ease-out-expo), r 0.6s var(--ease-out-expo);
+}
+.mind-node-core {
+  fill: rgba(255, 255, 255, 0.55);
+  transition:
+    fill 0.6s var(--ease-out-expo),
+    r 0.6s var(--ease-out-expo),
+    filter 0.6s var(--ease-out-expo);
+}
+.mind-node-label {
+  opacity: 0.55;
+  transition: opacity 0.5s var(--ease-out-expo);
+}
+
+/* Activation rules — when wrapper has data-active >= N, the Nth node
+   reads as "lit". Use cascading sibling logic with attribute matrix. */
+.mind-constellation[data-active="0"] [data-node="0"] .mind-node-core,
+.mind-constellation[data-active="1"] [data-node="0"] .mind-node-core,
+.mind-constellation[data-active="1"] [data-node="1"] .mind-node-core,
+.mind-constellation[data-active="2"] [data-node="0"] .mind-node-core,
+.mind-constellation[data-active="2"] [data-node="1"] .mind-node-core,
+.mind-constellation[data-active="2"] [data-node="2"] .mind-node-core,
+.mind-constellation[data-active="3"] [data-node="0"] .mind-node-core,
+.mind-constellation[data-active="3"] [data-node="1"] .mind-node-core,
+.mind-constellation[data-active="3"] [data-node="2"] .mind-node-core,
+.mind-constellation[data-active="3"] [data-node="3"] .mind-node-core,
+.mind-constellation[data-active="4"] [data-node="0"] .mind-node-core,
+.mind-constellation[data-active="4"] [data-node="1"] .mind-node-core,
+.mind-constellation[data-active="4"] [data-node="2"] .mind-node-core,
+.mind-constellation[data-active="4"] [data-node="3"] .mind-node-core,
+.mind-constellation[data-active="4"] [data-node="4"] .mind-node-core,
+.mind-constellation[data-active="5"] [data-node="0"] .mind-node-core,
+.mind-constellation[data-active="5"] [data-node="1"] .mind-node-core,
+.mind-constellation[data-active="5"] [data-node="2"] .mind-node-core,
+.mind-constellation[data-active="5"] [data-node="3"] .mind-node-core,
+.mind-constellation[data-active="5"] [data-node="4"] .mind-node-core,
+.mind-constellation[data-active="5"] [data-node="5"] .mind-node-core,
+.mind-constellation[data-active="6"] [data-node] .mind-node-core,
+.mind-constellation[data-active="7"] [data-node] .mind-node-core {
+  fill: #ffffff;
+  filter: drop-shadow(0 0 1.5px rgba(167, 139, 250, 1))
+    drop-shadow(0 0 3px rgba(192, 132, 252, 0.85));
+}
+.mind-constellation[data-active="0"] [data-node="0"] .mind-node-halo,
+.mind-constellation[data-active="1"] [data-node="0"] .mind-node-halo,
+.mind-constellation[data-active="1"] [data-node="1"] .mind-node-halo,
+.mind-constellation[data-active="2"] [data-node="0"] .mind-node-halo,
+.mind-constellation[data-active="2"] [data-node="1"] .mind-node-halo,
+.mind-constellation[data-active="2"] [data-node="2"] .mind-node-halo,
+.mind-constellation[data-active="3"] [data-node="0"] .mind-node-halo,
+.mind-constellation[data-active="3"] [data-node="1"] .mind-node-halo,
+.mind-constellation[data-active="3"] [data-node="2"] .mind-node-halo,
+.mind-constellation[data-active="3"] [data-node="3"] .mind-node-halo,
+.mind-constellation[data-active="4"] [data-node="0"] .mind-node-halo,
+.mind-constellation[data-active="4"] [data-node="1"] .mind-node-halo,
+.mind-constellation[data-active="4"] [data-node="2"] .mind-node-halo,
+.mind-constellation[data-active="4"] [data-node="3"] .mind-node-halo,
+.mind-constellation[data-active="4"] [data-node="4"] .mind-node-halo,
+.mind-constellation[data-active="5"] [data-node="0"] .mind-node-halo,
+.mind-constellation[data-active="5"] [data-node="1"] .mind-node-halo,
+.mind-constellation[data-active="5"] [data-node="2"] .mind-node-halo,
+.mind-constellation[data-active="5"] [data-node="3"] .mind-node-halo,
+.mind-constellation[data-active="5"] [data-node="4"] .mind-node-halo,
+.mind-constellation[data-active="5"] [data-node="5"] .mind-node-halo,
+.mind-constellation[data-active="6"] [data-node] .mind-node-halo,
+.mind-constellation[data-active="7"] [data-node] .mind-node-halo {
+  fill: rgba(192, 132, 252, 0.5);
+}
+.mind-constellation[data-active="0"] [data-node="0"] .mind-node-label,
+.mind-constellation[data-active="1"] [data-node="0"] .mind-node-label,
+.mind-constellation[data-active="1"] [data-node="1"] .mind-node-label,
+.mind-constellation[data-active="2"] [data-node="0"] .mind-node-label,
+.mind-constellation[data-active="2"] [data-node="1"] .mind-node-label,
+.mind-constellation[data-active="2"] [data-node="2"] .mind-node-label,
+.mind-constellation[data-active="3"] [data-node="0"] .mind-node-label,
+.mind-constellation[data-active="3"] [data-node="1"] .mind-node-label,
+.mind-constellation[data-active="3"] [data-node="2"] .mind-node-label,
+.mind-constellation[data-active="3"] [data-node="3"] .mind-node-label,
+.mind-constellation[data-active="4"] [data-node="0"] .mind-node-label,
+.mind-constellation[data-active="4"] [data-node="1"] .mind-node-label,
+.mind-constellation[data-active="4"] [data-node="2"] .mind-node-label,
+.mind-constellation[data-active="4"] [data-node="3"] .mind-node-label,
+.mind-constellation[data-active="4"] [data-node="4"] .mind-node-label,
+.mind-constellation[data-active="5"] [data-node="0"] .mind-node-label,
+.mind-constellation[data-active="5"] [data-node="1"] .mind-node-label,
+.mind-constellation[data-active="5"] [data-node="2"] .mind-node-label,
+.mind-constellation[data-active="5"] [data-node="3"] .mind-node-label,
+.mind-constellation[data-active="5"] [data-node="4"] .mind-node-label,
+.mind-constellation[data-active="5"] [data-node="5"] .mind-node-label,
+.mind-constellation[data-active="6"] [data-node] .mind-node-label,
+.mind-constellation[data-active="7"] [data-node] .mind-node-label {
+  opacity: 1;
+}
+
+/* EDGES — draw progressively. Each edge has its stroke-dashoffset
+   start at full length (hidden); active state runs it to 0. */
+.mind-edge-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mind-constellation[data-active="1"] [data-edge="0"] .mind-edge-line,
+.mind-constellation[data-active="2"] [data-edge="0"] .mind-edge-line,
+.mind-constellation[data-active="2"] [data-edge="1"] .mind-edge-line,
+.mind-constellation[data-active="3"] [data-edge="0"] .mind-edge-line,
+.mind-constellation[data-active="3"] [data-edge="1"] .mind-edge-line,
+.mind-constellation[data-active="3"] [data-edge="2"] .mind-edge-line,
+.mind-constellation[data-active="4"] [data-edge="0"] .mind-edge-line,
+.mind-constellation[data-active="4"] [data-edge="1"] .mind-edge-line,
+.mind-constellation[data-active="4"] [data-edge="2"] .mind-edge-line,
+.mind-constellation[data-active="4"] [data-edge="3"] .mind-edge-line,
+.mind-constellation[data-active="5"] [data-edge="0"] .mind-edge-line,
+.mind-constellation[data-active="5"] [data-edge="1"] .mind-edge-line,
+.mind-constellation[data-active="5"] [data-edge="2"] .mind-edge-line,
+.mind-constellation[data-active="5"] [data-edge="3"] .mind-edge-line,
+.mind-constellation[data-active="5"] [data-edge="4"] .mind-edge-line,
+.mind-constellation[data-active="6"] [data-edge] .mind-edge-line,
+.mind-constellation[data-active="7"] [data-edge] .mind-edge-line {
+  stroke-dashoffset: 0;
+}
+
+/* PRINCIPLES — orbit quietly until the path is complete, then light up. */
+.mind-principle {
+  animation: mind-principle-float 8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.mind-principle-halo {
+  fill: rgba(167, 139, 250, 0.06);
+  transition: fill 0.6s var(--ease-out-expo);
+}
+.mind-principle-core {
+  fill: rgba(255, 255, 255, 0.3);
+  transition: fill 0.6s var(--ease-out-expo), filter 0.6s var(--ease-out-expo);
+}
+.mind-principle-label {
+  opacity: 0.45;
+  transition: opacity 0.5s var(--ease-out-expo);
+}
+.mind-principle-body {
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out-expo);
+}
+
+/* When Solution (node 6) is lit, principles glow. */
+.mind-constellation[data-active="6"] .mind-principle-halo,
+.mind-constellation[data-active="7"] .mind-principle-halo {
+  fill: rgba(192, 132, 252, 0.32);
+}
+.mind-constellation[data-active="6"] .mind-principle-core,
+.mind-constellation[data-active="7"] .mind-principle-core {
+  fill: #ffffff;
+  filter: drop-shadow(0 0 1.5px rgba(192, 132, 252, 0.9));
+}
+.mind-constellation[data-active="6"] .mind-principle-label,
+.mind-constellation[data-active="7"] .mind-principle-label {
+  opacity: 1;
+}
+.mind-constellation[data-active="6"] .mind-principle-body,
+.mind-constellation[data-active="7"] .mind-principle-body {
+  opacity: 0.75;
+}
+
+/* Principle → main-node faint connecting lines. Brighten on solution. */
+.mind-principle-link {
+  transition: stroke-opacity 0.6s var(--ease-out-expo);
+}
+.mind-constellation[data-active="6"] .mind-principle-link,
+.mind-constellation[data-active="7"] .mind-principle-link {
+  stroke-opacity: 0.42;
+}
+
+@keyframes mind-principle-float {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(0, -1.5px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mind-principle,
+  .mind-stars circle {
+    animation: none;
+  }
+}
+
+/* =========================================================
+   MISSION CONTROL — Section 3: sticky-left spacecraft visual,
+   right-column scroll-driven step cards connected by a glowing
+   timeline. Active step's layer cross-fades into view; others
+   sit at quiet opacity so the scene reads as one continuous
+   frame.
+   ========================================================= */
+.mission-section {
+  position: relative;
+  isolation: isolate;
+}
+
+.mission-head {
+  margin-bottom: clamp(48px, 6vw, 96px);
+  max-width: 880px;
+}
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(40px, 6vw, 96px);
+  /* stretch (default) so the left cell is as tall as the right column
+     — this is what gives the sticky child room to travel. */
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  .mission-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(40px, 6vw, 64px);
+    align-items: start;
+  }
+}
+
+/* LEFT — sticky visual that pins through all nine steps. The wrap is
+   full row height; the sticky child pins near the top and stays until
+   the wrap (= the last "Stay in Orbit" card) scrolls past. */
+.mission-visual-wrap {
+  position: relative;
+  height: 100%;
+}
+
+.mission-visual-sticky {
+  position: sticky;
+  top: max(110px, 18vh);
+  display: flex;
+  flex-direction: column;
+  /* Anchor the panel to the LEFT of the column so it reads pulled-left,
+     while the stack inside stays center-aligned. */
+  align-items: flex-start;
+}
+@media (max-width: 960px) {
+  /* No sticky on stacked layout — the visual sits above the steps. */
+  .mission-visual-sticky {
+    position: static;
+    align-items: center;
+  }
+}
+
+/* LEFT — large icon + title + body, the whole stack centered. */
+.mission-visual {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  min-height: clamp(300px, 42vh, 440px);
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+}
+.mission-visual-halo {
+  position: absolute;
+  inset: -14% -10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 42%,
+    rgba(167, 139, 250, 0.24) 0%,
+    rgba(124, 92, 200, 0.1) 42%,
+    transparent 72%
+  );
+  filter: blur(48px);
+  z-index: -1;
+  animation: mission-halo-breathe 7s ease-in-out infinite;
+}
+@keyframes mission-halo-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mission-visual-halo { animation: none; }
+}
+
+.mission-visual-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(20px, 2.4vw, 32px);
+  width: 100%;
+}
+
+/* Large active-step icon. */
+.mission-visual-icon {
+  display: grid;
+  place-items: center;
+  width: clamp(140px, 18vw, 200px);
+  height: clamp(140px, 18vw, 200px);
+  color: color-mix(in oklab, #c084fc 55%, #ffffff);
+}
+.mission-visual-icon .anim-icon {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+}
+.mission-visual-icon .anim-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 14px rgba(167, 139, 250, 0.45));
+}
+
+.mission-visual-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  color: #ffffff;
+  text-wrap: balance;
+}
+.mission-visual-body {
+  font-size: clamp(1rem, 1.15vw, 1.2rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 40ch;
+}
+
+/* Legacy spacecraft scene classes — no longer rendered. */
+.mission-scene,
+.mission-svg,
+.mission-visual-label {
+  display: none;
+}
+
+/* RIGHT — a clean scrollable list of step titles on a glowing
+   timeline. The title that crosses the centre band becomes active
+   (bright + accent) and drives the left panel. No cards, no icons. */
+.mission-steps {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Generous spacing between titles — gives a calm, smooth scroll and
+     stops the active item from flicking between two at once. */
+  gap: clamp(40px, 6vw, 88px);
+  padding-left: clamp(32px, 4vw, 56px);
+  padding-block: clamp(8px, 4vw, 64px);
+}
+
+.mission-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(167, 139, 250, 0.18) 8%,
+    rgba(167, 139, 250, 0.35) 50%,
+    rgba(167, 139, 250, 0.18) 92%,
+    transparent 100%
+  );
+}
+
+.mission-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Timeline node — small dot on the line, left of each title. */
+.mission-step-node {
+  position: absolute;
+  left: calc(-1 * clamp(32px, 4vw, 56px) + 1px);
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #0a0816;
+  border: 2px solid rgba(167, 139, 250, 0.32);
+  box-shadow: 0 0 0 4px rgba(5, 5, 7, 0.95);
+  transform: translate(-50%, -50%);
+  transition:
+    border-color 0.5s var(--ease-out-expo),
+    transform 0.5s var(--ease-out-expo),
+    background 0.5s var(--ease-out-expo);
+  z-index: 2;
+}
+.mission-step.is-active .mission-step-node {
+  background: #c084fc;
+  border-color: #ffffff;
+  transform: translate(-50%, -50%) scale(1.35);
+  box-shadow:
+    0 0 0 4px rgba(5, 5, 7, 0.95),
+    0 0 16px rgba(167, 139, 250, 0.85);
+}
+
+/* The titles — dim by default, bright + accent gradient when active. */
+.mission-step-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.35rem, 2.4vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: rgba(255, 255, 255, 0.34);
+  transition:
+    color 0.5s var(--ease-out-expo),
+    transform 0.5s var(--ease-out-expo),
+    opacity 0.5s var(--ease-out-expo);
+  transform-origin: left center;
+}
+.mission-step.is-active .mission-step-title {
+  color: #ffffff;
+  transform: translateX(4px);
+  text-shadow: 0 0 24px rgba(167, 139, 250, 0.35);
+}
+
+.mission-step-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .mission-step-card {
+    transform: translateZ(0) !important;
+  }
+}
+
+/* Step icon — sits where the numeral used to. Borderless, sized
+   slightly larger than body type, accent-tinted on active. */
+.mission-step-icon {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  transition:
+    color 0.5s var(--ease-out-expo),
+    transform 0.5s var(--ease-out-expo);
+}
+.mission-step-icon .anim-icon {
+  width: 100%;
+  height: 100%;
+}
+.mission-step.is-active .mission-step-icon {
+  color: color-mix(in oklab, #c084fc 60%, #ffffff);
+  transform: translateY(-1px) scale(1.05);
+}
+
+.mission-step-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+.mission-step-text {
+  font-size: clamp(0.95rem, 1vw, 1.05rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.68);
+  max-width: 52ch;
 }
 
 /* =========================================================
@@ -623,45 +2623,95 @@ body:has(.cursor) [role="button"] {
 }
 
 /* =========================================================
-   CARD SURFACE — typographic only. No border, no fill, no
-   shadow. Content flows directly on the page. A whisper-soft
-   accent halo on hover keeps interactive feedback without
-   reintroducing an outlined box.
+   CARD SURFACE — floating glass panel with pointer-tracked 3D
+   tilt. The JS sets --rx / --ry (rotation) and --mx / --my (the
+   sheen origin). Sits in a perspective so the rotation reads as
+   real depth. Shared by systems / craft / about.
    ========================================================= */
 .card-surface {
   position: relative;
-  padding: clamp(8px, 1.2vw, 16px) 0;
-  border-radius: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
+  padding: clamp(20px, 2.2vw, 30px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background:
+    linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.015) 60%
+    );
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 18px 44px rgba(0, 0, 0, 0.32);
   isolation: isolate;
-  transition: transform 0.5s var(--ease-out-expo);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transform: perspective(1200px) rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg));
+  transition:
+    transform 0.45s var(--ease-out-expo),
+    border-color 0.45s var(--ease-out-expo),
+    box-shadow 0.45s var(--ease-out-expo),
+    background 0.45s var(--ease-out-expo);
+  will-change: transform;
 }
 
 .card-surface:hover {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
+  border-color: rgba(167, 139, 250, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 26px 64px rgba(0, 0, 0, 0.45),
+    0 0 40px rgba(167, 139, 250, 0.2);
 }
 
-.card-surface::before,
-.card-surface::after {
-  content: none;
+/* Pointer-tracked sheen — soft highlight following the cursor. */
+.card-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    40% 55% at var(--mx, 50%) var(--my, 0%),
+    rgba(192, 132, 252, 0.18),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-out-expo);
+  pointer-events: none;
+  z-index: 0;
+}
+.card-surface:hover .card-sheen {
+  opacity: 1;
 }
 
-/* Optional lift effect on cards — kept as a subtle vertical nudge. */
-.card-lift {
-  transition: transform 0.5s var(--ease-out-expo);
+/* Content sits above the sheen and is pushed slightly forward in 3D
+   so it floats over the glass during tilt. */
+.card-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  transform: translateZ(28px);
 }
+
+/* Lift wrapper — adds a gentle vertical nudge on hover atop the tilt. */
 .card-lift:hover {
-  transform: translateY(-3px);
+  border-color: rgba(167, 139, 250, 0.3);
 }
 
-/* Keep card body copy at a readable measure — never edge-to-edge on
-   wide cards / large monitors. */
 .card-surface p {
   max-width: 60ch;
+}
+
+/* Touch / reduced motion — flatten the tilt, keep the glass. */
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .card-surface {
+    transform: none !important;
+  }
+  .card-inner {
+    transform: none;
+  }
 }
 
 /* =========================================================
@@ -1303,236 +3353,289 @@ html.lenis body {
 }
 
 /* =========================================================
-   LABS PAGE — horizontal case study rows.
-   Left: video / mockup placeholder. Right: detailed content.
-   Layout switches to stacked on tablet and below.
+   DESIGN LABS — editorial showcase of product thinking.
+   An intro header, then a vertical sequence of large project
+   "lessons". Each row alternates a dominant floating visual on
+   one side with a strong type hierarchy on the other. No cards —
+   depth comes from typography, asymmetric grids, parallax, and a
+   whisper of perspective.
    ========================================================= */
-.lab-case {
-  position: relative;
+
+/* INTRO ---------------------------------------------------- */
+.labs-intro-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.74rem, 0.7rem + 0.1vw, 0.82rem);
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-accent) 72%, #ffffff);
+}
+
+.labs-intro-title {
+  font-size: clamp(2.1rem, 4.6vw, 4rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  max-width: 22ch;
+}
+
+.labs-intro-desc {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.4vw, 20px);
+  max-width: 64ch;
+}
+.labs-intro-desc p {
+  margin: 0;
+  font-size: clamp(1rem, 0.97rem + 0.18vw, 1.125rem);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* SHOWCASE STACK ------------------------------------------- */
+.labs-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(96px, 13vw, 220px);
+}
+
+.labs-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: clamp(28px, 3.5vw, 56px);
-  align-items: stretch;
-  padding: clamp(24px, 3vw, 48px) 0;
-  border-radius: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  transition: transform 0.5s var(--ease-out-expo);
-  /* Hairline divider between cases — gives rhythm without making
-     each row read as an outlined card. */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: clamp(36px, 5vw, 104px);
+  align-items: center;
+  position: relative;
 }
-
-.lab-case:last-child {
-  border-bottom: 0;
+/* Even rows mirror: content moves left, visual right. */
+.labs-row.is-content-left .labs-visual {
+  order: 2;
 }
-
-.lab-case:hover {
-  transform: none;
+.labs-row.is-content-left .labs-content {
+  order: 1;
 }
 
 @media (max-width: 900px) {
-  .lab-case {
+  .labs-row {
     grid-template-columns: 1fr;
+    gap: clamp(28px, 6vw, 44px);
+  }
+  /* Visual always sits above the copy on stacked layouts. */
+  .labs-row.is-content-left .labs-visual,
+  .labs-row.is-content-left .labs-content {
+    order: initial;
   }
 }
 
-.lab-case-media {
+/* VISUAL SIDE ---------------------------------------------- */
+.labs-visual {
+  position: relative;
+  isolation: isolate;
+}
+/* Soft blurred floor glow that lends the visual depth. */
+.labs-visual-glow {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 2%;
+  height: 48%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 60% at 50% 60%,
+    rgba(167, 139, 250, 0.26) 0%,
+    rgba(138, 166, 255, 0.12) 45%,
+    transparent 78%
+  );
+  filter: blur(54px);
+  opacity: 0.55;
+}
+.labs-visual-stage {
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+}
+/* Float lives on its own wrapper so its translateY keyframe never
+   clobbers the static perspective tilt on the frame below it. */
+.labs-visual-float {
+  animation: labs-float 7.5s ease-in-out infinite;
+  will-change: transform;
+}
+.labs-visual-frame {
   position: relative;
   width: 100%;
-  /* In the two-column row the media stretches to match the text column
-     height. aspect-ratio is intentionally NOT used here — combined with
-     grid stretch it derives width from height and overflows the card. */
-  align-self: stretch;
-  min-height: 360px;
-  border-radius: 18px;
+  aspect-ratio: 4 / 3;
+  border-radius: 22px;
   overflow: hidden;
-  border: 0;
   background: linear-gradient(135deg, #0d0d14, #050507);
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transform-style: preserve-3d;
+  transition: transform 0.7s var(--ease-out-expo);
+}
+/* A whisper of perspective leaning toward the copy column. */
+.labs-visual-frame.is-tilt-right {
+  transform: perspective(2400px) rotateY(-2.4deg) rotateX(0.7deg);
+}
+.labs-visual-frame.is-tilt-left {
+  transform: perspective(2400px) rotateY(2.4deg) rotateX(0.7deg);
+}
+/* Inner mockup / image fills the frame. */
+.labs-visual-frame > * {
+  width: 100%;
+  height: 100%;
 }
 
-/* Stacked layout — media sits on top, so a fixed aspect ratio is safe
-   and keeps the placeholder from getting too tall on narrow screens. */
+@keyframes labs-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .labs-visual-float {
+    animation: none;
+  }
+}
 @media (max-width: 900px) {
-  .lab-case-media {
-    aspect-ratio: 16 / 10;
-    min-height: 220px;
+  .labs-visual-frame {
+    aspect-ratio: 16 / 11;
+  }
+  .labs-visual-frame.is-tilt-left,
+  .labs-visual-frame.is-tilt-right {
+    transform: none;
   }
 }
 
-@media (max-width: 560px) {
-  .lab-case-media {
-    aspect-ratio: 4 / 3;
-  }
-}
-
-.lab-case-media-label {
-  position: absolute;
-  inset: auto 18px 16px 18px;
+/* CONTENT SIDE --------------------------------------------- */
+.labs-content {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.42);
+  flex-direction: column;
+  gap: clamp(16px, 1.7vw, 24px);
+  max-width: 60ch;
 }
 
-.lab-case-media-index {
-  position: absolute;
-  top: 16px;
-  left: 18px;
+.labs-domain {
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 0.7rem + 0.08vw, 0.78rem);
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-accent-cool) 65%, #ffffff);
+}
+
+/* The question is the largest element in the section. */
+.labs-question {
   font-family: var(--font-sans);
-  font-weight: 300;
-  font-size: clamp(2.4rem, 4vw, 3.6rem);
-  letter-spacing: -0.03em;
-  line-height: 1;
+  font-size: clamp(1.9rem, 3.4vw, 3.1rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.labs-story {
+  font-size: clamp(1rem, 0.97rem + 0.18vw, 1.1rem);
+  line-height: 1.72;
+  color: rgba(255, 255, 255, 0.68);
+  max-width: 52ch;
+  margin: 0;
+}
+
+/* What changed — three quiet bullets with an accent tick. */
+.labs-changed {
+  margin-top: clamp(2px, 0.5vw, 6px);
+}
+.labs-changed-label,
+.labs-insight-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(236, 235, 230, 0.46);
+  margin-bottom: clamp(10px, 1vw, 14px);
+}
+.labs-changed ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.labs-changed li {
+  position: relative;
+  padding-left: 22px;
+  font-size: clamp(0.98rem, 0.95vw + 0.2rem, 1.05rem);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+}
+.labs-changed li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--color-accent);
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.6);
+}
+
+/* Key insight — the takeaway, visually distinct via an accent rail and
+   an emphasised punchline. Highlight without chrome (no card). */
+.labs-insight {
+  margin-top: clamp(6px, 1vw, 12px);
+  padding-left: clamp(18px, 1.6vw, 26px);
+  border-left: 2px solid color-mix(in oklab, var(--color-accent) 75%, transparent);
+}
+.labs-insight-text {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.1vw + 0.9rem, 1.7rem);
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.labs-insight-line {
+  color: rgba(255, 255, 255, 0.86);
+}
+.labs-insight-punch {
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.45) 0%,
-    color-mix(in oklab, var(--color-accent) 35%, rgba(255, 255, 255, 0.18)) 100%
+    #ffffff 0%,
+    color-mix(in oklab, var(--color-accent) 78%, #ffffff) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  pointer-events: none;
 }
 
-/* Animated icon centered in the case-study media placeholder. */
-.lab-case-media-glyph {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  pointer-events: none;
-}
-
-.lab-case-body {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(14px, 1.4vw, 20px);
-  justify-content: center;
-  padding-block: 4px;
-}
-
-.lab-case-title {
-  font-size: clamp(1.4rem, 2.2vw, 2.1rem);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.18;
-  color: #ffffff;
-  text-wrap: balance;
-}
-
-.lab-case-summary {
-  font-size: clamp(0.95rem, 1vw, 1.05rem);
-  /* Bumped from default 400 — the long summary was reading too
-     thin and washing out next to the heading sheen. */
-  font-weight: 450;
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.78);
-  max-width: 56ch;
-}
-
-/* Detail paragraphs — expanded copy below the summary on the Labs page. */
-.lab-case-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.lab-case-detail-p {
-  font-size: clamp(0.92rem, 0.88rem + 0.22vw, 1rem);
-  line-height: 1.7;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.7);
-  max-width: 60ch;
-}
-
-/* Secondary PNG image area on the Labs page. PNG drop-in path:
-   /case-studies/<slug>-detail.png — sits below the meta block and
-   stretches to the body column width. */
-.lab-case-detail-image {
-  position: relative;
-  width: 100%;
-  margin-top: 6px;
-  border-radius: 18px;
-  overflow: hidden;
-  aspect-ratio: 16 / 10;
-}
-.lab-case-detail-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.lab-case-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 4px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.lab-case-meta-row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.lab-case-meta-value {
-  font-size: clamp(0.9rem, 0.87rem + 0.15vw, 1rem);
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.6;
-}
-
-.lab-case-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.lab-case-pill {
+/* CTA */
+.labs-cta {
   display: inline-flex;
-  /* See .tag — pin the scrambled-text span to the optical centre. */
   align-items: center;
-  justify-content: center;
-  line-height: 1;
-  padding: 7px 13px;
-  border-radius: 999px;
-  font-family: var(--font-mono);
-  font-size: 11px;
+  gap: 10px;
+  margin-top: clamp(6px, 1vw, 12px);
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1vw, 1.05rem);
   font-weight: 500;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  -webkit-backdrop-filter: blur(10px) saturate(140%);
-  backdrop-filter: blur(10px) saturate(140%);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
-  transition: color 0.3s ease, border-color 0.3s ease,
-    background 0.3s ease, box-shadow 0.3s ease,
-    transform 0.4s var(--ease-out-expo);
-}
-.lab-case-pill:hover {
+  letter-spacing: -0.005em;
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.06);
-  transform: translateY(-1px);
+  transition: color 0.3s var(--ease-out-expo), gap 0.3s var(--ease-out-expo);
 }
-
-.lab-case-pill.is-accent {
-  color: color-mix(in oklab, var(--color-accent) 78%, #ffffff);
-  background: color-mix(in oklab, var(--color-accent) 12%, rgba(255, 255, 255, 0.02));
-  border-color: color-mix(in oklab, var(--color-accent) 24%, transparent);
+.labs-cta svg {
+  transition: transform 0.4s var(--ease-out-expo);
 }
-.lab-case-pill.is-accent:hover {
-  background: color-mix(in oklab, var(--color-accent) 18%, rgba(255, 255, 255, 0.04));
-  border-color: color-mix(in oklab, var(--color-accent) 38%, transparent);
+.labs-cta:hover {
+  gap: 14px;
+  color: color-mix(in oklab, var(--color-accent) 60%, #ffffff);
+}
+.labs-cta:hover svg {
+  transform: translate(3px, -3px);
 }
 
 /* =========================================================
@@ -1776,12 +3879,12 @@ html.lenis body {
    Width capped to roughly the heading's measure so the row doesn't
    feel like it sprints past the title. */
 .testimonials-cat-nav-wrap {
-  margin-top: clamp(32px, 5vw, 64px);
-  padding-top: clamp(18px, 2.4vw, 28px);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  /* Sits immediately under the body description as a continuation
+     of the same column — no border, no big gap. */
+  margin-top: clamp(18px, 2vw, 28px);
+  padding-top: 0;
+  border-top: 0;
   width: 100%;
-  /* Capped to roughly match the heading's rendered width so the row
-     stays under the title and doesn't sprint past it. */
   max-width: 28rem;
 }
 @media (max-width: 720px) {
@@ -2348,6 +4451,172 @@ html.lenis body {
 }
 
 /* =========================================================
+   TESTIMONIALS — ORBIT LAYOUT. Left: a slow galaxy of avatars
+   (active centred + large, the rest orbiting on three rings,
+   clickable). Right: existing testimonial content + a LinkedIn
+   button. The category nav / progress bar sits full-width below,
+   unchanged. Stacks on tablet and below.
+   ========================================================= */
+.orbit-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+}
+
+.orbit-stage-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.orbit-stage {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 1 / 1;
+  margin-inline: auto;
+}
+
+/* Faint guide rings for depth. */
+.orbit-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Avatar node — base size = centre size; orbit nodes are scaled down
+   by motion. Position (x/y/scale) is driven by motion values. */
+.orbit-node {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--node-size, 180px);
+  height: var(--node-size, 180px);
+  margin-left: calc(var(--node-size, 180px) / -2);
+  margin-top: calc(var(--node-size, 180px) / -2);
+  border: 0;
+  padding: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: transparent;
+  cursor: pointer;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 10px 30px rgba(0, 0, 0, 0.45);
+  transition: box-shadow 0.4s var(--ease-out-expo);
+}
+.orbit-node img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.orbit-node-initials {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: rgba(0, 0, 0, 0.75);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: calc(var(--node-size, 180px) * 0.26);
+}
+.orbit-node:not(.is-active):hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 0 26px 4px rgba(167, 139, 250, 0.5);
+}
+.orbit-node.is-active {
+  cursor: default;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 0 4px rgba(167, 139, 250, 0.22),
+    0 0 64px 10px rgba(167, 139, 250, 0.4);
+}
+
+/* RIGHT — content column */
+.orbit-content-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(8px, 2vw, 24px);
+}
+.orbit-meta-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(14px, 1.6vw, 24px);
+}
+.orbit-name-block {
+  align-items: flex-start !important;
+  text-align: left;
+  gap: 5px;
+}
+
+/* LinkedIn-blue button (brand blue, beside the name). */
+.orbit-linkedin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #0a66c2;
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  box-shadow: 0 6px 20px rgba(10, 102, 194, 0.35);
+  transition:
+    background 0.3s var(--ease-out-expo),
+    transform 0.3s var(--ease-out-expo),
+    box-shadow 0.3s var(--ease-out-expo);
+}
+.orbit-linkedin-btn svg {
+  color: #ffffff;
+}
+.orbit-linkedin-btn:hover {
+  background: #0b5cab;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(10, 102, 194, 0.5);
+}
+
+/* The right content reads left-aligned in the split layout. */
+.orbit-content-col .featured-quote {
+  text-align: left;
+  margin-inline: 0;
+}
+
+/* BOTTOM — category nav / progress bar, repositioned full-width. */
+.orbit-nav-wrap {
+  width: 100%;
+  max-width: 640px;
+  margin: clamp(40px, 5vw, 72px) auto 0;
+}
+
+@media (max-width: 960px) {
+  .orbit-layout {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 5vw, 44px);
+  }
+  .orbit-stage {
+    max-width: 380px;
+  }
+  .orbit-content-col {
+    text-align: left;
+  }
+}
+
+/* =========================================================
    ANIMATED ICONS — un-boxed glyphs. No surrounding tile, just
    the icon itself sitting on the section background.
    ========================================================= */
@@ -2797,16 +5066,32 @@ html.lenis body {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: clamp(8px, 1.2vw, 16px) 0;
-  border-radius: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  transition: transform 0.5s var(--ease-out-expo);
+  padding: clamp(20px, 2vw, 28px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.045) 0%,
+    rgba(255, 255, 255, 0.012) 60%
+  );
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 16px 40px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.5s var(--ease-out-expo),
+    border-color 0.5s var(--ease-out-expo),
+    box-shadow 0.5s var(--ease-out-expo);
   isolation: isolate;
 }
 .hw-tile:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  border-color: rgba(167, 139, 250, 0.26);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 24px 56px rgba(0, 0, 0, 0.42),
+    0 0 36px rgba(167, 139, 250, 0.18);
 }
 
 /* ---- Section 6 — beyond the work / sport tiles ----
@@ -2822,16 +5107,32 @@ html.lenis body {
   align-items: flex-start;
   gap: 16px;
   height: 100%;
-  padding: clamp(8px, 1vw, 14px) 0;
-  border-radius: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  transition: transform 0.5s var(--ease-out-expo);
+  padding: clamp(18px, 1.8vw, 24px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.045) 0%,
+    rgba(255, 255, 255, 0.012) 60%
+  );
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 14px 36px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.5s var(--ease-out-expo),
+    border-color 0.5s var(--ease-out-expo),
+    box-shadow 0.5s var(--ease-out-expo);
   isolation: isolate;
 }
 .sport-tile:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  border-color: rgba(167, 139, 250, 0.26);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 22px 50px rgba(0, 0, 0, 0.42),
+    0 0 32px rgba(167, 139, 250, 0.16);
 }
 .sport-tile:hover .sport-tile-icon {
   color: #ffffff;
@@ -3396,3 +5697,212 @@ html.lenis body {
   }
   .craft-thumb__img { transform: scale(1.02); }
 }
+
+/* =========================================================
+   PRODUCT UNIVERSE — orbital expertise section
+   ========================================================= */
+.pu-section {
+  /* `--pu-size` drives every orbit radius so the whole composition
+     scales together. Fluid: small on phones, huge on desktops.
+     Cap is tuned so the outermost ring + label width still fits the
+     viewport with comfortable horizontal margin. */
+  --pu-size: clamp(300px, 40vw, 540px);
+  position: relative;
+  min-height: clamp(680px, 100svh, 980px);
+  padding-top: clamp(80px, 10vw, 140px);
+  padding-bottom: 0;
+  isolation: isolate;
+  background:
+    radial-gradient(120% 80% at 50% 110%, rgba(207, 217, 255, 0.045) 0%, transparent 55%),
+    radial-gradient(80% 60% at 50% 0%, rgba(138, 166, 255, 0.025) 0%, transparent 60%);
+}
+
+/* Starfield dots. */
+.pu-star {
+  position: absolute;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+  animation: pu-twinkle 4s ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes pu-twinkle {
+  0%, 100% { opacity: var(--star-base, 0.35); transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+/* Soft atmospheric glow behind the portrait. */
+.pu-glow {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  width: calc(var(--pu-size) * 0.7);
+  height: calc(var(--pu-size) * 0.7);
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(207, 217, 255, 0.22) 0%,
+    rgba(138, 166, 255, 0.1) 30%,
+    transparent 65%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Wrapper handles section-relative positioning so motion.div is
+   free to apply its parallax transform. The universe sits with its
+   center on the section's bottom edge — visible area = top hemisphere. */
+.pu-universe-wrap {
+  position: absolute;
+  left: 50%;
+  /* Anchor the whole orbit system toward the lower-centre of the
+     section so the FULL circle stays on screen — nodes orbit round
+     and round without ever dipping below the fold or off the sides. */
+  top: 50%;
+  bottom: auto;
+  width: var(--pu-size);
+  height: var(--pu-size);
+  transform: translate(-50%, -34%);
+  pointer-events: none;
+}
+
+.pu-universe-wrap > * { pointer-events: auto; }
+
+.pu-universe {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.pu-orbit-paths,
+.pu-portrait-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Faint visible orbit lines. */
+.pu-orbit-paths { width: 100%; height: 100%; pointer-events: none; }
+.pu-orbit-path {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  border: 1px solid rgba(207, 217, 255, 0.07);
+  box-shadow: inset 0 0 60px rgba(207, 217, 255, 0.02);
+}
+
+/* Per-node orbiter. The outer wrapper rotates at the ring's speed;
+   the inner counter-rotates by the same amount so the label stays
+   upright. Phase is set per node via negative animation-delay. */
+.pu-orbiter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+  animation: pu-orbit linear infinite;
+  animation-play-state: paused;
+  will-change: transform;
+}
+
+.pu-orbiter-radius {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  /* `transform: translateX(R)` is set inline per node. */
+}
+
+.pu-orbiter-counter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Pin origin to the orbit point so the counter-rotation undoes the
+     ring rotation around the same pivot — without this, the counter
+     rotates around its own content center and the node drifts. */
+  transform-origin: 0 0;
+  animation: pu-orbit linear infinite;
+  animation-play-state: paused;
+  will-change: transform;
+}
+
+.pu-universe[data-in-view="true"] .pu-orbiter,
+.pu-universe[data-in-view="true"] .pu-orbiter-counter {
+  animation-play-state: running;
+}
+
+@keyframes pu-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Glassmorphism expertise node. */
+.pu-node {
+  display: inline-block;
+  white-space: nowrap;
+  /* Center the label on the orbit point (its parent's origin). */
+  transform: translate(-50%, -50%);
+  padding: 8px 14px;
+  font-family: var(--font-sans);
+  font-size: clamp(0.78rem, 0.74rem + 0.18vw, 0.92rem);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 300ms ease, background 300ms ease, border-color 300ms ease;
+}
+
+.pu-node:hover {
+  background: rgba(207, 217, 255, 0.1);
+  border-color: rgba(207, 217, 255, 0.25);
+}
+
+/* Portrait — sits at center of universe stage; z-stack puts it above
+   the orbits so the nodes pass behind it as they swing past. */
+.pu-portrait-wrap {
+  width: calc(var(--pu-size) * 0.42);
+  height: calc(var(--pu-size) * 0.42);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.pu-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 40px rgba(207, 217, 255, 0.18));
+}
+
+@media (max-width: 640px) {
+  .pu-section { --pu-size: min(92vw, 520px); }
+  .pu-node { padding: 6px 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pu-star { animation: none !important; opacity: 0.4 !important; }
+  .pu-orbiter,
+  .pu-orbiter-counter {
+    animation: none !important;
+  }
+}
+
