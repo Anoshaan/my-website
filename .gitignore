@@ -12,6 +12,9 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 
+# skills workspace (isolated heavy tooling, not part of the portfolio build)
+skills/
+
 # misc
 .DS_Store
 Thumbs.db

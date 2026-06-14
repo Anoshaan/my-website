@@ -148,7 +148,7 @@ export function MissionControl() {
               What I Bring to the Table
             </h2>
             <p className="text-body text-white/65 max-w-[60ch] mt-5">
-              Every project starts with understanding people — the founders,
+              Every project starts with understanding people: the founders,
               the business, and the customers. From discovery and strategy to
               design, storytelling, motion, and launch support, I help connect
               ideas with experiences that create lasting impact.

@@ -40,7 +40,7 @@ export function Contact() {
         <Reveal delay={0.2}>
           <p className="text-body text-white/60 max-w-[58ch]">
             Whether you need to scale a design system, refine product
-            interactions, or bring motion intelligence to your interfaces —
+            interactions, or bring motion intelligence to your interfaces,
             let&apos;s start a conversation.
           </p>
         </Reveal>

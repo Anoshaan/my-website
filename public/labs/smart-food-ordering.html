@@ -1,0 +1,589 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Food Ordering Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        /* Modern Food App Color Tokens */
+        :root {
+            --primary: #FF5E00;
+            --primary-light: #FFF0E6;
+            --secondary: #10B981;
+            --dark: #1E293B;
+            --text-main: #334155;
+            --text-light: #94A3B8;
+            --bg-canvas: #F8FAFC;
+            --bg-surface: #FFFFFF;
+            --border: #E2E8F0;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 40px -10px rgba(0,0,0,0.15);
+            --shadow-device: 0 30px 60px -15px rgba(0,0,0,0.4);
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 24px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #FFE8D6 0%, #FFCBA4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100%;
+            max-width: 1400px;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* =========================================
+           BACKGROUND LAYER: WEB DASHBOARD
+           ========================================= */
+        .browser-window {
+            width: 90%;
+            max-width: 1200px;
+            height: 100%;
+            background-color: var(--bg-canvas);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: scale(0.95);
+            position: relative;
+        }
+
+        .browser-header {
+            height: 52px;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .window-controls { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.close { background: #ff5f56; }
+        .dot.min { background: #ffbd2e; }
+        .dot.max { background: #27c93f; }
+
+        .address-bar {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 auto;
+            background: #F1F5F9;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .web-viewport {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Web Layout Sidebar */
+        .web-sidebar {
+            width: 240px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .web-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .web-brand span { color: var(--primary); }
+
+        .web-nav { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
+        .web-nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            border-radius: var(--radius-sm); color: var(--text-main); font-weight: 500;
+            cursor: pointer;
+        }
+        .web-nav-item.active { background: var(--primary-light); color: var(--primary); }
+
+        /* Web Layout Main */
+        .web-main {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .web-hero {
+            background: linear-gradient(to right, #FFF, #FFF0E6);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            border: 1px solid var(--primary-light);
+        }
+
+        .web-hero-text h1 { font-size: 2rem; color: var(--dark); margin-bottom: 8px; }
+        .web-hero-text p { color: var(--text-light); margin-bottom: 16px; }
+        .btn-primary {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 24px; border-radius: 30px; font-weight: 600; cursor: pointer;
+        }
+
+        .web-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 24px;
+        }
+
+        .web-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+        .web-card-img {
+            height: 140px; background: #F1F5F9; border-radius: var(--radius-sm);
+            margin-bottom: 16px; display: flex; align-items: center; justify-content: center;
+            color: var(--text-light);
+        }
+        .web-card h3 { font-size: 1.1rem; color: var(--dark); margin-bottom: 4px; }
+        .web-card p { font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px; }
+        .web-card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .web-price { font-weight: 700; font-size: 1.1rem; color: var(--dark); }
+        .add-btn {
+            background: var(--primary-light); color: var(--primary);
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: none; cursor: pointer; font-weight: bold;
+        }
+
+        /* Web Layout Cart */
+        .web-cart {
+            width: 300px;
+            background: var(--bg-surface);
+            border-left: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================================
+           FOREGROUND LAYER: MOBILE APP OVERLAP
+           ========================================= */
+        .mobile-device {
+            position: absolute;
+            bottom: -5%; /* Overflows container slightly for dynamic feel */
+            right: 8%;
+            width: 360px;
+            height: 740px;
+            background: var(--bg-surface);
+            border-radius: 40px;
+            box-shadow: var(--shadow-device);
+            border: 12px solid #0F172A; /* Phone Bezel */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            opacity: 0;
+            transform: translateX(100px) rotate(5deg);
+        }
+
+        /* Mobile Notch */
+        .device-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 25px;
+            background: #0F172A;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            z-index: 100;
+        }
+
+        /* Mobile UI Inner */
+        .mobile-header {
+            padding: 40px 20px 20px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-location { display: flex; flex-direction: column; }
+        .mobile-location span { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .mobile-location h2 { font-size: 1.1rem; color: var(--dark); display: flex; align-items: center; gap: 4px; }
+        
+        .avatar { width: 40px; height: 40px; background: var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 600; }
+
+        .mobile-search {
+            margin: 0 20px;
+            background: var(--bg-canvas);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-light);
+        }
+
+        .mobile-categories {
+            display: flex;
+            gap: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .mobile-categories::-webkit-scrollbar { display: none; }
+        
+        .cat-pill {
+            padding: 10px 20px;
+            background: var(--bg-canvas);
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .cat-pill.active { background: var(--primary); color: white; }
+
+        .mobile-menu-list {
+            flex: 1;
+            padding: 0 20px 100px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .mobile-item {
+            display: flex;
+            gap: 16px;
+            padding: 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .m-item-img {
+            width: 80px; height: 80px;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .m-item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .m-item-info h4 { font-size: 1rem; color: var(--dark); margin-bottom: 4px; }
+        .m-item-info p { font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px; }
+        .m-price-row { display: flex; justify-content: space-between; align-items: center; }
+
+        /* Mobile Floating Cart */
+        .mobile-fab {
+            position: absolute;
+            bottom: 24px;
+            left: 20px;
+            right: 20px;
+            background: var(--dark);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(30, 41, 59, 0.4);
+            z-index: 10;
+        }
+        .fab-info { display: flex; align-items: center; gap: 12px; }
+        .badge { background: var(--primary); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
+
+    </style>
+    <style id="labs-embed-reset">
+      html, body { background: transparent !important; background-color: transparent !important; padding: 0 !important; margin: 0 !important; }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+        
+        <!-- LAYER 1: WEB DESKTOP BROWSER -->
+        <div class="browser-window">
+            <div class="browser-header">
+                <div class="window-controls">
+                    <div class="dot close"></div>
+                    <div class="dot min"></div>
+                    <div class="dot max"></div>
+                </div>
+                <div class="address-bar">
+                    <span class="material-symbols-rounded" style="font-size: 14px;">lock</span>
+                    app.crave.com/menu
+                </div>
+            </div>
+
+            <div class="web-viewport">
+                <!-- Sidebar -->
+                <aside class="web-sidebar">
+                    <div class="web-brand">
+                        <span class="material-symbols-rounded" style="font-size: 28px;">lunch_dining</span>
+                        Crave
+                    </div>
+                    <nav class="web-nav">
+                        <div class="web-nav-item active"><span class="material-symbols-rounded">dashboard</span> Overview</div>
+                        <div class="web-nav-item"><span class="material-symbols-rounded">restaurant_menu</span> Full Menu</div>
+                        <div class="web-nav-item"><span class="material-symbols-rounded">local_offer</span> Promos & Deals</div>
+                        <div class="web-nav-item"><span class="material-symbols-rounded">history</span> Order History</div>
+                    </nav>
+                </aside>
+
+                <!-- Main Content -->
+                <main class="web-main">
+                    <div class="web-hero">
+                        <div class="web-hero-text">
+                            <h1>Fast, Fresh & Delivered.</h1>
+                            <p>Get 20% off your first enterprise team order today.</p>
+                            <button class="btn-primary">Claim Offer</button>
+                        </div>
+                        <span class="material-symbols-rounded" style="font-size: 120px; color: var(--primary); opacity: 0.2;">delivery_dining</span>
+                    </div>
+
+                    <h2 style="margin-bottom: 20px; color: var(--dark);">Popular Near You</h2>
+                    <div class="web-grid">
+                        <div class="web-card">
+                            <div class="web-card-img"><span class="material-symbols-rounded" style="font-size: 48px;">local_pizza</span></div>
+                            <h3>Truffle Mushroom Pizza</h3>
+                            <p>Wood-fired crust, truffle oil, mozzarella</p>
+                            <div class="web-card-footer">
+                                <span class="web-price">$18.50</span>
+                                <button class="add-btn"><span class="material-symbols-rounded" style="font-size: 18px;">add</span></button>
+                            </div>
+                        </div>
+                        <div class="web-card">
+                            <div class="web-card-img"><span class="material-symbols-rounded" style="font-size: 48px;">lunch_dining</span></div>
+                            <h3>Double Smash Burger</h3>
+                            <p>Angus beef, cheddar, signature sauce</p>
+                            <div class="web-card-footer">
+                                <span class="web-price">$14.00</span>
+                                <button class="add-btn"><span class="material-symbols-rounded" style="font-size: 18px;">add</span></button>
+                            </div>
+                        </div>
+                        <div class="web-card">
+                            <div class="web-card-img"><span class="material-symbols-rounded" style="font-size: 48px;">ramen_dining</span></div>
+                            <h3>Spicy Miso Ramen</h3>
+                            <p>Rich broth, chashu pork, soft egg</p>
+                            <div class="web-card-footer">
+                                <span class="web-price">$16.50</span>
+                                <button class="add-btn"><span class="material-symbols-rounded" style="font-size: 18px;">add</span></button>
+                            </div>
+                        </div>
+                        <div class="web-card">
+                            <div class="web-card-img"><span class="material-symbols-rounded" style="font-size: 48px;">local_cafe</span></div>
+                            <h3>Artisan Cold Brew</h3>
+                            <p>Slow-steeped 18 hours, smooth finish</p>
+                            <div class="web-card-footer">
+                                <span class="web-price">$5.50</span>
+                                <button class="add-btn"><span class="material-symbols-rounded" style="font-size: 18px;">add</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- Web Order Summary -->
+                <aside class="web-cart">
+                    <h2 style="font-size: 1.2rem; color: var(--dark); margin-bottom: 24px;">Current Order</h2>
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-light); text-align: center;">
+                        <span class="material-symbols-rounded" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">shopping_bag</span>
+                        <p>Your team cart is empty.<br>Start adding items!</p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- LAYER 2: FOREGROUND MOBILE APP DEVICE -->
+        <div class="mobile-device">
+            <div class="device-notch"></div>
+            
+            <header class="mobile-header">
+                <div class="mobile-location">
+                    <span>Delivering to</span>
+                    <h2>Office HQ <span class="material-symbols-rounded" style="color: var(--primary); font-size: 20px;">expand_more</span></h2>
+                </div>
+                <div class="avatar">JD</div>
+            </header>
+
+            <div class="mobile-search">
+                <span class="material-symbols-rounded">search</span>
+                <span style="font-size: 0.9rem;">What are you craving?</span>
+            </div>
+
+            <div class="mobile-categories">
+                <div class="cat-pill active">
+                    <span class="material-symbols-rounded" style="font-size: 18px;">local_fire_department</span> Popular
+                </div>
+                <div class="cat-pill">
+                    <span class="material-symbols-rounded" style="font-size: 18px;">lunch_dining</span> Burgers
+                </div>
+                <div class="cat-pill">
+                    <span class="material-symbols-rounded" style="font-size: 18px;">local_pizza</span> Pizza
+                </div>
+            </div>
+
+            <div class="mobile-menu-list">
+                <div class="mobile-item">
+                    <div class="m-item-img"><span class="material-symbols-rounded" style="font-size: 32px; color: var(--primary);">lunch_dining</span></div>
+                    <div class="m-item-info">
+                        <h4>Spicy Crispy Chicken</h4>
+                        <p>Brioche bun, pickles, slaw</p>
+                        <div class="m-price-row">
+                            <span style="font-weight: 700; color: var(--dark);">$12.99</span>
+                            <button class="add-btn" style="width: 28px; height: 28px;"><span class="material-symbols-rounded" style="font-size: 16px;">add</span></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mobile-item">
+                    <div class="m-item-img" style="background: #E0F2FE;"><span class="material-symbols-rounded" style="font-size: 32px; color: #0284C7;">set_meal</span></div>
+                    <div class="m-item-info">
+                        <h4>Poke Bowl Supreme</h4>
+                        <p>Fresh ahi, mango, edamame</p>
+                        <div class="m-price-row">
+                            <span style="font-weight: 700; color: var(--dark);">$16.00</span>
+                            <button class="add-btn" style="width: 28px; height: 28px;"><span class="material-symbols-rounded" style="font-size: 16px;">add</span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mobile-item">
+                    <div class="m-item-img" style="background: #DCFCE7;"><span class="material-symbols-rounded" style="font-size: 32px; color: #16A34A;">eco</span></div>
+                    <div class="m-item-info">
+                        <h4>Avocado Toast</h4>
+                        <p>Sourdough, chili flakes, egg</p>
+                        <div class="m-price-row">
+                            <span style="font-weight: 700; color: var(--dark);">$9.50</span>
+                            <button class="add-btn" style="width: 28px; height: 28px;"><span class="material-symbols-rounded" style="font-size: 16px;">add</span></button>
+                        </div>
+                    </div>
+                </div>
+                
+                 <div class="mobile-item">
+                    <div class="m-item-img" style="background: #F3E8FF;"><span class="material-symbols-rounded" style="font-size: 32px; color: #9333EA;">icecream</span></div>
+                    <div class="m-item-info">
+                        <h4>Matcha Soft Serve</h4>
+                        <p>Premium Uji matcha, cone</p>
+                        <div class="m-price-row">
+                            <span style="font-weight: 700; color: var(--dark);">$6.00</span>
+                            <button class="add-btn" style="width: 28px; height: 28px;"><span class="material-symbols-rounded" style="font-size: 16px;">add</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Checkout Action -->
+            <div class="mobile-fab">
+                <div class="fab-info">
+                    <div class="badge">2</div>
+                    <span style="font-weight: 600;">View Order</span>
+                </div>
+                <span style="font-weight: 700;">$28.99</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- GSAP Web Entrance Animation Sequence Frame -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tl = gsap.timeline();
+
+            // 1. Reveal Web App Background Frame
+            tl.to(".browser-window", {
+                opacity: 1,
+                scale: 1,
+                duration: 1.2,
+                ease: "power4.out"
+            })
+            
+            // 2. Cascade Web UI Elements
+            .from(".web-sidebar, .web-cart", {
+                opacity: 0,
+                y: 20,
+                duration: 0.8,
+                ease: "power2.out"
+            }, "-=0.8")
+            .from(".web-hero", {
+                opacity: 0,
+                scale: 0.95,
+                duration: 0.6,
+                ease: "back.out(1.2)"
+            }, "-=0.6")
+            .from(".web-card", {
+                opacity: 0,
+                y: 30,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: "power2.out"
+            }, "-=0.4")
+
+            // 3. Emphasize Mobile First - Slide device in over the web UI
+            .to(".mobile-device", {
+                opacity: 1,
+                x: 0,
+                rotation: 0,
+                duration: 1.2,
+                ease: "elastic.out(1, 0.8)"
+            }, "-=0.5")
+
+            // 4. Stagger animate mobile UI inner contents
+            .from(".mobile-header", {
+                y: -20, opacity: 0, duration: 0.5
+            }, "-=0.8")
+            .from(".mobile-search", {
+                scale: 0.9, opacity: 0, duration: 0.5, ease: "back.out(1.5)"
+            }, "-=0.6")
+            .from(".cat-pill", {
+                x: 20, opacity: 0, duration: 0.4, stagger: 0.1
+            }, "-=0.5")
+            .from(".mobile-item", {
+                y: 20, opacity: 0, duration: 0.5, stagger: 0.1, ease: "power2.out"
+            }, "-=0.4")
+            
+            // 5. Pop the Cart FAB
+            .from(".mobile-fab", {
+                y: 100, opacity: 0, duration: 0.6, ease: "back.out(1.2)"
+            }, "-=0.2");
+        });
+    </script>
+</body>
+</html>

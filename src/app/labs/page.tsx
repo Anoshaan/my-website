@@ -17,13 +17,10 @@ export default function LabsPage() {
       <section className="pt-[clamp(140px,16vw,200px)] pb-[clamp(72px,9vw,120px)]">
         <Container>
           <div className="flex flex-col gap-7 max-w-[1000px]">
-            <Reveal delay={0.05}>
-              <span className="labs-intro-label">Design Labs</span>
-            </Reveal>
             <Reveal delay={0.1}>
               <h1 className="labs-intro-title text-white">
                 <ShinyText
-                  text="A collection of product challenges, design decisions, and lessons learned."
+                  text="Lessons learned through building digital products."
                   color="#d6d6da"
                   shineColor="#ffffff"
                   speed={6}
@@ -35,16 +32,9 @@ export default function LabsPage() {
             <Reveal delay={0.2}>
               <div className="labs-intro-desc">
                 <p>
-                  Across enterprise systems, analytics platforms, commerce
-                  experiences, and emerging technologies, I&apos;ve worked on
-                  products that required balancing user needs, business goals,
-                  and operational complexity.
-                </p>
-                <p>
-                  To respect confidentiality agreements, project names,
-                  branding, and certain implementation details have been adapted
-                  while preserving the design challenges, decisions, and
-                  outcomes behind the work.
+                  Real-world challenges, design decisions, and product thinking
+                  across enterprise systems, analytics, commerce, and emerging
+                  technology.
                 </p>
               </div>
             </Reveal>

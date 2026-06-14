@@ -11,7 +11,9 @@ type CommonProps = {
   variant?: Variant;
   className?: string;
   trailingIcon?: ReactNode;
-  /** Show animated rainbow gradient halo under the button. Default true for primary only. */
+  /** Show animated rainbow gradient halo under the button. Opt-in only:
+   *  to keep the site-wide rule of one rainbow treatment per page, this is
+   *  OFF by default and must be set explicitly on a page's single hero CTA. */
   rainbow?: boolean;
 };
 
@@ -67,8 +69,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ...rest
     } = props;
 
-    // Rainbow defaults to on for primary only.
-    const showRainbow = rainbow ?? variant === "primary";
+    // Rainbow is opt-in only (one rainbow per page, site-wide rule).
+    const showRainbow = rainbow ?? false;
 
     const icon = trailingIcon !== undefined ? trailingIcon : <ArrowIcon />;
 

@@ -1,0 +1,626 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Intelligence Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        /* M3 Color Tokens - AI/Analytics Theme (Deep Violet) */
+        :root {
+            --md-sys-color-primary: #65558f;
+            --md-sys-color-primary-container: #e8def8;
+            --md-sys-color-on-primary-container: #1d192b;
+            --md-sys-color-surface: #fdfafb;
+            --md-sys-color-surface-container: #f4eff4;
+            --md-sys-color-on-surface: #1c1b1f;
+            --md-sys-color-outline: #79747e;
+            --md-sys-color-tertiary: #7d5260;
+            --md-sys-color-tertiary-container: #ffd8e4;
+            --md-sys-color-error: #b3261e;
+            --md-sys-color-success: #146c2e;
+            --radius-m: 16px;
+            --radius-l: 24px;
+            --elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Ambient background for the "desktop" */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            padding: 24px;
+        }
+
+        /* --- Browser Chrome Template --- */
+        .browser-window {
+            width: 100%;
+            max-width: 1440px;
+            height: 90vh;
+            background-color: var(--md-sys-color-surface-container);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            opacity: 0; 
+            transform: scale(0.95); 
+        }
+
+        .browser-header {
+            height: 52px;
+            background: #f1f3f4;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 20;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            left: 16px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.close { background: #ff5f56; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+        .dot.min { background: #ffbd2e; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+        .dot.max { background: #27c93f; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+
+        .address-bar {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            height: 28px;
+            border-radius: 6px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #5f6368;
+            gap: 8px;
+        }
+
+        .browser-viewport {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Application UI --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--md-sys-color-surface);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--md-sys-color-outline);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 28px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 400;
+        }
+
+        .global-filters {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: var(--md-sys-color-surface);
+            cursor: pointer;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-gap: 24px;
+            padding-bottom: 40px;
+        }
+
+        .panel {
+            background-color: var(--md-sys-color-surface);
+            border-radius: var(--radius-l);
+            padding: 24px;
+            box-shadow: var(--elevation-1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* High-Density KPI Cards */
+        .metrics-row {
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .kpi-card {
+            background: var(--md-sys-color-surface);
+            padding: 20px;
+            border-radius: var(--radius-m);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-header {
+            font-size: 0.875rem;
+            color: var(--md-sys-color-outline);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .kpi-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
+            line-height: 1;
+        }
+
+        .trend {
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .trend.up { color: var(--md-sys-color-success); }
+        .trend.down { color: var(--md-sys-color-error); }
+
+        /* Main Chart Area */
+        .main-chart-panel {
+            grid-column: span 8;
+            min-height: 380px;
+        }
+
+        .chart-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-left: 1px solid rgba(0,0,0,0.1);
+            overflow: hidden; /* For animation mask */
+        }
+
+        .chart-svg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .chart-mask {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--md-sys-color-surface);
+            z-index: 5;
+        }
+
+        /* AI Panels */
+        .anomaly-panel {
+            grid-column: span 4;
+        }
+
+        .decision-panel {
+            grid-column: span 12;
+            background: linear-gradient(145deg, #fdfafb, #f3edf7);
+            border: 1px solid var(--md-sys-color-primary-container);
+        }
+
+        .anomaly-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            align-items: flex-start;
+        }
+        
+        .anomaly-item:last-child {
+            border-bottom: none;
+        }
+
+        .anomaly-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .ai-recommendation {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .confidence-score {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 6px solid var(--md-sys-color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+        }
+
+    </style>
+    <style id="labs-embed-reset">
+      html, body { background: transparent !important; background-color: transparent !important; padding: 0 !important; margin: 0 !important; }
+    </style>
+</head>
+<body>
+
+    <div class="browser-window">
+        <div class="browser-header">
+            <div class="window-controls">
+                <div class="dot close"></div>
+                <div class="dot min"></div>
+                <div class="dot max"></div>
+            </div>
+            <div class="address-bar">
+                <span class="material-symbols-outlined" style="font-size: 14px;">lock</span>
+                app.datacore.ai/analytics/predictive
+            </div>
+        </div>
+
+        <div class="browser-viewport">
+            <nav class="sidebar">
+                <div class="brand">
+                    <span class="material-symbols-outlined" style="font-size: 28px;">query_stats</span>
+                    DataCore AI
+                </div>
+                
+                <div class="nav-section mt-4" style="margin-top: 32px;">
+                    <div class="nav-label">Dashboards</div>
+                    <div class="nav-item">
+                        <span class="material-symbols-outlined">space_dashboard</span> Global Metrics
+                    </div>
+                    <div class="nav-item active">
+                        <span class="material-symbols-outlined">insights</span> Predictive Models
+                    </div>
+                    <div class="nav-item">
+                        <span class="material-symbols-outlined">donut_small</span> User Behavior
+                    </div>
+                </div>
+
+                <div class="nav-section mt-4" style="margin-top: 24px;">
+                    <div class="nav-label">Intelligence</div>
+                    <div class="nav-item">
+                        <span class="material-symbols-outlined">troubleshoot</span> Anomaly Logs
+                    </div>
+                    <div class="nav-item">
+                        <span class="material-symbols-outlined">model_training</span> Algorithm Config
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <header class="header">
+                    <div>
+                        <h1>Predictive Intelligence Center</h1>
+                        <p style="color: var(--md-sys-color-outline); margin-top: 4px; font-size: 0.875rem;">Real-time forecasting and systemic anomaly detection.</p>
+                    </div>
+                    <div class="global-filters">
+                        <button class="filter-chip">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">calendar_month</span>
+                            Last 30 Days (Forecast: +14d)
+                        </button>
+                        <button class="filter-chip">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">public</span>
+                            Region: All Global
+                        </button>
+                    </div>
+                </header>
+
+                <div class="dashboard-grid">
+                    
+                    <div class="metrics-row">
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                Projected MRR
+                                <span class="material-symbols-outlined" style="color: var(--md-sys-color-outline)">info</span>
+                            </div>
+                            <div class="kpi-value">$2.48M</div>
+                            <div class="trend up"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> +14.2% vs last period</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                Churn Probability
+                                <span class="material-symbols-outlined" style="color: var(--md-sys-color-outline)">info</span>
+                            </div>
+                            <div class="kpi-value">1.8%</div>
+                            <div class="trend down"><span class="material-symbols-outlined" style="font-size: 16px;">trending_down</span> -0.4% baseline</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                Data Latency
+                                <span class="material-symbols-outlined" style="color: var(--md-sys-color-outline)">info</span>
+                            </div>
+                            <div class="kpi-value">42ms</div>
+                            <div class="trend up" style="color: var(--md-sys-color-outline)"><span class="material-symbols-outlined" style="font-size: 16px;">check_circle</span> Optimal</div>
+                        </div>
+                        <div class="kpi-card" style="background: var(--md-sys-color-tertiary-container); border: none;">
+                            <div class="kpi-header" style="color: var(--md-sys-color-tertiary);">
+                                Systemic Anomalies
+                            </div>
+                            <div class="kpi-value" style="color: var(--md-sys-color-tertiary);">3</div>
+                            <div class="trend down" style="color: var(--md-sys-color-tertiary);"><span class="material-symbols-outlined" style="font-size: 16px;">warning</span> Attention Required</div>
+                        </div>
+                    </div>
+
+                    <div class="panel main-chart-panel">
+                        <div class="panel-header">
+                            <div>
+                                Performance Trends & Forecasting
+                                <div style="font-size: 0.75rem; color: var(--md-sys-color-outline); margin-top: 4px; font-weight: 400;">Confidence Interval: 95%</div>
+                            </div>
+                            <div style="display: flex; gap: 12px; font-size: 0.875rem;">
+                                <span style="display: flex; align-items: center; gap: 4px;"><div style="width: 12px; height: 4px; background: var(--md-sys-color-primary);"></div> Actual</span>
+                                <span style="display: flex; align-items: center; gap: 4px;"><div style="width: 12px; height: 4px; border-bottom: 2px dashed var(--md-sys-color-tertiary);"></div> AI Forecast</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <svg class="chart-svg" viewBox="0 0 800 250" preserveAspectRatio="none">
+                                <line x1="0" y1="50" x2="800" y2="50" stroke="rgba(0,0,0,0.05)" stroke-width="1"/>
+                                <line x1="0" y1="125" x2="800" y2="125" stroke="rgba(0,0,0,0.05)" stroke-width="1"/>
+                                <line x1="0" y1="200" x2="800" y2="200" stroke="rgba(0,0,0,0.05)" stroke-width="1"/>
+                                
+                                <path d="M0,220 C100,210 150,150 250,180 C350,210 400,90 500,120 C550,135 580,80 600,60" fill="none" stroke="var(--md-sys-color-primary)" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M600,60 C650,10 700,40 800,20" fill="none" stroke="var(--md-sys-color-tertiary)" stroke-width="4" stroke-dasharray="8,8" stroke-linecap="round"/>
+                                
+                                <path d="M0,220 C100,210 150,150 250,180 C350,210 400,90 500,120 C550,135 580,80 600,60 L600,250 L0,250 Z" fill="var(--md-sys-color-primary-container)" opacity="0.3"/>
+                            </svg>
+                            <div class="chart-mask"></div>
+                        </div>
+                    </div>
+
+                    <div class="panel anomaly-panel">
+                        <div class="panel-header">Real-Time Anomalies</div>
+                        <div>
+                            <div class="anomaly-item">
+                                <div class="anomaly-icon" style="background: var(--md-sys-color-error);">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">show_chart</span>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500; font-size: 0.875rem;">Traffic Spike: APJ Region</div>
+                                    <div style="font-size: 0.75rem; color: var(--md-sys-color-outline); margin-top: 4px;">Deviates +340% from 30d baseline. Load balancers engaged.</div>
+                                </div>
+                            </div>
+                            <div class="anomaly-item">
+                                <div class="anomaly-icon" style="background: var(--md-sys-color-error);">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">api</span>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500; font-size: 0.875rem;">Payment Gateway Timeout</div>
+                                    <div style="font-size: 0.75rem; color: var(--md-sys-color-outline); margin-top: 4px;">Latency exceeded 800ms threshold for 2 minutes.</div>
+                                </div>
+                            </div>
+                            <div class="anomaly-item">
+                                <div class="anomaly-icon" style="background: #e37400;">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">account_circle</span>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500; font-size: 0.875rem;">Unusual Login Patterns</div>
+                                    <div style="font-size: 0.75rem; color: var(--md-sys-color-outline); margin-top: 4px;">Multiple failed attempts originating from restricted IPs.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel decision-panel">
+                        <div class="panel-header" style="color: var(--md-sys-color-primary); margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="material-symbols-outlined">psychology</span> AI Decision Support
+                            </div>
+                        </div>
+                        <div class="ai-recommendation">
+                            <div class="confidence-score">92%</div>
+                            <div>
+                                <h3 style="font-size: 1.1rem; font-weight: 500; margin-bottom: 8px;">Reallocate Infrastructure Resources</h3>
+                                <p style="font-size: 0.875rem; color: var(--md-sys-color-outline); line-height: 1.5;">
+                                    Based on the forecasted APJ traffic spike and current server loads, AI recommends immediately scaling database instances in the Tokyo cluster by 40%. Doing so prevents projected downtime during peak hours (08:00 - 12:00 JST).
+                                </p>
+                                <div style="margin-top: 16px; display: flex; gap: 12px;">
+                                    <button style="padding: 10px 20px; background: var(--md-sys-color-primary); color: white; border: none; border-radius: 20px; font-weight: 500; font-size: 0.875rem; cursor: pointer;">Execute Automation</button>
+                                    <button style="padding: 10px 20px; background: transparent; color: var(--md-sys-color-primary); border: 1px solid var(--md-sys-color-primary); border-radius: 20px; font-weight: 500; font-size: 0.875rem; cursor: pointer;">View Simulation</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+            const tl = gsap.timeline();
+
+            // 1. App Reveal: Scale in the browser window
+            tl.to(".browser-window", {
+                opacity: 1,
+                scale: 1,
+                duration: 1.2,
+                ease: "elastic.out(1, 0.75)"
+            })
+            
+            // 2. Slide in sidebar relative to the browser window
+            .from(".sidebar", {
+                x: -50,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power4.out"
+            }, "-=0.8")
+            
+            // 3. Fade in header elements & filters
+            .from(".header > div, .filter-chip", {
+                y: -20,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "power3.out"
+            }, "-=0.6")
+
+            // 4. Pop in KPI metric cards
+            .from(".kpi-card", {
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "back.out(1.2)"
+            }, "-=0.4")
+
+            // 5. Slide up the main chart and side panels
+            .from(".panel", {
+                y: 40,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.15,
+                ease: "power3.out"
+            }, "-=0.4")
+            
+            // 6. Data Reveal: Sweep the mask to reveal the SVG chart line
+            .to(".chart-mask", {
+                width: 0,
+                duration: 1.5,
+                ease: "power2.inOut"
+            }, "-=0.2")
+
+            // 7. Stagger in anomaly list items
+            .from(".anomaly-item", {
+                x: -20,
+                opacity: 0,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: "power2.out"
+            }, "-=1.0")
+            
+            // 8. Scale in the AI Confidence score circle
+            .from(".confidence-score", {
+                scale: 0,
+                rotation: -90,
+                opacity: 0,
+                duration: 0.8,
+                ease: "back.out(1.5)"
+            }, "-=0.8");
+        });
+    </script>
+</body>
+</html>

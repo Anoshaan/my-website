@@ -90,7 +90,7 @@ export function FigmaWorkspace() {
           <span>+</span>
         </div>
         <div className="fw-win-dots">
-          <span>—</span>
+          <span>‐</span>
           <span>□</span>
           <span>✕</span>
         </div>

@@ -4,25 +4,24 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   motion,
   useScroll,
-  useTransform,
   useSpring,
+  useMotionValueEvent,
   useReducedMotion,
-  type MotionValue,
 } from "motion/react";
 import { Container } from "@/components/ui/Container";
 
 /**
  * Section 4 — This Is How I Stay Ahead.
  *
- * A pinned, cinematic section: the header settles into the centre as the
- * previous section fades away, then three premium "floating object" cards
- * reveal one-by-one as the user keeps scrolling. Each card has subtle 3D
- * depth (mouse tilt + a slow float) and a bespoke inner animation that
- * reinforces its idea — exploration, control, motion.
+ * One dedicated viewport chapter. The previous section fades as it
+ * leaves the centre; once this one owns the frame, a timed stagger
+ * plays — heading, then body, then the three cards one-by-one. The
+ * reveal is time-driven (not scroll-scrubbed) so it never waits on
+ * additional scrolling. Each card keeps its 3D mouse tilt, slow float,
+ * and a bespoke inner animation integrated into the card surface.
  */
 
 type CardData = {
-  num: string;
   title: string;
   tag: string;
   body: string;
@@ -30,19 +29,16 @@ type CardData = {
 
 const CARDS: CardData[] = [
   {
-    num: "01",
     title: "AI-Powered Exploration",
     tag: "From idea to first concept in minutes, not days.",
     body: "Using AI to rapidly explore ideas, wireframes, flows, and design directions frees up time to focus on solving meaningful problems.",
   },
   {
-    num: "02",
     title: "Human-Guided Control",
     tag: "Speed means nothing without structure.",
-    body: "AI accelerates exploration, but every decision stays intentional, scalable, and editable — controlled through professional design systems.",
+    body: "AI accelerates exploration, but every decision stays intentional, scalable, and editable, all controlled through professional design systems.",
   },
   {
-    num: "03",
     title: "Motion-Driven Experiences",
     tag: "Interfaces should communicate, not just exist.",
     body: "Motion guides attention, provides feedback, improves understanding, and creates experiences that feel alive.",
@@ -141,25 +137,21 @@ const VISUALS = [<VisualExplore key="0" />, <VisualControl key="1" />, <VisualMo
 
 /* ---------------------------------------------------------------- */
 
+const easeOutExpo = [0.22, 1, 0.36, 1] as const;
+
 function EvolveCard({
   i,
   data,
   visual,
-  progress,
+  revealed,
   animate,
 }: {
   i: number;
   data: CardData;
   visual: ReactNode;
-  progress: MotionValue<number>;
+  revealed: boolean;
   animate: boolean;
 }) {
-  const start = 0.24 + i * 0.18;
-  const end = start + 0.2;
-  const opacity = useTransform(progress, [start, end], [0, 1]);
-  const y = useTransform(progress, [start, end], [80, 0]);
-  const scale = useTransform(progress, [start, end], [0.9, 1]);
-
   // Mouse tilt — gives each card the feel of a physical floating object.
   const rotX = useSpring(0, { stiffness: 120, damping: 14 });
   const rotY = useSpring(0, { stiffness: 120, damping: 14 });
@@ -177,14 +169,20 @@ function EvolveCard({
     rotY.set(0);
   };
 
-  const slotStyle = animate ? { opacity, y, scale } : { opacity: 1 };
-
   return (
-    <motion.div className="evolve-card-slot" style={slotStyle}>
-      <div
-        className="evolve-card-float"
-        style={{ animationDelay: `${i * 0.8}s` }}
-      >
+    <motion.div
+      className="evolve-card-slot"
+      initial={animate ? { opacity: 0, y: 64, scale: 0.92 } : false}
+      animate={
+        animate
+          ? revealed
+            ? { opacity: 1, y: 0, scale: 1 }
+            : { opacity: 0, y: 64, scale: 0.92 }
+          : { opacity: 1 }
+      }
+      transition={{ duration: 0.8, delay: 0.5 + i * 0.22, ease: easeOutExpo }}
+    >
+      <div className="evolve-card-float" style={{ animationDelay: `${i * 0.8}s` }}>
         <motion.article
           className="evolve-card"
           style={animate ? { rotateX: rotX, rotateY: rotY } : undefined}
@@ -193,7 +191,6 @@ function EvolveCard({
         >
           <span className="evolve-card-glow" aria-hidden />
           <div className="evolve-card-visual">{visual}</div>
-          <span className="evolve-card-num">{data.num}</span>
           <h3 className="evolve-card-title">{data.title}</h3>
           <p className="evolve-card-tag">{data.tag}</p>
           <p className="evolve-card-body">{data.body}</p>
@@ -207,6 +204,8 @@ export function Section4StayAhead() {
   const reduced = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const [isWide, setIsWide] = useState(true);
+  const [revealed, setRevealed] = useState(false);
+
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 901px)");
     const update = () => setIsWide(mq.matches);
@@ -216,48 +215,62 @@ export function Section4StayAhead() {
   }, []);
   const animate = isWide && !reduced;
 
+  // One-shot trigger: the timed sequence starts the moment the section
+  // takes the frame (scroll-position driven, so it's reliable under
+  // Lenis where IntersectionObserver is not).
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end end"],
+    offset: ["start 0.9", "start 0.35"],
   });
+  useMotionValueEvent(scrollYProgress, "change", (p) => {
+    if (p > 0.6) setRevealed(true);
+  });
+  useEffect(() => {
+    if (scrollYProgress.get() > 0.6) setRevealed(true);
+  }, [scrollYProgress]);
 
-  // Header settles into the centre as the section emerges.
-  const headOpacity = useTransform(scrollYProgress, [0, 0.12], [0, 1]);
-  const headY = useTransform(scrollYProgress, [0, 0.16], [54, 0]);
-  const headScale = useTransform(scrollYProgress, [0, 0.16], [0.92, 1]);
-
-  const headStyle = animate
-    ? { opacity: headOpacity, y: headY, scale: headScale }
-    : { opacity: 1 };
+  const headerStates = animate
+    ? {
+        initial: { opacity: 0, y: 36 },
+        animate: revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 },
+      }
+    : { initial: false as const, animate: { opacity: 1 } };
 
   return (
-    <section
-      ref={sectionRef}
-      id="stay-ahead"
-      className="evolve-section"
-      style={{ minHeight: animate ? "320vh" : undefined }}
-    >
+    <section ref={sectionRef} id="stay-ahead" className="evolve-section">
       <div className="evolve-sticky">
         <div className="evolve-aura" aria-hidden />
         <Container size="wide" className="evolve-inner">
-          <motion.header className="evolve-header" style={headStyle}>
-            <p className="evolve-eyebrow">Design is evolving faster than ever</p>
-            <h2 className="text-section evolve-title">This Is How I Stay Ahead</h2>
-            <p className="text-body evolve-body">
+          <header className="evolve-header">
+            {/* Left — label + headline */}
+            <motion.div
+              {...headerStates}
+              transition={{ duration: 0.8, ease: easeOutExpo }}
+            >
+              <p className="evolve-eyebrow">Method</p>
+              <h2 className="text-section evolve-title">This Is How I Stay Ahead</h2>
+            </motion.div>
+
+            {/* Right — supporting copy, a beat later */}
+            <motion.p
+              className="text-body evolve-body"
+              {...headerStates}
+              transition={{ duration: 0.8, delay: 0.18, ease: easeOutExpo }}
+            >
               Modern product design is no longer just about creating screens. The
               combination of AI, design systems, and motion has fundamentally
               changed how products are imagined, built, and experienced.
-            </p>
-          </motion.header>
+            </motion.p>
+          </header>
 
           <div className="evolve-cards">
             {CARDS.map((c, i) => (
               <EvolveCard
-                key={c.num}
+                key={c.title}
                 i={i}
                 data={c}
                 visual={VISUALS[i]}
-                progress={scrollYProgress}
+                revealed={revealed}
                 animate={animate}
               />
             ))}

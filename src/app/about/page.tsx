@@ -12,7 +12,7 @@ export default function AboutPage() {
       <PageHead
         title="Human behavior is"
         shineWords="my design system."
-        intro="I'm Anoshaan — a product systems designer working at the intersection of behavioral UX, motion, and technology. I build interfaces, scalable systems, and quietly intelligent experiences for enterprise platforms, AI products, and the layer of things still being figured out."
+        intro="I'm Anoshaan, a product systems designer working at the intersection of behavioral UX, motion, and technology. I build interfaces, scalable systems, and quietly intelligent experiences for enterprise platforms, AI products, and the layer of things still being figured out."
       />
 
       <AboutIntro />

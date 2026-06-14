@@ -1,0 +1,612 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Software Website Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <!-- GSAP for fluid animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        /* Modern Premium B2B Color Tokens */
+        :root {
+            --brand-dark: #0f172a;
+            --brand-primary: #4f46e5;
+            --brand-primary-hover: #4338ca;
+            --brand-accent: #10b981;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --surface: #ffffff;
+            --radius-s: 8px;
+            --radius-m: 16px;
+            --radius-l: 24px;
+            --border-subtle: rgba(15, 23, 42, 0.08);
+            --shadow-premium: 0 10px 30px -10px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Ambient desktop background canvas */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            padding: 24px;
+        }
+
+        /* --- Browser Chrome Template --- */
+        .browser-window {
+            width: 100%;
+            max-width: 1440px;
+            height: 90vh;
+            background-color: var(--bg-light);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px -15px rgba(15, 23, 42, 0.3), 0 0 0 1px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            opacity: 0; 
+            transform: scale(0.96); 
+        }
+
+        .browser-header {
+            height: 52px;
+            background: #f1f3f4;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 50;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            left: 16px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot.close { background: #ff5f56; }
+        .dot.min { background: #ffbd2e; }
+        .dot.max { background: #27c93f; }
+
+        .address-bar {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            height: 28px;
+            border-radius: 6px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.03), 0 0 0 1px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #5f6368;
+            gap: 8px;
+        }
+
+        /* Continuous scroll viewport for the landing page grid */
+        .browser-viewport {
+            flex: 1;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            background: var(--surface);
+        }
+
+        /* --- Marketing Website Layout Styles --- */
+        
+        /* Sticky Modern Header Navigation */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 64px;
+            border-bottom: 1px solid var(--border-subtle);
+            z-index: 40;
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--brand-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--brand-primary); }
+
+        .cta-btn {
+            background: var(--brand-dark);
+            color: white;
+            padding: 10px 20px;
+            border-radius: var(--radius-s);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .cta-btn:hover { background: var(--brand-primary); }
+        .cta-btn.secondary {
+            background: transparent;
+            color: var(--brand-dark);
+            border: 1px solid rgba(15, 23, 42, 0.15);
+        }
+        .cta-btn.secondary:hover { background: rgba(0,0,0,0.02); }
+
+        /* Conversion Hero Area */
+        .hero-section {
+            padding: 80px 64px 60px 64px;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .announcement-badge {
+            background: rgba(79, 70, 229, 0.08);
+            color: var(--brand-primary);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--brand-dark);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+
+        .hero-section p {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 680px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 60px;
+        }
+
+        /* Abstract Premium Product Preview Frame */
+        .product-preview {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--brand-dark);
+            border-radius: var(--radius-m);
+            padding: 16px;
+            box-shadow: 0 40px 80px -20px rgba(15, 23, 42, 0.15);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .preview-inner {
+            background: #1e293b;
+            border-radius: 8px;
+            height: 340px;
+            display: flex;
+            padding: 24px;
+            gap: 24px;
+        }
+
+        /* High Density Feature Presentation Grid */
+        .section-container {
+            padding: 100px 64px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 60px auto;
+        }
+
+        .section-header h2 {
+            font-size: 2.25rem;
+            color: var(--brand-dark);
+            margin-bottom: 16px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            padding: 32px;
+            border-radius: var(--radius-m);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-premium);
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(79, 70, 229, 0.06);
+            border-radius: 12px;
+            color: var(--brand-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        /* Integration Layer Matrix */
+        .integrations-box {
+            background: var(--bg-light);
+            border-radius: var(--radius-l);
+            padding: 48px;
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .integrations-text { flex: 1; }
+        .integrations-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .int-logo {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            height: 80px;
+            border-radius: var(--radius-m);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--text-light);
+            box-shadow: var(--shadow-premium);
+        }
+
+        /* High-Density Enterprise Pricing Comparison Structure */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            align-items: stretch;
+        }
+
+        .pricing-card {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-l);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-premium);
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid var(--brand-primary);
+        }
+
+        .pricing-card.featured .popular-tag {
+            position: absolute;
+            top: -14px;
+            right: 32px;
+            background: var(--brand-primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .price-point {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--brand-dark);
+            margin: 24px 0;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .price-point span { font-size: 1rem; color: var(--text-light); font-weight: 400; }
+
+        .feature-list {
+            list-style: none;
+            margin: 32px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            flex: 1;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .check-icon { color: var(--brand-accent); font-size: 18px !important; }
+
+    </style>
+    <style id="labs-embed-reset">
+      html, body { background: transparent !important; background-color: transparent !important; padding: 0 !important; margin: 0 !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Browser Frame Window Wrapper -->
+    <div class="browser-window">
+        <!-- Structural Browser Chrome Bar -->
+        <div class="browser-header">
+            <div class="window-controls">
+                <div class="dot close"></div>
+                <div class="dot min"></div>
+                <div class="dot max"></div>
+            </div>
+            <div class="address-bar">
+                <span class="material-symbols-outlined" style="font-size: 14px;">lock</span>
+                www.nexusflow.com
+            </div>
+        </div>
+
+        <!-- Scrollable Active Web Viewport Layer -->
+        <div class="browser-viewport">
+            
+            <!-- Global Interactive Navigation Frame -->
+            <nav class="navbar">
+                <div class="nav-logo">
+                    <span class="material-symbols-outlined" style="color: var(--brand-primary); font-size: 28px;">token</span>
+                    NexusFlow
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#features">Platform</a></li>
+                    <li><a href="#integrations">Solutions</a></li>
+                    <li><a href="#pricing">Enterprise Pricing</a></li>
+                </ul>
+                <a href="#pricing" class="cta-btn">Book Enterprise Demo</a>
+            </nav>
+
+            <!-- Conversion Driven Hero Segment -->
+            <header class="hero-section">
+                <div class="announcement-badge">
+                    <span class="material-symbols-outlined" style="font-size: 14px;">bolt</span>
+                    NexusFlow v3.0 Native Compute is Now Live
+                </div>
+                <h1>The Operating System for Modern Enterprise Operations</h1>
+                <p>Consolidate workforce scheduling, infrastructure analytics pipelines, and dynamic cross-department workflows inside a centralized, cryptographically secure architecture.</p>
+                
+                <div class="hero-actions">
+                    <a href="#pricing" class="cta-btn" style="padding: 14px 28px; font-size: 1rem;">Deploy Cloud Core</a>
+                    <a href="#features" class="cta-btn secondary" style="padding: 14px 28px; font-size: 1rem;">View Reference Architecture</a>
+                </div>
+
+                <!-- Abstract Visual Mock Blueprint Container -->
+                <div class="product-preview">
+                    <div class="preview-inner">
+                        <div style="flex: 1; background: #334155; border-radius: 6px; opacity: 0.4;"></div>
+                        <div style="flex: 2; background: #334155; border-radius: 6px; display: flex; flex-direction: column; gap: 12px; padding: 16px;">
+                            <div style="height: 32px; background: rgba(255,255,255,0.1); border-radius: 4px; width: 60%;"></div>
+                            <div style="height: 120px; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+                            <div style="height: 40px; background: rgba(255,255,255,0.05); border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Three Column High Density Feature Highlights -->
+            <section id="features" class="section-container" style="background: var(--bg-light); margin-top: 60px;">
+                <div class="section-header">
+                    <h2>Engineered for High-Concurrency Management</h2>
+                    <p style="color: var(--text-light);">Unify disparate data ecosystems with compliance and global scale defaults built-in.</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><span class="material-symbols-outlined">shield</span></div>
+                        <h3 style="margin-bottom: 12px; font-size: 1.25rem;">Military-Grade Governance</h3>
+                        <p style="color: var(--text-light); font-size: 0.95rem; line-height: 1.5;">Granular row-level policy assignment, programmatic IAM lifecycle enforcement, and complete zero-knowledge logging pipelines natively layered.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><span class="material-symbols-outlined">monitoring</span></div>
+                        <h3 style="margin-bottom: 12px; font-size: 1.25rem;">Deterministic Forecasting</h3>
+                        <p style="color: var(--text-light); font-size: 0.95rem; line-height: 1.5;">Ingest multi-layered production parameters to systematically anticipate capacity drops, latency degradation, and operational overhead anomalies.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><span class="material-symbols-outlined">sync_alt</span></div>
+                        <h3 style="margin-bottom: 12px; font-size: 1.25rem;">Automated Pipeline Sync</h3>
+                        <p style="color: var(--text-light); font-size: 0.95rem; line-height: 1.5;">Programmatically deploy cluster nodes, synchronize resource scheduling rules, and bridge cross-regional data siloes without code dependencies.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ecosystem Integrations Panel -->
+            <section id="integrations" class="section-container">
+                <div class="integrations-box">
+                    <div class="integrations-text">
+                        <h2 style="font-size: 2rem; margin-bottom: 16px; color: var(--brand-dark);">Extensible Connectivity Across Every Stack</h2>
+                        <p style="color: var(--text-light); line-height: 1.6; margin-bottom: 24px;">Plug effortlessly into structural components, databases, and operational software using out-of-the-box native cluster connectivity integrations.</p>
+                        <a href="#" class="cta-btn secondary">Explore API Framework</a>
+                    </div>
+                    <div class="integrations-grid">
+                        <div class="int-logo"><span class="material-symbols-outlined" style="margin-right: 8px;">cloud</span> AWS</div>
+                        <div class="int-logo"><span class="material-symbols-outlined" style="margin-right: 8px;">terminal</span> K8s</div>
+                        <div class="int-logo"><span class="material-symbols-outlined" style="margin-right: 8px;">database</span> Snowflake</div>
+                        <div class="int-logo"><span class="material-symbols-outlined" style="margin-right: 8px;">reorder</span> Kafka</div>
+                        <div class="int-logo"><span class="material-symbols-outlined" style="margin-right: 8px;">hub</span> Okta</div>
+                        <div class="int-logo"><span class="material-symbols-outlined" style="margin-right: 8px;">code</span> GitHub</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Structural Pricing Comparison Grid Matrix -->
+            <section id="pricing" class="section-container" style="background: var(--bg-light); border-top: 1px solid var(--border-subtle);">
+                <div class="section-header">
+                    <h2>Transparent Tiers Built for Growth Scale</h2>
+                    <p style="color: var(--text-light);">Start small with sandbox modules or roll out site-wide systems globally.</p>
+                </div>
+
+                <div class="pricing-grid">
+                    <!-- Standard Tier -->
+                    <div class="pricing-card">
+                        <h3 style="font-size: 1.25rem; color: var(--brand-dark);">Developer Base</h3>
+                        <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 4px;">Isolated sandbox environment</p>
+                        <div class="price-point">$49 <span>/mo</span></div>
+                        <button class="cta-btn secondary" style="width:100%;">Initialize Core</button>
+                        <ul class="feature-list">
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> Up to 5 Active Compute Nodes</li>
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> Standard Data Ingestion Filters</li>
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> 30-Day Audit Log History</li>
+                        </ul>
+                    </div>
+
+                    <!-- Growth Featured Tier -->
+                    <div class="pricing-card featured">
+                        <div class="popular-tag">Most Deployed</div>
+                        <h3 style="font-size: 1.25rem; color: var(--brand-dark);">Scale Engine</h3>
+                        <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 4px;">For complete company wide alignment</p>
+                        <div class="price-point">$199 <span>/mo</span></div>
+                        <button class="cta-btn" style="width:100%; background: var(--brand-primary)">Provision System</button>
+                        <ul class="feature-list">
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> Unlimited Node Provisioning</li>
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> Predictive Analytics Layer</li>
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> 10ms Real-Time Data Sync</li>
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> SSO & Advanced SAML Provisioning</li>
+                        </ul>
+                    </div>
+
+                    <!-- Enterprise Custom Tier -->
+                    <div class="pricing-card">
+                        <h3 style="font-size: 1.25rem; color: var(--brand-dark);">Global Secure Core</h3>
+                        <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 4px;">Isolated dedicated governance models</p>
+                        <div class="price-point">Custom</div>
+                        <button class="cta-btn secondary" style="width:100%;">Contact Architecture Team</button>
+                        <ul class="feature-list">
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> Bare Metal Custom Deployments</li>
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> Cryptographic Compliance Guard</li>
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> Custom SLA & 24/7 Phone Support</li>
+                            <li><span class="material-symbols-outlined check-icon">check_circle</span> Dedicated TAM Infrastructure</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- GSAP Web Entrance Animation Sequence Frame -->
+    <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+            const tl = gsap.timeline();
+
+            // 1. Initial Web Window Fluid Slide Entry
+            tl.to(".browser-window", {
+                opacity: 1,
+                scale: 1,
+                duration: 1.2,
+                ease: "elastic.out(1, 0.75)"
+            })
+            
+            // 2. Cascade Nav Bar Header
+            .from(".navbar", {
+                y: -50,
+                opacity: 0,
+                duration: 0.6,
+                ease: "power3.out"
+            }, "-=0.8")
+            
+            // 3. Stagger Text Elements Inside Landing Hero Window
+            .from(".hero-section > div, .hero-section h1, .hero-section p", {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: "power4.out"
+            }, "-=0.5")
+
+            // 4. Smooth Sweep Hero Interactive CTA Buttons
+            .from(".hero-actions a", {
+                scale: 0.9,
+                opacity: 0,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: "back.out(1.5)"
+            }, "-=0.4")
+
+            // 5. Rise and reveal abstract software wireframe layout
+            .from(".product-preview", {
+                y: 60,
+                opacity: 0,
+                duration: 1,
+                ease: "power2.out"
+            }, "-=0.3")
+
+            // 6. Grid components fade array reveal loop
+            .from(".feature-card", {
+                y: 40,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.12,
+                ease: "power3.out"
+            }, "-=0.4");
+        });
+    </script>
+</body>
+</html>

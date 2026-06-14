@@ -128,7 +128,7 @@ export function Stories() {
           <Reveal delay={0.15}>
             <p className="text-body text-white/75 max-w-[58ch] mx-auto mt-6">
               A collection of products, platforms, and experiences I&apos;ve
-              helped shape — from early concepts to launched solutions.
+              helped shape, from early concepts to launched solutions.
             </p>
           </Reveal>
         </Container>

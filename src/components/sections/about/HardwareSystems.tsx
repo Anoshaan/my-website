@@ -31,25 +31,25 @@ const capabilities: Capability[] = [
     icon: "network",
     title: "Connected Devices",
     body:
-      "Building and instrumenting IoT systems — sensors, microcontrollers, and the small protocols that link them.",
+      "Building and instrumenting IoT systems: sensors, microcontrollers, and the small protocols that link them.",
   },
   {
     icon: "flow",
     title: "Automation Logic",
     body:
-      "Sensor-driven automation — feedback loops, state machines, and rules that keep a physical system in balance.",
+      "Sensor-driven automation: feedback loops, state machines, and rules that keep a physical system in balance.",
   },
   {
     icon: "scan",
     title: "Sensors & Telemetry",
     body:
-      "Reading the real world cleanly — humidity, motion, signal, temperature — and turning it into a usable stream.",
+      "Reading the real world cleanly across humidity, motion, signal, and temperature, then turning it into a usable stream.",
   },
   {
     icon: "structure",
     title: "End-to-End Systems",
     body:
-      "Hardware, firmware, software, interface — designed as one coherent system rather than four separate concerns.",
+      "Hardware, firmware, software, and interface, designed as one coherent system rather than four separate concerns.",
   },
 ];
 
@@ -60,7 +60,7 @@ export function HardwareSystems() {
         <div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-start lg:gap-[clamp(48px,6vw,96px)]">
           <SectionTitle
             title="Hardware-aware thinking."
-            intro="My work doesn't end at the screen. I think about systems the way a hardware engineer thinks about a circuit — inputs, state, behavior, and the connection between what a user does and what a system actually does in response."
+            intro="My work doesn't end at the screen. I think about systems the way a hardware engineer thinks about a circuit, with inputs, state, behavior, and the connection between what a user does and what a system actually does in response."
             className="lg:sticky lg:top-28"
           />
 

@@ -64,7 +64,7 @@ export function Experiments() {
       <Container>
         <SectionTitle
           title="Interests Beyond Design."
-          intro="Beyond UI/UX and product systems design, I actively explore cybersecurity, ethical hacking, IoT ecosystems, and hardware experimentation. I enjoy building and testing technology-driven systems — from custom servers and network-based projects to sensor-powered automation and intelligent hardware solutions."
+          intro="Beyond UI/UX and product systems design, I actively explore cybersecurity, ethical hacking, IoT ecosystems, and hardware experimentation. I enjoy building and testing technology-driven systems, from custom servers and network-based projects to sensor-powered automation and intelligent hardware solutions."
         />
 
         <StaggerContainer className="mt-14 grid items-stretch gap-6 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3">

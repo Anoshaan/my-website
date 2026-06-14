@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, type Variants } from "motion/react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 type RevealProps = {
   children: ReactNode;
@@ -9,6 +9,7 @@ type RevealProps = {
   /** "up" | "fade" — preset motion shape. */
   variant?: "up" | "fade";
   className?: string;
+  style?: CSSProperties;
   /** Retained for API compatibility; ignored now that we animate on mount. */
   once?: boolean;
   duration?: number;
@@ -42,6 +43,7 @@ export function Reveal({
   delay = 0,
   variant = "up",
   className,
+  style,
   duration = 0.8,
   as = "div",
 }: RevealProps) {
@@ -49,6 +51,7 @@ export function Reveal({
   return (
     <MotionTag
       className={className}
+      style={style}
       initial="hidden"
       animate="visible"
       variants={variants[variant]}

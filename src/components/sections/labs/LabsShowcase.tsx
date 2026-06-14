@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
@@ -18,18 +17,47 @@ import { labsProjects, type LabsProject } from "@/lib/labs-projects";
  * scroll-up.
  */
 
-function ArrowSmall() {
+/** Logical design size of the embedded HTML mockups (desktop, 4:3). */
+const EMBED_W = 1440;
+const EMBED_H = 1080;
+
+/** Live interactive mockup, rendered at full desktop size then scaled to
+ *  fit the frame so it reads as a crisp product screenshot while keeping
+ *  every GSAP entrance + hover interaction intact. */
+function LabsEmbed({ src, title }: { src: string; title: string }) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.4);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const update = () => setScale(host.clientWidth / EMBED_W);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(host);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
   return (
-    <svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true">
-      <path
-        d="M3 11L11 3M11 3H5M11 3V9"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+    <div ref={hostRef} className="labs-embed" aria-hidden>
+      <iframe
+        src={src}
+        title={title}
+        loading="lazy"
+        scrolling="no"
+        tabIndex={-1}
+        style={{
+          width: EMBED_W,
+          height: EMBED_H,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+        }}
       />
-    </svg>
+    </div>
   );
 }
 
@@ -61,15 +89,18 @@ function ProjectVisual({
 
   return (
     <div className="labs-visual">
-      <div className="labs-visual-glow" aria-hidden />
       <motion.div ref={ref} className="labs-visual-stage" style={{ y }}>
         <div className="labs-visual-float">
           <div className={`labs-visual-frame is-tilt-${tilt}`}>
-            <CaseStudyMedia
-              caseStudy={caseStudy}
-              index={index}
-              icon={project.icon}
-            />
+            {project.embed ? (
+              <LabsEmbed src={project.embed} title={project.title} />
+            ) : (
+              <CaseStudyMedia
+                caseStudy={caseStudy}
+                index={index}
+                icon={project.icon}
+              />
+            )}
           </div>
         </div>
       </motion.div>
@@ -84,7 +115,11 @@ function ProjectRow({ project, index }: { project: LabsProject; index: number })
   const insightPunch = project.insight[project.insight.length - 1];
 
   return (
-    <Reveal as="article" className={`labs-row is-content-${contentSide}`}>
+    <Reveal
+      as="article"
+      className={`labs-row is-content-${contentSide}`}
+      style={{ "--labs-accent": project.accent } as CSSProperties}
+    >
       <ProjectVisual
         project={project}
         index={index}
@@ -92,36 +127,39 @@ function ProjectRow({ project, index }: { project: LabsProject; index: number })
       />
 
       <div className="labs-content">
-        <span className="labs-domain">{project.domain}</span>
+        <span className="labs-challenge">{project.challenge}</span>
 
-        <h2 className="labs-question">{project.question}</h2>
+        <h2 className="labs-title">{project.title}</h2>
 
-        <p className="labs-story">{project.story}</p>
-
-        <div className="labs-changed">
-          <span className="labs-changed-label">What changed</span>
-          <ul>
-            {project.whatChanged.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
+        <div className="labs-story">
+          {project.story.map((para) => (
+            <p key={para}>{para}</p>
+          ))}
         </div>
 
-        <div className="labs-insight">
-          <span className="labs-insight-label">Key insight</span>
-          <p className="labs-insight-text">
-            {insightLead.map((line) => (
-              <span key={line} className="labs-insight-line">
-                {line}{" "}
-              </span>
-            ))}
-            <span className="labs-insight-punch">{insightPunch}</span>
-          </p>
-        </div>
+        {/* What Changed | Key Insight — side by side, never stacked. */}
+        <div className="labs-bottom">
+          <div className="labs-changed">
+            <span className="labs-changed-label">What changed</span>
+            <ul>
+              {project.whatChanged.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </div>
 
-        <Link href={project.ctaHref} className="labs-cta" data-cursor-precise>
-          View Case Study <ArrowSmall />
-        </Link>
+          <div className="labs-insight">
+            <span className="labs-insight-label">Key insight</span>
+            <p className="labs-insight-text">
+              {insightLead.map((line) => (
+                <span key={line} className="labs-insight-line">
+                  {line}{" "}
+                </span>
+              ))}
+              <span className="labs-insight-punch">{insightPunch}</span>
+            </p>
+          </div>
+        </div>
       </div>
     </Reveal>
   );

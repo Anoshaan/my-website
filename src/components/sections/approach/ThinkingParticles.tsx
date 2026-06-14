@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { MotionValue } from "motion/react";
+import { motion, type MotionValue } from "motion/react";
 
 /**
  * ThinkingParticles — a single Canvas-2D particle field, fixed to the
@@ -25,6 +25,10 @@ type Props = {
   progress: MotionValue<number>;
   active?: boolean;
   reduced?: boolean | null;
+  /** Section exit opacity — fades the field out in step with the copy so
+   *  the whole chapter leaves as one, instead of the particles vanishing
+   *  before the section does. */
+  fade?: MotionValue<number>;
 };
 
 type RGB = [number, number, number];
@@ -33,7 +37,7 @@ const LAV: RGB = [207, 217, 255];
 const COOL: RGB = [150, 170, 255];
 const WARM: RGB = [255, 184, 154];
 const MUTE: RGB = [120, 132, 176];
-const NEON_YELLOW: RGB = [242, 255, 77]; // Deliver chart accent
+const NEON_GOLD: RGB = [242, 210, 77]; // Deliver chart accent (neon gold)
 
 type Vec = { x: number; y: number; z: number; r: number; g: number; b: number; a: number };
 
@@ -42,16 +46,19 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
-/** Scroll progress → continuous stage float (0..3). Plateaus = holds. */
+/** Scroll progress → continuous stage float (0..3). Plateaus = holds.
+ * Tighter than before — short holds, quick morphs — so each stage
+ * starts animating the moment it becomes active and the user never
+ * scrolls through inactive waiting space. */
 function stageFloat(p: number): number {
   const pts: [number, number][] = [
-    [0.22, 0],
-    [0.34, 0],
-    [0.44, 1],
+    [0.38, 0],
+    [0.46, 0],
     [0.54, 1],
-    [0.64, 2],
+    [0.6, 1],
+    [0.68, 2],
     [0.74, 2],
-    [0.84, 3],
+    [0.82, 3],
     [1.0, 3],
   ];
   if (p <= pts[0][0]) return 0;
@@ -99,31 +106,38 @@ function form(o: Vec, stage: number, i: number, N: number, t: number) {
       setC(o, ring === 0 ? LAV : COOL);
     }
   } else if (stage === 1) {
-    // OBSERVE — a journey path with a congested friction bottleneck.
+    // OBSERVE — a journey path with a churning friction bottleneck. A
+    // scanning "attention" head sweeps the line so the formation reads as
+    // actively tracing the journey rather than sitting frozen.
     const X = -2.4 + u * 4.8;
+    const baseY = Math.sin(X * 1.8) * 0.6 + Math.cos(X * 0.9) * 0.2;
+    const head = ((t * 0.65) % 4.8) - 2.4; // sweeps left→right and repeats
+    const pulse = Math.exp(-Math.pow((X - head) * 1.8, 2)); // bright bump at head
     if (X > 0.0 && X < 1.4) {
-      const ip = X / 1.4;
-      const px = 0.0 + 0.5 * Math.sin(ip * Math.PI * 0.5);
-      o.x = px;
-      o.y = Math.sin(px * 1.8) * 0.6 + Math.cos(px * 0.9) * 0.2 + Math.sin(t * 6 + i) * 0.045;
-      o.z = Math.cos(i * 4.0) * 0.22;
+      // Bottleneck — particles jitter and churn energetically (friction).
+      o.x = X + Math.sin(t * 3 + i) * 0.05;
+      o.y = baseY + Math.sin(t * 6 + i * 1.7) * 0.12 + Math.cos(t * 4 + i) * 0.06;
+      o.z = Math.sin(i * 4.0 + t * 2) * 0.3;
       setC(o, WARM);
     } else {
       o.x = X;
-      o.y = Math.sin(X * 1.8) * 0.6 + Math.cos(X * 0.9) * 0.2;
-      o.z = 0;
-      setC(o, MUTE);
+      o.y = baseY + Math.sin(t * 2.2 + X * 2.5) * 0.05 + pulse * 0.16;
+      o.z = Math.sin(X * 2 - t * 1.4) * 0.12;
+      setC(o, pulse > 0.45 ? LAV : MUTE);
     }
   } else if (stage === 2) {
-    // SIMPLIFY — clean backbone line; the rest drift off, faded.
+    // SIMPLIFY — the tangle collapses onto one clean backbone. A gentle
+    // pulse travels the line (settling, not frozen) while the discarded
+    // noise slowly swirls away.
     const bx = -2.1 + u * 4.2;
     if (u < 0.66) {
       o.x = bx;
-      o.y = Math.sin(i * 12.0) * 0.03;
+      const wave = Math.sin(bx * 1.5 - t * 2.4);
+      o.y = Math.sin(i * 12.0) * 0.03 + wave * 0.05;
       o.z = 0;
-      setC(o, u < 0.5 ? WHITE : COOL);
+      setC(o, 0.5 + 0.5 * wave > 0.6 ? WHITE : COOL);
     } else {
-      const a = i * 3.1;
+      const a = i * 3.1 + t * 0.4;
       o.x = bx * 0.82 + Math.cos(a) * 0.5;
       o.y = Math.sin(a * 1.7) * 1.0;
       o.z = Math.sin(a) * 0.45;
@@ -204,7 +218,7 @@ function form(o: Vec, stage: number, i: number, N: number, t: number) {
         Math.sin(local * Math.PI * 5.0) * 0.12 +
         Math.sin(t * 1.6 + local * 6) * 0.03;
       o.z = 0;
-      setC(o, NEON_YELLOW);
+      setC(o, NEON_GOLD);
     } else if (u < 0.86) {
       // Bar chart (right of the main area).
       const local = (u - 0.66) / 0.2;
@@ -226,7 +240,7 @@ function form(o: Vec, stage: number, i: number, N: number, t: number) {
   }
 }
 
-export function ThinkingParticles({ progress, active = true, reduced }: Props) {
+export function ThinkingParticles({ progress, active = true, reduced, fade }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const activeRef = useRef(active);
   activeRef.current = active;
@@ -289,9 +303,15 @@ export function ThinkingParticles({ progress, active = true, reduced }: Props) {
       const s0 = Math.min(3, Math.floor(sf));
       const s1 = Math.min(3, s0 + 1);
       const frac = sf - s0;
-      const emerge = easeOutCubic(clamp01(p / 0.18));
-      const exit = 1 - clamp01((p - 0.93) / 0.07);
-      const gAlpha = emerge * exit;
+      // Particles roam free while the section approaches; only once it
+      // reaches the centre of the screen (the pin engages ~0.25) do they
+      // organise and settle into the first formation.
+      const emerge = easeOutCubic(clamp01((p - 0.2) / 0.18));
+      const roamA = easeOutCubic(clamp01(p / 0.14)); // fade the roamers in early
+      // No internal exit fade — the whole canvas is faded by the shared
+      // section exit opacity (see `fade`), so the field leaves together
+      // with the copy rather than disappearing first.
+      const gAlpha = Math.max(roamA * 0.55, emerge);
 
       const spinW = clamp01(1 - sf);
       spin += dt * (0.12 * spinW);
@@ -304,12 +324,12 @@ export function ThinkingParticles({ progress, active = true, reduced }: Props) {
       const cxR = Math.cos(rotX);
       const sxR = Math.sin(rotX);
 
-      // Desktop: biased into the gap between the side copy columns.
-      // Mobile (stacked): centred horizontally, lifted up so it sits
-      // above the copy rather than over it.
-      const cx = wide ? W * 0.57 : W * 0.5;
+      // Centred under the title on every breakpoint so the field reads as
+      // one composition with the heading, with balanced copy on both sides.
+      // Mobile (stacked): lifted up so it sits above the copy.
+      const cx = W * 0.5;
       const cyc = wide ? H * 0.52 : H * 0.36;
-      const zoom = Math.min(W, H) * (wide ? 0.108 : small ? 0.085 : 0.095);
+      const zoom = Math.min(W, H) * (wide ? 0.115 : small ? 0.088 : 0.1);
       const baseSize = Math.max(1.1, Math.min(W, H) * 0.0016);
       const deliverW = clamp01(sf - 2);
 
@@ -336,10 +356,15 @@ export function ThinkingParticles({ progress, active = true, reduced }: Props) {
           ta = lerp(ta, fb.a, frac);
         }
 
-        // Converge from the dispersed edge cloud during emergence.
-        tx = lerp(disp[i * 3], tx, emerge);
-        ty = lerp(disp[i * 3 + 1], ty, emerge);
-        tz = lerp(disp[i * 3 + 2], tz, emerge);
+        // Converge from the dispersed edge cloud during emergence. Until
+        // then the cloud keeps roaming — slow, organic drift around each
+        // particle's home position.
+        const roamX = disp[i * 3] + Math.sin(t * 0.32 + i * 1.3) * 0.55;
+        const roamY = disp[i * 3 + 1] + Math.cos(t * 0.27 + i * 2.1) * 0.45;
+        const roamZ = disp[i * 3 + 2] + Math.sin(t * 0.21 + i * 0.7) * 0.3;
+        tx = lerp(roamX, tx, emerge);
+        ty = lerp(roamY, ty, emerge);
+        tz = lerp(roamZ, tz, emerge);
 
         const j = i * 3;
         if (snap) {
@@ -391,10 +416,10 @@ export function ThinkingParticles({ progress, active = true, reduced }: Props) {
 
       // Deliver connecting line — a glowing neon chart polyline.
       if (deliverW > 0.02 && gAlpha > 0.02) {
-        ctx.strokeStyle = `rgba(242,255,77,${0.5 * deliverW * gAlpha})`;
+        ctx.strokeStyle = `rgba(242,210,77,${0.5 * deliverW * gAlpha})`;
         ctx.lineWidth = 1.4;
         ctx.lineJoin = "round";
-        ctx.shadowColor = "rgba(242,255,77,0.7)";
+        ctx.shadowColor = "rgba(242,210,77,0.7)";
         ctx.shadowBlur = 8;
         ctx.beginPath();
         ctx.moveTo(chartSX[0], chartSY[0]);
@@ -447,5 +472,12 @@ export function ThinkingParticles({ progress, active = true, reduced }: Props) {
     };
   }, [progress, reduced]);
 
-  return <canvas ref={canvasRef} className="approach-canvas" aria-hidden />;
+  return (
+    <motion.canvas
+      ref={canvasRef}
+      className="approach-canvas"
+      aria-hidden
+      style={fade ? { opacity: fade } : undefined}
+    />
+  );
 }

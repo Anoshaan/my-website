@@ -33,7 +33,7 @@ const STEPS: Step[] = [
   {
     number: "01",
     title: "User Problem",
-    body: "Start with the human friction — not a feature wishlist, not a competitor sheet, but the actual moment something feels harder than it should.",
+    body: "Start with the human friction, not a feature wishlist, not a competitor sheet, but the actual moment something feels harder than it should.",
   },
   {
     number: "02",
@@ -53,7 +53,7 @@ const STEPS: Step[] = [
   {
     number: "05",
     title: "Prototype",
-    body: "Build the cheapest, smallest, sharpest version of the idea — enough fidelity to provoke a real reaction.",
+    body: "Build the cheapest, smallest, sharpest version of the idea, with enough fidelity to provoke a real reaction.",
   },
   {
     number: "06",
@@ -63,7 +63,7 @@ const STEPS: Step[] = [
   {
     number: "07",
     title: "Solution",
-    body: "Ship the smallest thing that demonstrably moves the metric — and design the loop that makes the next iteration easier.",
+    body: "Ship the smallest thing that demonstrably moves the metric, and design the loop that makes the next iteration easier.",
   },
 ];
 
@@ -144,7 +144,7 @@ export function InsideMyMind() {
               Every design decision starts with a question. Before thinking
               about interfaces or features, I focus on understanding the
               problem, uncovering insights, and finding the simplest path
-              forward. Design is not just about creating solutions — it&apos;s
+              forward. Design is not just about creating solutions. It&apos;s
               about asking better questions.
             </p>
           </div>
@@ -176,7 +176,7 @@ export function InsideMyMind() {
                   <motion.button
                     key={s.title}
                     type="button"
-                    aria-label={`${s.title} — step ${s.number}`}
+                    aria-label={`${s.title}, step ${s.number}`}
                     onClick={() => setActive(i)}
                     className={`mind-card ${i === active ? "is-active" : ""}`}
                     animate={{

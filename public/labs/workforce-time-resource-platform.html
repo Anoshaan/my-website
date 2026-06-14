@@ -1,0 +1,543 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workforce Time & Resource Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        /* M3 Color Tokens & Baseline */
+        :root {
+            --md-sys-color-primary: #0061a4;
+            --md-sys-color-primary-container: #d1e4ff;
+            --md-sys-color-on-primary-container: #001d36;
+            --md-sys-color-surface: #fdfcff;
+            --md-sys-color-surface-container: #f3f3f7;
+            --md-sys-color-on-surface: #1a1c1e;
+            --md-sys-color-outline: #73777f;
+            --md-sys-color-tertiary: #535f70;
+            --radius-m: 16px;
+            --radius-l: 24px;
+            --elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Ambient background for the "desktop" */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #cfd9df 0%, #e2ebf0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            padding: 24px;
+        }
+
+        /* --- Browser Chrome Template --- */
+        .browser-window {
+            width: 100%;
+            max-width: 1440px;
+            height: 90vh;
+            background-color: var(--md-sys-color-surface-container);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            opacity: 0; /* Set for GSAP */
+            transform: scale(0.95); /* Set for GSAP */
+        }
+
+        .browser-header {
+            height: 52px;
+            background: #f1f3f4;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 20;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            left: 16px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.close { background: #ff5f56; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+        .dot.min { background: #ffbd2e; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+        .dot.max { background: #27c93f; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+
+        .address-bar {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            height: 28px;
+            border-radius: 6px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #5f6368;
+            gap: 8px;
+        }
+
+        .browser-viewport {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Application UI --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--md-sys-color-surface);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--md-sys-color-tertiary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 28px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 400;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--md-sys-color-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-gap: 24px;
+            padding-bottom: 40px;
+        }
+
+        .panel {
+            background-color: var(--md-sys-color-surface);
+            border-radius: var(--radius-l);
+            padding: 24px;
+            box-shadow: var(--elevation-1);
+        }
+
+        .panel-header {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .metrics-row {
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .metric-card {
+            background: var(--md-sys-color-surface);
+            padding: 20px;
+            border-radius: var(--radius-m);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--md-sys-color-tertiary);
+        }
+
+        .utilization-chart {
+            grid-column: span 8;
+            min-height: 300px;
+        }
+
+        .ai-insights {
+            grid-column: span 4;
+            background: linear-gradient(145deg, #fdfcff, #f0f4fa);
+            border: 1px solid var(--md-sys-color-primary-container);
+        }
+
+        .task-list {
+            grid-column: span 12;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--md-sys-color-surface-container);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--md-sys-color-primary);
+            width: 75%;
+            border-radius: 4px;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-size: 0.875rem;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: #e6f4ea;
+            color: #137333;
+        }
+        
+        .status-badge.warning {
+            background: #fef7e0;
+            color: #b06000;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            width: 100%;
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .bar {
+            flex: 1;
+            background: var(--md-sys-color-primary-container);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        
+        .bar-inner {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: var(--md-sys-color-primary);
+            border-radius: 4px 4px 0 0;
+        }
+    </style>
+    <style id="labs-embed-reset">
+      html, body { background: transparent !important; background-color: transparent !important; padding: 0 !important; margin: 0 !important; }
+    </style>
+</head>
+<body>
+
+    <div class="browser-window">
+        <div class="browser-header">
+            <div class="window-controls">
+                <div class="dot close"></div>
+                <div class="dot min"></div>
+                <div class="dot max"></div>
+            </div>
+            <div class="address-bar">
+                <span class="material-symbols-outlined" style="font-size: 14px;">lock</span>
+                app.nexusflow.ai/dashboard/workforce
+            </div>
+        </div>
+
+        <div class="browser-viewport">
+            <nav class="sidebar">
+                <div class="brand">
+                    <span class="material-symbols-outlined">dataset</span>
+                    NexusFlow
+                </div>
+                
+                <div class="nav-section mt-4" style="margin-top: 24px;">
+                    <div class="nav-label">Org Views</div>
+                    <div class="nav-item active">
+                        <span class="material-symbols-outlined">dashboard</span> Director Overview
+                    </div>
+                    <div class="nav-item">
+                        <span class="material-symbols-outlined">account_tree</span> Project Managers
+                    </div>
+                    <div class="nav-item">
+                        <span class="material-symbols-outlined">groups</span> Team Capacity
+                    </div>
+                </div>
+
+                <div class="nav-section mt-4" style="margin-top: 24px;">
+                    <div class="nav-label">Operations</div>
+                    <div class="nav-item">
+                        <span class="material-symbols-outlined">schedule</span> Time Tracking
+                    </div>
+                    <div class="nav-item">
+                        <span class="material-symbols-outlined">task_alt</span> Active Tasks
+                    </div>
+                    <div class="nav-item">
+                        <span class="material-symbols-outlined">analytics</span> Utilization Reports
+                    </div>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <header class="header">
+                    <div>
+                        <h1>Global Resource Allocation</h1>
+                        <p style="color: var(--md-sys-color-tertiary); margin-top: 4px; font-size: 0.875rem;">Q2 Enterprise Planning & Workload Distribution</p>
+                    </div>
+                    <div class="user-controls">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="material-symbols-outlined">search</span>
+                        <div class="avatar">JD</div>
+                    </div>
+                </header>
+
+                <div class="dashboard-grid">
+                    
+                    <div class="metrics-row">
+                        <div class="metric-card">
+                            <span class="metric-label">Total Allocated Hours</span>
+                            <span class="metric-value">12,450</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 82%;"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Avg. Resource Utilization</span>
+                            <span class="metric-value">87%</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 87%; background: #137333;"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Over-capacity Teams</span>
+                            <span class="metric-value">3</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 25%; background: #b06000;"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Projects at Risk</span>
+                            <span class="metric-value">2</span>
+                            <div class="progress-bar"><div class="progress-fill" style="width: 15%; background: #c5221f;"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="panel utilization-chart">
+                        <div class="panel-header">
+                            Workload Distribution by Department
+                            <span class="material-symbols-outlined">more_horiz</span>
+                        </div>
+                        <div class="chart-placeholder">
+                            <div class="bar" style="height: 100%;"><div class="bar-inner" style="height: 80%;"></div></div>
+                            <div class="bar" style="height: 80%;"><div class="bar-inner" style="height: 60%;"></div></div>
+                            <div class="bar" style="height: 90%;"><div class="bar-inner" style="height: 85%;"></div></div>
+                            <div class="bar" style="height: 60%;"><div class="bar-inner" style="height: 40%;"></div></div>
+                            <div class="bar" style="height: 110%;"><div class="bar-inner" style="height: 95%;"></div></div>
+                            <div class="bar" style="height: 70%;"><div class="bar-inner" style="height: 65%;"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="panel ai-insights">
+                        <div class="panel-header" style="color: var(--md-sys-color-primary);">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="material-symbols-outlined">auto_awesome</span> AI Optimization
+                            </div>
+                        </div>
+                        <p style="font-size: 0.875rem; line-height: 1.5;">Based on current velocity, <strong>Design Team Alpha</strong> will hit a bottleneck by next Tuesday. Reallocating 2 junior designers from Project Beta will normalize the timeline.</p>
+                        <div style="margin-top: 24px; padding: 12px; background: white; border-radius: 8px; font-weight: 500; font-size: 0.875rem; text-align: center; color: var(--md-sys-color-primary); cursor: pointer; border: 1px solid var(--md-sys-color-primary-container);">
+                            Apply Suggested Reallocation
+                        </div>
+                    </div>
+
+                    <div class="panel task-list">
+                        <div class="panel-header">Active Assignments & Status Indicators</div>
+                        <div>
+                            <div class="task-item" style="color: var(--md-sys-color-tertiary); font-weight: 500; border-bottom: 2px solid rgba(0,0,0,0.1);">
+                                <span style="flex: 2;">Project / Task</span>
+                                <span style="flex: 1;">Assignee</span>
+                                <span style="flex: 1;">Timeline</span>
+                                <span style="flex: 1; text-align: right;">Status</span>
+                            </div>
+                            <div class="task-item">
+                                <span style="flex: 2; font-weight: 500;">Enterprise Platform v2.0 - Core UX</span>
+                                <span style="flex: 1;">Sarah Jenkins (Lead)</span>
+                                <span style="flex: 1;">May 10 - Jun 15</span>
+                                <span style="flex: 1; text-align: right;"><span class="status-badge">On Track</span></span>
+                            </div>
+                            <div class="task-item">
+                                <span style="flex: 2; font-weight: 500;">Database Migration Scripting</span>
+                                <span style="flex: 1;">DevOps Team B</span>
+                                <span style="flex: 1;">May 12 - May 20</span>
+                                <span style="flex: 1; text-align: right;"><span class="status-badge warning">At Risk</span></span>
+                            </div>
+                            <div class="task-item">
+                                <span style="flex: 2; font-weight: 500;">Q2 Marketing Asset Generation</span>
+                                <span style="flex: 1;">Creative Studio</span>
+                                <span style="flex: 1;">May 01 - May 30</span>
+                                <span style="flex: 1; text-align: right;"><span class="status-badge">On Track</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+            const tl = gsap.timeline();
+
+            // 1. App Reveal: Scale in the browser window with a physical bounce
+            tl.to(".browser-window", {
+                opacity: 1,
+                scale: 1,
+                duration: 1.2,
+                ease: "elastic.out(1, 0.75)"
+            })
+            
+            // 2. Slide in sidebar relative to the browser window
+            .from(".sidebar", {
+                x: -50,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power4.out"
+            }, "-=0.8")
+            
+            // 3. Fade in header elements
+            .from(".header > div", {
+                y: -20,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "power3.out"
+            }, "-=0.6")
+
+            // 4. Pop in metric cards
+            .from(".metric-card", {
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "back.out(1.2)"
+            }, "-=0.4")
+
+            // 5. Slide up complex panels
+            .from(".panel", {
+                y: 40,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.15,
+                ease: "power3.out"
+            }, "-=0.4")
+            
+            // 6. Animate chart bars growing from bottom
+            .from(".bar-inner", {
+                height: 0,
+                duration: 1,
+                stagger: 0.05,
+                ease: "elastic.out(1, 0.8)"
+            }, "-=0.4");
+        });
+    </script>
+</body>
+</html>

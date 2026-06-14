@@ -7,6 +7,13 @@ import { FigmaWorkspace } from "@/components/sections/figma/FigmaWorkspace";
 const DESIGN_W = 1100;
 const DESIGN_H = 680;
 
+// Environmental star dots — deterministic so SSR and client agree.
+const ENV_STARS = Array.from({ length: 12 }, (_, i) => ({
+  left: `${(i * 53 + 7) % 100}%`,
+  top: `${(i * 31 + 11) % 100}%`,
+  d: `${-((i * 1.7) % 6)}s`,
+}));
+
 /**
  * Section 2 — The Problem.
  *
@@ -16,13 +23,13 @@ const DESIGN_H = 680;
  *   1. While the Hero lifts and fades, the workspace screen is already
  *      rising in from the bottom of the viewport (large + close).
  *   2. It pins dead-centre, scales down and settles 100%.
- *   3. It holds, then slides to the right and scales down further.
- *   4. The heading reveals on the left, then the body + principles below.
+ *   3. It holds briefly, then slides to the right and scales down.
+ *   4. The heading reveals on the left, then the body below — and the
+ *      moment the composition completes, continued scrolling moves the
+ *      story on to the next chapter (no inactive waiting states).
  *
- * The `["start end", "end end"]` offset is what creates the overlap: the
- * scene's progress starts climbing the instant the page does, so the
- * card's entrance is choreographed against the Hero's exit rather than
- * waiting for it to finish.
+ * A persistent environmental layer (dotted rings, guide lines, stars,
+ * streaks) keeps the space alive behind the whole sequence.
  */
 export function Section2Problem() {
   const reduced = useReducedMotion();
@@ -62,28 +69,40 @@ export function Section2Problem() {
     offset: ["start end", "end end"],
   });
 
+  // Exit — the whole scene dims as it leaves the top of the viewport,
+  // handing focus to the next chapter (site-wide fade system).
+  const { scrollYProgress: pExit } = useScroll({
+    target: sectionRef,
+    offset: ["end end", "end start"],
+  });
+  const sceneOpacity = useTransform(pExit, [0.05, 0.55], [1, 0]);
+
   // Card appears as it rises; never dims (it stays a crisp visual).
   const cardOpacity = useTransform(p, [0.06, 0.16], [0, 1]);
   const rotateX = useTransform(p, [0.18, 0.5], [8, 0]);
 
   // Scale: oversized while rising → brief settle centre → shrink as it
-  // parks. Pin lands ~0.53, so it settles right as it reaches centre.
-  const scaleWide = useTransform(p, [0.4, 0.53, 0.58, 0.7], [1.12, 0.95, 0.95, 0.56]);
-  const scaleNarrow = useTransform(p, [0.4, 0.53, 0.58, 0.7], [1.05, 0.85, 0.85, 0.5]);
+  // parks. With a 150vh section the pin lands ~0.67, so it settles right
+  // as it reaches centre, then parks immediately — larger than before
+  // and pushed harder to the viewport edge for a more immersive frame.
+  const scaleWide = useTransform(p, [0.45, 0.67, 0.7, 0.82], [1.14, 0.96, 0.96, 0.62]);
+  const scaleNarrow = useTransform(p, [0.45, 0.67, 0.7, 0.82], [1.05, 0.86, 0.86, 0.54]);
 
   // Park position: slide right (wide) or up (narrow) — quick, right after
   // it centres.
-  const xWide = useTransform(p, [0.58, 0.7], ["0%", "26%"]);
-  const yNarrow = useTransform(p, [0.58, 0.7], ["0%", "-33%"]);
+  const xWide = useTransform(p, [0.7, 0.82], ["0%", "28%"]);
+  const yNarrow = useTransform(p, [0.7, 0.82], ["0%", "-33%"]);
 
-  // Copy reveals in a single quick beat as the card parks.
-  const textOpacity = useTransform(p, [0.6, 0.72], [0, 1]);
-  const textY = useTransform(p, [0.6, 0.72], [26, 0]);
+  // Copy reveals in a single quick beat as the card parks; everything is
+  // resolved by ~0.88 so the remaining scroll flows straight into the
+  // next section.
+  const textOpacity = useTransform(p, [0.74, 0.88], [0, 1]);
+  const textY = useTransform(p, [0.74, 0.88], [26, 0]);
 
   let figStyle: Record<string, unknown>;
   if (reduced) {
     figStyle = {
-      transform: isWide ? "translateX(26%) scale(0.56)" : "translateY(-33%) scale(0.5)",
+      transform: isWide ? "translateX(28%) scale(0.62)" : "translateY(-33%) scale(0.54)",
       opacity: 1,
     };
   } else if (isWide) {
@@ -99,9 +118,59 @@ export function Section2Problem() {
       ref={sectionRef}
       id="problem"
       className="problem-section"
-      style={{ minHeight: reduced ? "100svh" : "190vh" }}
+      style={{ minHeight: reduced ? "100svh" : "150vh" }}
     >
-      <div ref={stickyRef} className="problem-sticky">
+      <motion.div
+        ref={stickyRef}
+        className="problem-sticky"
+        style={reduced ? undefined : { opacity: sceneOpacity }}
+      >
+        {/* Environmental motion — persists through the whole sequence. */}
+        <div className="problem-env" aria-hidden>
+          <span
+            className="penv-ring"
+            style={{ width: "44vmin", height: "44vmin", left: "6%", top: "10%" }}
+          />
+          <span
+            className="penv-ring"
+            style={{
+              width: "26vmin",
+              height: "26vmin",
+              right: "9%",
+              bottom: "12%",
+              animationDuration: "70s",
+              animationDirection: "reverse",
+            }}
+          />
+          <span
+            className="penv-ring"
+            style={{
+              width: "70vmin",
+              height: "70vmin",
+              right: "-14%",
+              top: "-20%",
+              animationDuration: "140s",
+            }}
+          />
+          <span className="penv-line" style={{ top: "22%", left: "4%", width: "20%" }} />
+          <span className="penv-line" style={{ bottom: "18%", right: "5%", width: "16%" }} />
+          {ENV_STARS.map((s, i) => (
+            <span
+              key={i}
+              className="penv-star"
+              style={{ left: s.left, top: s.top, ["--d" as string]: s.d }}
+            />
+          ))}
+          <span
+            className="penv-streak"
+            style={{ top: "16%", right: "14%", ["--d" as string]: "2s" }}
+          />
+          <span
+            className="penv-streak"
+            style={{ top: "62%", left: "18%", ["--d" as string]: "7.5s" }}
+          />
+        </div>
+
         {/* Workspace — the rising design canvas */}
         <motion.div className="problem-figma" style={figStyle}>
           <div className="problem-fit" style={{ transform: `scale(${fit})` }}>
@@ -112,20 +181,20 @@ export function Section2Problem() {
         {/* Copy — left column on desktop, lower-centre on mobile */}
         <div className="problem-content">
           <motion.div className="problem-content-group" style={textStyle}>
-            <p className="problem-eyebrow">But every story starts with a problem</p>
-            <h2 className="problem-title">
+            <p className="problem-eyebrow">The Problem</p>
+            <h2 className="text-section problem-title">
               Why Great Products Need More Than Great Interfaces
             </h2>
             <p className="text-body problem-body">
               Most products don&rsquo;t fail because of bad technology or poor
               visuals. They fail because they overlook the people they&rsquo;re
               built for. Great design isn&rsquo;t just about making things look
-              better&mdash;it&rsquo;s about understanding how people think, feel,
+              better. It&rsquo;s about understanding how people think, feel,
               and make decisions.
             </p>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

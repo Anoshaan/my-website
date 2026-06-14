@@ -20,7 +20,7 @@ const beliefs: { icon: AnimatedIconName; title: string; body: string }[] = [
   {
     icon: "motion",
     title: "Behavior over decoration.",
-    body: "Motion, color, and typography exist to make interfaces more usable — not to make them more impressive.",
+    body: "Motion, color, and typography exist to make interfaces more usable, not to make them more impressive.",
   },
   {
     icon: "network",
@@ -40,7 +40,7 @@ const beliefs: { icon: AnimatedIconName; title: string; body: string }[] = [
   {
     icon: "radar",
     title: "Quality is measurable.",
-    body: "Adoption rate, override count, contribution velocity — design systems can and should be quantified.",
+    body: "Adoption rate, override count, contribution velocity: design systems can and should be quantified.",
   },
 ];
 

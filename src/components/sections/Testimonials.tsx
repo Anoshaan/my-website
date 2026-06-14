@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, motionValue, useReducedMotion } from "motion/react";
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/animations/Reveal";
 
 type CategoryName =
   | "Founder"
@@ -211,13 +212,14 @@ function LinkedInIcon({ size = 14 }: { size?: number }) {
    centre while the previous centre eases back to its orbit slot.
    ---------------------------------------------------------------- */
 
-const ORBIT_SCALE = 0.26; // orbit avatar size relative to the centre avatar
+const ORBIT_SCALE = 0.16; // orbit avatar size relative to the centre avatar — small "planets" against a large central sun
 
-// Ring assignment per testimonial index (3 + 4 + 4 = 11).
+// Ring assignment per testimonial index (3 + 4 + 4 = 11). Larger paths —
+// the outer rings are allowed to run past the viewport edge.
 const RINGS = [
-  { rf: 0.25, dir: 1, spd: 0.9, offset: 0 },
-  { rf: 0.36, dir: -1, spd: 0.62, offset: Math.PI / 4 },
-  { rf: 0.44, dir: 1, spd: 0.46, offset: Math.PI / 8 },
+  { rf: 0.27, dir: 1, spd: 0.9, offset: 0 },
+  { rf: 0.39, dir: -1, spd: 0.62, offset: Math.PI / 4 },
+  { rf: 0.5, dir: 1, spd: 0.46, offset: Math.PI / 8 },
 ];
 const RING_INDEX = [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2];
 const RING_COUNT = [3, 4, 4];
@@ -259,7 +261,8 @@ function OrbitField({
     if (!el) return;
     const measure = () => {
       const S = Math.min(el.clientWidth, el.clientHeight);
-      setNodeSize(S * 0.34);
+      // Featured avatar reads larger; orbit radii scale with the stage.
+      setNodeSize(S * 0.36);
       dims.current.radii = RINGS.map((r) => r.rf * S);
     };
     measure();
@@ -313,11 +316,11 @@ function OrbitField({
 
   return (
     <div ref={stageRef} className="orbit-stage" style={{ ["--node-size" as string]: `${nodeSize}px` }}>
-      {/* Faint orbit rings for depth. */}
+      {/* Dotted orbital paths — inner strongest, outer most subtle. */}
       {RINGS.map((r, k) => (
         <span
           key={k}
-          className="orbit-ring"
+          className={`orbit-ring orbit-ring-${k}`}
           aria-hidden
           style={{ width: `${r.rf * 200}%`, height: `${r.rf * 200}%` }}
         />
@@ -332,7 +335,7 @@ function OrbitField({
             aria-label={`Show testimonial from ${t.name}`}
             aria-pressed={isActive}
             onClick={() => onSelect(i)}
-            className={`orbit-node ${isActive ? "is-active" : ""}`}
+            className={`orbit-node is-ring-${RING_INDEX[i]} ${isActive ? "is-active" : ""}`}
             style={{
               x: nodes.current[i].x,
               y: nodes.current[i].y,
@@ -365,24 +368,25 @@ function OrbitField({
 }
 
 function quoteSizeFor(len: number) {
-  // Reduced one notch — short quotes used to read at ~26px; that felt
-  // shouty next to the heading and the name/role. Cap held at 21px.
-  if (len > 360) return "clamp(14px, 1vw, 16px)";
-  if (len > 260) return "clamp(15px, 1.1vw, 17px)";
-  if (len > 160) return "clamp(16px, 1.2vw, 19px)";
-  return "clamp(17px, 1.3vw, 21px)";
+  // Scaled up one notch — the quote is the primary reading content of
+  // the chapter and earns real presence at the wider measure.
+  if (len > 360) return "clamp(16px, 1.15vw, 19px)";
+  if (len > 260) return "clamp(17px, 1.3vw, 21px)";
+  if (len > 160) return "clamp(18px, 1.45vw, 23px)";
+  return "clamp(19px, 1.6vw, 26px)";
 }
 
 /**
- * Featured testimonial content — name, role, quote, and a LinkedIn-blue
- * button. The portrait now lives in the orbit field (centre avatar), so
- * this column is content only. Wording + type are unchanged; the column
- * is left-aligned to match the new split layout.
+ * Featured testimonial content — reading order follows the reference:
+ * name → designation → quote → LinkedIn button. The portrait lives in
+ * the orbit field (centre avatar), so this column is content only.
+ * The LinkedIn button uses the site's secondary pill styling with
+ * LinkedIn blue kept to the icon accent.
  */
 function FeaturedContent({ index }: { index: number }) {
   const t = testimonials[index];
   const quoteSize = useMemo(
-    () => (t ? quoteSizeFor(t.quote.length) : "clamp(18px, 1.4vw, 21px)"),
+    () => (t ? quoteSizeFor(t.quote.length) : "clamp(19px, 1.5vw, 24px)"),
     [t]
   );
 
@@ -411,32 +415,32 @@ function FeaturedContent({ index }: { index: number }) {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="featured-inner"
         >
-          {/* Name + role, with the LinkedIn button beside it. */}
-          <div className="orbit-meta-row">
-            <div className="featured-name-block orbit-name-block">
-              <span className="featured-name">{t.name}</span>
-              <span className="featured-role">{t.role}</span>
-            </div>
-            <a
-              href={t.linkedIn}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Open ${t.name}'s LinkedIn profile`}
-              data-cursor-precise
-              className="orbit-linkedin-btn"
-            >
-              <LinkedInIcon size={16} />
-              <span>LinkedIn</span>
-            </a>
-          </div>
-
-          {/* Quote */}
+          {/* Quote leads — it is the substance the visitor came to read. */}
           <p className="featured-quote" style={{ fontSize: quoteSize }}>
             <span className="featured-quote-mark-inline" aria-hidden>
               &ldquo;
             </span>
             {t.quote}
           </p>
+
+          {/* Attribution — name, then role, beneath the quote. */}
+          <div className="featured-name-block orbit-name-block">
+            <span className="featured-name">{t.name}</span>
+            <span className="featured-role">{t.role}</span>
+          </div>
+
+          {/* LinkedIn — directly beneath the testimonial text. */}
+          <a
+            href={t.linkedIn}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${t.name}'s LinkedIn profile`}
+            data-cursor-precise
+            className="orbit-linkedin-btn"
+          >
+            <LinkedInIcon size={16} />
+            <span>LinkedIn</span>
+          </a>
         </motion.div>
       </AnimatePresence>
     </div>
@@ -560,26 +564,40 @@ export function Testimonials() {
   }, []);
 
   return (
-    <section className="testimonials-section py-[clamp(80px,10vw,140px)] relative">
-      <Container size="wide">
+    <section className="testimonials-section relative min-h-[100svh] flex items-center py-[clamp(56px,7vw,104px)]">
+      <Container size="wide" className="w-full">
+        {/* Section entry point — gives the social proof a clear, scannable
+            header so the visitor knows what they're looking at before the
+            orbit draws the eye. */}
+        <Reveal duration={0.9}>
+          <header className="orbit-header">
+            <p className="section-label">Testimonials</p>
+            <h2 className="text-section text-white orbit-title">
+              What People Say About Working With Me
+            </h2>
+            <p className="text-body orbit-supporting">
+              The experiences of founders, leads, and teams I&rsquo;ve
+              collaborated with across products and projects.
+            </p>
+          </header>
+        </Reveal>
+
         <div className="orbit-layout">
-          {/* LEFT — galaxy / orbit of avatars, active in the centre */}
+          {/* LEFT — orbital system, pushed toward the viewport edge */}
           <div className="orbit-stage-col">
             <OrbitField active={index} onSelect={setIndex} />
           </div>
 
-          {/* RIGHT — testimonial content (name, role, quote, LinkedIn) */}
+          {/* RIGHT — name → designation → quote → LinkedIn → role nav */}
           <div className="orbit-content-col">
             <FeaturedContent index={index} />
+            <div className="orbit-nav-wrap">
+              <CategoryNav
+                activeCategory={activeMeta.name}
+                onSelect={jumpToCategory}
+              />
+            </div>
           </div>
-        </div>
-
-        {/* BOTTOM — category nav / progress bar (unchanged, repositioned) */}
-        <div className="orbit-nav-wrap">
-          <CategoryNav
-            activeCategory={activeMeta.name}
-            onSelect={jumpToCategory}
-          />
         </div>
       </Container>
     </section>

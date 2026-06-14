@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/Button";
  */
 
 const paragraphs = [
-  "I think in systems. Most of what I build — interfaces, motion, the small behaviors that make a product feel intentional — comes from looking at the whole structure, not just the surface.",
+  "I think in systems. Interfaces, motion, and the small behaviors that make a product feel intentional all come from looking at the whole structure, not just the surface.",
   "My interest sits where design meets logic: how people behave inside an experience, how interactions are choreographed, and how a system holds together as it scales. I'm drawn to interfaces that feel quietly intelligent rather than loud.",
-  "I work across product, motion, and emerging technology — and I keep experimenting outside the screen so the work on it stays sharp.",
+  "I work across product, motion, and emerging technology, and I keep experimenting outside the screen so the work on it stays sharp.",
 ];
 
 export function AboutIntro() {

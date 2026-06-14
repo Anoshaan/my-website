@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+} from "motion/react";
 
 const links = [
   { label: "Labs", href: "/labs" },
@@ -12,26 +18,39 @@ const links = [
 
 /**
  * Inline page footer — appears at the natural end of each page, not pinned
- * to the viewport. The pill nav keeps the same visual styling as before;
- * the wrapper just sits in normal document flow.
+ * to the viewport. It reveals with a slight delay after the closing CTA
+ * settles (scroll-linked, so it works in both directions) and anchors the
+ * very bottom of the page — nothing scrolls past it.
  */
 export function Footer() {
+  const ref = useRef<HTMLElement>(null);
+  const reduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end end"],
+  });
+  // Late ramp = the "slight delay" after the CTA section has settled.
+  const opacity = useTransform(scrollYProgress, [0.35, 0.95], [0, 1]);
+  const y = useTransform(scrollYProgress, [0.35, 0.95], [22, 0]);
+
   const goToTop = useCallback(() => {
     if (typeof window === "undefined") return;
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   return (
-    <footer
+    <motion.footer
+      ref={ref}
       aria-label="Site footer"
-      className="relative z-10 flex items-center justify-center pt-16 pb-10 sm:pt-24 sm:pb-14 px-3"
+      className="relative z-10 flex items-center justify-center pt-10 pb-10 sm:pt-12 sm:pb-12 px-3"
+      style={reduced ? undefined : { opacity, y }}
     >
       <nav
         aria-label="Footer"
         className="flex items-center gap-3 sm:gap-5 px-3 sm:px-5 py-2 rounded-full bg-black/55 backdrop-blur-[24px] saturate-[140%] border border-white/[0.10] shadow-[0_10px_36px_rgba(0,0,0,0.45)] max-w-[calc(100vw-16px)]"
       >
         <span className="hidden md:inline-flex items-center text-sm font-medium tracking-tight text-white/85 whitespace-nowrap px-2">
-          Anoshaan&nbsp;—&nbsp;Product Designer
+          Anoshaan&nbsp;·&nbsp;Product Designer
         </span>
 
         <span className="hidden md:inline-block h-3.5 w-px bg-white/[0.14]" aria-hidden />
@@ -72,6 +91,6 @@ export function Footer() {
           </svg>
         </button>
       </nav>
-    </footer>
+    </motion.footer>
   );
 }

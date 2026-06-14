@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   motion,
   useScroll,
@@ -13,7 +13,9 @@ import { Reveal } from "@/components/animations/Reveal";
 /**
  * Next Mission — closing scene. Calm, centered, cinematic. Soft
  * atmospheric purple wash, sparse stars, no hard shapes or rings.
- * One CTA. Headline rises + scales gently on entrance.
+ * One CTA. Headline rises + scales gently on entrance. When the
+ * journey nears its end the page magnetically settles on the final
+ * frame (CTA centered, footer anchored beneath — nothing after it).
  */
 export function NextMission() {
   const ref = useRef<HTMLElement>(null);
@@ -33,11 +35,55 @@ export function NextMission() {
     [reduced ? 1 : 0.96, 1]
   );
 
+  // Magnetic settle — once the closing scene is mostly in frame and the
+  // user pauses, glide the page to its final resting frame so the CTA
+  // centres and the footer completes the story.
+  useEffect(() => {
+    if (reduced) return;
+    let timer: ReturnType<typeof setTimeout>;
+    let snapping = false;
+
+    const snap = () => {
+      if (snapping) return;
+      const lenis = window.__lenis;
+      const el = ref.current;
+      if (!lenis || !el) return;
+      const end =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const rect = el.getBoundingClientRect();
+      // Only when the section owns most of the frame and we're not
+      // already resting at the end.
+      const remaining = end - window.scrollY;
+      if (rect.top > window.innerHeight * 0.45) return;
+      if (remaining < 6 || remaining > window.innerHeight * 0.6) return;
+      snapping = true;
+      lenis.scrollTo(end, {
+        duration: 0.85,
+        easing: (x: number) => 1 - Math.pow(1 - x, 3),
+        lock: true,
+        onComplete: () => {
+          snapping = false;
+        },
+      });
+    };
+
+    const onScroll = () => {
+      if (snapping) return;
+      clearTimeout(timer);
+      timer = setTimeout(snap, 160);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [reduced]);
+
   return (
     <section
       ref={ref}
       id="contact"
-      className="next-mission-section section-pad text-center"
+      className="next-mission-section text-center"
     >
       {/* Atmosphere — a single soft purple aura that fades smoothly into
           the page background. Stars are handled globally by the fixed
@@ -45,8 +91,12 @@ export function NextMission() {
       <div className="next-mission-aura" aria-hidden />
 
       <Container size="default" className="next-mission-content">
+        <Reveal>
+          <p className="next-mission-eyebrow">Contact</p>
+        </Reveal>
+
         <motion.h2
-          className="text-section text-white heading-sheen next-mission-title"
+          className="text-section text-white next-mission-title"
           style={{ y: headingY, scale: headingScale }}
         >
           I&apos;m Ready for the Next Mission.

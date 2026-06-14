@@ -1,0 +1,604 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Cannabis Commerce</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        /* Premium Botanical Color Tokens */
+        :root {
+            --brand-dark: #1A2E24;     /* Deep Forest Green */
+            --brand-primary: #2C4A3B;  /* Primary Green */
+            --brand-light: #E9EFEA;    /* Soft Sage Tint */
+            --brand-accent: #D4AF37;   /* Muted Gold */
+            --bg-page: #FDFDFB;        /* Warm Off-White */
+            --surface: #FFFFFF;
+            --text-main: #222222;
+            --text-muted: #666666;
+            --border-subtle: #E2E4E2;
+            
+            /* Strain Colors */
+            --indica: #6B5B95;
+            --sativa: #D66E43;
+            --hybrid: #5B8A72;
+            --cbd: #4A90E2;
+
+            --shadow-float: 0 25px 50px -12px rgba(26, 46, 36, 0.25);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-sans);
+            background: linear-gradient(135deg, #E9EFEA 0%, #D1DDD4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100%;
+            max-width: 1440px;
+            height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* =========================================
+           LAYER 1: WEB DESKTOP (DISCOVERY)
+           ========================================= */
+        .browser-window {
+            width: 92%;
+            max-width: 1280px;
+            height: 100%;
+            background-color: var(--bg-page);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
+            position: relative;
+        }
+
+        /* Compliance Banner */
+        .compliance-banner {
+            background: #111111;
+            color: #AAAAAA;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            padding: 6px 16px;
+            font-weight: 500;
+        }
+
+        .browser-header {
+            height: 48px;
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .window-controls { display: flex; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot.close { background: #E0E0E0; }
+        .dot.min { background: #E0E0E0; }
+        .dot.max { background: #E0E0E0; }
+
+        /* Web Nav */
+        .web-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .brand-logo {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            color: var(--brand-dark);
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links { display: flex; gap: 32px; font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
+        .nav-actions { display: flex; gap: 20px; color: var(--brand-dark); }
+
+        .web-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Filters Sidebar */
+        .web-sidebar {
+            width: 260px;
+            padding: 32px 40px;
+            border-right: 1px solid var(--border-subtle);
+            background: var(--surface);
+            overflow-y: auto;
+        }
+
+        .filter-group { margin-bottom: 32px; }
+        .filter-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; margin-bottom: 16px; }
+        
+        .filter-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 0.9rem; color: var(--text-main); cursor: pointer; }
+        .checkbox { width: 18px; height: 18px; border: 1px solid var(--border-subtle); border-radius: 4px; }
+        .checkbox.active { background: var(--brand-primary); border-color: var(--brand-primary); display: flex; align-items: center; justify-content: center; }
+        .checkbox.active::after { content: "âœ“"; color: white; font-size: 12px; }
+
+        /* Product Grid Area */
+        .web-main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: var(--bg-page);
+        }
+
+        .page-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
+        .page-header h1 { font-family: var(--font-serif); font-size: 2.5rem; color: var(--brand-dark); }
+        
+        .trust-badges { display: flex; gap: 16px; }
+        .trust-badge { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--brand-primary); background: var(--brand-light); padding: 6px 12px; border-radius: 20px; font-weight: 500; }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); border-color: var(--brand-light); }
+
+        .card-img-wrap {
+            height: 200px;
+            background: var(--brand-light);
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .strain-tag {
+            position: absolute;
+            top: 12px; left: 12px;
+            font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            padding: 4px 8px; border-radius: 4px; color: white;
+        }
+        .tag-indica { background: var(--indica); }
+        .tag-sativa { background: var(--sativa); }
+        .tag-hybrid { background: var(--hybrid); }
+
+        .product-brand { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .product-title { font-family: var(--font-serif); font-size: 1.1rem; color: var(--brand-dark); margin-bottom: 8px; line-height: 1.3; }
+        .product-stats { display: flex; gap: 12px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; }
+        .stat { display: flex; align-items: center; gap: 4px; }
+        
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 16px; }
+        .price { font-size: 1.1rem; font-weight: 600; color: var(--brand-dark); }
+        .add-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--brand-light); color: var(--brand-primary); display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: background 0.2s; }
+        .add-btn:hover { background: var(--brand-primary); color: white; }
+
+        /* =========================================
+           LAYER 2: TABLET DEVICE (PRODUCT DETAIL)
+           ========================================= */
+        .tablet-device {
+            position: absolute;
+            bottom: -2%;
+            right: 4%;
+            width: 540px;
+            height: 780px;
+            background: var(--surface);
+            border-radius: 24px;
+            box-shadow: var(--shadow-float);
+            border: 14px solid #111; /* Tablet Bezel */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            opacity: 0;
+            transform: translateX(50px) rotate(-2deg);
+        }
+
+        .tablet-camera {
+            position: absolute;
+            top: -7px; left: 50%;
+            transform: translateX(-50%);
+            width: 6px; height: 6px;
+            background: #333;
+            border-radius: 50%;
+            z-index: 60;
+        }
+
+        .tablet-content {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+            background: var(--bg-page);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* PDP Header Image */
+        .pdp-hero {
+            height: 320px;
+            background: var(--brand-primary);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pdp-hero::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+            background: linear-gradient(to top, var(--bg-page), transparent);
+        }
+        
+        .tablet-nav {
+            position: absolute; top: 0; left: 0; right: 0;
+            padding: 20px; display: flex; justify-content: space-between; color: white; z-index: 10;
+        }
+        .icon-btn { background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        /* PDP Info */
+        .pdp-body { padding: 0 32px 100px 32px; margin-top: -20px; position: relative; z-index: 5; }
+        
+        .pdp-brand-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .pdp-brand { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        
+        .pdp-title { font-family: var(--font-serif); font-size: 2.2rem; color: var(--brand-dark); line-height: 1.1; margin-bottom: 16px; }
+        
+        .pdp-badges { display: flex; gap: 12px; margin-bottom: 24px; }
+        .badge-pill { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-indica { background: rgba(107, 91, 149, 0.1); color: var(--indica); }
+        .badge-thc { background: var(--brand-light); color: var(--brand-primary); border: 1px solid var(--border-subtle); }
+
+        .pdp-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 32px; }
+
+        /* Education & Effects section */
+        .edu-section { margin-bottom: 32px; }
+        .edu-title { font-size: 0.9rem; font-weight: 600; color: var(--brand-dark); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px; }
+        
+        .effects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .effect-card { background: var(--surface); border: 1px solid var(--border-subtle); padding: 16px 12px; border-radius: 8px; text-align: center; }
+        .effect-icon { font-size: 24px; color: var(--brand-primary); margin-bottom: 8px; }
+        .effect-name { font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
+
+        .terpene-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .t-name { width: 100px; font-size: 0.85rem; color: var(--text-muted); }
+        .t-track { flex: 1; height: 6px; background: var(--border-subtle); border-radius: 3px; overflow: hidden; }
+        .t-fill { height: 100%; background: var(--brand-accent); border-radius: 3px; }
+
+        /* Sticky Checkout Bar */
+        .tablet-bottom-bar {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: var(--surface); border-top: 1px solid var(--border-subtle);
+            padding: 20px 32px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.03); z-index: 20;
+        }
+        
+        .qty-selector { display: flex; align-items: center; border: 1px solid var(--border-subtle); border-radius: 30px; padding: 4px; }
+        .qty-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-page); border: none; cursor: pointer; color: var(--text-main); }
+        .qty-val { width: 40px; text-align: center; font-weight: 600; font-size: 1rem; }
+
+        .btn-checkout { background: var(--brand-primary); color: white; border: none; padding: 0 32px; height: 48px; border-radius: 30px; font-weight: 500; font-size: 1rem; display: flex; align-items: center; gap: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(44, 74, 59, 0.3); }
+
+    </style>
+    <style id="labs-embed-reset">
+      html, body { background: transparent !important; background-color: transparent !important; padding: 0 !important; margin: 0 !important; }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+        
+        <!-- LAYER 1: WEB DESKTOP (DISCOVERY & FILTERING) -->
+        <div class="browser-window">
+            <div class="compliance-banner">
+                Warning: For use by adults 21 and older. Keep out of reach of children.
+            </div>
+            <div class="browser-header">
+                <div class="window-controls">
+                    <div class="dot close"></div>
+                    <div class="dot min"></div>
+                    <div class="dot max"></div>
+                </div>
+            </div>
+
+            <!-- Global Nav -->
+            <nav class="web-nav">
+                <div class="brand-logo">
+                    <span class="material-symbols-outlined" style="color: var(--brand-accent);">eco</span>
+                    AURA
+                </div>
+                <div class="nav-links">
+                    <span style="color: var(--brand-primary); font-weight: 600;">Shop Menu</span>
+                    <span>Brands</span>
+                    <span>Education</span>
+                    <span>Dispensaries</span>
+                </div>
+                <div class="nav-actions">
+                    <span class="material-symbols-outlined">search</span>
+                    <span class="material-symbols-outlined">person</span>
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                </div>
+            </nav>
+
+            <div class="web-body">
+                <!-- Sidebar Filters -->
+                <aside class="web-sidebar">
+                    <div class="filter-group">
+                        <div class="filter-title">Category</div>
+                        <div class="filter-item"><div class="checkbox active"></div> Premium Flower</div>
+                        <div class="filter-item"><div class="checkbox"></div> Pre-Rolls</div>
+                        <div class="filter-item"><div class="checkbox"></div> Vaporizers</div>
+                        <div class="filter-item"><div class="checkbox"></div> Edibles & Gummies</div>
+                        <div class="filter-item"><div class="checkbox"></div> Concentrates</div>
+                    </div>
+
+                    <div class="filter-group">
+                        <div class="filter-title">Strain Type</div>
+                        <div class="filter-item"><div class="checkbox active"></div> Indica (Relax)</div>
+                        <div class="filter-item"><div class="checkbox"></div> Sativa (Elevate)</div>
+                        <div class="filter-item"><div class="checkbox active"></div> Hybrid (Balance)</div>
+                        <div class="filter-item"><div class="checkbox"></div> CBD (Relief)</div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="filter-title">Potency (THC)</div>
+                        <div class="filter-item"><div class="checkbox"></div> Low (&lt; 15%)</div>
+                        <div class="filter-item"><div class="checkbox"></div> Medium (15% - 25%)</div>
+                        <div class="filter-item"><div class="checkbox active"></div> High (25%+)</div>
+                    </div>
+                </aside>
+
+                <!-- Product Grid -->
+                <main class="web-main">
+                    <div class="page-header">
+                        <div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Menu / Premium Flower</p>
+                            <h1>Curated Reserve</h1>
+                        </div>
+                        <div class="trust-badges">
+                            <div class="trust-badge"><span class="material-symbols-outlined" style="font-size: 16px;">verified_user</span> 100% Lab Tested</div>
+                            <div class="trust-badge"><span class="material-symbols-outlined" style="font-size: 16px;">compost</span> Sustainably Grown</div>
+                        </div>
+                    </div>
+
+                    <div class="product-grid">
+                        <!-- Product Card 1 -->
+                        <div class="product-card">
+                            <div class="card-img-wrap">
+                                <span class="strain-tag tag-indica">Indica</span>
+                                <span class="material-symbols-outlined" style="font-size: 64px; color: var(--brand-primary); opacity: 0.2;">spa</span>
+                            </div>
+                            <div class="product-brand">Crescent Farms</div>
+                            <div class="product-title">Northern Lights Reserve</div>
+                            <div class="product-stats">
+                                <span class="stat"><span class="material-symbols-outlined" style="font-size: 14px;">science</span> 26.4% THC</span>
+                                <span class="stat">0.2% CBD</span>
+                            </div>
+                            <div class="card-footer">
+                                <span class="price">$45.00 <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 400;">/ 3.5g</span></span>
+                                <button class="add-btn"><span class="material-symbols-outlined" style="font-size: 18px;">add</span></button>
+                            </div>
+                        </div>
+
+                        <!-- Product Card 2 -->
+                        <div class="product-card">
+                            <div class="card-img-wrap">
+                                <span class="strain-tag tag-hybrid">Hybrid</span>
+                                <span class="material-symbols-outlined" style="font-size: 64px; color: var(--brand-primary); opacity: 0.2;">spa</span>
+                            </div>
+                            <div class="product-brand">Aura Originals</div>
+                            <div class="product-title">Gelato #33 Premium</div>
+                            <div class="product-stats">
+                                <span class="stat"><span class="material-symbols-outlined" style="font-size: 14px;">science</span> 22.1% THC</span>
+                                <span class="stat">1.0% CBD</span>
+                            </div>
+                            <div class="card-footer">
+                                <span class="price">$50.00 <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 400;">/ 3.5g</span></span>
+                                <button class="add-btn"><span class="material-symbols-outlined" style="font-size: 18px;">add</span></button>
+                            </div>
+                        </div>
+
+                        <!-- Product Card 3 -->
+                        <div class="product-card">
+                            <div class="card-img-wrap">
+                                <span class="strain-tag tag-sativa">Sativa</span>
+                                <span class="material-symbols-outlined" style="font-size: 64px; color: var(--brand-primary); opacity: 0.2;">spa</span>
+                            </div>
+                            <div class="product-brand">Highland Cultivation</div>
+                            <div class="product-title">Sour Diesel Whole Flower</div>
+                            <div class="product-stats">
+                                <span class="stat"><span class="material-symbols-outlined" style="font-size: 14px;">science</span> 24.8% THC</span>
+                                <span class="stat">0.1% CBD</span>
+                            </div>
+                            <div class="card-footer">
+                                <span class="price">$40.00 <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 400;">/ 3.5g</span></span>
+                                <button class="add-btn"><span class="material-symbols-outlined" style="font-size: 18px;">add</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- LAYER 2: TABLET (DETAILED PRODUCT PAGE) -->
+        <div class="tablet-device">
+            <div class="tablet-camera"></div>
+            
+            <div class="tablet-content">
+                <div class="tablet-nav">
+                    <div class="icon-btn"><span class="material-symbols-outlined">arrow_back</span></div>
+                    <div class="icon-btn"><span class="material-symbols-outlined">favorite_border</span></div>
+                </div>
+
+                <div class="pdp-hero">
+                    <span class="material-symbols-outlined" style="font-size: 120px; color: var(--surface); opacity: 0.3;">potted_plant</span>
+                </div>
+
+                <div class="pdp-body">
+                    <div class="pdp-brand-row">
+                        <span class="pdp-brand">Crescent Farms</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+                            <span class="material-symbols-outlined" style="font-size: 14px; color: var(--brand-accent);">star</span> 4.9 (128)
+                        </span>
+                    </div>
+                    
+                    <h1 class="pdp-title">Northern Lights Reserve</h1>
+                    
+                    <div class="pdp-badges">
+                        <span class="badge-pill badge-indica">Indica</span>
+                        <span class="badge-pill badge-thc">26.4% THC</span>
+                        <span class="badge-pill badge-thc">0.2% CBD</span>
+                    </div>
+
+                    <p class="pdp-desc">
+                        A highly sought-after pure indica strain known for its resinous buds and fast flowering. It produces a euphoric effect that settles firmly throughout the body, relaxing muscles and easing the mind.
+                    </p>
+
+                    <!-- Education Sections -->
+                    <div class="edu-section">
+                        <div class="edu-title">Reported Effects</div>
+                        <div class="effects-grid">
+                            <div class="effect-card">
+                                <div class="effect-icon"><span class="material-symbols-outlined">self_improvement</span></div>
+                                <div class="effect-name">Relaxed</div>
+                            </div>
+                            <div class="effect-card">
+                                <div class="effect-icon"><span class="material-symbols-outlined">bedtime</span></div>
+                                <div class="effect-name">Sleepy</div>
+                            </div>
+                            <div class="effect-card">
+                                <div class="effect-icon"><span class="material-symbols-outlined">sentiment_very_satisfied</span></div>
+                                <div class="effect-name">Happy</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="edu-section">
+                        <div class="edu-title">Top Terpenes</div>
+                        <div class="terpene-bar">
+                            <span class="t-name">Myrcene</span>
+                            <div class="t-track"><div class="t-fill" style="width: 75%;"></div></div>
+                            <span style="font-size: 0.75rem; font-weight: 600;">1.2%</span>
+                        </div>
+                        <div class="terpene-bar">
+                            <span class="t-name">Caryophyllene</span>
+                            <div class="t-track"><div class="t-fill" style="width: 45%;"></div></div>
+                            <span style="font-size: 0.75rem; font-weight: 600;">0.8%</span>
+                        </div>
+                        <div class="terpene-bar">
+                            <span class="t-name">Pinene</span>
+                            <div class="t-track"><div class="t-fill" style="width: 25%;"></div></div>
+                            <span style="font-size: 0.75rem; font-weight: 600;">0.4%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tablet Sticky Checkout -->
+            <div class="tablet-bottom-bar">
+                <div class="qty-selector">
+                    <button class="qty-btn"><span class="material-symbols-outlined" style="font-size: 16px;">remove</span></button>
+                    <div class="qty-val">1</div>
+                    <button class="qty-btn"><span class="material-symbols-outlined" style="font-size: 16px;">add</span></button>
+                </div>
+                <button class="btn-checkout">
+                    Add to Order <span style="opacity: 0.5;">|</span> $45.00
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tl = gsap.timeline();
+
+            // 1. Reveal Background Web Platform
+            tl.to(".browser-window", {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: "power3.out"
+            })
+            
+            // 2. Cascade Web Components
+            .from(".web-nav", { y: -20, opacity: 0, duration: 0.6, ease: "power2.out" }, "-=0.6")
+            .from(".web-sidebar", { x: -20, opacity: 0, duration: 0.6, ease: "power2.out" }, "-=0.4")
+            .from(".page-header", { y: 10, opacity: 0, duration: 0.4 }, "-=0.2")
+            .from(".product-card", { 
+                y: 20, 
+                opacity: 0, 
+                duration: 0.5, 
+                stagger: 0.1, 
+                ease: "back.out(1.2)" 
+            }, "-=0.2")
+
+            // 3. Slide Tablet Detail Page into foreground
+            .to(".tablet-device", {
+                opacity: 1,
+                x: 0,
+                duration: 1.2,
+                ease: "expo.out"
+            }, "-=0.3")
+
+            // 4. Reveal Tablet Content (PDP)
+            .from(".pdp-hero", { opacity: 0, scale: 0.95, duration: 0.8, ease: "power2.out" }, "-=0.8")
+            .from(".pdp-title, .pdp-badges, .pdp-desc", {
+                y: 15,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "power2.out"
+            }, "-=0.6")
+            .from(".effect-card, .terpene-bar", {
+                y: 10,
+                opacity: 0,
+                duration: 0.4,
+                stagger: 0.05,
+                ease: "power2.out"
+            }, "-=0.4")
+            
+            // 5. Pop Checkout Bar
+            .from(".tablet-bottom-bar", {
+                y: 100,
+                opacity: 0,
+                duration: 0.6,
+                ease: "back.out(1.1)"
+            }, "-=0.2");
+        });
+    </script>
+</body>
+</html>

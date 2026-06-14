@@ -19,14 +19,14 @@ export function AboutCTA() {
         </Reveal>
         <Reveal delay={0.16}>
           <p className="text-body text-white/60 max-w-[54ch]">
-            If you&apos;re building something complex — an enterprise platform,
-            an AI-driven product, a system that has to think — I&apos;d like to
+            If you&apos;re building something complex, an enterprise platform,
+            an AI-driven product, a system that has to think, I&apos;d like to
             hear about it.
           </p>
         </Reveal>
         <Reveal delay={0.24}>
           <div className="mt-2">
-            <Button href="mailto:hello@anoshaan.com">
+            <Button href="mailto:hello@anoshaan.com" rainbow>
               hello@anoshaan.com
             </Button>
           </div>

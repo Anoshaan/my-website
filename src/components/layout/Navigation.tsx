@@ -18,15 +18,14 @@ export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
 
+  // Nav lives at the top of the page only — once the journey starts it
+  // stays out of the way (no floating reveal on scroll-up; the footer
+  // carries navigation at the end of the story).
   useEffect(() => {
-    let lastY = 0;
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 20);
-      if (y < 10) setHidden(false);
-      else if (y > lastY) setHidden(true);
-      else setHidden(false);
-      lastY = y;
+      setHidden(y > 160);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });

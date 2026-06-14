@@ -1,159 +1,189 @@
 import type { AnimatedIconName } from "@/components/icons/AnimatedIcon";
 
 /**
- * Labs page — editorial showcase of product thinking.
+ * Labs page — an editorial collection of product thinking.
  *
- * Each entry is a "design lesson", not a deliverable. The copy is the
- * focus (domain → question → story → what changed → key insight); the
- * `visualSlug` only points at the bespoke animated mockup (registered in
- * CaseStudyMedia) that dominates the visual side of the row.
+ * Each entry is a "design lesson", not a deliverable. The copy carries
+ * half the story (challenge → title → story → what changed → key insight)
+ * and the visual carries the other half.
+ *
+ * `embed` points at a self-contained interactive HTML mockup served from
+ * /public/labs and shown in a scaled iframe (the dominant hero visual).
+ * When absent, `visualSlug` falls back to the bespoke animated mockup
+ * registered in CaseStudyMedia.
  *
  * `insight` is an array so a punchline can break across two lines — the
- * final line is rendered with accent emphasis.
+ * final line is rendered with accent emphasis as the most memorable
+ * element of the row.
  */
 export type LabsProject = {
   num: string;
-  domain: string;
-  question: string;
-  story: string;
+  /** Challenge prompt — small accent text above the title. */
+  challenge: string;
+  /** Project title — the largest heading in the section. */
+  title: string;
+  /** Short story, max two paragraphs. */
+  story: string[];
   whatChanged: string[];
   insight: string[];
-  /** Slug of the case study whose animated mockup fills the visual side. */
+  /** Muted per-case accent — drives challenge text, insight punch, markers. */
+  accent: string;
+  /** Path to a live interactive HTML mockup under /public/labs (preferred). */
+  embed?: string;
+  /** Fallback: slug of the case study whose bespoke mockup fills the visual. */
   visualSlug: string;
-  /** Fallback glyph if the slug has no bespoke mockup. */
+  /** Fallback glyph if neither embed nor slug has a visual. */
   icon: AnimatedIconName;
-  ctaHref: string;
 };
-
-const REQUEST = "/#contact";
 
 export const labsProjects: LabsProject[] = [
   {
     num: "01",
-    domain: "Workforce Operations",
-    question: "How do you reduce noise across large teams?",
-    story:
-      "Large organizations often manage hundreds of projects simultaneously. While project managers need visibility across initiatives, employees only need access to the work assigned to them. This project focused on redesigning the workflow between planning, task allocation, and time tracking. By structuring information around responsibility rather than hierarchy, teams could focus on relevant work while managers retained visibility across operations.",
+    challenge: "How do you reduce noise across large teams?",
+    title: "Workforce Time & Resource Management Platform",
+    story: [
+      "Large organizations often manage hundreds of projects simultaneously. While managers need visibility across teams, employees only need access to the work assigned to them.",
+      "This platform connected planning, task allocation, and time tracking through a structured workflow that reduced complexity and improved day-to-day efficiency.",
+    ],
     whatChanged: [
       "Simplified task visibility",
-      "Structured workflows around responsibility",
-      "Embedded time tracking into daily operations",
+      "Reduced information overload",
+      "Embedded time tracking into daily workflows",
     ],
     insight: ["Users don't need more visibility.", "They need relevant visibility."],
+    accent: "#b3a4d6",
+    embed: "/labs/workforce-time-resource-platform.html",
     visualSlug: "workforce-time-resource-platform",
     icon: "network",
-    ctaHref: REQUEST,
   },
   {
     num: "02",
-    domain: "Analytics & Intelligence",
-    question: "How do you turn data into action?",
-    story:
-      "Many analytics platforms successfully present information but fail to support decision-making. Users often spend more time interpreting dashboards than acting on them. This project explored ways to surface meaningful signals, prioritize attention, and create experiences that guide users toward informed actions rather than passive observation.",
+    challenge: "How do you turn data into action?",
+    title: "Analytics Intelligence Platform",
+    story: [
+      "Most dashboards present information. Few help users understand what requires attention next.",
+      "This platform focused on surfacing meaningful signals and guiding users toward faster, more informed decisions.",
+    ],
     whatChanged: [
       "Improved information hierarchy",
-      "Highlighted actionable insights",
-      "Reduced cognitive overload",
+      "Prioritized actionable insights",
+      "Reduced cognitive load",
     ],
     insight: ["Data is only valuable", "when it changes a decision."],
+    accent: "#93a7bd",
+    embed: "/labs/analytics-intelligence-platform.html",
     visualSlug: "predictive-analytics-intelligence",
     icon: "scan",
-    ctaHref: REQUEST,
   },
   {
     num: "03",
-    domain: "Enterprise Software",
-    question: "How do you explain complex products simply?",
-    story:
-      "Enterprise software often contains extensive capabilities that can overwhelm potential customers during evaluation. The challenge was creating a digital experience that communicated value before features. The experience was structured around business outcomes, helping visitors quickly understand how the platform solved real operational problems.",
+    challenge: "How do you explain complex products simply?",
+    title: "Enterprise Software Website Experience",
+    story: [
+      "Enterprise products often contain extensive capabilities that can overwhelm potential customers during evaluation.",
+      "The experience was designed to communicate business value before product features, making decision-making easier for buyers.",
+    ],
     whatChanged: [
       "Simplified product communication",
       "Improved content structure",
       "Reduced evaluation friction",
     ],
     insight: ["People buy outcomes,", "not functionality."],
+    accent: "#a3ba9e",
+    embed: "/labs/enterprise-software-website.html",
     visualSlug: "enterprise-software-website",
     icon: "structure",
-    ctaHref: REQUEST,
   },
   {
     num: "04",
-    domain: "Food & Commerce",
-    question: "How do you help people decide faster?",
-    story:
-      "Ordering food should be simple, but crowded menus, competing options, and time pressure can create unnecessary friction. This experience focused on helping users move from browsing to ordering with greater confidence while maintaining flexibility for customization and discovery.",
+    challenge: "How do you help people decide faster?",
+    title: "Smart Food Ordering Platform",
+    story: [
+      "Ordering food often happens in busy environments where users have limited time and attention.",
+      "This experience streamlined browsing, selection, and checkout to support faster decision-making.",
+    ],
     whatChanged: [
-      "Streamlined ordering flows",
       "Reduced decision fatigue",
+      "Streamlined ordering flows",
       "Improved checkout experience",
     ],
     insight: ["Hungry users don't explore.", "They choose."],
+    accent: "#cbb39a",
+    embed: "/labs/smart-food-ordering.html",
     visualSlug: "smart-food-court-ordering",
     icon: "flow",
-    ctaHref: REQUEST,
   },
   {
     num: "05",
-    domain: "Regulated Commerce",
-    question: "How do you build trust in restricted industries?",
-    story:
-      "In regulated industries, compliance requirements often compete with usability goals. The challenge was creating a shopping experience that felt approachable while maintaining transparency and regulatory clarity. The solution balanced product discovery, trust signals, and educational content without overwhelming users.",
+    challenge: "How do you build trust in regulated industries?",
+    title: "Cannabis Commerce Platform",
+    story: [
+      "Regulated industries require balancing compliance, transparency, and usability without overwhelming customers.",
+      "The platform focused on creating confidence through clear communication and guided product discovery.",
+    ],
     whatChanged: [
       "Improved transparency",
       "Simplified compliance communication",
       "Strengthened user confidence",
     ],
-    insight: ["Clarity creates confidence."],
+    insight: ["Clarity creates", "confidence."],
+    accent: "#8fb0a6",
+    embed: "/labs/cannabis-commerce.html",
     visualSlug: "cannabis-commerce-wellness",
     icon: "scale",
-    ctaHref: REQUEST,
   },
   {
     num: "06",
-    domain: "Defence Systems",
-    question: "How do you make critical information easier to access?",
-    story:
-      "Operational environments depend on accurate documentation and efficient access to information. As information grows, discoverability becomes just as important as accuracy. This project focused on structuring large volumes of documentation into an experience that improved navigation, comprehension, and retrieval.",
+    challenge: "How do you make critical information easier to access?",
+    title: "Defence Documentation Platform",
+    story: [
+      "Operational environments depend on quick access to accurate information, especially as documentation grows in scale.",
+      "This platform focused on organizing complex information into a structure that improved discoverability and retrieval.",
+    ],
     whatChanged: [
       "Improved information architecture",
       "Enhanced discoverability",
-      "Simplified navigation patterns",
+      "Simplified navigation",
     ],
-    insight: ["Accuracy is a usability feature."],
+    insight: ["Accuracy is", "a usability feature."],
+    accent: "#9aa6c2",
     visualSlug: "defence-operations-documentation",
     icon: "radar",
-    ctaHref: REQUEST,
   },
   {
     num: "07",
-    domain: "Productivity & Workflows",
-    question: "How do you remove friction from daily work?",
-    story:
-      "Teams often spend significant time navigating systems, repeating actions, and managing operational overhead. The challenge was identifying opportunities to simplify recurring workflows without disrupting existing processes. The result was a more focused experience that reduced effort while improving efficiency.",
+    challenge: "How do you simplify operational workflows?",
+    title: "Workforce Scheduling & Operations Platform",
+    story: [
+      "Managing schedules, resources, and operational responsibilities often requires navigating multiple disconnected systems.",
+      "This platform unified workflows into a more structured and efficient experience.",
+    ],
     whatChanged: [
-      "Simplified repetitive workflows",
-      "Reduced operational overhead",
-      "Improved process efficiency",
+      "Centralized operational workflows",
+      "Improved resource coordination",
+      "Reduced process friction",
     ],
     insight: ["The best workflow", "is the one users barely notice."],
+    accent: "#bdae9d",
     visualSlug: "workplace-safety-retail",
     icon: "collaborate",
-    ctaHref: REQUEST,
   },
   {
     num: "08",
-    domain: "AI-Assisted Experiences",
-    question: "How do you introduce AI without overwhelming users?",
-    story:
-      "AI features often promise efficiency but can introduce uncertainty when users lose visibility or control. The challenge was integrating intelligent assistance into existing workflows while maintaining trust and predictability. The solution focused on transparency, guidance, and gradual adoption rather than automation for its own sake.",
+    challenge: "How do you introduce AI without overwhelming users?",
+    title: "AI-Assisted Product Experience",
+    story: [
+      "AI can improve efficiency, but only when users understand how and why it is supporting their work.",
+      "The experience focused on transparency, guidance, and maintaining user control throughout the workflow.",
+    ],
     whatChanged: [
       "Integrated AI into familiar workflows",
       "Increased transparency",
       "Preserved user control",
     ],
     insight: ["Trust matters more", "than intelligence."],
+    accent: "#bfa6b6",
     visualSlug: "p2p-lending-fintech",
     icon: "brain",
-    ctaHref: REQUEST,
   },
 ];

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Navigation } from "@/components/layout/Navigation";
@@ -11,7 +12,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Anoshaan — Product Designer & UI/UX Designer",
+    default: "Anoshaan · Product Designer & UI/UX Designer",
     template: "%s | Anoshaan",
   },
   description:
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     apple: "/icon.png",
   },
   openGraph: {
-    title: "Anoshaan — Product Designer & UI/UX Designer",
+    title: "Anoshaan · Product Designer & UI/UX Designer",
     description:
       "Product designer focused on UI/UX, spatial interfaces, digital experiences, and interactive product design.",
     url: "https://anoshaan.design",
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Anoshaan — Product Designer & UI/UX Designer",
+    title: "Anoshaan · Product Designer & UI/UX Designer",
     description:
       "Product designer focused on UI/UX, spatial interfaces, digital experiences, and interactive product design.",
     images: ["/icon.png"],
@@ -55,6 +56,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+      <head>
+        <Script id="microsoft-clarity" strategy="afterInteractive">
+          {`(function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "x6zzkjjdae");`}
+        </Script>
+      </head>
       <body>
         <GalaxyBackground />
         <CustomCursor />

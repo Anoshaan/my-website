@@ -180,6 +180,70 @@ body {
     galaxy-twinkle 8s ease-in-out infinite;
 }
 
+/* Dust motes — a handful of larger, softly blurred particles floating
+   free across the page. Slow vertical drift + fade so the air feels
+   alive without ever demanding attention. */
+.galaxy-dust {
+  position: absolute;
+  inset: 0;
+}
+.galaxy-dust span {
+  position: absolute;
+  left: var(--x, 50%);
+  top: var(--y, 50%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(207, 217, 255, 0.55);
+  filter: blur(1px);
+  opacity: 0;
+  animation: galaxy-dust-float var(--dur, 26s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes galaxy-dust-float {
+  0% {
+    transform: translate3d(0, 30px, 0);
+    opacity: 0;
+  }
+  14% {
+    opacity: var(--o, 0.4);
+  }
+  86% {
+    opacity: var(--o, 0.4);
+  }
+  100% {
+    transform: translate3d(var(--dx, 30px), -70px, 0);
+    opacity: 0;
+  }
+}
+
+/* Ambient light beam — one huge, heavily blurred diagonal wash that
+   sweeps across the page over ~40s. Felt more than seen; it keeps the
+   darkest areas from ever reading as flat black. */
+.galaxy-beam {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(167, 139, 250, 0.045) 46%,
+    rgba(138, 166, 255, 0.06) 50%,
+    rgba(167, 139, 250, 0.045) 54%,
+    transparent 68%
+  );
+  filter: blur(34px);
+  animation: galaxy-beam-sweep 42s ease-in-out infinite alternate;
+}
+@keyframes galaxy-beam-sweep {
+  from {
+    transform: translate3d(-14%, 0, 0);
+  }
+  to {
+    transform: translate3d(14%, 0, 0);
+  }
+}
+
 /* Edge vignette — keeps the corners dark so content never fights the
    field, and the whole thing reads as depth rather than texture. */
 .galaxy-vignette {
@@ -217,8 +281,13 @@ body {
   .galaxy-nebula,
   .galaxy-stars-far,
   .galaxy-stars-mid,
-  .galaxy-stars-near {
+  .galaxy-stars-near,
+  .galaxy-beam {
     animation: none;
+  }
+  .galaxy-dust span {
+    animation: none;
+    opacity: 0.3;
   }
 }
 
@@ -358,13 +427,182 @@ body:has(.cursor) [role="button"] {
 
 /* Homepage hero — intentionally more restrained than .text-hero so it
    reads as minimal copy over the background video rather than filling
-   the frame. */
+   the frame. A faint drop-shadow glow gives the metallic type a refined
+   luminous outline without ever reading as a "glow effect". */
 .hero-title {
   font-size: clamp(2.5rem, 5.8vw, 7rem);
   font-weight: 500;
   line-height: 1.02;
   letter-spacing: -0.035em;
   text-wrap: balance;
+  /* Solid white type is the hero's single dominant element. The filter is
+     now only a soft neutral shadow for legibility against the field — no
+     coloured glow that would compete with the message. */
+  filter: drop-shadow(0 1px 24px rgba(0, 0, 0, 0.45));
+}
+
+/* HERO — galaxy depth field. A premium, low-contrast environment behind
+   the headline: a soft nebula glow for cinematic depth plus a fine star
+   field. The whole layer is masked to dissolve into transparency toward
+   the bottom of the hero, so it blends seamlessly into the site-wide
+   field below with no hard edge into the next section. */
+.hero-galaxy {
+  position: absolute;
+  inset: -12% 0 0 0;
+  z-index: -1;
+  pointer-events: none;
+  will-change: transform;
+  /* Dissolve toward the bottom → seamless hand-off to the next section. */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 50%, transparent 94%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 50%, transparent 94%);
+}
+/* Nebula glow — soft, cool, low-contrast clouds that give the headline a
+   sense of depth without ever reading as a "space scene". */
+.hero-galaxy-glow {
+  position: absolute;
+  inset: 0;
+  /* Kept deliberately low-contrast so the solid-white headline in front
+     of it is always the dominant element — the field reads as depth, not
+     as a glow competing with the message. */
+  background:
+    radial-gradient(42% 38% at 50% 36%, rgba(150, 120, 235, 0.09) 0%, transparent 70%),
+    radial-gradient(54% 44% at 72% 22%, rgba(96, 124, 224, 0.07) 0%, transparent 72%),
+    radial-gradient(50% 42% at 26% 30%, rgba(168, 116, 230, 0.06) 0%, transparent 74%),
+    radial-gradient(70% 60% at 50% 48%, rgba(124, 92, 200, 0.04) 0%, transparent 80%);
+  filter: blur(10px);
+  animation: hero-galaxy-breathe 26s ease-in-out infinite alternate;
+}
+/* Fine premium star field, slightly denser than the global one so the hero
+   reads as the deepest, most detailed point of the journey. */
+.hero-galaxy-stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 90px 70px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 240px 160px, rgba(207, 217, 255, 0.6), transparent),
+    radial-gradient(1.4px 1.4px at 380px 90px, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(1px 1px at 520px 240px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1.2px 1.2px at 150px 300px, rgba(224, 214, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 620px 130px, rgba(255, 255, 255, 0.55), transparent);
+  background-size: 700px 520px;
+  opacity: 0.7;
+  animation: galaxy-twinkle 9s ease-in-out infinite;
+}
+@keyframes hero-galaxy-breathe {
+  from {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-galaxy-glow,
+  .hero-galaxy-stars {
+    animation: none;
+  }
+}
+
+/* HERO — ambient light rays. Soft conic shafts falling from above the
+   frame, drifting very slowly side to side. Masked out before they can
+   reach the body copy. */
+.hero-rays {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  width: min(1500px, 130vw);
+  height: 60vh;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    conic-gradient(
+      from 178deg at 50% -12%,
+      transparent 41%,
+      rgba(207, 217, 255, 0.075) 46%,
+      transparent 50%,
+      rgba(167, 139, 250, 0.06) 55%,
+      transparent 60%
+    ),
+    conic-gradient(
+      from 183deg at 50% -12%,
+      transparent 44%,
+      rgba(138, 166, 255, 0.055) 49%,
+      transparent 56%
+    );
+  filter: blur(18px);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 40%, transparent 92%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 40%, transparent 92%);
+  animation: hero-rays-drift 18s ease-in-out infinite alternate;
+}
+@keyframes hero-rays-drift {
+  from {
+    transform: translateX(-53%);
+    opacity: 0.28;
+  }
+  to {
+    transform: translateX(-47%);
+    opacity: 0.42;
+  }
+}
+
+/* HERO — scroll indicator. A quiet label + a thin track with a light
+   that keeps dropping through it, guiding the eye downward. */
+.hero-scroll-hint {
+  position: absolute;
+  bottom: clamp(26px, 5vh, 56px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 5;
+  pointer-events: none;
+}
+.hero-scroll-hint-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(236, 235, 230, 0.5);
+}
+.hero-scroll-line {
+  position: relative;
+  width: 1px;
+  height: 46px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.hero-scroll-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -45%;
+  width: 100%;
+  height: 45%;
+  background: linear-gradient(180deg, transparent, #cfd9ff);
+  animation: hero-scroll-drop 2.4s var(--ease-in-out) infinite;
+}
+@keyframes hero-scroll-drop {
+  0% {
+    top: -45%;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    top: 110%;
+    opacity: 0.85;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-rays,
+  .hero-scroll-line::after {
+    animation: none;
+  }
 }
 
 /* =========================================================
@@ -392,6 +630,92 @@ body:has(.cursor) [role="button"] {
   /* Perspective so the rising card's rotateX reads as depth. */
   perspective: 1600px;
   perspective-origin: 50% 50%;
+}
+
+/* Environmental motion — dotted rings, dotted guide lines, star dots
+   and occasional streaks living behind the rising workspace. They
+   persist for the whole pinned scene so the space never feels empty. */
+.problem-env {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.penv-ring {
+  position: absolute;
+  border: 1px dashed rgba(207, 217, 255, 0.13);
+  border-radius: 50%;
+  animation: penv-spin 90s linear infinite;
+}
+@keyframes penv-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.penv-line {
+  position: absolute;
+  height: 1px;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.2) 0 4px,
+    transparent 4px 11px
+  );
+  background-size: 11px 1px;
+  opacity: 0.45;
+}
+.penv-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  animation: penv-twinkle 6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes penv-twinkle {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+.penv-streak {
+  position: absolute;
+  width: 100px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(207, 217, 255, 0.75));
+  transform: rotate(-24deg);
+  opacity: 0;
+  animation: penv-streak 11s ease-in infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes penv-streak {
+  0%,
+  76% {
+    opacity: 0;
+    transform: rotate(-24deg) translateX(0);
+  }
+  80% {
+    opacity: 0.85;
+  }
+  90%,
+  100% {
+    opacity: 0;
+    transform: rotate(-24deg) translateX(-280px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .penv-ring,
+  .penv-star,
+  .penv-streak {
+    animation: none;
+  }
+  .penv-streak {
+    opacity: 0;
+  }
 }
 
 /* Workspace layer — fills the stage and centres the scaled card. */
@@ -434,31 +758,24 @@ body:has(.cursor) [role="button"] {
 }
 
 .problem-eyebrow {
-  font-family: var(--font-mono);
-  font-size: clamp(0.72rem, 0.7rem + 0.1vw, 0.8rem);
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(236, 235, 230, 0.5);
+  /* Shared .section-label style — see TYPOGRAPHY SCALE. */
 }
 
-/* Lighter + smaller than .text-section so the line wraps to two and
-   reads as quiet, thoughtful copy beside the workspace. */
+/* Stronger presence than before — this heading carries the chapter
+   while the workspace parks beside it, so it earns more scale and
+   weight. Still capped to wrap at 2–3 lines. */
 .problem-title {
-  font-family: var(--font-sans);
+  /* Uses the shared .text-section scale (added in the markup) so every
+     section heading on the page is one consistent size/weight. Only the
+     colour, measure and margin are section-specific here. */
   color: #ffffff;
-  font-size: clamp(1.6rem, 2.5vw, 2.5rem);
-  font-weight: 500;
-  line-height: 1.12;
-  letter-spacing: -0.025em;
-  max-width: 18ch;
+  max-width: 20ch;
   margin: 0;
-  text-wrap: balance;
 }
 
 .problem-body {
   color: rgba(255, 255, 255, 0.7);
-  max-width: 46ch;
+  max-width: 50ch;
   margin: 0;
 }
 
@@ -522,7 +839,7 @@ body:has(.cursor) [role="button"] {
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(
-    42% 40% at 55% 52%,
+    44% 42% at 50% 52%,
     rgba(167, 139, 250, 0.1) 0%,
     transparent 70%
   );
@@ -544,12 +861,6 @@ body:has(.cursor) [role="button"] {
   margin: 0 auto;
 }
 .approach-eyebrow {
-  font-family: var(--font-mono);
-  font-size: clamp(0.72rem, 0.7rem + 0.1vw, 0.8rem);
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(236, 235, 230, 0.5);
   margin-bottom: clamp(10px, 1vw, 16px);
 }
 .approach-title {
@@ -558,38 +869,45 @@ body:has(.cursor) [role="button"] {
   max-width: 18ch;
 }
 
-/* Split row: narrative left (primary, roomy), timeline right; particles
-   sit in the central gap between them. */
+/* Split row: narrative pinned left, timeline pinned right, balanced as
+   equal columns so the centred particle field reads as one composition
+   with the title and has symmetric breathing room on both sides. */
 .approach-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
-  gap: clamp(24px, 4vw, 72px);
+  gap: clamp(32px, 8vw, 160px);
 }
 
-/* Primary reading content — given room and emphasis. */
+/* Primary reading content — pinned to the left edge of its column and kept
+   narrow so the centred particle field has clear, symmetric breathing room
+   between it and the right-hand timeline. */
 .approach-narrative {
-  max-width: 34ch;
+  max-width: 30ch;
   pointer-events: auto;
   text-shadow: 0 2px 24px rgba(5, 5, 7, 0.55);
 }
 .approach-subject {
   font-family: var(--font-sans);
-  font-size: clamp(1.8rem, 3.1vw, 2.8rem);
+  /* H3 scale — the active stage subject is a sub-heading beneath the
+     section title, not a second section heading competing with it. */
+  font-size: clamp(1.25rem, 1.6vw, 1.55rem);
   font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.06;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   color: #ffffff;
-  margin: 0 0 clamp(10px, 1.1vw, 16px);
+  margin: 0 0 clamp(8px, 0.9vw, 12px);
 }
 .approach-question {
   font-family: var(--font-sans);
-  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
   font-weight: 500;
   line-height: 1.32;
   letter-spacing: -0.015em;
-  color: color-mix(in oklab, var(--color-accent) 60%, #ffffff);
+  /* Neutral near-white — accent is reserved for actions, not supporting
+     sub-headings. */
+  color: rgba(255, 255, 255, 0.82);
   margin: 0 0 clamp(12px, 1.3vw, 18px);
   text-wrap: balance;
 }
@@ -609,7 +927,8 @@ body:has(.cursor) [role="button"] {
   justify-self: end;
   display: flex;
   flex-direction: column;
-  gap: clamp(30px, 3.6vw, 56px);
+  /* Tighter grouping — the four stages read as one unit. */
+  gap: clamp(20px, 2.4vw, 34px);
   pointer-events: auto;
 }
 /* Faint base track. */
@@ -631,8 +950,14 @@ body:has(.cursor) [role="button"] {
   width: 2px;
   border-radius: 2px;
   transform-origin: top;
-  background: linear-gradient(180deg, #b15cff 0%, #ff5ccd 36%, #4dff9e 70%, #f2ff4d 100%);
-  box-shadow: 0 0 12px rgba(150, 120, 255, 0.55);
+  /* Single lavender accent — the light reads as one calm colour that
+     simply deepens as the journey progresses (no multi-hue rainbow). */
+  background: linear-gradient(
+    180deg,
+    rgba(207, 217, 255, 0.28) 0%,
+    rgba(207, 217, 255, 0.9) 100%
+  );
+  box-shadow: 0 0 12px rgba(207, 217, 255, 0.4);
 }
 /* The glowing comet head that travels from stage to stage. */
 .approach-rail-head {
@@ -715,23 +1040,23 @@ body:has(.cursor) [role="button"] {
 }
 
 /* =========================================================
-   SECTION 4 — THIS IS HOW I STAY AHEAD. Pinned, cinematic.
-   The header settles centre, then three premium floating
-   "object" cards reveal one-by-one with 3D depth and a
-   bespoke inner animation each (explore / control / motion).
+   SECTION 4 — THIS IS HOW I STAY AHEAD. One dedicated viewport
+   chapter. When it becomes the focus, a timed stagger plays:
+   heading → body → card 01 → 02 → 03. Three premium floating
+   "object" cards with 3D depth and a bespoke inner animation
+   each (explore / control / motion).
    ========================================================= */
 .evolve-section {
   position: relative;
   isolation: isolate;
 }
 .evolve-sticky {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  overflow: hidden;
+  position: relative;
+  min-height: 100svh;
   isolation: isolate;
   display: flex;
   align-items: center;
+  padding-block: clamp(56px, 8vh, 104px);
 }
 .evolve-aura {
   position: absolute;
@@ -747,45 +1072,62 @@ body:has(.cursor) [role="button"] {
 .evolve-inner {
   position: relative;
   z-index: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(28px, 4vh, 56px);
+  gap: clamp(40px, 6vh, 72px);
 }
 
+/* Header — one horizontal band: label + title left, supporting copy
+   right. Uses the full content width instead of a centred column. */
 .evolve-header {
-  text-align: center;
-  max-width: 720px;
+  width: 100%;
+  max-width: 1240px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+  align-items: end;
+  gap: clamp(24px, 4vw, 72px);
+  text-align: left;
 }
 .evolve-eyebrow {
-  font-family: var(--font-mono);
-  font-size: clamp(0.72rem, 0.7rem + 0.1vw, 0.8rem);
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(236, 235, 230, 0.5);
   margin-bottom: clamp(10px, 1vw, 16px);
 }
 .evolve-title {
   color: #ffffff;
-  margin: 0 auto;
-  max-width: 16ch;
+  margin: 0;
+  max-width: 14ch;
 }
 .evolve-body {
   color: rgba(255, 255, 255, 0.66);
-  max-width: 58ch;
-  margin: clamp(12px, 1.4vw, 20px) auto 0;
+  /* A comfortable measure that keeps lines short and readable. */
+  max-width: 42ch;
+  margin: 0;
+  justify-self: start;
+  text-align: left;
+  line-height: 1.65;
+  padding-bottom: 0.35em;
+}
+@media (max-width: 900px) {
+  .evolve-header {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: clamp(14px, 3vw, 24px);
+  }
 }
 
-/* Card row — 3D stage. */
+/* Card row — 3D stage. A composed, comfortable measure (not edge-to-edge):
+   the three cards sit at a natural size, vertically centred in the chapter
+   with intentional whitespace around them rather than stretched to fill. */
 .evolve-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(18px, 2vw, 32px);
+  gap: clamp(20px, 2vw, 34px);
   width: 100%;
-  max-width: 1140px;
-  perspective: 1400px;
+  max-width: 1240px;
+  margin-inline: auto;
+  perspective: 1500px;
 }
 .evolve-card-slot {
   will-change: transform, opacity;
@@ -834,34 +1176,51 @@ body:has(.cursor) [role="button"] {
   pointer-events: none;
   background: radial-gradient(80% 50% at 50% -10%, rgba(207, 217, 255, 0.16), transparent 60%);
 }
+/* Visual — no inner box. The animation bleeds to the card's own edges
+   (negative margins cancel the card padding) so it reads as part of
+   the card surface, not a framed thumbnail inside it. */
 .evolve-card-visual {
   position: relative;
-  height: clamp(92px, 11vh, 124px);
-  margin-bottom: clamp(14px, 1.6vw, 22px);
-  border-radius: 14px;
-  background: radial-gradient(120% 100% at 50% 0%, rgba(167, 139, 250, 0.1), rgba(255, 255, 255, 0.015));
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  height: clamp(150px, 17vh, 200px);
+  margin: calc(-1 * clamp(20px, 1.8vw, 28px)) calc(-1 * clamp(20px, 1.8vw, 28px))
+    clamp(16px, 1.8vw, 24px);
+  border-radius: 20px 20px 0 0;
+  background: radial-gradient(
+    130% 130% at 50% -20%,
+    rgba(167, 139, 250, 0.14),
+    transparent 72%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   transform: translateZ(28px);
 }
-.evolve-card-num {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  color: color-mix(in oklab, var(--color-accent) 75%, #ffffff);
-  transform: translateZ(20px);
+/* Soft divider where the visual meets the copy — replaces the old box
+   border with a single fading hairline. */
+.evolve-card-visual::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.09) 30%,
+    rgba(255, 255, 255, 0.09) 70%,
+    transparent
+  );
 }
 .evolve-card-title {
   font-family: var(--font-sans);
-  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  font-size: clamp(1.25rem, 1.6vw, 1.55rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: #ffffff;
-  margin: 6px 0 4px;
+  margin: 0 0 6px;
   transform: translateZ(20px);
 }
 .evolve-card-tag {
@@ -869,7 +1228,9 @@ body:has(.cursor) [role="button"] {
   font-size: clamp(0.92rem, 1vw, 1.02rem);
   font-weight: 500;
   line-height: 1.4;
-  color: color-mix(in oklab, var(--color-accent) 55%, #ffffff);
+  /* Neutral supporting tone — accent removed so it reads as a quiet
+     sub-line, not a coloured label competing with the card title. */
+  color: rgba(255, 255, 255, 0.75);
   margin: 0 0 10px;
 }
 .evolve-card-body {
@@ -885,7 +1246,7 @@ body:has(.cursor) [role="button"] {
 }
 
 /* Card-visual animation primitives. */
-.evx { width: 90%; height: 84%; display: block; overflow: visible; }
+.evx { width: 94%; height: 90%; display: block; overflow: visible; }
 
 /* 01 — Exploration */
 .evx1-seed { fill: var(--color-accent); filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.9)); animation: evx-pulse 2.4s ease-in-out infinite; }
@@ -932,17 +1293,27 @@ body:has(.cursor) [role="button"] {
   .evx1-thumb { opacity: 1; }
 }
 
-/* Mobile — unpin and stack the cards into the normal flow. */
+/* Mobile — stack the cards into the normal flow (no viewport-fill). */
 @media (max-width: 900px) {
   .evolve-sticky {
-    position: static;
-    height: auto;
+    min-height: auto;
     padding-block: clamp(64px, 12vh, 120px);
   }
   .evolve-cards {
     grid-template-columns: 1fr;
-    max-width: 460px;
+    grid-template-rows: none;
+    flex: none;
+    min-height: 0;
+    max-width: 520px;
     perspective: none;
+  }
+  .evolve-card-slot {
+    height: auto;
+  }
+  .evolve-card-visual {
+    flex: none;
+    height: clamp(150px, 42vw, 240px);
+    min-height: 0;
   }
 }
 
@@ -959,12 +1330,12 @@ body:has(.cursor) [role="button"] {
   align-items: center;
   overflow: clip;
   isolation: isolate;
-  padding-block: clamp(64px, 10vh, 120px);
+  padding-block: clamp(48px, 7vh, 88px);
 }
 .cs-inner {
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   align-items: center;
   gap: clamp(20px, 3vw, 56px);
 }
@@ -1045,34 +1416,31 @@ body:has(.cursor) [role="button"] {
   .cs-dash-tilt { transform: none; }
 }
 
-/* Right — content */
+/* Right — content. Wider measure so the copy uses the available
+   screen width instead of reading as a narrow strip. */
 .cs-content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: clamp(16px, 1.7vw, 26px);
-  max-width: 560px;
-  padding-right: clamp(28px, 6vw, 120px);
+  max-width: 720px;
+  padding-right: clamp(24px, 4vw, 72px);
   padding-left: clamp(20px, 2.5vw, 48px);
 }
 .cs-label {
-  font-family: var(--font-mono);
-  font-size: clamp(0.72rem, 0.7rem + 0.1vw, 0.8rem);
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--color-accent-cool) 70%, #ffffff);
+  /* Shared .section-label style — see TYPOGRAPHY SCALE. */
 }
 .cs-heading {
   color: #ffffff;
-  max-width: 18ch;
+  /* Wide enough to settle at 2–3 lines. */
+  max-width: 22ch;
   margin: 0;
 }
 .cs-desc {
   display: flex;
   flex-direction: column;
   gap: clamp(10px, 1vw, 14px);
-  max-width: 48ch;
+  max-width: 56ch;
   color: rgba(255, 255, 255, 0.66);
 }
 .cs-desc p {
@@ -1088,11 +1456,11 @@ body:has(.cursor) [role="button"] {
 .cs-learned-label {
   display: block;
   font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(236, 235, 230, 0.5);
+  font-size: clamp(0.74rem, 0.7rem + 0.12vw, 0.84rem);
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: none;
+  color: rgba(236, 235, 230, 0.52);
   margin-bottom: 8px;
 }
 .cs-learned p {
@@ -1176,6 +1544,26 @@ body:has(.cursor) [role="button"] {
   text-wrap: pretty;
 }
 
+/* SECTION LABEL — the one standardized chapter label used by every
+   landing-page section. Mono for character, sentence case (no
+   uppercase shouting), accent-tinted, consistent size and tracking.
+   Hierarchy comes from size/weight/contrast, not capitalization. */
+.problem-eyebrow,
+.approach-eyebrow,
+.evolve-eyebrow,
+.cs-label,
+.next-mission-eyebrow,
+.section-label {
+  font-family: var(--font-mono);
+  font-size: clamp(0.78rem, 0.74rem + 0.15vw, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: none;
+  /* Neutral muted tone — eyebrows are wayfinding labels, not emphasis.
+     Accent is reserved for actions and intentional emphasis only. */
+  color: rgba(236, 235, 230, 0.6);
+}
+
 .text-eyebrow {
   font-family: var(--font-mono);
   font-size: clamp(0.72rem, 0.7rem + 0.06vw, 0.76rem);
@@ -1228,7 +1616,16 @@ body:has(.cursor) [role="button"] {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  padding-block: clamp(120px, 16vw, 200px);
+  /* CTA + footer together complete the final viewport — the CTA fills
+     the frame, the footer anchors the bottom, nothing scrolls past it. */
+  min-height: calc(100svh - 170px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: clamp(56px, 8vh, 110px);
+}
+.next-mission-section > .next-mission-content {
+  width: 100%;
 }
 
 /* Soft, edge-faded atmospheric wash — fades to transparent at every
@@ -1311,12 +1708,7 @@ body:has(.cursor) [role="button"] {
 }
 
 .next-mission-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  /* Shared .section-label style — see TYPOGRAPHY SCALE. */
 }
 
 /* Heading uses the standard .text-section style — the overrides
@@ -3362,15 +3754,6 @@ html.lenis body {
    ========================================================= */
 
 /* INTRO ---------------------------------------------------- */
-.labs-intro-label {
-  font-family: var(--font-mono);
-  font-size: clamp(0.74rem, 0.7rem + 0.1vw, 0.82rem);
-  font-weight: 600;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--color-accent) 72%, #ffffff);
-}
-
 .labs-intro-title {
   font-size: clamp(2.1rem, 4.6vw, 4rem);
   font-weight: 500;
@@ -3402,8 +3785,9 @@ html.lenis body {
 
 .labs-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-  gap: clamp(36px, 5vw, 104px);
+  /* Visual ~60% / content ~40% — the visual is always dominant. */
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 72px);
   align-items: center;
   position: relative;
 }
@@ -3413,6 +3797,24 @@ html.lenis body {
 }
 .labs-row.is-content-left .labs-content {
   order: 1;
+}
+
+/* Edge bleed — each visual is pulled toward its outer page edge (the way
+   a hero mockup sits close to the viewport edge), trimming dead space and
+   letting the product UI command the frame. The column has width:auto, so
+   a negative outer margin widens the mockup rather than just shifting it. */
+.labs-row.is-content-right .labs-visual {
+  margin-left: calc(-1 * clamp(20px, 3.5vw, 48px));
+}
+.labs-row.is-content-left .labs-visual {
+  margin-right: calc(-1 * clamp(20px, 3.5vw, 48px));
+}
+@media (max-width: 900px) {
+  .labs-row.is-content-right .labs-visual,
+  .labs-row.is-content-left .labs-visual {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 @media (max-width: 900px) {
@@ -3431,24 +3833,6 @@ html.lenis body {
 .labs-visual {
   position: relative;
   isolation: isolate;
-}
-/* Soft blurred floor glow that lends the visual depth. */
-.labs-visual-glow {
-  position: absolute;
-  left: 6%;
-  right: 6%;
-  bottom: 2%;
-  height: 48%;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    50% 60% at 50% 60%,
-    rgba(167, 139, 250, 0.26) 0%,
-    rgba(138, 166, 255, 0.12) 45%,
-    transparent 78%
-  );
-  filter: blur(54px);
-  opacity: 0.55;
 }
 .labs-visual-stage {
   position: relative;
@@ -3487,6 +3871,20 @@ html.lenis body {
   height: 100%;
 }
 
+/* Live HTML mockup — rendered at full desktop size inside the frame and
+   scaled down via transform (set in JS) so it stays crisp and interactive
+   while reading as a product screenshot. */
+.labs-embed {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: transparent;
+}
+.labs-embed iframe {
+  border: 0;
+  display: block;
+}
+
 @keyframes labs-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
@@ -3510,23 +3908,30 @@ html.lenis body {
 .labs-content {
   display: flex;
   flex-direction: column;
-  gap: clamp(16px, 1.7vw, 24px);
-  max-width: 60ch;
+  gap: clamp(14px, 1.5vw, 22px);
+  max-width: 56ch;
 }
 
-.labs-domain {
-  font-family: var(--font-mono);
-  font-size: clamp(0.72rem, 0.7rem + 0.08vw, 0.78rem);
-  font-weight: 600;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--color-accent-cool) 65%, #ffffff);
-}
-
-/* The question is the largest element in the section. */
-.labs-question {
+/* Challenge — a small accent prompt that frames the project. Tinted with
+   the project's own muted accent. */
+.labs-challenge {
   font-family: var(--font-sans);
-  font-size: clamp(1.9rem, 3.4vw, 3.1rem);
+  font-size: clamp(1rem, 0.92rem + 0.4vw, 1.22rem);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: color-mix(
+    in oklab,
+    var(--labs-accent, var(--color-accent)) 78%,
+    #ffffff
+  );
+}
+
+/* The title is the largest element in the section. */
+.labs-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.7rem, 2.7vw, 2.7rem);
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: -0.035em;
@@ -3536,17 +3941,36 @@ html.lenis body {
 }
 
 .labs-story {
-  font-size: clamp(1rem, 0.97rem + 0.18vw, 1.1rem);
-  line-height: 1.72;
-  color: rgba(255, 255, 255, 0.68);
-  max-width: 52ch;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1vw, 14px);
+  max-width: 54ch;
+}
+.labs-story p {
   margin: 0;
+  font-size: clamp(0.98rem, 0.95rem + 0.16vw, 1.08rem);
+  line-height: 1.68;
+  color: rgba(255, 255, 255, 0.66);
 }
 
-/* What changed — three quiet bullets with an accent tick. */
-.labs-changed {
-  margin-top: clamp(2px, 0.5vw, 6px);
+/* Bottom row — What Changed and Key Insight sit SIDE BY SIDE. Separation
+   comes from rhythm, not rules: generous top spacing, distinct label
+   treatments and a dominant insight — no divider line. */
+.labs-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.1fr);
+  gap: clamp(28px, 3vw, 52px);
+  margin-top: clamp(20px, 2.6vw, 36px);
 }
+@media (max-width: 560px) {
+  .labs-bottom {
+    grid-template-columns: 1fr;
+    gap: clamp(26px, 7vw, 36px);
+  }
+}
+
+/* Section labels — small mono eyebrows. "What changed" stays quiet; "Key
+   insight" carries the accent so the two groups read as distinct. */
 .labs-changed-label,
 .labs-insight-label {
   display: block;
@@ -3555,87 +3979,73 @@ html.lenis body {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(236, 235, 230, 0.46);
-  margin-bottom: clamp(10px, 1vw, 14px);
+  margin-bottom: clamp(12px, 1.2vw, 16px);
 }
+.labs-changed-label {
+  color: rgba(236, 235, 230, 0.42);
+}
+.labs-insight-label {
+  color: color-mix(in oklab, var(--labs-accent, var(--color-accent)) 62%, #ffffff);
+}
+
+/* What changed — refined minimal dash markers, vertically centred on each
+   line of text via a flex row (no floated pseudo-bullets). */
 .labs-changed ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: clamp(10px, 1vw, 13px);
 }
 .labs-changed li {
-  position: relative;
-  padding-left: 22px;
-  font-size: clamp(0.98rem, 0.95vw + 0.2rem, 1.05rem);
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.82);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: clamp(0.92rem, 0.6vw + 0.74rem, 1rem);
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.8);
 }
 .labs-changed li::before {
   content: "";
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--color-accent);
-  box-shadow: 0 0 10px rgba(167, 139, 250, 0.6);
+  flex: 0 0 auto;
+  width: 14px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: color-mix(in oklab, var(--labs-accent, var(--color-accent)) 85%, transparent);
 }
 
-/* Key insight — the takeaway, visually distinct via an accent rail and
-   an emphasised punchline. Highlight without chrome (no card). */
-.labs-insight {
-  margin-top: clamp(6px, 1vw, 12px);
-  padding-left: clamp(18px, 1.6vw, 26px);
-  border-left: 2px solid color-mix(in oklab, var(--color-accent) 75%, transparent);
-}
+/* Key insight — the takeaway. No rail, no card; the accent punchline and
+   the labelled group carry the emphasis on their own. */
 .labs-insight-text {
   margin: 0;
-  font-size: clamp(1.25rem, 1.1vw + 0.9rem, 1.7rem);
-  font-weight: 500;
-  line-height: 1.28;
-  letter-spacing: -0.02em;
   text-wrap: balance;
 }
+/* Setup line — deliberately quieter so the punchline dominates. */
 .labs-insight-line {
-  color: rgba(255, 255, 255, 0.86);
+  font-size: clamp(0.98rem, 0.6vw + 0.8rem, 1.15rem);
+  font-weight: 450;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  color: rgba(255, 255, 255, 0.56);
 }
+/* Punchline — the most memorable element on the row. Its own line,
+   larger, heavier, rendered in the project's muted accent. */
 .labs-insight-punch {
+  display: block;
+  margin-top: clamp(5px, 0.6vw, 9px);
+  font-size: clamp(1.4rem, 1vw + 1.05rem, 2rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
   background: linear-gradient(
     180deg,
-    #ffffff 0%,
-    color-mix(in oklab, var(--color-accent) 78%, #ffffff) 100%
+    color-mix(in oklab, var(--labs-accent, var(--color-accent)) 24%, #ffffff) 0%,
+    var(--labs-accent, var(--color-accent)) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-/* CTA */
-.labs-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: clamp(6px, 1vw, 12px);
-  font-family: var(--font-sans);
-  font-size: clamp(0.95rem, 1vw, 1.05rem);
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  color: #ffffff;
-  transition: color 0.3s var(--ease-out-expo), gap 0.3s var(--ease-out-expo);
-}
-.labs-cta svg {
-  transition: transform 0.4s var(--ease-out-expo);
-}
-.labs-cta:hover {
-  gap: 14px;
-  color: color-mix(in oklab, var(--color-accent) 60%, #ffffff);
-}
-.labs-cta:hover svg {
-  transform: translate(3px, -3px);
 }
 
 /* =========================================================
@@ -4092,12 +4502,14 @@ html.lenis body {
   align-items: center;
   gap: 6px;
 }
-/* Bump the name / role one notch for legibility against the quote. */
+/* Name leads the block — a clear step above the quote. */
 .featured-name {
-  font-size: clamp(15px, 1.05vw, 17px);
+  font-size: clamp(20px, 1.5vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 .featured-role {
-  font-size: clamp(11.5px, 0.85vw, 12.5px);
+  font-size: clamp(13px, 0.95vw, 15px);
 }
 
 .featured-testimonial:hover,
@@ -4118,13 +4530,13 @@ html.lenis body {
 .featured-quote {
   font-family: var(--font-sans);
   /* Default; overridden inline per quote length. */
-  font-size: clamp(18px, 1.6vw, 22px);
+  font-size: clamp(18px, 1.6vw, 24px);
   line-height: 1.55;
   letter-spacing: -0.01em;
   color: rgba(255, 255, 255, 0.95);
   margin: 0;
-  /* Trimmed measure — keeps lines short and readable, no wide stretches. */
-  max-width: 34ch;
+  /* Roomier measure — uses the available column width. */
+  max-width: 46ch;
   text-wrap: pretty;
 }
 .featured-quote.is-centered {
@@ -4232,12 +4644,12 @@ html.lenis body {
 }
 
 .featured-role {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-family: var(--font-sans);
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.045em;
-  color: rgba(255, 255, 255, 0.66);
-  text-transform: uppercase;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: none;
   margin-top: 5px;
   line-height: 1.5;
 }
@@ -4457,35 +4869,103 @@ html.lenis body {
    button. The category nav / progress bar sits full-width below,
    unchanged. Stacks on tablet and below.
    ========================================================= */
+/* Section header — the scan entry point. Eyebrow → heading → supporting
+   copy are grouped tightly (small gap) and separated from the orbit
+   composition below by a generous margin (clear group separation). */
+.orbit-header {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1vw, 14px);
+  text-align: left;
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+.orbit-title {
+  max-width: 22ch;
+  margin: 0;
+}
+.orbit-supporting {
+  color: rgba(255, 255, 255, 0.66);
+  max-width: 56ch;
+  margin: 0;
+}
+@media (max-width: 960px) {
+  .orbit-header {
+    text-align: center;
+    align-items: center;
+    margin-bottom: clamp(28px, 6vw, 44px);
+  }
+  .orbit-title,
+  .orbit-supporting {
+    margin-inline: auto;
+  }
+}
+
 .orbit-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(32px, 5vw, 80px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px);
   align-items: center;
 }
 
+/* The orbital system is pushed toward the left edge of the viewport —
+   the outer rings are allowed to run off-screen for an immersive,
+   planetary composition. The featured (centre) avatar always stays
+   fully visible with padding to spare. */
 .orbit-stage-col {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .orbit-stage {
   position: relative;
-  width: 100%;
-  max-width: 560px;
+  width: min(48vw, 860px);
+  max-width: none;
   aspect-ratio: 1 / 1;
-  margin-inline: auto;
+  margin-left: clamp(-240px, -10vw, -48px);
+  flex-shrink: 0;
 }
 
-/* Faint guide rings for depth. */
+/* Dotted orbital paths — clearly visible silver orbit rings so the
+   planetary motion reads at a glance, even on large high-DPI displays.
+   Inner ring strongest, outer rings step down but all stay legible. A
+   faint shadow lifts the dots off the starfield so they never disappear
+   into the background. */
 .orbit-ring {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 2px dotted rgba(232, 236, 245, 0.62);
   border-radius: 50%;
   pointer-events: none;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+}
+.orbit-ring-1 {
+  border-color: rgba(232, 236, 245, 0.5);
+}
+.orbit-ring-2 {
+  border-color: rgba(232, 236, 245, 0.4);
+}
+
+/* Ring-depth system — orbiting avatars dim with distance from the
+   centre. The featured avatar overrides to full brightness + glow. */
+.orbit-node.is-ring-0 {
+  filter: brightness(0.88) saturate(0.92);
+}
+.orbit-node.is-ring-1 {
+  filter: brightness(0.68) saturate(0.8);
+}
+.orbit-node.is-ring-2 {
+  filter: brightness(0.5) saturate(0.66);
+}
+.orbit-node.is-active,
+.orbit-node.is-active.is-ring-0,
+.orbit-node.is-active.is-ring-1,
+.orbit-node.is-active.is-ring-2 {
+  filter: none;
+}
+.orbit-node:not(.is-active):hover {
+  filter: brightness(1) saturate(1);
 }
 
 /* Avatar node — base size = centre size; orbit nodes are scaled down
@@ -4540,54 +5020,63 @@ html.lenis body {
     0 0 64px 10px rgba(167, 139, 250, 0.4);
 }
 
-/* RIGHT — content column */
+/* RIGHT — content column. Reading order: name → designation → quote →
+   LinkedIn → role navigation. Left-aligned, generous type scale. */
 .orbit-content-col {
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding-block: clamp(8px, 2vw, 24px);
-}
-.orbit-meta-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: clamp(14px, 1.6vw, 24px);
+  max-width: 760px;
 }
 .orbit-name-block {
   align-items: flex-start !important;
   text-align: left;
-  gap: 5px;
+  gap: 4px;
+  /* Attribution now sits BELOW the quote — spacing is handled by the
+     parent flex gap, so no extra bottom margin. */
+  margin-bottom: 0;
 }
 
-/* LinkedIn-blue button (brand blue, beside the name). */
+/* LinkedIn button — the site's secondary glass pill; LinkedIn blue
+   lives only in the icon accent. Sits directly beneath the quote. */
 .orbit-linkedin-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
+  align-self: flex-start;
   flex-shrink: 0;
-  padding: 8px 16px;
-  border-radius: 8px;
-  background: #0a66c2;
-  color: #ffffff;
+  margin-top: clamp(18px, 2vw, 28px);
+  padding: 11px 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  /* A clearly visible but still thin hairline border. */
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  color: rgba(255, 255, 255, 0.92);
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  box-shadow: 0 6px 20px rgba(10, 102, 194, 0.35);
   transition:
     background 0.3s var(--ease-out-expo),
-    transform 0.3s var(--ease-out-expo),
-    box-shadow 0.3s var(--ease-out-expo);
+    border-color 0.3s var(--ease-out-expo),
+    box-shadow 0.3s var(--ease-out-expo),
+    color 0.3s var(--ease-out-expo),
+    transform 0.3s var(--ease-out-expo);
 }
 .orbit-linkedin-btn svg {
-  color: #ffffff;
+  /* LinkedIn blue, lifted for the dark surface. */
+  color: #6cb2f5;
 }
 .orbit-linkedin-btn:hover {
-  background: #0b5cab;
+  background: rgba(255, 255, 255, 0.07);
+  /* Border stays clearly defined and picks up a soft LinkedIn-blue glow. */
+  border-color: rgba(124, 178, 245, 0.6);
+  box-shadow: 0 6px 22px rgba(108, 178, 245, 0.16);
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(10, 102, 194, 0.5);
 }
 
 /* The right content reads left-aligned in the split layout. */
@@ -4596,11 +5085,12 @@ html.lenis body {
   margin-inline: 0;
 }
 
-/* BOTTOM — category nav / progress bar, repositioned full-width. */
+/* Role navigation / progress — beneath the LinkedIn button, part of
+   the same reading column. */
 .orbit-nav-wrap {
   width: 100%;
-  max-width: 640px;
-  margin: clamp(40px, 5vw, 72px) auto 0;
+  max-width: 560px;
+  margin: clamp(28px, 3vw, 44px) 0 0;
 }
 
 @media (max-width: 960px) {
@@ -4608,8 +5098,14 @@ html.lenis body {
     grid-template-columns: 1fr;
     gap: clamp(28px, 5vw, 44px);
   }
+  .orbit-stage-col {
+    justify-content: center;
+  }
   .orbit-stage {
-    max-width: 380px;
+    width: 100%;
+    max-width: 400px;
+    margin-left: 0;
+    margin-inline: auto;
   }
   .orbit-content-col {
     text-align: left;

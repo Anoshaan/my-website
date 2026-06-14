@@ -28,7 +28,7 @@ const roles: Role[] = [
     badge: "AE",
     company: "Aeturnum",
     role: "Associate UI/UX Lead",
-    period: "October 2021 — Present",
+    period: "October 2021 – Present",
     logo: {
       src: "/logos/aeturnum.png",
       alt: "Aeturnum",
@@ -36,7 +36,7 @@ const roles: Role[] = [
       height: 24,
     },
     points: [
-      "Lead UX and motion direction across enterprise platforms — design systems, AI-driven workflows, and large-scale product surfaces.",
+      "Lead UX and motion direction across enterprise platforms: design systems, AI-driven workflows, and large-scale product surfaces.",
       "Build scalable interaction frameworks and motion languages that hold up across multiple products and engineering teams.",
       "Partner with product, engineering, and leadership; integrate AI-assisted workflows into how design itself ships.",
     ],
@@ -45,7 +45,7 @@ const roles: Role[] = [
     badge: "EM",
     company: "Elegant Media",
     role: "Senior UI/UX Engineer",
-    period: "September 2018 — October 2021",
+    period: "September 2018 – October 2021",
     logo: {
       src: "/logos/elegant-media.png",
       alt: "Elegant Media",
@@ -55,7 +55,7 @@ const roles: Role[] = [
     points: [
       "Designed end-to-end product experiences for clients across fintech, healthcare, logistics, and government platforms.",
       "Established interaction and visual standards that carried consistency across a high-volume agency portfolio.",
-      "Worked directly across the full product lifecycle — research, system design, prototyping, and production hand-off.",
+      "Worked directly across the full product lifecycle: research, system design, prototyping, and production hand-off.",
     ],
   },
 ];
@@ -72,7 +72,7 @@ export function CareerTimeline() {
       <Container>
         <SectionTitle
           title="A path through Enterprise User Experience."
-          intro="Eight years across product systems design, design systems, and motion craft — moving from a high-volume digital studio into deep, long-form product systems work."
+          intro="Eight years across product systems design, design systems, and motion craft, moving from a high-volume digital studio into deep, long-form product systems work."
         />
 
         <div ref={ref} className="about-timeline mt-14 lg:mt-16 max-w-[860px]">
