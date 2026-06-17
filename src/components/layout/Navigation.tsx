@@ -11,23 +11,60 @@ const links = [
   { label: "Systems", href: "/systems" },
   { label: "Brand", href: "/brand" },
   { label: "About", href: "/about" },
+  { label: "Connect", href: "/connect" },
 ];
+
+// Sustained upward distance (px) the user must scroll before the nav drops
+// back in — keeps a tiny upward nudge from re-summoning it.
+const SHOW_THRESHOLD = 110;
+// Stay pinned/visible while still near the top of the page.
+const TOP_ZONE = 90;
+// Only start hiding once the user is genuinely down the page.
+const HIDE_AFTER = 160;
 
 export function Navigation() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
 
-  // Nav lives at the top of the page only — once the journey starts it
-  // stays out of the way (no floating reveal on scroll-up; the footer
-  // carries navigation at the end of the story).
+  // Direction-aware reveal: hide on scroll-down, and only drop the nav back
+  // in after the user has scrolled UP a sustained distance (so a small
+  // upward nudge does nothing). Throttled with requestAnimationFrame.
   useEffect(() => {
-    const onScroll = () => {
+    let lastY = window.scrollY;
+    let upAccum = 0;
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
       const y = window.scrollY;
+      const dy = y - lastY;
       setScrolled(y > 20);
-      setHidden(y > 160);
+
+      if (y <= TOP_ZONE) {
+        // Near the top → always available, reset the accumulator.
+        setHidden(false);
+        upAccum = 0;
+      } else if (dy > 0) {
+        // Scrolling down → collapse once past the threshold; reset up-count.
+        upAccum = 0;
+        if (y > HIDE_AFTER) setHidden(true);
+      } else if (dy < 0) {
+        // Scrolling up → build intent; reveal only after a sustained nudge.
+        upAccum += -dy;
+        if (upAccum >= SHOW_THRESHOLD) setHidden(false);
+      }
+      lastY = y;
     };
-    onScroll();
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -42,7 +79,7 @@ export function Navigation() {
       <nav
         aria-label="Primary"
         className={cn(
-          "app-nav flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-full transition-all duration-[500ms] ease-[cubic-bezier(0.65,0,0.35,1)]",
+          "app-nav flex items-center gap-0.5 sm:gap-2 px-1.5 sm:px-3 py-2 rounded-full transition-all duration-[500ms] ease-[cubic-bezier(0.65,0,0.35,1)]",
           scrolled && "app-nav--scrolled"
         )}
       >
@@ -55,7 +92,7 @@ export function Navigation() {
               href={link.href}
               data-cursor-precise
               className={cn(
-                "nav-link group relative inline-flex items-center justify-center px-2.5 sm:px-4 py-1.5 rounded-full text-sm font-medium tracking-tight transition-colors duration-[250ms] min-h-[40px] min-w-[44px]",
+                "nav-link group relative inline-flex items-center justify-center px-2 sm:px-4 py-1.5 rounded-full text-[12.5px] sm:text-sm font-medium tracking-tight transition-colors duration-[250ms] min-h-[40px] sm:min-w-[44px]",
                 active
                   ? "text-white"
                   : "text-white/55 hover:text-white"

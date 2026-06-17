@@ -122,7 +122,11 @@ export function Hero() {
 
             <Reveal delay={0.3} duration={0.9}>
               <div className="hero-cta-row mt-9">
-                <Button href="/labs" leadingIcon={<LabsIcon />}>
+                <Button
+                  href="/labs"
+                  variant="secondary"
+                  leadingIcon={<LabsIcon />}
+                >
                   Explore Labs
                 </Button>
                 <Button

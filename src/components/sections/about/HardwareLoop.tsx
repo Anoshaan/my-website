@@ -63,7 +63,7 @@ export function HardwareLoop() {
           </div>
 
           <Reveal variant="fade" duration={1} delay={0.1} className="ab-loop">
-            <svg viewBox="0 0 220 220" className="ab-loop-svg" aria-hidden>
+            <svg viewBox="-18 -16 256 256" className="ab-loop-svg" aria-hidden>
               <circle className="ab-loop-ring" cx="110" cy="110" r="92" fill="none" />
               <path id="abLoopPath" className="ab-loop-active" d={LOOP} fill="none" />
 

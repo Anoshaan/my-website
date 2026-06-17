@@ -32,7 +32,9 @@ export function ThemeToggle({
   // layered colour utilities on <button> elements. We keep only layout here.
   const base =
     variant === "floating"
-      ? "theme-toggle theme-toggle--floating fixed top-4 right-3 sm:top-5 sm:right-5 z-[101] inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full"
+      ? // Hidden on phones so the corner stays clear for the full nav; the
+        // footer carries the theme toggle on mobile. Visible from sm up.
+        "theme-toggle theme-toggle--floating fixed top-4 right-3 sm:top-5 sm:right-5 z-[101] hidden sm:inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full"
       : "theme-toggle inline-flex items-center justify-center w-9 h-9 rounded-full";
 
   return (

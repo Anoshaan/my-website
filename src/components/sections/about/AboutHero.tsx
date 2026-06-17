@@ -15,6 +15,22 @@ export function AboutHero() {
     <section className="ab-hero">
       <Container>
         <div className="ab-hero-grid">
+          <Reveal variant="fade" duration={1.1} delay={0.2} className="ab-hero-media">
+            <div className="ab-hero-video-glow" aria-hidden />
+            <div className="about-video ab-hero-video">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster="/about/intro-poster.jpg"
+              >
+                <source src="/about/intro.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </Reveal>
+
           <div className="ab-hero-copy">
             <Reveal delay={0.1}>
               <h1 className="page-hero-title">
@@ -46,22 +62,6 @@ export function AboutHero() {
               </div>
             </Reveal>
           </div>
-
-          <Reveal variant="fade" duration={1.1} delay={0.2} className="ab-hero-media">
-            <div className="ab-hero-video-glow" aria-hidden />
-            <div className="about-video ab-hero-video">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                poster="/about/intro-poster.jpg"
-              >
-                <source src="/about/intro.mp4" type="video/mp4" />
-              </video>
-            </div>
-          </Reveal>
         </div>
       </Container>
     </section>

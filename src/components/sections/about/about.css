@@ -36,7 +36,8 @@ html[data-theme="light"] .ab-section {
 }
 @media (min-width: 901px) {
   .ab-hero-grid {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    /* Video on the left (slightly narrower), copy on the right. */
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
   }
 }
 .ab-hero-copy {
@@ -71,11 +72,11 @@ html[data-theme="light"] .ab-section {
      heavy dark drop that looked harsh on the light field. */
   box-shadow: 0 24px 60px rgba(var(--shadow-rgb), 0.16);
 }
-/* On desktop the media anchors to the right edge of its column so the
-   composition balances against the left-aligned title and copy. */
+/* On desktop the media sits on the left, anchored to the left edge of its
+   column so it balances against the copy on the right. */
 @media (min-width: 901px) {
   .ab-hero-video {
-    margin-inline: auto 0;
+    margin-inline: 0 auto;
   }
 }
 .ab-hero-video-glow {

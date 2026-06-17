@@ -89,7 +89,9 @@ export function CareerTimeline() {
               delay={i * 0.06}
               className="about-tl-item"
             >
-              <div className="about-tl-badge">{r.badge}</div>
+              <div className="about-tl-node" aria-hidden>
+                <span className="about-tl-node-dot" />
+              </div>
 
               <div className="card-surface card-lift flex flex-col gap-5 p-7 md:p-8">
                 <div className="flex flex-wrap items-center justify-between gap-4">

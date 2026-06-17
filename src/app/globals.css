@@ -662,13 +662,15 @@ html[data-theme="dark"] .hero-title {
     ),
     linear-gradient(180deg, var(--ht-b-top) 0%, var(--ht-b-mid) 52%, var(--ht-b-bot) 100%);
   background-size: 300% 100%, 100% 100%;
-  background-position: 165% 0, 0 0;
+  background-position: 140% 0, 0 0;
   background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: hero-title-shine 8.5s var(--ease-in-out) infinite;
+  /* The band starts close to the text and sweeps within the first ~2s, so
+     it is noticeable on the first view, then repeats on a calm loop. */
+  animation: hero-title-shine 5.5s var(--ease-in-out) 0.4s infinite;
 }
 /* Moving spotlight shadow — a soft, blurred oval that travels behind the
    type in sync with the shine: darker at its centre, dissolving at the
@@ -691,7 +693,7 @@ html[data-theme="dark"] .hero-title {
   opacity: 0;
   pointer-events: none;
   mix-blend-mode: var(--ht-spot-blend);
-  animation: hero-title-spot 8.5s var(--ease-in-out) infinite;
+  animation: hero-title-spot 5.5s var(--ease-in-out) 0.4s infinite;
 }
 /* Dark theme — brushed silver base, bright sweep, luminous halo. */
 html[data-theme="dark"] .hero-title-shine {
@@ -706,29 +708,29 @@ html[data-theme="dark"] .hero-title-shine::before {
 }
 @keyframes hero-title-shine {
   0% {
-    background-position: 165% 0, 0 0;
+    background-position: 140% 0, 0 0;
   }
-  /* Sweep completes by ~58%, then holds → a calm pause between loops. */
-  58%,
+  /* Sweep completes by ~45%, then holds → a calm pause between loops. */
+  45%,
   100% {
-    background-position: -65% 0, 0 0;
+    background-position: -55% 0, 0 0;
   }
 }
 @keyframes hero-title-spot {
   0% {
-    transform: translate(-78%, -50%);
+    transform: translate(-72%, -50%);
     opacity: 0;
   }
-  12% {
+  9% {
     opacity: 1;
   }
-  52% {
-    transform: translate(255%, -50%);
+  40% {
+    transform: translate(252%, -50%);
     opacity: 1;
   }
-  58%,
+  45%,
   100% {
-    transform: translate(300%, -50%);
+    transform: translate(296%, -50%);
     opacity: 0;
   }
 }
@@ -736,7 +738,7 @@ html[data-theme="dark"] .hero-title-shine::before {
   .hero-title-shine {
     animation: none;
     /* Rest on the readable metallic base, no sweep. */
-    background-position: -65% 0, 0 0;
+    background-position: -55% 0, 0 0;
   }
   .hero-title-shine::before {
     display: none;
@@ -4411,12 +4413,21 @@ html.lenis body {
   aspect-ratio: 4 / 3;
   border-radius: 22px;
   overflow: hidden;
+  /* Frame surface is theme-aware: a deep panel on dark, a soft light
+     stage on light, so the mockup never sits inside a black box. The
+     shadow lives on this frame itself (the polished floating mockup). */
   background: linear-gradient(135deg, #0d0d14, #050507);
   box-shadow:
-    0 40px 90px rgba(var(--shadow-rgb), 0.5),
+    0 30px 70px rgba(var(--shadow-rgb), 0.32),
     inset 0 1px 0 rgba(var(--c-fg-rgb), 0.05);
   transform-style: preserve-3d;
   transition: transform 0.7s var(--ease-out-expo);
+}
+html[data-theme="light"] .labs-visual-frame {
+  background: linear-gradient(135deg, #f6f5f2, #eceae4);
+  box-shadow:
+    0 26px 60px rgba(var(--shadow-rgb), 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 /* A whisper of perspective leaning toward the copy column. */
 .labs-visual-frame.is-tilt-right {
@@ -5603,6 +5614,32 @@ html[data-theme="light"] .cat-nav-label-sweep {
     0 0 64px 10px rgba(167, 139, 250, 0.4);
 }
 
+/* Light theme — the silver orbit rings are near-white and vanish on a
+   light field, and the lavender active glow reads too strong. Switch the
+   rings to a subtle ink dotted line and soften the glow to a quieter,
+   slightly deeper violet so it stays premium, not prominent. */
+html[data-theme="light"] .orbit-ring {
+  border-color: rgba(var(--c-fg-rgb), 0.34);
+  box-shadow: none;
+}
+html[data-theme="light"] .orbit-ring-1 {
+  border-color: rgba(var(--c-fg-rgb), 0.27);
+}
+html[data-theme="light"] .orbit-ring-2 {
+  border-color: rgba(var(--c-fg-rgb), 0.2);
+}
+html[data-theme="light"] .orbit-node.is-active {
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--c-fg-rgb), 0.16),
+    0 0 0 3px rgba(120, 92, 220, 0.12),
+    0 0 36px 6px rgba(120, 92, 220, 0.16);
+}
+html[data-theme="light"] .orbit-node:not(.is-active):hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--c-fg-rgb), 0.22),
+    0 0 22px 3px rgba(120, 92, 220, 0.2);
+}
+
 /* RIGHT — content column. Reading order: name → designation → quote →
    LinkedIn → role navigation. Left-aligned, generous type scale. */
 .orbit-content-col {
@@ -6032,33 +6069,41 @@ html[data-theme="light"] .cat-nav-label-sweep {
 .about-tl-item + .about-tl-item {
   margin-top: clamp(18px, 2.2vw, 32px);
 }
-.about-tl-badge {
+/* Timeline node — a clean ring + accent dot marker sitting on the track
+   (replaces the old initials badge). The bg-filled ring lets the spine
+   read as connecting into each node. */
+.about-tl-node {
   position: relative;
   z-index: 1;
   width: 56px;
   height: 56px;
-  border-radius: 0;
   display: grid;
   place-items: center;
-  font-family: var(--font-sans);
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  color: color-mix(in oklab, var(--color-accent) 62%, var(--c-fg));
-  background: transparent;
-  border: 0;
-  box-shadow: none;
+}
+.about-tl-node::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1px solid color-mix(in oklab, var(--color-accent) 42%, transparent);
+}
+.about-tl-node-dot {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--color-accent) 55%, transparent);
 }
 @media (max-width: 540px) {
   .about-tl-item {
     grid-template-columns: 44px 1fr;
     gap: 14px;
   }
-  .about-tl-badge {
+  .about-tl-node {
     width: 44px;
     height: 44px;
-    border-radius: 13px;
-    font-size: 14px;
   }
   .about-tl-track,
   .about-tl-fill {
@@ -6284,6 +6329,24 @@ html[data-theme="light"] .cat-nav-label-sweep {
      it already carries the glow at near-zero cost. */
   .hero-aura {
     display: none;
+  }
+
+  /* Freeze the ambient field animations on touch devices. The layered
+     nebula, star fields, beam, dust and hero galaxy stay fully visible
+     (the atmosphere is preserved) but stop their continuous per-frame
+     repaints, which are pure battery/scroll cost on phones and tablets. */
+  .galaxy-nebula,
+  .galaxy-stars-far,
+  .galaxy-stars-mid,
+  .galaxy-stars-near,
+  .galaxy-beam,
+  .galaxy-dust > span,
+  .hero-galaxy-glow,
+  .hero-galaxy-stars,
+  .hero-rays,
+  .penv-star,
+  .penv-streak {
+    animation: none !important;
   }
 }
 
@@ -7119,6 +7182,79 @@ html[data-theme="light"] .cat-nav-label-sweep {
 .cs-close:focus-visible {
   outline: 2px solid color-mix(in oklab, var(--cs-accent) 70%, var(--c-fg));
   outline-offset: 2px;
+}
+
+/* =========================================================
+   LIGHT THEME — media / animation frame surfaces.
+   These containers shipped with a dark gradient (built for the
+   dark theme) that reads as a black box on light. On light they
+   become a soft, premium light stage so the media/mockup floats
+   rather than sitting in a dark panel. Inner content in each is
+   token-driven (or a fill-the-frame image/mockup), so it stays
+   readable once the surface is light. Inner device/app screens
+   keep their own dark surfaces — those are screenshots.
+   ========================================================= */
+html[data-theme="light"] .story-media,
+html[data-theme="light"] .featured-slide-media,
+html[data-theme="light"] .csw-hero-visual {
+  background: linear-gradient(135deg, #f6f5f2, #ecebe6);
+}
+html[data-theme="light"] .csw-hero-visual {
+  box-shadow:
+    0 26px 60px rgba(var(--shadow-rgb), 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+html[data-theme="light"] .interest-thumb {
+  background: #efeee9;
+}
+/* Timeline node — its dark fill + dark "cut-out" ring matched the dark
+   page; on light they track the light page so the node reads as a clean
+   hollow marker on the spine. */
+html[data-theme="light"] .mission-step-node {
+  background: var(--color-bg);
+  box-shadow: 0 0 0 4px var(--color-bg);
+}
+
+/* Light theme — the reading sheet, its top fade, the close button, the
+   backdrop dim, and the in-article phone device all become soft light
+   surfaces so the case study fully respects the selected theme. The
+   article body itself is already token-driven, so its text + animated
+   visuals read correctly once the surfaces are light. */
+html[data-theme="light"] .cs-backdrop {
+  background: rgba(28, 30, 42, 0.4);
+}
+html[data-theme="light"] .cs-sheet {
+  background: linear-gradient(180deg, #faf9f6 0%, #f2f1ed 100%);
+}
+html[data-theme="light"] .cs-sheet-fade {
+  background: linear-gradient(
+    180deg,
+    #faf9f6 8%,
+    color-mix(in oklab, #faf9f6 55%, transparent) 55%,
+    transparent 100%
+  );
+}
+html[data-theme="light"] .cs-close {
+  background: rgba(255, 255, 255, 0.72);
+}
+html[data-theme="light"] .cs-close:hover {
+  background: rgba(255, 255, 255, 0.92);
+}
+html[data-theme="light"] .ui-dot {
+  background: rgba(var(--c-fg-rgb), 0.04);
+}
+html[data-theme="light"] .csw-phone {
+  background: linear-gradient(160deg, #e8e7ec, #dad9df);
+  border-color: rgba(22, 22, 32, 0.12);
+}
+html[data-theme="light"] .csw-phone-screen {
+  background: linear-gradient(180deg, #ffffff, #f4f3f6);
+  border-color: rgba(22, 22, 32, 0.06);
+}
+/* AI confidence-ring inner hole tracks the light surface so the ring
+   reads correctly (was a dark disc on the light sheet). */
+html[data-theme="light"] .csw-ai-ring::before {
+  background: #f3f2ee;
 }
 
 .cs-sheet-body {

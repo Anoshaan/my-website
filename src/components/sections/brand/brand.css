@@ -593,6 +593,12 @@ html[data-theme="light"] .br-section {
   overflow: hidden;
   box-shadow: 0 30px 70px rgba(var(--shadow-rgb), 0.45), 0 0 40px rgba(231, 200, 115, 0.06);
 }
+/* Light — a soft, glassy warm-white product window instead of a dark box.
+   Inner bars/dots are token-driven so they read as ink on the light frame. */
+html[data-theme="light"] .br-pf-window {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(249, 247, 240, 0.96));
+  border-color: rgba(169, 118, 26, 0.22);
+}
 .br-pf-top {
   display: flex;
   align-items: center;
@@ -786,6 +792,10 @@ html[data-theme="light"] .br-section {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+html[data-theme="light"] .br-stage-card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(250, 248, 242, 0.97));
+  border-color: rgba(169, 118, 26, 0.28);
 }
 .br-stage-card-glow {
   position: absolute;

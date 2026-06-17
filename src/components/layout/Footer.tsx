@@ -15,6 +15,7 @@ const links = [
   { label: "Systems", href: "/systems" },
   { label: "Brand", href: "/brand" },
   { label: "About", href: "/about" },
+  { label: "Connect", href: "/connect" },
 ];
 
 /**

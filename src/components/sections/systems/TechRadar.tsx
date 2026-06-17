@@ -62,9 +62,14 @@ export function TechRadar() {
 
             {TOPICS.map((t, i) => {
               const angle = (i / TOPICS.length) * Math.PI * 2 - Math.PI / 2;
-              const r = t.ring === 0 ? 31 : 44;
-              const x = 50 + Math.cos(angle) * r * 1.32;
-              const y = 50 + Math.sin(angle) * r;
+              // Radius % matches the ring radii (ring--2 = 29, ring--3 = 43)
+              // so each label sits cleanly on its ring path. Equal x/y on a
+              // square field keeps them on a true circle.
+              const r = t.ring === 0 ? 29 : 43;
+              // Rounded to a fixed precision so the SSR and client strings are
+              // byte-identical (avoids a float-precision hydration mismatch).
+              const x = (50 + Math.cos(angle) * r).toFixed(3);
+              const y = (50 + Math.sin(angle) * r).toFixed(3);
               return (
                 <ScrollReveal
                   key={t.label}
