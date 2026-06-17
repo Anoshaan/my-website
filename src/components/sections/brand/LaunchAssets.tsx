@@ -90,9 +90,6 @@ export function LaunchAssets() {
       <Container>
         <div className="br-stack-head">
           <Reveal>
-            <span className="section-label br-eyebrow">Production and launch</span>
-          </Reveal>
-          <Reveal delay={0.08}>
             <h2 className="text-section text-white heading-sheen br-h2">
               Everything a launch needs to land.
             </h2>

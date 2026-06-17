@@ -9,7 +9,7 @@ import { AboutCTA } from "@/components/sections/about/AboutCTA";
 export const metadata = {
   title: "About",
   description:
-    "Anoshaan, a product designer working across behavioral UX, interface design, motion, design systems, AI, and technology. The person, the path, and the systems behind the work.",
+    "Anoshaan, a product experience designer working across user experience, interface design, motion, design systems, AI, and technology. The person, the path, and the systems behind the work.",
 };
 
 export default function AboutPage() {

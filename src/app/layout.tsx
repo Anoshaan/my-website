@@ -7,11 +7,13 @@ import { Footer } from "@/components/layout/Footer";
 import { LenisProvider } from "@/components/animations/LenisProvider";
 import { ScrollToTop } from "@/components/animations/ScrollToTop";
 import { GalaxyBackground } from "@/components/animations/GalaxyBackground";
+import { ThemeProvider, themeNoFlashScript } from "@/components/theme/ThemeProvider";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Anoshaan · Product Designer & UI/UX Designer",
+    default: "Anoshaan · Product Experience Designer & UI/UX Lead",
     template: "%s | Anoshaan",
   },
   description:
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
     apple: "/icon.png",
   },
   openGraph: {
-    title: "Anoshaan · Product Designer & UI/UX Designer",
+    title: "Anoshaan · Product Experience Designer & UI/UX Lead",
     description:
       "Product designer focused on UI/UX, spatial interfaces, digital experiences, and interactive product design.",
     url: "https://anoshaan.design",
@@ -41,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Anoshaan · Product Designer & UI/UX Designer",
+    title: "Anoshaan · Product Experience Designer & UI/UX Lead",
     description:
       "Product designer focused on UI/UX, spatial interfaces, digital experiences, and interactive product design.",
     images: ["/icon.png"],
@@ -54,8 +56,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html
+      lang="en"
+      data-theme="light"
+      suppressHydrationWarning
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+    >
       <head>
+        {/* No-flash theme resolution — must run before first paint. */}
+        <script
+          id="theme-no-flash"
+          dangerouslySetInnerHTML={{ __html: themeNoFlashScript }}
+        />
         {/* Microsoft Clarity */}
         <Script id="microsoft-clarity" strategy="afterInteractive">
           {`(function(c,l,a,r,i,t,y){
@@ -79,13 +91,16 @@ export default function RootLayout({
         </Script>
       </head>
       <body>
-        <GalaxyBackground />
-        <LenisProvider>
-          <ScrollToTop />
-          <Navigation />
-          <main>{children}</main>
-          <Footer />
-        </LenisProvider>
+        <ThemeProvider>
+          <GalaxyBackground />
+          <LenisProvider>
+            <ScrollToTop />
+            <ThemeToggle variant="floating" />
+            <Navigation />
+            <main>{children}</main>
+            <Footer />
+          </LenisProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

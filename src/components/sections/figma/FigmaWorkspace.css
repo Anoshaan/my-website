@@ -31,8 +31,11 @@
   font-size: 11px;
   line-height: 1.4;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Outer cast shadow is theme-aware (soft light-gray on light, deep black
+     on dark) so the dark window doesn't drop a harsh blob on the light
+     page. The white edge ring + lavender bloom stay as the framing. */
   box-shadow:
-    0 50px 130px rgba(0, 0, 0, 0.65),
+    0 40px 100px rgba(var(--shadow-rgb), 0.38),
     0 0 0 1px rgba(255, 255, 255, 0.04),
     0 0 80px rgba(167, 139, 250, 0.12);
   user-select: none;

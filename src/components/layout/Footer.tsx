@@ -8,6 +8,7 @@ import {
   useTransform,
   useReducedMotion,
 } from "motion/react";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const links = [
   { label: "Labs", href: "/labs" },
@@ -47,10 +48,10 @@ export function Footer() {
     >
       <nav
         aria-label="Footer"
-        className="flex items-center gap-3 sm:gap-5 px-3 sm:px-5 py-2 rounded-full bg-black/55 backdrop-blur-[24px] saturate-[140%] border border-white/[0.10] shadow-[0_10px_36px_rgba(0,0,0,0.45)] max-w-[calc(100vw-16px)]"
+        className="app-footer-pill flex items-center gap-3 sm:gap-5 px-3 sm:px-5 py-2 rounded-full max-w-[calc(100vw-16px)]"
       >
         <span className="hidden md:inline-flex items-center text-sm font-medium tracking-tight text-white/85 whitespace-nowrap px-2">
-          Anoshaan&nbsp;·&nbsp;Product Designer
+          Anoshaan&nbsp;·&nbsp;Product Experience Designer &amp; UI/UX Lead
         </span>
 
         <span className="hidden md:inline-block h-3.5 w-px bg-white/[0.14]" aria-hidden />
@@ -69,6 +70,10 @@ export function Footer() {
         </div>
 
         <span className="hidden sm:inline-block h-3.5 w-px bg-white/[0.14]" aria-hidden />
+
+        <ThemeToggle variant="inline" />
+
+        <span className="inline-block h-3.5 w-px bg-white/[0.14]" aria-hidden />
 
         <button
           type="button"

@@ -17,18 +17,16 @@ export function BrandAsExperience() {
         <div className="br-split">
           <div className="br-split-copy">
             <Reveal>
-              <span className="section-label br-eyebrow">Brand as experience</span>
-            </Reveal>
-            <Reveal delay={0.08}>
               <h2 className="text-section text-white heading-sheen br-h2">
-                Brand is not decoration.
+                Brand is more than a logo.
               </h2>
             </Reveal>
-            <Reveal delay={0.16}>
+            <Reveal delay={0.1}>
               <p className="text-body text-white/60 br-lead">
-                A brand is not only how it looks. It is how it speaks, moves,
-                responds, and feels. The static pieces are only the start. They
-                come alive the moment someone uses the product.
+                A brand is how people understand you, remember you, and
+                experience you across every touchpoint. I help shape the full
+                system around an idea: how it looks, speaks, moves, and shows up
+                online.
               </p>
             </Reveal>
           </div>

@@ -71,9 +71,6 @@ export function ProductAsBrand() {
 
           <div className="br-split-copy">
             <Reveal>
-              <span className="section-label br-eyebrow">Product experience as brand</span>
-            </Reveal>
-            <Reveal delay={0.08}>
               <h2 className="text-section text-white heading-sheen br-h2">
                 The product is where the brand becomes real.
               </h2>

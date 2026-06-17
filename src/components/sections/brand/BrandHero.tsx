@@ -18,17 +18,17 @@ export function BrandHero() {
           <div className="br-hero-copy">
             <Reveal delay={0.1}>
               <h1 className="page-hero-title">
-                <span className="page-hero-line">Building brands people</span>
+                <span className="page-hero-line">I build brands</span>
                 <span className="page-hero-grad page-hero-grad--gold">
-                  can see, feel, and remember.
+                  that feel alive.
                 </span>
               </h1>
             </Reveal>
             <Reveal delay={0.22}>
               <p className="br-hero-sub">
-                From identity and product experience to motion, 3D, video,
-                launch assets, and storytelling, I help ideas become complete
-                digital brands.
+                From identity and websites to product experience, motion,
+                content, and launch assets, I help ideas become complete digital
+                brands.
               </p>
             </Reveal>
           </div>

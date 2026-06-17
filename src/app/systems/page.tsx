@@ -22,7 +22,6 @@ export default function SystemsPage() {
       <TechRadar />
       <ProductLoop />
       <PageCTA
-        eyebrow="In practice"
         title="See how these systems show up in real work."
         lead="Case studies, product decisions, and the systems behind them."
         buttonLabel="View Labs"

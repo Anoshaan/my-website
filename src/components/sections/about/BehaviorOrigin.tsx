@@ -30,9 +30,6 @@ export function BehaviorOrigin() {
         <div className="ab-split">
           <div className="ab-split-copy">
             <Reveal>
-              <span className="section-label ab-eyebrow">Where the interest started</span>
-            </Reveal>
-            <Reveal delay={0.08}>
               <h2 className="text-section text-white heading-sheen">
                 It began with how people behave.
               </h2>

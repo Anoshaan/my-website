@@ -73,9 +73,6 @@ export function OffScreenDiscipline() {
       <Container>
         <div className="ab-disc-head">
           <Reveal>
-            <span className="section-label ab-eyebrow">Off-screen discipline</span>
-          </Reveal>
-          <Reveal delay={0.08}>
             <h2 className="text-section text-white heading-sheen">
               The habits that keep the work sharp.
             </h2>

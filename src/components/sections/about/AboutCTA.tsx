@@ -11,17 +11,14 @@ export function AboutCTA() {
     <section className="section-pad border-t border-white/[0.06] text-center">
       <Container size="narrow" className="flex flex-col items-center gap-6">
         <Reveal>
-          <span className="section-label">What&apos;s next</span>
-        </Reveal>
-        <Reveal delay={0.08}>
           <h2 className="text-section text-white heading-sheen">
-            If you&apos;re building something complex, I&apos;d like to hear about it.
+            If you&apos;re building something ambitious, I&apos;d like to hear about it.
           </h2>
         </Reveal>
-        <Reveal delay={0.16}>
+        <Reveal delay={0.12}>
           <p className="text-body text-white/60 max-w-[52ch]">
-            An enterprise platform, an AI-driven product, or a system that has to
-            think. Take a look at the work, or reach out directly.
+            A new product, an AI-driven experience, or an idea you want to shape.
+            Take a look at the work, or reach out directly.
           </p>
         </Reveal>
         <Reveal delay={0.24}>

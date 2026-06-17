@@ -11,6 +11,8 @@ type CommonProps = {
   variant?: Variant;
   className?: string;
   trailingIcon?: ReactNode;
+  /** Optional small icon shown before the label (e.g. a topic glyph). */
+  leadingIcon?: ReactNode;
   /** Show animated rainbow gradient halo under the button. Opt-in only:
    *  to keep the site-wide rule of one rainbow treatment per page, this is
    *  OFF by default and must be set explicitly on a page's single hero CTA. */
@@ -65,6 +67,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       variant = "primary",
       className,
       trailingIcon,
+      leadingIcon,
       rainbow,
       ...rest
     } = props;
@@ -84,6 +87,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           download={props.download}
           className={inner}
         >
+          {leadingIcon}
           {children}
           {icon}
         </Link>
@@ -93,6 +97,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           className={inner}
           {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
         >
+          {leadingIcon}
           {children}
           {icon}
         </button>

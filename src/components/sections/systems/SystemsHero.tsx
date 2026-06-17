@@ -27,9 +27,9 @@ export function SystemsHero() {
             </Reveal>
             <Reveal delay={0.22}>
               <p className="sys-hero-sub">
-                Design systems, UX quality, AI-assisted workflows, and technical
-                product thinking that help ideas move from interface to
-                implementation.
+                I build design systems that help teams move faster without losing
+                quality. For me, systems are not just components. They are shared
+                decisions that make products easier to design, build, and scale.
               </p>
             </Reveal>
           </div>

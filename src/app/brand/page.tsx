@@ -1,5 +1,6 @@
 import { BrandHero } from "@/components/sections/brand/BrandHero";
 import { BrandAsExperience } from "@/components/sections/brand/BrandAsExperience";
+import { BrandCapabilities } from "@/components/sections/brand/BrandCapabilities";
 import { BrandJourney } from "@/components/sections/brand/BrandJourney";
 import { IdentitySystem } from "@/components/sections/brand/IdentitySystem";
 import { ProductAsBrand } from "@/components/sections/brand/ProductAsBrand";
@@ -19,6 +20,7 @@ export default function BrandPage() {
     <>
       <BrandHero />
       <BrandAsExperience />
+      <BrandCapabilities />
       <BrandJourney />
       <IdentitySystem />
       <ProductAsBrand />
@@ -26,11 +28,10 @@ export default function BrandPage() {
       <LaunchAssets />
       <BrandSupport />
       <PageCTA
-        eyebrow="In practice"
-        title="See how brand thinking becomes product work."
-        lead="Case studies, product decisions, and the craft behind them."
-        buttonLabel="View Labs"
-        href="/labs"
+        title="Have a brand idea? Let's shape it properly."
+        lead="Whether you're starting from scratch or improving an existing brand, I can help turn the idea into a clear digital experience."
+        buttonLabel="Start a Brand Conversation"
+        href="mailto:hello@anoshaan.com"
       />
     </>
   );

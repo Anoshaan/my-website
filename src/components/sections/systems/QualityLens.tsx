@@ -102,14 +102,11 @@ export function QualityLens() {
         <div className="sys-split">
           <div className="sys-split-copy">
             <Reveal>
-              <span className="section-label sys-eyebrow">Product quality lens</span>
-            </Reveal>
-            <Reveal delay={0.08}>
               <h2 className="text-section text-white heading-sheen sys-h2">
                 Quality is inspected, not guessed.
               </h2>
             </Reveal>
-            <Reveal delay={0.16}>
+            <Reveal delay={0.1}>
               <p className="text-body text-white/60 sys-lead">
                 Every product passes through the same lens. Each layer is read,
                 tested, and refined before it ships.

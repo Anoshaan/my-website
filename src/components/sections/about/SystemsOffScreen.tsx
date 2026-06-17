@@ -148,9 +148,6 @@ export function SystemsOffScreen() {
     <section className="section-pad ab-section border-t border-white/[0.06]">
       <Container>
         <Reveal>
-          <span className="section-label ab-eyebrow">Systems outside the screen</span>
-        </Reveal>
-        <Reveal delay={0.08}>
           <h2 className="text-section text-white heading-sheen ab-h2-mt">
             Curiosity that runs deeper than interfaces.
           </h2>

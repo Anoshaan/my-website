@@ -84,7 +84,7 @@ export function FigmaWorkspace() {
         <div className="fw-titlebar-left">
           <span style={{ fontSize: 13 }}>⌂</span>
           <span className="fw-tab">
-            <span className="fw-tab-dot">❖</span> Lead UI/UX Portfolio
+            <span className="fw-tab-dot">❖</span> Product Experience Portfolio
             <span style={{ fontSize: 9, marginLeft: 6 }}>✕</span>
           </span>
           <span>+</span>
@@ -143,7 +143,7 @@ export function FigmaWorkspace() {
               <span className="fw-layer-icon">◇</span> Badge Tag
             </div>
             <div className={`fw-layer fw-i3 ${editing === "layer" ? "is-editing" : ""}`}>
-              <span className="fw-layer-icon">T</span> &ldquo;Lead UI/UX Engine…&rdquo;
+              <span className="fw-layer-icon">T</span> &ldquo;Product Experience…&rdquo;
             </div>
             <div className="fw-layer fw-i3">
               <span className="fw-layer-icon">T</span> Description Block
@@ -184,14 +184,14 @@ export function FigmaWorkspace() {
                   className={`fw-web-title fw-edit ${editing === "title" ? "is-editing" : ""}`}
                   style={{ fontSize: size }}
                 >
-                  Lead UI/UX
+                  Product
                   <br />
-                  Engineer.
+                  Experience.
                 </h2>
                 <p className="fw-web-desc fw-edit">
-                  <strong>8 years of experience</strong> crafting scalable
-                  digital systems, leveraging <strong>AI</strong> and
-                  physics-based motion to bridge static design and fluid code.
+                  <strong>8 years of experience</strong> crafting clear, useful
+                  digital products, using <strong>AI</strong> and physics-based
+                  motion to bridge static design and fluid code.
                 </p>
                 <div className="fw-btn-group">
                   <span className="fw-btn-primary">View Projects</span>

@@ -31,9 +31,6 @@ export function MotionDepth() {
       <Container>
         <div className="br-stack-head">
           <Reveal>
-            <span className="section-label br-eyebrow">Motion, 3D, and depth</span>
-          </Reveal>
-          <Reveal delay={0.08}>
             <h2 className="text-section text-white heading-sheen br-h2">
               Movement that supports clarity and emotion.
             </h2>

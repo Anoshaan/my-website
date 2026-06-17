@@ -14,15 +14,15 @@ import { Reveal } from "@/components/animations/Reveal";
 const STAGES = [
   {
     name: "Starting",
-    body: "Clarify the idea, direction, identity, and first digital experience.",
+    body: "Clarify the idea, define the direction, and create the first brand experience.",
   },
   {
     name: "Growing",
-    body: "Build the website, product UI, motion, content, and launch materials.",
+    body: "Build the website, product UI, launch assets, motion, content, and social presence.",
   },
   {
     name: "Scaling",
-    body: "Create guidelines, systems, templates, and repeatable creative structure.",
+    body: "Create guidelines, templates, systems, and repeatable creative structure so the brand can grow consistently.",
   },
 ];
 
@@ -40,9 +40,6 @@ export function BrandSupport() {
       <Container>
         <div className="br-stack-head">
           <Reveal>
-            <span className="section-label br-eyebrow">Brand support model</span>
-          </Reveal>
-          <Reveal delay={0.08}>
             <h2 className="text-section text-white heading-sheen br-h2">
               Support that grows with the brand.
             </h2>

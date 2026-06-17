@@ -8,7 +8,7 @@ import { Reveal } from "@/components/animations/Reveal";
 /**
  * Brand — Section 2. Brand creation journey. A flowing path with a
  * distinct crafted glyph per stage: idea → positioning → identity →
- * product → motion → launch. A gold line draws through the stages on
+ * website/product → content → launch → scale. A gold line draws through the stages on
  * scroll and each glyph lights as it is reached. Cinematic, controlled;
  * static under reduced motion.
  */
@@ -58,7 +58,7 @@ const STAGES: Stage[] = [
     ),
   },
   {
-    name: "Product",
+    name: "Website / Product",
     line: "Where the brand becomes usable.",
     glyph: (
       <svg viewBox="0 0 32 32">
@@ -69,12 +69,14 @@ const STAGES: Stage[] = [
     ),
   },
   {
-    name: "Motion",
-    line: "How it moves and responds.",
+    name: "Content",
+    line: "The stories that carry it.",
     glyph: (
       <svg viewBox="0 0 32 32">
-        <path d="M5 22 C 12 22, 12 10, 19 10 S 27 8, 27 8" {...G} />
-        <circle cx="5" cy="22" r="1.6" fill="currentColor" stroke="none" />
+        <rect x="7" y="6" width="18" height="20" rx="2.5" {...G} opacity="0.5" />
+        <line x1="11" y1="12" x2="21" y2="12" {...G} />
+        <line x1="11" y1="16" x2="21" y2="16" {...G} opacity="0.7" />
+        <line x1="11" y1="20" x2="17" y2="20" {...G} opacity="0.5" />
       </svg>
     ),
   },
@@ -86,6 +88,18 @@ const STAGES: Stage[] = [
         <circle cx="16" cy="16" r="2.4" fill="currentColor" stroke="none" />
         <circle cx="16" cy="16" r="6.5" {...G} opacity="0.55" />
         <circle cx="16" cy="16" r="11" {...G} opacity="0.28" />
+      </svg>
+    ),
+  },
+  {
+    name: "Scale",
+    line: "Growing it consistently.",
+    glyph: (
+      <svg viewBox="0 0 32 32">
+        <line x1="9" y1="24" x2="9" y2="18" {...G} opacity="0.5" />
+        <line x1="16" y1="24" x2="16" y2="13" {...G} opacity="0.75" />
+        <line x1="23" y1="24" x2="23" y2="8" {...G} />
+        <path d="M7 11 L14 14 L20 9 L25 6" {...G} opacity="0.6" />
       </svg>
     ),
   },
@@ -137,11 +151,8 @@ export function BrandJourney() {
       <Container>
         <div className="br-stack-head">
           <Reveal>
-            <span className="section-label br-eyebrow">Brand creation journey</span>
-          </Reveal>
-          <Reveal delay={0.08}>
             <h2 className="text-section text-white heading-sheen br-h2">
-              How an idea becomes a complete brand.
+              From idea to launch.
             </h2>
           </Reveal>
         </div>

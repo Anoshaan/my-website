@@ -81,18 +81,13 @@ export function SystemInfrastructure() {
         <div className="sys-split sys-split--wide">
           <div className="sys-split-copy">
             <Reveal>
-              <span className="section-label sys-eyebrow">
-                Design systems as infrastructure
-              </span>
-            </Reveal>
-            <Reveal delay={0.08}>
               <h2 className="text-section text-white heading-sheen sys-h2">
-                Systems are not libraries. They are product infrastructure.
+                Systems are not libraries. They are shared product decisions.
               </h2>
             </Reveal>
-            <Reveal delay={0.16}>
+            <Reveal delay={0.1}>
               <p className="text-body text-white/60 sys-lead">
-                A real design system encodes decisions and carries them upward,
+                A real design system captures decisions and carries them upward,
                 from a single token to the experience a user feels. It is
                 versioned, documented, adopted, and contributed to like any
                 other product.

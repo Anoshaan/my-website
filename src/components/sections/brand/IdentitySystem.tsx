@@ -17,18 +17,15 @@ export function IdentitySystem() {
         <div className="br-split br-split--board">
           <div className="br-split-copy">
             <Reveal>
-              <span className="section-label br-eyebrow">Identity system</span>
-            </Reveal>
-            <Reveal delay={0.08}>
               <h2 className="text-section text-white heading-sheen br-h2">
                 Structure, not just decoration.
               </h2>
             </Reveal>
-            <Reveal delay={0.16}>
+            <Reveal delay={0.1}>
               <p className="text-body text-white/60 br-lead">
                 Visual direction, typography, a color system, layout language,
-                and tone, all written down as reusable, digital-first brand
-                rules. A guideline a team can actually build on.
+                and tone, all written down as reusable brand rules. A guideline a
+                team can actually build on.
               </p>
             </Reveal>
           </div>

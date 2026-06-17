@@ -12,6 +12,17 @@
   --sys-faint: rgba(120, 224, 184, 0.12);
 }
 
+/* On light, the pale emerald labels vanish — deepen the green so it
+   stays the page's accent but reads as ink. Glows/soft fills keep
+   their rgb so they stay airy. */
+html[data-theme="light"] .sys-hero,
+html[data-theme="light"] .sys-section {
+  --sys: #0f9468;
+  --sys-bright: #0c805a;
+  --sys-soft: rgba(15, 148, 104, 0.45);
+  --sys-faint: rgba(15, 148, 104, 0.1);
+}
+
 /* ---- HERO ------------------------------------------------ */
 .sys-hero {
   position: relative;
@@ -38,7 +49,7 @@
 .sys-hero-sub {
   font-size: clamp(1.02rem, 0.98rem + 0.22vw, 1.2rem);
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.64);
+  color: rgba(var(--c-fg-rgb), 0.64);
   max-width: 54ch;
   margin: 0;
 }
@@ -61,7 +72,7 @@
   overflow: visible;
 }
 .sys-edge-base {
-  stroke: rgba(255, 255, 255, 0.07);
+  stroke: rgba(var(--c-fg-rgb), 0.07);
   stroke-width: 0.3;
 }
 .sys-edge-trace {
@@ -127,7 +138,7 @@
   font-size: clamp(0.56rem, 0.5rem + 0.3vw, 0.72rem);
   letter-spacing: 0.04em;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(var(--c-fg-rgb), 0.5);
 }
 .sys-map-label--t1 {
   color: var(--sys-bright);
@@ -136,7 +147,7 @@
   transform: translate(-50%, 11px);
 }
 .sys-map-label--t3 {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(var(--c-fg-rgb), 0.4);
 }
 
 /* ---- SHARED SECTION SCAFFOLD ----------------------------- */
@@ -205,15 +216,15 @@
   font-family: var(--font-mono);
   font-size: 0.78rem;
   letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(var(--c-fg-rgb), 0.62);
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(var(--c-fg-rgb), 0.1);
+  background: rgba(var(--c-fg-rgb), 0.025);
   transition: border-color 0.3s var(--ease-out-expo), color 0.3s var(--ease-out-expo);
 }
 .sys-trait:hover {
-  color: #fff;
+  color: var(--c-fg);
   border-color: var(--sys-soft);
 }
 
@@ -228,7 +239,7 @@
   display: flex;
   gap: 16px;
   padding: 14px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(var(--c-fg-rgb), 0.06);
 }
 .sys-quality-item:first-child {
   border-top: none;
@@ -246,13 +257,13 @@
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #fff;
+  color: var(--c-fg);
   margin: 0 0 2px;
 }
 .sys-quality-line {
   font-size: 0.97rem;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.58);
+  color: rgba(var(--c-fg-rgb), 0.58);
   margin: 0;
 }
 
@@ -345,11 +356,11 @@
   gap: 3px;
   padding: 18px 22px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(var(--c-fg-rgb), 0.08);
   background: linear-gradient(
     160deg,
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.015)
+    rgba(var(--c-fg-rgb), 0.05),
+    rgba(var(--c-fg-rgb), 0.015)
   );
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -372,34 +383,34 @@
     rgba(120, 224, 184, 0.12),
     rgba(120, 224, 184, 0.03)
   );
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3),
+  box-shadow: 0 16px 40px rgba(var(--shadow-rgb), 0.3),
     0 0 28px rgba(120, 224, 184, 0.12);
 }
 .sys-stack-label {
   font-size: 1.02rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #fff;
+  color: var(--c-fg);
 }
 .sys-stack-sub {
   font-family: var(--font-mono);
   font-size: 0.76rem;
   letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(var(--c-fg-rgb), 0.5);
 }
 .sys-stack-layer--4 .sys-stack-sub {
-  color: rgba(141, 240, 200, 0.9);
+  color: color-mix(in oklab, var(--sys) 90%, transparent);
 }
 
 /* ---- HUMAN + AI WORKFLOW --------------------------------- */
 .sys-flow {
   position: relative;
   border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(var(--c-fg-rgb), 0.08);
   background: linear-gradient(
     160deg,
-    rgba(255, 255, 255, 0.04),
-    rgba(255, 255, 255, 0.012)
+    rgba(var(--c-fg-rgb), 0.04),
+    rgba(var(--c-fg-rgb), 0.012)
   );
   padding: clamp(28px, 4vw, 52px) clamp(22px, 4vw, 56px);
   overflow: hidden;
@@ -412,7 +423,7 @@
   height: 2px;
   background: repeating-linear-gradient(
     to right,
-    rgba(255, 255, 255, 0.14) 0 6px,
+    rgba(var(--c-fg-rgb), 0.14) 0 6px,
     transparent 6px 12px
   );
   transform: translateY(-50%);
@@ -495,7 +506,7 @@
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(var(--c-fg-rgb), 0.55);
 }
 .sys-flow-zone--output .sys-flow-tag {
   color: var(--sys-bright);
@@ -508,13 +519,13 @@
   gap: 8px;
   padding: 14px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(var(--c-fg-rgb), 0.08);
+  background: rgba(var(--c-fg-rgb), 0.02);
 }
 .sys-flow-b {
   height: 8px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(var(--c-fg-rgb), 0.16);
 }
 .sys-flow-b--w { width: 100%; }
 .sys-flow-b--m { width: 70%; }
@@ -557,7 +568,7 @@
 .sys-flow-ui-row {
   height: 7px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(var(--c-fg-rgb), 0.18);
 }
 .sys-flow-ui-row--short { width: 60%; }
 .sys-flow-ui-cta {
@@ -634,7 +645,7 @@
   font-family: var(--font-mono);
   font-size: 0.74rem;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(var(--c-fg-rgb), 0.7);
 }
 .sys-radar-chip-wrap {
   position: absolute;
@@ -648,10 +659,10 @@
   font-size: 0.74rem;
   letter-spacing: 0.01em;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(var(--c-fg-rgb), 0.72);
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--c-fg-rgb), 0.1);
   background: rgba(10, 12, 14, 0.7);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -660,7 +671,7 @@
 }
 .sys-radar-chip:hover,
 .sys-radar-chip:focus-visible {
-  color: #fff;
+  color: var(--c-fg);
   border-color: var(--sys);
   outline: none;
 }
@@ -675,7 +686,7 @@
   line-height: 1.4;
   letter-spacing: 0;
   text-align: center;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(var(--c-fg-rgb), 0.78);
   padding: 8px 12px;
   border-radius: 10px;
   border: 1px solid rgba(120, 224, 184, 0.25);
@@ -704,7 +715,7 @@
   right: 0;
   top: 6px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--c-fg-rgb), 0.08);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -746,13 +757,13 @@
   font-size: 1.05rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #fff;
+  color: var(--c-fg);
   margin: 6px 0 6px;
 }
 .sys-loop-line {
   font-size: 0.92rem;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.56);
+  color: rgba(var(--c-fg-rgb), 0.56);
   margin: 0;
 }
 .sys-loop-return {
@@ -783,7 +794,7 @@
   font-family: var(--font-mono);
   font-size: 0.74rem;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(var(--c-fg-rgb), 0.55);
 }
 
 /* ---- RESPONSIVE ------------------------------------------ */
@@ -812,8 +823,8 @@
     gap: 6px;
     padding: 16px;
     border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(var(--c-fg-rgb), 0.08);
+    background: rgba(var(--c-fg-rgb), 0.025);
   }
   .sys-radar-rail-label {
     font-family: var(--font-mono);
@@ -823,7 +834,7 @@
   .sys-radar-rail-insight {
     font-size: 0.88rem;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.62);
+    color: rgba(var(--c-fg-rgb), 0.62);
   }
   /* Loop → two columns. */
   .sys-loop-track {

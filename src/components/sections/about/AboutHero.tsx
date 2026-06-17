@@ -26,9 +26,10 @@ export function AboutHero() {
             </Reveal>
             <Reveal delay={0.22}>
               <p className="ab-hero-sub">
-                I&apos;m Anoshaan, a product designer working across behavioral
-                UX, interface design, motion, design systems, AI, and the
-                technology underneath it all.
+                I&apos;m Anoshaan, a product experience designer focused on
+                building digital products that are clear, useful, and easy to
+                scale. My work sits between user experience, interface design,
+                motion, and frontend thinking.
               </p>
             </Reveal>
             <Reveal delay={0.32}>

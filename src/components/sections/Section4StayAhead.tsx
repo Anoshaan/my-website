@@ -36,7 +36,7 @@ const CARDS: CardData[] = [
   {
     title: "Human-Guided Control",
     tag: "Speed means nothing without structure.",
-    body: "AI accelerates exploration, but every decision stays intentional, scalable, and editable, all controlled through professional design systems.",
+    body: "AI accelerates exploration, but every decision stays intentional and editable, all guided by clear design systems.",
   },
   {
     title: "Motion-Driven Experiences",

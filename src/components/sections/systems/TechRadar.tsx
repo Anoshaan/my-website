@@ -36,9 +36,6 @@ export function TechRadar() {
       <Container>
         <div className="sys-stack-head">
           <Reveal>
-            <span className="section-label sys-eyebrow">Technology radar</span>
-          </Reveal>
-          <Reveal delay={0.08}>
             <h2 className="text-section text-white heading-sheen sys-h2">
               Tracking what changes how products get built.
             </h2>

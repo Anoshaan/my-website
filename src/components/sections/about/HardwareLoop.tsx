@@ -38,9 +38,6 @@ export function HardwareLoop() {
         <div className="ab-split ab-split--loop">
           <div className="ab-split-copy">
             <Reveal>
-              <span className="section-label ab-eyebrow">Hardware-aware thinking</span>
-            </Reveal>
-            <Reveal delay={0.08}>
               <h2 className="text-section text-white heading-sheen">
                 My work doesn&apos;t end at the screen.
               </h2>

@@ -79,9 +79,6 @@ export function HumanAIWorkflow() {
       <Container>
         <div className="sys-stack-head">
           <Reveal>
-            <span className="section-label sys-eyebrow">Human + AI workflow</span>
-          </Reveal>
-          <Reveal delay={0.08}>
             <h2 className="text-section text-white heading-sheen sys-h2">
               AI accelerates production. Judgment controls the experience.
             </h2>

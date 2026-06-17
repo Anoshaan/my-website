@@ -4,10 +4,49 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
+import { Button } from "@/components/ui/Button";
+
+const HERO_TITLE = "Designing product experiences shaped by human behavior.";
+
+/* Small, subtle topic glyphs for the hero CTAs — same hairline stroke
+   language as the button arrow so they read as part of the system. */
+const LabsIcon = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="14"
+    height="14"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.35"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M6.3 1.9h3.4M6.9 1.9v3.9L3.6 11.4a1.4 1.4 0 0 0 1.2 2.1h6.4a1.4 1.4 0 0 0 1.2-2.1L9.1 5.8V1.9" />
+    <path d="M5.4 9.1h5.2" />
+  </svg>
+);
+
+const BrandIcon = () => (
+  <svg
+    viewBox="0 0 16 16"
+    width="14"
+    height="14"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.35"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M8 1.7 13.6 4.9v6.2L8 14.3 2.4 11.1V4.9z" />
+    <circle cx="8" cy="8" r="2.1" />
+  </svg>
+);
 
 /**
- * Hero — a quiet, centered first impression. No imagery, no calls to
- * action: just the statement and a single line of intent. The title is
+ * Hero — a quiet, centered first impression. No imagery: the statement,
+ * a single line of intent, and two calls to action. The title is
  * rendered as solid white type so it is unambiguously the strongest,
  * first thing the eye lands on — every ambient layer (galaxy, rays) is
  * kept low-contrast so nothing competes with the primary message.
@@ -62,17 +101,38 @@ export function Hero() {
         >
           <motion.div style={{ y: titleY }}>
             <Reveal duration={0.9}>
-              <h1 className="hero-title text-white max-w-[30ch] mx-auto">
-                Designing Product Experiences Shaped by Human Behavior
+              <h1
+                className="hero-title hero-title-shine max-w-[30ch] mx-auto"
+                data-text={HERO_TITLE}
+              >
+                {HERO_TITLE}
               </h1>
             </Reveal>
           </motion.div>
 
           <motion.div style={{ y: bodyY }}>
             <Reveal delay={0.18} duration={0.9}>
-              <p className="text-body text-white/65 max-w-[52ch] mx-auto mt-6">
-                Every product tells a story. This is where I share mine.
+              <p className="text-body text-white/65 max-w-[54ch] mx-auto mt-6">
+                I design web, mobile, and AI product experiences that are clear,
+                scalable, and easy to use. I combine UX thinking, visual craft,
+                motion, and product strategy to create digital products that feel
+                simple and human.
               </p>
+            </Reveal>
+
+            <Reveal delay={0.3} duration={0.9}>
+              <div className="hero-cta-row mt-9">
+                <Button href="/labs" leadingIcon={<LabsIcon />}>
+                  Explore Labs
+                </Button>
+                <Button
+                  href="/brand"
+                  variant="secondary"
+                  leadingIcon={<BrandIcon />}
+                >
+                  Build a Brand
+                </Button>
+              </div>
             </Reveal>
           </motion.div>
         </Container>

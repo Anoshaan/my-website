@@ -73,9 +73,6 @@ export function ProductLoop() {
       <Container>
         <div className="sys-stack-head">
           <Reveal>
-            <span className="section-label sys-eyebrow">From idea to product</span>
-          </Reveal>
-          <Reveal delay={0.08}>
             <h2 className="text-section text-white heading-sheen sys-h2">
               One loop, run continuously.
             </h2>
