@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
 import { CaseStudyMedia } from "@/components/mockups/CaseStudyMedia";
 import { caseStudies } from "@/lib/case-studies";
 import { labsProjects, type LabsProject } from "@/lib/labs-projects";
+import { caseStudyDetails } from "@/lib/case-study-details";
+import { LabsEmbed } from "./LabsEmbed";
+import { CaseStudyOverlay } from "./CaseStudyOverlay";
 
 /**
  * Labs showcase — a vertical sequence of large, alternating project
@@ -15,51 +18,10 @@ import { labsProjects, type LabsProject } from "@/lib/labs-projects";
  * perspective tilt + floor glow) and a strong type hierarchy on the
  * content side. Entrances animate once on mount (Reveal), never on
  * scroll-up.
+ *
+ * Projects registered in `caseStudyDetails` show a "Read Detailed Case
+ * Study" button that opens an in-page overlay — never a route change.
  */
-
-/** Logical design size of the embedded HTML mockups (desktop, 4:3). */
-const EMBED_W = 1440;
-const EMBED_H = 1080;
-
-/** Live interactive mockup, rendered at full desktop size then scaled to
- *  fit the frame so it reads as a crisp product screenshot while keeping
- *  every GSAP entrance + hover interaction intact. */
-function LabsEmbed({ src, title }: { src: string; title: string }) {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.4);
-
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
-    const update = () => setScale(host.clientWidth / EMBED_W);
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(host);
-    window.addEventListener("resize", update);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", update);
-    };
-  }, []);
-
-  return (
-    <div ref={hostRef} className="labs-embed" aria-hidden>
-      <iframe
-        src={src}
-        title={title}
-        loading="lazy"
-        scrolling="no"
-        tabIndex={-1}
-        style={{
-          width: EMBED_W,
-          height: EMBED_H,
-          transform: `scale(${scale})`,
-          transformOrigin: "top left",
-        }}
-      />
-    </div>
-  );
-}
 
 /** Dominant visual — slow scroll parallax + a perspective tilt that
  *  leans toward the content so the pair reads as one composition. */
@@ -108,11 +70,20 @@ function ProjectVisual({
   );
 }
 
-function ProjectRow({ project, index }: { project: LabsProject; index: number }) {
+function ProjectRow({
+  project,
+  index,
+  onOpenDetail,
+}: {
+  project: LabsProject;
+  index: number;
+  onOpenDetail: (num: string, trigger: HTMLButtonElement) => void;
+}) {
   // Project 1 (index 0) = visual left. Then alternate.
   const contentSide = index % 2 === 0 ? "right" : "left";
   const insightLead = project.insight.slice(0, -1);
   const insightPunch = project.insight[project.insight.length - 1];
+  const hasDetail = Boolean(caseStudyDetails[project.num]);
 
   return (
     <Reveal
@@ -160,21 +131,66 @@ function ProjectRow({ project, index }: { project: LabsProject; index: number })
             </p>
           </div>
         </div>
+
+        {hasDetail && (
+          <button
+            type="button"
+            className="labs-detail-btn"
+            onClick={(e) => onOpenDetail(project.num, e.currentTarget)}
+          >
+            Read Detailed Case Study
+            <span className="labs-detail-arrow" aria-hidden>
+              →
+            </span>
+          </button>
+        )}
       </div>
     </Reveal>
   );
 }
 
 export function LabsShowcase() {
+  // `renderNum` is the case study whose content is mounted; `open` drives the
+  // slide animation. They are separate so the sheet can animate OUT (open
+  // false) before its content is torn down.
+  const [renderNum, setRenderNum] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const active = renderNum ? caseStudyDetails[renderNum] : null;
+
+  const openDetail = (num: string, trigger: HTMLButtonElement) => {
+    triggerRef.current = trigger;
+    setRenderNum(num);
+    setOpen(true);
+  };
+
   return (
     <section className="pb-[clamp(120px,16vw,200px)]">
       <Container size="wide">
         <div className="labs-showcase">
           {labsProjects.map((project, i) => (
-            <ProjectRow key={project.num} project={project} index={i} />
+            <ProjectRow
+              key={project.num}
+              project={project}
+              index={i}
+              onOpenDetail={openDetail}
+            />
           ))}
         </div>
       </Container>
+
+      {active && (
+        <CaseStudyOverlay
+          open={open}
+          onClose={() => setOpen(false)}
+          onExited={() => setRenderNum(null)}
+          title={active.title}
+          returnFocusRef={triggerRef}
+        >
+          <active.Body />
+        </CaseStudyOverlay>
+      )}
     </section>
   );
 }

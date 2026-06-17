@@ -1,25 +1,26 @@
-import { PageHead } from "@/components/ui/PageHead";
-import { AboutIntro } from "@/components/sections/about/AboutIntro";
+import { AboutHero } from "@/components/sections/about/AboutHero";
+import { BehaviorOrigin } from "@/components/sections/about/BehaviorOrigin";
 import { CareerTimeline } from "@/components/sections/about/CareerTimeline";
-import { Experiments } from "@/components/sections/about/Experiments";
-import { HardwareSystems } from "@/components/sections/about/HardwareSystems";
-import { PersonalInterests } from "@/components/sections/about/PersonalInterests";
+import { SystemsOffScreen } from "@/components/sections/about/SystemsOffScreen";
+import { HardwareLoop } from "@/components/sections/about/HardwareLoop";
+import { OffScreenDiscipline } from "@/components/sections/about/OffScreenDiscipline";
 import { AboutCTA } from "@/components/sections/about/AboutCTA";
+
+export const metadata = {
+  title: "About",
+  description:
+    "Anoshaan, a product designer working across behavioral UX, interface design, motion, design systems, AI, and technology. The person, the path, and the systems behind the work.",
+};
 
 export default function AboutPage() {
   return (
     <>
-      <PageHead
-        title="Human behavior is"
-        shineWords="my design system."
-        intro="I'm Anoshaan, a product systems designer working at the intersection of behavioral UX, motion, and technology. I build interfaces, scalable systems, and quietly intelligent experiences for enterprise platforms, AI products, and the layer of things still being figured out."
-      />
-
-      <AboutIntro />
+      <AboutHero />
+      <BehaviorOrigin />
       <CareerTimeline />
-      <Experiments />
-      <HardwareSystems />
-      <PersonalInterests />
+      <SystemsOffScreen />
+      <HardwareLoop />
+      <OffScreenDiscipline />
       <AboutCTA />
     </>
   );

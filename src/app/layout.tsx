@@ -5,7 +5,6 @@ import { GeistMono } from "geist/font/mono";
 import { Navigation } from "@/components/layout/Navigation";
 import { Footer } from "@/components/layout/Footer";
 import { LenisProvider } from "@/components/animations/LenisProvider";
-import { CustomCursor } from "@/components/animations/CustomCursor";
 import { ScrollToTop } from "@/components/animations/ScrollToTop";
 import { GalaxyBackground } from "@/components/animations/GalaxyBackground";
 import "./globals.css";
@@ -81,7 +80,6 @@ export default function RootLayout({
       </head>
       <body>
         <GalaxyBackground />
-        <CustomCursor />
         <LenisProvider>
           <ScrollToTop />
           <Navigation />

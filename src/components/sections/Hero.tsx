@@ -83,7 +83,6 @@ export function Hero() {
       <motion.div style={{ opacity: heroOpacity }}>
         <Reveal delay={0.6} variant="fade" duration={1.2}>
           <div className="hero-scroll-hint" aria-hidden>
-            <span className="hero-scroll-hint-label">Scroll</span>
             <span className="hero-scroll-line" />
           </div>
         </Reveal>

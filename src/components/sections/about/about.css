@@ -1,0 +1,604 @@
+/* =========================================================
+   ABOUT PAGE — the person, the path, the systems behind it.
+   Neutral / silver with the site's lavender accent. Reuses
+   the global hero title (.page-hero-grad--silver), the
+   .about-video frame, .about-timeline, glass language, and
+   section rhythm; everything below is page-specific.
+   ========================================================= */
+.ab-hero,
+.ab-section {
+  --ab: #cfd9ff;
+  --ab-bright: #e7ecff;
+  --ab-soft: rgba(207, 217, 255, 0.5);
+  --ab-faint: rgba(207, 217, 255, 0.12);
+}
+
+/* ---- HERO ------------------------------------------------ */
+.ab-hero {
+  position: relative;
+  padding-top: clamp(140px, 16vw, 210px);
+  padding-bottom: clamp(72px, 9vw, 130px);
+  overflow: hidden;
+}
+.ab-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(40px, 6vw, 72px);
+  align-items: center;
+}
+@media (min-width: 901px) {
+  .ab-hero-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+}
+.ab-hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 2.6vw, 32px);
+}
+.ab-hero-sub {
+  font-size: clamp(1.02rem, 0.98rem + 0.22vw, 1.2rem);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.64);
+  max-width: 50ch;
+  margin: 0;
+}
+.ab-hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.ab-hero-media {
+  position: relative;
+}
+.ab-hero-video {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  max-width: 540px;
+  margin-inline: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+}
+.ab-hero-video-glow {
+  position: absolute;
+  inset: -14%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 50% at 50% 40%,
+    rgba(207, 217, 255, 0.16),
+    transparent 70%
+  );
+  filter: blur(18px);
+}
+
+/* ---- SHARED SECTION SCAFFOLD ----------------------------- */
+.ab-eyebrow {
+  color: var(--ab-bright);
+  opacity: 0.8;
+}
+.ab-lead {
+  max-width: 54ch;
+}
+.ab-lead--wide {
+  max-width: 64ch;
+}
+.ab-h2-mt {
+  margin-top: 18px;
+}
+.ab-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(40px, 6vw, 84px);
+  align-items: center;
+}
+@media (min-width: 901px) {
+  .ab-split {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+  .ab-split--loop {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+    align-items: center;
+  }
+}
+.ab-split-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ---- BEHAVIOR MAP ---------------------------------------- */
+.ab-behavior {
+  display: flex;
+  justify-content: center;
+}
+.ab-behavior-svg {
+  width: 100%;
+  max-width: 420px;
+}
+.ab-bh-screen {
+  fill: rgba(255, 255, 255, 0.015);
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1;
+}
+.ab-bh-ui {
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.ab-bh-ui-block {
+  fill: rgba(255, 255, 255, 0.05);
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1;
+}
+.ab-bh-path {
+  stroke: var(--ab-soft);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 4 6;
+  animation: ab-dash 5s linear infinite;
+}
+@keyframes ab-dash {
+  to { stroke-dashoffset: -20; }
+}
+.ab-bh-node-dot {
+  fill: var(--ab-bright);
+}
+.ab-bh-node {
+  animation: ab-node-pulse 3.6s var(--ease-in-out) infinite;
+  transform-origin: center;
+}
+@keyframes ab-node-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+.ab-bh-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  fill: rgba(255, 255, 255, 0.55);
+}
+.ab-bh-cursor {
+  fill: #fff;
+  filter: drop-shadow(0 0 5px rgba(207, 217, 255, 0.9));
+}
+
+/* ---- SYSTEMS OFF SCREEN (3 objects) ---------------------- */
+.ab-obj-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: clamp(40px, 5vw, 64px);
+}
+.ab-obj {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012));
+}
+.ab-obj-visual {
+  height: 120px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.25);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.ab-obj-svg {
+  width: 100%;
+  height: 100%;
+  color: var(--ab);
+}
+.ab-obj-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+  margin: 0;
+}
+.ab-obj-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.58);
+  margin: 0;
+}
+.ab-obj-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+.ab-obj-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* RF module. */
+.ab-rf-board {
+  fill: rgba(207, 217, 255, 0.06);
+  stroke: var(--ab-soft);
+  stroke-width: 1;
+}
+.ab-rf-chip {
+  fill: none;
+  stroke: var(--ab-bright);
+  stroke-width: 1.2;
+}
+.ab-rf-pin {
+  stroke: rgba(207, 217, 255, 0.45);
+  stroke-width: 1;
+}
+.ab-rf-wave {
+  fill: none;
+  stroke: var(--ab);
+  stroke-width: 1;
+  transform-origin: 100px 64px;
+  opacity: 0;
+  animation: ab-rf-emit 4s ease-out infinite;
+}
+@keyframes ab-rf-emit {
+  0% { transform: scale(0.4); opacity: 0.7; }
+  70% { opacity: 0.12; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.ab-rf-freq {
+  stroke: var(--ab-bright);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0.7;
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: ab-draw-loop 3s ease-in-out infinite;
+}
+@keyframes ab-draw-loop {
+  0% { stroke-dashoffset: 80; }
+  50% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -80; }
+}
+
+/* Wi-Fi nodes. */
+.ab-wf-edge {
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1;
+}
+.ab-wf-node {
+  fill: rgba(207, 217, 255, 0.7);
+}
+.ab-wf-node.is-hub {
+  fill: var(--ab-bright);
+  filter: drop-shadow(0 0 5px rgba(207, 217, 255, 0.8));
+}
+.ab-wf-packet {
+  fill: #fff;
+}
+.ab-wf-tag {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  fill: rgba(255, 255, 255, 0.4);
+}
+
+/* Aeroponic tower. */
+.ab-ae-tower {
+  fill: rgba(207, 217, 255, 0.06);
+  stroke: var(--ab-soft);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+.ab-ae-sensor {
+  fill: var(--ab-bright);
+  animation: ab-node-pulse 2.6s var(--ease-in-out) infinite;
+}
+.ab-ae-flow {
+  stroke: var(--ab);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 3 6;
+  animation: ab-flow-down 2.2s linear infinite;
+}
+@keyframes ab-flow-down {
+  to { stroke-dashoffset: -18; }
+}
+.ab-ae-phone {
+  fill: rgba(255, 255, 255, 0.02);
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1;
+}
+.ab-ae-phone-bar {
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.ab-ae-phone-stat {
+  fill: rgba(207, 217, 255, 0.18);
+}
+.ab-ae-phone-chart {
+  stroke: var(--ab-bright);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ab-ae-read {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  fill: rgba(231, 236, 255, 0.7);
+}
+
+/* Mindset chips. */
+.ab-mindset {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: clamp(36px, 4vw, 52px);
+  padding-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.ab-mindset-label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.5);
+}
+.ab-mindset-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ab-mindset-chip {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.01em;
+  color: var(--ab-bright);
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(207, 217, 255, 0.22);
+  background: rgba(207, 217, 255, 0.05);
+}
+
+/* ---- HARDWARE LOOP --------------------------------------- */
+.ab-facets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 22px;
+  margin-top: 22px;
+}
+.ab-facet {
+  display: flex;
+  gap: 12px;
+}
+.ab-facet-dot {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: var(--ab);
+  box-shadow: 0 0 0 4px var(--ab-faint);
+}
+.ab-facet-title {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 2px;
+}
+.ab-facet-body {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+.ab-loop {
+  display: flex;
+  justify-content: center;
+}
+.ab-loop-svg {
+  width: 100%;
+  max-width: 360px;
+}
+.ab-loop-ring {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1.5;
+}
+.ab-loop-active {
+  stroke: var(--ab-soft);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 8;
+  animation: ab-dash 6s linear infinite;
+}
+.ab-loop-node {
+  animation: ab-node-pulse 4.8s var(--ease-in-out) infinite;
+}
+.ab-loop-node-halo {
+  fill: rgba(207, 217, 255, 0.12);
+}
+.ab-loop-node-dot {
+  fill: var(--ab-bright);
+}
+.ab-loop-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  fill: rgba(255, 255, 255, 0.62);
+}
+.ab-loop-center {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  fill: #fff;
+}
+.ab-loop-center--sm {
+  font-size: 11px;
+  fill: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+.ab-loop-pulse {
+  fill: #fff;
+  filter: drop-shadow(0 0 6px rgba(207, 217, 255, 0.9));
+}
+
+/* ---- OFF-SCREEN DISCIPLINE ------------------------------- */
+.ab-disc-head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 60ch;
+}
+.ab-disc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: clamp(40px, 5vw, 64px);
+}
+.ab-mark {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012));
+}
+.ab-mark-visual {
+  height: 70px;
+  color: var(--ab);
+}
+.ab-mark-svg {
+  width: 100%;
+  height: 100%;
+}
+.ab-mark-line {
+  stroke: currentColor;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ab-mark-line--shuttle {
+  stroke-width: 1.8;
+  stroke-dasharray: 230;
+  stroke-dashoffset: 230;
+  animation: ab-mark-draw 3.4s var(--ease-in-out) infinite;
+}
+.ab-mark-pt--shuttle {
+  fill: var(--ab-bright);
+  opacity: 0;
+  animation: ab-mark-blink 3.4s var(--ease-in-out) infinite;
+}
+@keyframes ab-mark-draw {
+  0% { stroke-dashoffset: 230; }
+  45% { stroke-dashoffset: 0; }
+  80% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -230; }
+}
+@keyframes ab-mark-blink {
+  0%, 40% { opacity: 0; }
+  50%, 80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.ab-mark-line--wave {
+  stroke-width: 1.8;
+  opacity: 0.85;
+  animation: ab-wave-shift 4s linear infinite;
+}
+.ab-mark-line--wave2 {
+  stroke-width: 1.4;
+  opacity: 0.4;
+  animation: ab-wave-shift 5.5s linear infinite reverse;
+}
+@keyframes ab-wave-shift {
+  to { transform: translateX(-40px); }
+}
+.ab-mark-line--tactic {
+  stroke-width: 1.6;
+  animation: ab-dash 4s linear infinite;
+}
+.ab-mark-node {
+  fill: rgba(207, 217, 255, 0.7);
+}
+.ab-mark-node--goal {
+  fill: var(--ab-bright);
+  filter: drop-shadow(0 0 5px rgba(207, 217, 255, 0.8));
+}
+.ab-mark-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+  margin: 4px 0 0;
+}
+.ab-mark-label {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---- FINAL CTA ------------------------------------------- */
+.ab-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+/* ---- RESPONSIVE ------------------------------------------ */
+@media (max-width: 900px) {
+  .ab-obj-grid {
+    grid-template-columns: 1fr;
+    max-width: 460px;
+  }
+  .ab-disc-grid {
+    grid-template-columns: 1fr;
+    max-width: 460px;
+  }
+  .ab-loop-svg {
+    max-width: 300px;
+  }
+}
+@media (max-width: 560px) {
+  .ab-facets {
+    grid-template-columns: 1fr;
+  }
+  .ab-hero-actions {
+    width: 100%;
+  }
+}
+
+/* ---- REDUCED MOTION -------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .ab-bh-path,
+  .ab-bh-node,
+  .ab-rf-wave,
+  .ab-rf-freq,
+  .ab-ae-sensor,
+  .ab-ae-flow,
+  .ab-loop-active,
+  .ab-loop-node,
+  .ab-mark-line--shuttle,
+  .ab-mark-pt--shuttle,
+  .ab-mark-line--wave,
+  .ab-mark-line--wave2,
+  .ab-mark-line--tactic {
+    animation: none !important;
+  }
+  .ab-bh-path,
+  .ab-loop-active { stroke-dasharray: none; }
+  .ab-mark-line--shuttle { stroke-dashoffset: 0; }
+  .ab-bh-node,
+  .ab-ae-sensor,
+  .ab-loop-node { opacity: 0.9; }
+}

@@ -3,31 +3,40 @@ import { Reveal } from "@/components/animations/Reveal";
 import { Button } from "@/components/ui/Button";
 
 /**
- * About — Section 8. Calm closing CTA.
+ * About — Section 6. Final CTA. Calm, direct close that keeps the resume
+ * download easy to reach and points to the work, or a direct line.
  */
 export function AboutCTA() {
   return (
     <section className="section-pad border-t border-white/[0.06] text-center">
       <Container size="narrow" className="flex flex-col items-center gap-6">
         <Reveal>
-          <span className="text-eyebrow text-white/45">What&apos;s next</span>
+          <span className="section-label">What&apos;s next</span>
         </Reveal>
         <Reveal delay={0.08}>
           <h2 className="text-section text-white heading-sheen">
-            Let&apos;s build meaningful digital experiences.
+            If you&apos;re building something complex, I&apos;d like to hear about it.
           </h2>
         </Reveal>
         <Reveal delay={0.16}>
-          <p className="text-body text-white/60 max-w-[54ch]">
-            If you&apos;re building something complex, an enterprise platform,
-            an AI-driven product, a system that has to think, I&apos;d like to
-            hear about it.
+          <p className="text-body text-white/60 max-w-[52ch]">
+            An enterprise platform, an AI-driven product, or a system that has to
+            think. Take a look at the work, or reach out directly.
           </p>
         </Reveal>
         <Reveal delay={0.24}>
-          <div className="mt-2">
-            <Button href="mailto:hello@anoshaan.com" rainbow>
-              hello@anoshaan.com
+          <div className="ab-cta-actions">
+            <Button href="/labs" rainbow>
+              View Labs
+            </Button>
+            <Button
+              href="/resume/Anoshaan-Resume.pdf"
+              variant="secondary"
+              rainbow={false}
+              trailingIcon={null}
+              download
+            >
+              Download Resume
             </Button>
           </div>
         </Reveal>
