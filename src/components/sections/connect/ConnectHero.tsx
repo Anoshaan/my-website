@@ -50,25 +50,6 @@ const LinkedInIcon = () => (
   </svg>
 );
 
-const ArrowIcon = () => (
-  <svg
-    viewBox="0 0 14 14"
-    width="14"
-    height="14"
-    aria-hidden="true"
-    className="connect-card-arrow"
-  >
-    <path
-      d="M3 11L11 3M11 3H5M11 3V9"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
 const OPTIONS: Option[] = [
   {
     label: "WhatsApp",
@@ -130,7 +111,6 @@ export function ConnectHero() {
                   <span className="connect-card-label">{opt.label}</span>
                   <span className="connect-card-hint">{opt.hint}</span>
                 </span>
-                <ArrowIcon />
               </a>
             </Reveal>
           ))}

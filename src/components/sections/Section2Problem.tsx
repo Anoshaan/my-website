@@ -192,6 +192,16 @@ export function Section2Problem() {
               better. It&rsquo;s about understanding how people think, feel,
               and make decisions.
             </p>
+
+            <p className="problem-subhead">What the product really needs</p>
+            <p className="problem-keywords">
+              End-user mapping&nbsp;&middot; Accessibility depth&nbsp;&middot;
+              First-five-second clarity&nbsp;&middot; Psychology-led
+              design&nbsp;&middot; Guided attention&nbsp;&middot; Friction
+              removal&nbsp;&middot; Task-first UX&nbsp;&middot; Trust-building
+              moments&nbsp;&middot; Product-specific flow&nbsp;&middot; Less
+              noise, more direction
+            </p>
           </motion.div>
         </div>
       </motion.div>

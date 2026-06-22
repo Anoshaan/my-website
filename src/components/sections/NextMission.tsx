@@ -118,21 +118,6 @@ export function NextMission() {
               data-cursor-precise
             >
               Start a Conversation
-              <svg
-                viewBox="0 0 14 14"
-                width="14"
-                height="14"
-                aria-hidden="true"
-              >
-                <path
-                  d="M3 11L11 3M11 3H5M11 3V9"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
             </a>
           </div>
         </Reveal>

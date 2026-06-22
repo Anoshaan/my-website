@@ -1093,6 +1093,25 @@ html[data-theme="dark"] .hero-title-shine::before {
   margin: 0;
 }
 
+/* Follow-up hierarchy — a calm sub-heading + a single continuous
+   keyword line (not bullets, not a tag cloud). Premium and readable. */
+.problem-subhead {
+  margin: clamp(10px, 1.4vw, 18px) 0 0;
+  font-size: clamp(0.95rem, 0.9rem + 0.4vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--c-fg);
+}
+.problem-keywords {
+  margin: 0;
+  max-width: 54ch;
+  font-size: clamp(0.92rem, 0.88rem + 0.3vw, 1.05rem);
+  line-height: 1.85;
+  font-weight: 450;
+  color: rgba(var(--c-fg-rgb), 0.55);
+  text-wrap: pretty;
+}
+
 /* Stacked layout — card parks UP, copy sits centred below it. */
 @media (max-width: 900px) {
   .problem-content {
@@ -1113,11 +1132,205 @@ html[data-theme="dark"] .hero-title-shine::before {
 }
 
 /* =========================================================
-   SECTION 3 — HOW I THINK BEFORE I DESIGN. A pinned, scroll-
-   driven chapter. A fixed Canvas-2D particle field re-forms
-   through four stages; the left narrative (primary content)
-   crossfades, and the right timeline lights up via a travelling
-   neon glow. No cards.
+   SECTION 3 — THINKING MODEL. A calm thinking cloud: a central
+   "user" core with four facets floating around it, joined by
+   subtle connectors and faint orbit rings. Not a timeline/grid.
+   ========================================================= */
+.thinking-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.thinking-aura {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    58% 48% at 50% 36%,
+    rgba(var(--c-accent-rgb), 0.1),
+    transparent 70%
+  );
+}
+.thinking-header {
+  position: relative;
+  z-index: 1;
+  max-width: 46rem;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 18px);
+}
+.thinking-title {
+  color: var(--c-fg);
+  margin: 0;
+  max-width: 20ch;
+}
+.thinking-intro {
+  color: rgba(var(--c-fg-rgb), 0.6);
+  max-width: 58ch;
+  margin: 0;
+}
+
+.thinking-cloud {
+  position: relative;
+  z-index: 1;
+  margin: clamp(48px, 7vw, 104px) auto 0;
+  max-width: 1080px;
+}
+
+/* Ambient — faint orbit rings + connectors from core to each card. */
+.thinking-orbits {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.thinking-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  aspect-ratio: 1;
+  border: 1px dashed rgba(var(--c-fg-rgb), 0.1);
+}
+.thinking-ring-1 {
+  width: min(300px, 38%);
+}
+.thinking-ring-2 {
+  width: min(500px, 64%);
+  border-color: rgba(var(--c-fg-rgb), 0.06);
+}
+.thinking-links {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.thinking-links line {
+  stroke: rgba(var(--c-fg-rgb), 0.12);
+  stroke-width: 1;
+  stroke-dasharray: 2 6;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Central core — the user. */
+.thinking-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+}
+.thinking-core-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 6px rgba(var(--c-accent-rgb), 0.12),
+    0 0 26px 6px rgba(var(--c-accent-rgb), 0.4);
+}
+.thinking-core-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: rgba(var(--c-fg-rgb), 0.5);
+}
+
+/* Facet cards — soft, floating, scattered (not a rigid grid). */
+.thinking-grid {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(16px, 2vw, 26px);
+}
+@media (min-width: 760px) {
+  .thinking-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(140px, 17vw, 320px);
+    row-gap: clamp(48px, 6vw, 104px);
+  }
+  .thinking-card {
+    margin-block-start: var(--lift, 0);
+  }
+}
+.thinking-card {
+  position: relative;
+  border-radius: 26px;
+  border: 1px solid rgba(var(--c-fg-rgb), 0.1);
+  background: rgba(var(--c-fg-rgb), 0.025);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  padding: clamp(20px, 1.8vw, 30px);
+  box-shadow: 0 18px 50px -30px rgba(var(--shadow-rgb), 0.5);
+  transition: border-color 0.5s var(--ease-out-expo);
+  will-change: transform;
+}
+.thinking-card:hover {
+  border-color: rgba(var(--c-fg-rgb), 0.2);
+}
+.thinking-card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.7;
+  background: radial-gradient(
+    120% 80% at 18% 0%,
+    rgba(var(--c-accent-rgb), 0.1),
+    transparent 60%
+  );
+}
+.thinking-card-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(var(--c-fg-rgb), 0.05);
+  color: rgba(var(--c-fg-rgb), 0.75);
+  margin-bottom: clamp(12px, 1.2vw, 18px);
+}
+.thinking-card-title {
+  position: relative;
+  margin: 0;
+  font-size: clamp(1.1rem, 1.4vw, 1.35rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--c-fg);
+}
+.thinking-card-body {
+  position: relative;
+  margin: 8px 0 0;
+  max-width: 34ch;
+  color: rgba(var(--c-fg-rgb), 0.55);
+  font-size: clamp(0.95rem, 0.92rem + 0.16vw, 1.0625rem);
+  line-height: 1.6;
+}
+@media (max-width: 759px) {
+  .thinking-orbits,
+  .thinking-core {
+    display: none;
+  }
+  .thinking-cloud {
+    margin-top: clamp(36px, 8vw, 56px);
+    max-width: 460px;
+  }
+}
+
+/* =========================================================
+   SECTION 3 (legacy) — HOW I THINK BEFORE I DESIGN. Retained
+   styles for the former pinned timeline (no longer rendered).
    ========================================================= */
 .approach-section {
   position: relative;
@@ -1402,12 +1615,12 @@ html[data-theme="light"] .approach-item.is-active .approach-item-label {
    right. Uses the full content width instead of a centred column. */
 .evolve-header {
   width: 100%;
-  max-width: 1240px;
+  max-width: 1600px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
   align-items: end;
-  gap: clamp(24px, 4vw, 72px);
+  gap: clamp(24px, 4vw, 96px);
   text-align: left;
 }
 .evolve-eyebrow {
@@ -1442,9 +1655,9 @@ html[data-theme="light"] .approach-item.is-active .approach-item-label {
 .evolve-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(20px, 2vw, 34px);
+  gap: clamp(20px, 2.4vw, 44px);
   width: 100%;
-  max-width: 1240px;
+  max-width: 1600px;
   margin-inline: auto;
   perspective: 1500px;
 }

@@ -41,25 +41,6 @@ const variants: Record<Variant, string> = {
   secondary: "btn-secondary",
 };
 
-const ArrowIcon = () => (
-  <svg
-    viewBox="0 0 14 14"
-    width="12"
-    height="12"
-    aria-hidden="true"
-    className="transition-transform duration-[300ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-[2px] group-hover:-translate-y-[2px]"
-  >
-    <path
-      d="M3 11L11 3M11 3H5M11 3V9"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(props, ref) {
     const {
@@ -75,7 +56,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     // Rainbow is opt-in only (one rainbow per page, site-wide rule).
     const showRainbow = rainbow ?? false;
 
-    const icon = trailingIcon !== undefined ? trailingIcon : <ArrowIcon />;
+    // No default arrow icon — buttons show only intentional icons
+    // (leadingIcon, or an explicit trailingIcon when passed).
+    const icon = trailingIcon;
 
     const inner = cn("group", base, variants[variant], className);
 

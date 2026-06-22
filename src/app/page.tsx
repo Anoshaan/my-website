@@ -1,6 +1,7 @@
 import { Hero } from "@/components/sections/Hero";
 import { Section2Problem } from "@/components/sections/Section2Problem";
 import { Section3Approach } from "@/components/sections/Section3Approach";
+import { IdeaToLaunch } from "@/components/sections/IdeaToLaunch";
 import { Section4StayAhead } from "@/components/sections/Section4StayAhead";
 import { CaseStudyFeature } from "@/components/sections/CaseStudyFeature";
 import { Testimonials } from "@/components/sections/Testimonials";
@@ -20,6 +21,9 @@ export default function HomePage() {
       <Hero />
       <Section2Problem />
       <Section3Approach />
+      <ScrollFocusFade>
+        <IdeaToLaunch />
+      </ScrollFocusFade>
       <ScrollFocusFade>
         <Section4StayAhead />
       </ScrollFocusFade>
