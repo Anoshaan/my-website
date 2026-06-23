@@ -11,19 +11,32 @@ import { ScrollReveal } from "@/components/animations/ScrollReveal";
  * Reveals row by row on scroll.
  */
 
-const AREAS = [
-  "Brand idea and positioning",
-  "Brand identity direction",
-  "Logo and visual system direction",
-  "Typography, color, layout, and tone",
-  "Website design",
-  "Product UI and digital experience",
-  "Motion, micro-interactions, 3D, and scroll storytelling",
-  "Social media and launch content",
-  "Pitch decks and presentation assets",
-  "Video, explainer, and campaign assets",
-  "Brand guidelines and reusable templates",
-  "Ongoing creative support as the brand grows",
+/* Grouped into clear, scannable categories so the full range reads at a
+   glance instead of as one long flat list. Every original area is still
+   covered, just organised under a heading. */
+const GROUPS = [
+  {
+    title: "Brand Strategy",
+    detail: "Brand idea, positioning, and the story that holds it together",
+  },
+  {
+    title: "Identity Direction",
+    detail: "Logo and visual system, typography, color, layout, and tone",
+  },
+  {
+    title: "Website & Product Experience",
+    detail: "Website design, product UI, and the full digital experience",
+  },
+  {
+    title: "Motion & Launch Assets",
+    detail:
+      "Motion, micro-interactions, 3D, scroll storytelling, social, video, and launch content",
+  },
+  {
+    title: "Guidelines & Growth Support",
+    detail:
+      "Brand guidelines, reusable templates, pitch decks, and ongoing creative support as the brand grows",
+  },
 ];
 
 export function BrandCapabilities() {
@@ -45,14 +58,17 @@ export function BrandCapabilities() {
         </div>
 
         <div className="br-cap-grid">
-          {AREAS.map((area, i) => (
+          {GROUPS.map((group, i) => (
             <ScrollReveal
-              key={area}
+              key={group.title}
               delay={(i % 2) * 0.06 + Math.floor(i / 2) * 0.05}
               className="br-cap-item"
             >
               <span className="br-cap-dot" aria-hidden />
-              <span className="br-cap-label">{area}</span>
+              <span className="br-cap-text">
+                <span className="br-cap-label">{group.title}</span>
+                <span className="br-cap-detail">{group.detail}</span>
+              </span>
             </ScrollReveal>
           ))}
         </div>

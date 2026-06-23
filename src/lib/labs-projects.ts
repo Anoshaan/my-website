@@ -24,6 +24,8 @@ export type LabsProject = {
   title: string;
   /** Short story, max two paragraphs. */
   story: string[];
+  /** One short, practical proof/outcome line shown under the story. */
+  proof: string;
   whatChanged: string[];
   insight: string[];
   /** Muted per-case accent — drives challenge text, insight punch, markers. */
@@ -45,6 +47,8 @@ export const labsProjects: LabsProject[] = [
       "Large organizations often manage hundreds of projects simultaneously. While managers need visibility across teams, employees only need access to the work assigned to them.",
       "This platform connected planning, task allocation, and time tracking through a structured workflow that reduced complexity and improved day-to-day efficiency.",
     ],
+    proof:
+      "Built around role-based clarity, so people see only the work that is theirs while managers keep the full picture.",
     whatChanged: [
       "Simplified task visibility",
       "Reduced information overload",
@@ -64,6 +68,8 @@ export const labsProjects: LabsProject[] = [
       "Most dashboards present information. Few help users understand what requires attention next.",
       "This platform focused on surfacing meaningful signals and guiding users toward faster, more informed decisions.",
     ],
+    proof:
+      "Structured to move users from raw data to the next decision faster.",
     whatChanged: [
       "Improved information hierarchy",
       "Prioritized actionable insights",
@@ -83,6 +89,8 @@ export const labsProjects: LabsProject[] = [
       "Enterprise products often contain extensive capabilities that can overwhelm potential customers during evaluation.",
       "The experience was designed to communicate business value before product features, making decision-making easier for buyers.",
     ],
+    proof:
+      "Designed to lead with business value before features, so evaluation feels easier.",
     whatChanged: [
       "Simplified product communication",
       "Improved content structure",
@@ -102,6 +110,8 @@ export const labsProjects: LabsProject[] = [
       "Ordering food often happens in busy environments where users have limited time and attention.",
       "This experience streamlined browsing, selection, and checkout to support faster decision-making.",
     ],
+    proof:
+      "Designed to reduce decision fatigue and speed up everyday ordering.",
     whatChanged: [
       "Reduced decision fatigue",
       "Streamlined ordering flows",
@@ -121,6 +131,8 @@ export const labsProjects: LabsProject[] = [
       "Regulated industries require balancing compliance, transparency, and usability without overwhelming customers.",
       "The platform focused on creating confidence through clear communication and guided product discovery.",
     ],
+    proof:
+      "Built to make compliance feel clear, so trust comes before the transaction.",
     whatChanged: [
       "Improved transparency",
       "Simplified compliance communication",
@@ -140,6 +152,8 @@ export const labsProjects: LabsProject[] = [
       "Operational environments depend on quick access to accurate information, especially as documentation grows in scale.",
       "This platform focused on organizing complex information into a structure that improved discoverability and retrieval.",
     ],
+    proof:
+      "Structured so critical information stays fast to find under pressure.",
     whatChanged: [
       "Improved information architecture",
       "Enhanced discoverability",
@@ -158,6 +172,8 @@ export const labsProjects: LabsProject[] = [
       "Managing schedules, resources, and operational responsibilities often requires navigating multiple disconnected systems.",
       "This platform unified workflows into a more structured and efficient experience.",
     ],
+    proof:
+      "Built to fold scattered operational tasks into one calmer daily flow.",
     whatChanged: [
       "Centralized operational workflows",
       "Improved resource coordination",
@@ -176,6 +192,8 @@ export const labsProjects: LabsProject[] = [
       "AI can improve efficiency, but only when users understand how and why it is supporting their work.",
       "The experience focused on transparency, guidance, and maintaining user control throughout the workflow.",
     ],
+    proof:
+      "Designed to keep people in control as AI supports their work.",
     whatChanged: [
       "Integrated AI into familiar workflows",
       "Increased transparency",

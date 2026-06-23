@@ -23,8 +23,8 @@ export function AboutCTA() {
         </Reveal>
         <Reveal delay={0.24}>
           <div className="ab-cta-actions">
-            <Button href="/labs" rainbow>
-              View Labs
+            <Button href="/selected-work" rainbow>
+              View Selected Work
             </Button>
             <Button
               href="/resume/Anoshaan-Resume.pdf"

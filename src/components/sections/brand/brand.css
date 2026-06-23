@@ -303,23 +303,37 @@ html[data-theme="light"] .br-section {
 }
 .br-cap-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
-  padding: 18px 4px;
+  padding: 20px 4px;
   border-bottom: 1px solid rgba(var(--c-fg-rgb), 0.07);
 }
 .br-cap-dot {
   flex: 0 0 auto;
   width: 7px;
   height: 7px;
+  margin-top: 9px;
   border-radius: 50%;
   background: var(--br-bright);
   box-shadow: 0 0 12px rgba(231, 200, 115, 0.55);
 }
+.br-cap-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
 .br-cap-label {
-  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
-  line-height: 1.45;
-  color: rgba(var(--c-fg-rgb), 0.82);
+  font-size: clamp(1.05rem, 1rem + 0.25vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  color: var(--c-fg);
+}
+.br-cap-detail {
+  font-size: clamp(0.92rem, 0.9rem + 0.15vw, 1rem);
+  line-height: 1.5;
+  color: rgba(var(--c-fg-rgb), 0.6);
 }
 
 /* ---- BRAND AS EXPERIENCE --------------------------------- */
@@ -449,9 +463,13 @@ html[data-theme="light"] .br-section {
   box-shadow: 0 0 10px rgba(231, 200, 115, 0.4);
 }
 .br-journey-stages {
+  /* Seven stages on ONE row — was repeat(6,1fr), which pushed the seventh
+     ("Scale") onto a broken second line. Sits above the connector track. */
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: clamp(12px, 2vw, 22px);
+  grid-template-columns: repeat(7, 1fr);
+  gap: clamp(10px, 1.4vw, 20px);
 }
 .br-journey-stage {
   display: flex;
@@ -466,8 +484,21 @@ html[data-theme="light"] .br-section {
   place-items: center;
   border-radius: 10px;
   border: 1px solid rgba(231, 200, 115, 0.28);
-  background: rgba(231, 200, 115, 0.06);
+  /* Opaque so the progress line runs BEHIND it as a connector, not across
+     the glyph face. */
+  background: color-mix(in oklab, #e7c873 9%, var(--c-bg));
   color: var(--br-bright);
+}
+@media (max-width: 760px) {
+  /* On narrow screens the single connector line can't span wrapped rows, so
+     stack into a tidy grid and drop the track. */
+  .br-journey-track {
+    display: none;
+  }
+  .br-journey-stages {
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(20px, 5vw, 32px);
+  }
 }
 .br-journey-glyph svg {
   width: 22px;

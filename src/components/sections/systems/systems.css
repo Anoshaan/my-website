@@ -111,19 +111,25 @@ html[data-theme="light"] .sys-section {
   }
 }
 .sys-node-dot {
-  fill: #d7f5e8;
+  /* A clear source point inside each green glow — the brand green (theme
+     aware) rather than the old pale, washed-out tint. A small soft glow gives
+     every point a defined centre, like the core, without going neon. */
+  fill: var(--sys-bright);
+  filter: drop-shadow(0 0 2px color-mix(in oklab, var(--sys-bright) 70%, transparent));
 }
 .sys-node--t1 .sys-node-dot {
   fill: var(--sys-bright);
 }
 .sys-node--t2 .sys-node-dot {
-  fill: #cdeede;
+  fill: var(--sys-bright);
+  opacity: 0.9;
 }
 .sys-node--t3 .sys-node-dot {
-  fill: rgba(205, 238, 222, 0.78);
+  fill: var(--sys-bright);
+  opacity: 0.78;
 }
 .is-core .sys-node-dot {
-  filter: drop-shadow(0 0 4px rgba(141, 240, 200, 0.9));
+  filter: drop-shadow(0 0 4px color-mix(in oklab, var(--sys-bright) 90%, transparent));
 }
 
 .sys-map-labels {
@@ -167,12 +173,15 @@ html[data-theme="light"] .sys-section {
   align-items: center;
   text-align: center;
   gap: 18px;
-  max-width: 760px;
+  max-width: 920px;
   margin-inline: auto;
   margin-bottom: clamp(48px, 6vw, 80px);
 }
+/* Wider measure + a slightly tighter size so the two-sentence title settles
+   on TWO lines (one sentence each) instead of breaking into three. */
 .sys-stack-head .sys-h2 {
-  max-width: 22ch;
+  max-width: 30ch;
+  font-size: clamp(1.7rem, 1.2rem + 1.9vw, 2.5rem);
 }
 .sys-lead--center {
   text-align: center;
@@ -493,6 +502,9 @@ html[data-theme="light"] .sys-section {
 }
 .sys-flow-zones {
   position: relative;
+  /* Above the dashed track + travelling token so the line reads as a
+     connector running BEHIND the cards, never across their faces. */
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   gap: clamp(16px, 4vw, 48px);
@@ -515,14 +527,18 @@ html[data-theme="light"] .sys-section {
 }
 .sys-flow-blocks,
 .sys-flow-ui {
+  position: relative;
   width: clamp(110px, 16vw, 150px);
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 14px;
   border-radius: 12px;
-  border: 1px solid rgba(var(--c-fg-rgb), 0.08);
-  background: rgba(var(--c-fg-rgb), 0.02);
+  border: 1px solid rgba(var(--c-fg-rgb), 0.1);
+  /* Opaque, theme-matched card surface so the dashed track + token are hidden
+     behind it (no line showing through the card). */
+  background: color-mix(in oklab, var(--c-fg) 6%, var(--c-bg));
+  box-shadow: 0 6px 18px rgba(var(--shadow-rgb), 0.12);
 }
 .sys-flow-b {
   height: 8px;
@@ -699,7 +715,11 @@ html[data-theme="light"] .sys-radar-ring {
   top: calc(100% + 8px);
   transform: translate(-50%, 6px);
   width: max-content;
-  max-width: 220px;
+  max-width: 240px;
+  /* The chip sets white-space:nowrap for its own label; the tooltip must
+     reset it so the sentence WRAPS inside the box instead of overflowing the
+     background and border. */
+  white-space: normal;
   font-size: 0.72rem;
   line-height: 1.4;
   letter-spacing: 0;

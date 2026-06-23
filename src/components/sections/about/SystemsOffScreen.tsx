@@ -121,15 +121,15 @@ function AeroVisual() {
 
 const OBJECTS: Obj[] = [
   {
-    title: "RF Signal Research",
-    body: "A controlled learning project exploring radio frequency behavior, interference concepts, antenna response, and how signals react in safe, experimental environments.",
-    tags: ["RF Behavior", "Antenna Response", "Signal Testing"],
+    title: "Signals & RF Exploration",
+    body: "A hands-on study of how radio signals travel, fade, and respond to their surroundings. Reading those invisible inputs and responses is the same instinct I bring to designing feedback and state.",
+    tags: ["Signal Behavior", "Inputs & Response", "Experimentation"],
     visual: () => <RFVisual />,
   },
   {
-    title: "Wi-Fi Protocol Research",
-    body: "A cybersecurity learning project studying Wi-Fi protocol behavior, packet communication, and network testing through ethical, sandboxed security research.",
-    tags: ["Protocol Behavior", "Packet Analysis", "Ethical Research"],
+    title: "Connected Systems Research",
+    body: "A controlled, sandboxed look at how connected devices talk to each other: how messages move, stay in sync, and recover when something breaks. It sharpened how I think about flow, edge cases, and reliability.",
+    tags: ["Protocol Behavior", "Edge Cases", "Reliability"],
     visual: (reduced) => <WifiVisual reduced={reduced} />,
   },
   {
@@ -154,9 +154,9 @@ export function SystemsOffScreen() {
         </Reveal>
         <Reveal delay={0.16}>
           <p className="text-body text-white/60 ab-lead ab-lead--wide">
-            Outside product work, I run controlled research into signals,
-            networks, and connected hardware. Each one taught me to think in the
-            same terms I design with.
+            Outside product work, I explore systems that involve signals,
+            feedback loops, sensors, and connected hardware. These projects
+            sharpen how I think about inputs, constraints, state, and response.
           </p>
         </Reveal>
 

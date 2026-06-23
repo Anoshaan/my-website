@@ -21,7 +21,7 @@ const QUALITIES: Quality[] = [
   },
   {
     name: "Accessibility",
-    line: "Designed to AAA thinking, so the experience holds for everyone, not the average user.",
+    line: "Designed with accessibility-first thinking, so the experience works beyond the average user.",
   },
   {
     name: "Behavior",

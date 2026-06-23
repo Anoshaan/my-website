@@ -51,41 +51,56 @@ export function BehaviorOrigin() {
           </div>
 
           <Reveal variant="fade" duration={1} delay={0.1} className="ab-behavior">
-            <svg viewBox="0 0 260 200" className="ab-behavior-svg" aria-hidden>
-              <defs>
-                <radialGradient id="abAttnGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="rgba(207,217,255,0.5)" />
-                  <stop offset="100%" stopColor="rgba(207,217,255,0)" />
-                </radialGradient>
-              </defs>
+            <div className="ab-behavior-stage">
+              <svg viewBox="0 0 260 200" className="ab-behavior-svg" aria-hidden>
+                <defs>
+                  <radialGradient id="abAttnGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="rgba(207,217,255,0.5)" />
+                    <stop offset="100%" stopColor="rgba(207,217,255,0)" />
+                  </radialGradient>
+                </defs>
 
-              {/* Minimal interface. */}
-              <rect className="ab-bh-screen" x="16" y="20" width="228" height="160" rx="10" />
-              <line className="ab-bh-ui" x1="32" y1="36" x2="120" y2="36" />
-              <rect className="ab-bh-ui-block" x="130" y="62" width="44" height="30" rx="5" />
-              <rect className="ab-bh-ui-block" x="32" y="120" width="60" height="22" rx="5" />
+                {/* Minimal interface — borderless soft surface, not a boxed
+                    frame, so it reads as part of the page. */}
+                <rect className="ab-bh-screen" x="16" y="20" width="228" height="160" rx="12" />
+                <line className="ab-bh-ui" x1="32" y1="36" x2="120" y2="36" />
+                <rect className="ab-bh-ui-block" x="130" y="62" width="44" height="30" rx="5" />
+                <rect className="ab-bh-ui-block" x="32" y="120" width="60" height="22" rx="5" />
 
-              {/* Attention path. */}
-              <path className="ab-bh-path" d={PATH} fill="none" />
+                {/* Attention path. */}
+                <path className="ab-bh-path" d={PATH} fill="none" />
 
-              {/* Nodes. */}
-              {POINTS.map((p, i) => (
-                <g key={p.label} className="ab-bh-node" style={{ animationDelay: `${i * 0.9}s` }}>
-                  <circle cx={p.x} cy={p.y} r="11" fill="url(#abAttnGlow)" />
-                  <circle className="ab-bh-node-dot" cx={p.x} cy={p.y} r="4" />
-                  <text className="ab-bh-label" x={p.x} y={p.y - 14} textAnchor="middle">
+                {/* Node glows + dots (labels are HTML chips on top). */}
+                {POINTS.map((p, i) => (
+                  <g key={p.label} className="ab-bh-node" style={{ animationDelay: `${i * 0.9}s` }}>
+                    <circle cx={p.x} cy={p.y} r="11" fill="url(#abAttnGlow)" />
+                    <circle className="ab-bh-node-dot" cx={p.x} cy={p.y} r="4" />
+                  </g>
+                ))}
+
+                {/* Travelling cursor — motion only. */}
+                {!reduced && (
+                  <circle className="ab-bh-cursor" r="3.5">
+                    <animateMotion dur="6s" repeatCount="indefinite" path={PATH} />
+                  </circle>
+                )}
+              </svg>
+
+              {/* Label chips — real auto-sized pills with centred text, sitting
+                  ABOVE the lines so nothing crosses them. Positioned over each
+                  node as a percentage of the 260×200 viewBox. */}
+              <div className="ab-bh-labels" aria-hidden>
+                {POINTS.map((p) => (
+                  <span
+                    key={p.label}
+                    className="ab-bh-chip"
+                    style={{ left: `${(p.x / 260) * 100}%`, top: `${(p.y / 200) * 100}%` }}
+                  >
                     {p.label}
-                  </text>
-                </g>
-              ))}
-
-              {/* Travelling cursor — motion only. */}
-              {!reduced && (
-                <circle className="ab-bh-cursor" r="3.5">
-                  <animateMotion dur="6s" repeatCount="indefinite" path={PATH} />
-                </circle>
-              )}
-            </svg>
+                  </span>
+                ))}
+              </div>
+            </div>
           </Reveal>
         </div>
       </Container>

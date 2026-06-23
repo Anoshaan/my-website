@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "motion/react"
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
 import { Button } from "@/components/ui/Button";
+import { HeroParticles } from "@/components/sections/problem/HeroParticles";
 
 const HERO_TITLE = "Designing product experiences shaped by human behavior.";
 
@@ -113,25 +114,27 @@ export function Hero() {
           <motion.div style={{ y: bodyY }}>
             <Reveal delay={0.18} duration={0.9}>
               <p className="text-body text-white/65 max-w-[54ch] mx-auto mt-6">
-                I design web, mobile, and AI product experiences that are clear,
-                scalable, and easy to use. I combine UX thinking, visual craft,
-                motion, and product strategy to create digital products that feel
-                simple and human.
+                I design web, mobile, and AI product experiences that turn
+                complex ideas into clear, usable, scalable products. I combine
+                UX thinking, visual craft, motion, and product strategy to make
+                digital products that feel simple and human.
               </p>
             </Reveal>
 
             <Reveal delay={0.3} duration={0.9}>
               <div className="hero-cta-row mt-9">
                 <Button
-                  href="/labs"
-                  variant="secondary"
+                  href="/selected-work"
+                  variant="primary"
+                  tone="work"
                   leadingIcon={<LabsIcon />}
                 >
-                  Explore Labs
+                  View Selected Work
                 </Button>
                 <Button
-                  href="/brand"
-                  variant="secondary"
+                  href="/branding"
+                  variant="primary"
+                  tone="brand"
                   leadingIcon={<BrandIcon />}
                 >
                   Build a Brand
@@ -142,15 +145,14 @@ export function Hero() {
         </Container>
       </motion.div>
 
-      {/* Scroll indicator — no CTAs; the page itself is the invitation.
-          Anchored to the section bottom, fading away with the hero. */}
-      <motion.div style={{ opacity: heroOpacity }}>
-        <Reveal delay={0.6} variant="fade" duration={1.2}>
-          <div className="hero-scroll-hint" aria-hidden>
-            <span className="hero-scroll-line" />
-          </div>
-        </Reveal>
-      </motion.div>
+      {/* Scroll cue — a soft cloud of glowing particles drifting slowly near
+          the bottom edge, in the same dot language as the next section's field.
+          It does NOT fade with the hero: the particles stay visible through the
+          scroll so they read as one continuous flow into the workspace section
+          below, rather than vanishing the moment you start scrolling. */}
+      <div className="hero-particles-band" aria-hidden>
+        <HeroParticles reduced={reduced} />
+      </div>
     </section>
   );
 }

@@ -59,8 +59,14 @@ function interpolate(input, output, ease = Easing.linear) {
 }
 
 // ── Timeline + sprite context ────────────────────────────────────────────────
-const TimelineContext = React.createContext({ time: 0, duration: 10, playing: false });
+// `time` is the stage playhead (it can be paused on hover so a stage/description
+// can be read). `clock` is a continuous, never-pausing wall clock that drives
+// all ambient looping motion (drifting particles, orbiting icons, the gentle
+// float of every card) so the reel stays visibly alive even while the story is
+// held. This is what keeps the animation from ever freezing under hover.
+const TimelineContext = React.createContext({ time: 0, duration: 10, playing: false, clock: 0 });
 const useTime = () => React.useContext(TimelineContext).time;
+const useClock = () => React.useContext(TimelineContext).clock;
 const useTimeline = () => React.useContext(TimelineContext);
 
 const SpriteContext = React.createContext({ localTime: 0, progress: 0, duration: 0 });
@@ -89,6 +95,7 @@ function Sprite({ start = 0, end = Infinity, children, keepMounted = false }) {
 //    and the background is transparent so the visual sits natively on the page.
 function StageView({ width = 1920, height = 1080, time = 0, duration = 44, children }) {
   const [scale, setScale] = React.useState(0);
+  const [, bump] = React.useReducer((x) => (x + 1) % 1e6, 0);
   const wrapRef = React.useRef(null);
 
   React.useLayoutEffect(() => {
@@ -104,10 +111,51 @@ function StageView({ width = 1920, height = 1080, time = 0, duration = 44, child
     return () => ro.disconnect();
   }, [width, height]);
 
-  const ctx = React.useMemo(
-    () => ({ time, duration, playing: true }),
-    [time, duration]
-  );
+  // The continuous ambient clock is read live from the wall clock at render
+  // time, so it is always fresh while the parent is re-rendering (i.e. while
+  // the stage playhead is advancing). When the playhead is PAUSED on hover the
+  // parent stops re-rendering, so a lightweight rAF below forces re-renders —
+  // but only while the visual is actually on screen and the playhead is static.
+  // This keeps the reel alive under hover without ever re-rendering off-screen.
+  const lastTimeRef = React.useRef(time);
+  const lastChangeRef = React.useRef(0);
+  if (time !== lastTimeRef.current) {
+    lastTimeRef.current = time;
+    lastChangeRef.current = typeof performance !== "undefined" ? performance.now() : 0;
+  }
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    const el = wrapRef.current;
+    let onscreen = true;
+    let io = null;
+    if (el && "IntersectionObserver" in window) {
+      io = new IntersectionObserver(
+        ([e]) => { onscreen = e.isIntersecting; },
+        { threshold: 0.01 }
+      );
+      io.observe(el);
+    }
+    let raf = 0;
+    const loop = () => {
+      // Only drive our own frames when on screen AND the playhead is static
+      // (parent not re-rendering); otherwise the parent's per-frame render
+      // already refreshes the live clock for us.
+      if (onscreen && !document.hidden &&
+          performance.now() - lastChangeRef.current > 40) {
+        bump();
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => { cancelAnimationFrame(raf); io && io.disconnect(); };
+  }, []);
+
+  const clock = (typeof performance !== "undefined" ? performance.now() : 0) / 1000;
+  const ctx = { time, duration, playing: true, clock };
 
   return (
     <div
@@ -179,6 +227,7 @@ function At({ from = 0, to = Infinity, children }) {
 // ── glass card ───────────────────────────────────────────────────────────────
 function FloatCard({ x, y, w, h, appear = 0, leave = null, phase = 0, drift = 5, glow = false, r = 18, children, tint = CARD, extra }) {
   const { localTime, duration } = useSprite();
+  const clock = useClock();
   const lv = leave == null ? duration : leave;
   let op = 1, sc = 1, ty = 0;
   if (localTime < appear) { op = 0; sc = 0.85; ty = 16; }
@@ -189,8 +238,10 @@ function FloatCard({ x, y, w, h, appear = 0, leave = null, phase = 0, drift = 5,
     const t = Easing.easeInQuad(clamp((localTime - (lv - 0.4)) / 0.4, 0, 1));
     op = 1 - t; sc = 1 - 0.06 * t; ty = -12 * t;
   }
-  const fl = Math.sin((localTime + phase) * 1.15) * drift;
-  const fr = Math.sin((localTime + phase) * 0.8) * 0.7;
+  // Idle float runs on the continuous clock so every card keeps drifting even
+  // while the stage playhead is paused for reading.
+  const fl = Math.sin((clock + phase) * 1.15) * drift;
+  const fr = Math.sin((clock + phase) * 0.8) * 0.7;
   return (
     <div style={{
       position: "absolute", left: x, top: y, width: w, height: h,
@@ -225,6 +276,7 @@ function Lines({ n = 3, w = 130, c = "#ded6c8", g = 8 }) {
 const ORBIT_ICONS = [IconBulb, IconSearch, IconTarget, IconFlow, IconSpark, IconCode, IconCheck, IconRocket];
 function Orbit({ bright = 0.3 }) {
   const t = useTime();
+  const ck = useClock();
   const intro = clamp((t - 0.4) / 1.4, 0, 1);
   const cx = 960, cy = 540, rx = 760, ry = 430;
   return (
@@ -234,7 +286,7 @@ function Orbit({ bright = 0.3 }) {
         <ellipse cx={cx} cy={cy} rx={rx * 0.64} ry={ry * 0.64} fill="none" stroke="rgba(245,166,35,0.12)" strokeWidth="1.5" strokeDasharray="2 13" />
       </svg>
       {ORBIT_ICONS.map((Ic, i) => {
-        const ang = (i / ORBIT_ICONS.length) * Math.PI * 2 + t * 0.16;
+        const ang = (i / ORBIT_ICONS.length) * Math.PI * 2 + ck * 0.16;
         const ix = cx + Math.cos(ang) * rx, iy = cy + Math.sin(ang) * ry;
         const dep = (Math.sin(ang) + 1) / 2;
         const op = bright * (0.35 + dep * 0.65);
@@ -245,7 +297,7 @@ function Orbit({ bright = 0.3 }) {
   );
 }
 function Particles() {
-  const t = useTime();
+  const t = useClock();
   const dots = React.useMemo(() => Array.from({ length: 22 }).map((_, i) => ({ x: (i * 61.8) % 97, base: (i * 43) % 100, sp: 3 + (i % 5), sz: 1.5 + (i % 3), ph: i })), []);
   return <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>{dots.map((d, i) => {
     const y = (d.base - (t * d.sp * 0.45) % 110 + 110) % 110;

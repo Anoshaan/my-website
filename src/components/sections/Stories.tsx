@@ -82,7 +82,7 @@ function StoryRow({
   return (
     <Reveal>
       <Link
-        href="/labs"
+        href="/selected-work"
         data-cursor-precise
         className={`story-row story-row-alt ${mediaSide} group`}
         aria-label={`Read the case study: ${c.title}`}

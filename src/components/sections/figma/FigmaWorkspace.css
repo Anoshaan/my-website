@@ -506,3 +506,93 @@
     animation: none;
   }
 }
+
+/* =========================================================
+   LIGHT THEME — the same editor, re-skinned into a proper light
+   UI. Layered whites / off-whites / very light greys, subtle
+   borders, soft shadows, and soft dark-grey text (never pitch
+   black). Layout, scale, position and animation are untouched.
+   ========================================================= */
+html[data-theme="light"] .fw-card {
+  --fw-bg: #f1f1f4;
+  --fw-panel: #f8f8fa;
+  --fw-border: #e4e4ea;
+  --fw-canvas-bg: #e9e9ee;
+  --fw-text: #3a3a44;
+  --fw-muted: #9a9aa2;
+  --fw-accent: #0d83e8;
+  --fw-active: rgba(13, 131, 232, 0.12);
+  border: 1px solid rgba(22, 22, 32, 0.08);
+  box-shadow:
+    0 40px 100px rgba(var(--shadow-rgb), 0.3),
+    0 0 0 1px rgba(22, 22, 32, 0.03),
+    0 0 80px rgba(167, 139, 250, 0.1);
+}
+html[data-theme="light"] .fw-tab,
+html[data-theme="light"] .fw-project-title,
+html[data-theme="light"] .fw-prop-strong,
+html[data-theme="light"] .fw-tabs-row .is-on,
+html[data-theme="light"] .fw-web-nav,
+html[data-theme="light"] .fw-web-links .is-on,
+html[data-theme="light"] .fw-web-title,
+html[data-theme="light"] .fw-web-desc strong,
+html[data-theme="light"] .fw-btn-secondary {
+  color: var(--fw-text);
+}
+html[data-theme="light"] .fw-tabs-row .is-on {
+  border-bottom-color: var(--fw-text);
+}
+html[data-theme="light"] .fw-badge {
+  background: #e4e4ea;
+  color: #5a5a64;
+}
+html[data-theme="light"] .fw-box {
+  background: #ffffff;
+  border-color: #e4e4ea;
+  color: var(--fw-text);
+}
+html[data-theme="light"] .fw-swatch {
+  border-color: #cfcfd6;
+}
+html[data-theme="light"] .fw-web {
+  background: #ffffff;
+  border-color: #e9e9ee;
+  box-shadow: 0 10px 36px rgba(140, 146, 170, 0.26);
+}
+html[data-theme="light"] .fw-web-nav {
+  border-bottom-color: rgba(22, 22, 32, 0.06);
+}
+html[data-theme="light"] .fw-web-links {
+  color: #a0a0a8;
+}
+html[data-theme="light"] .fw-web-desc {
+  color: #70707a;
+}
+html[data-theme="light"] .fw-btn-primary {
+  /* Soft dark, not pitch black, and not plain white. */
+  background: #2c2c34;
+  color: #ffffff;
+}
+html[data-theme="light"] .fw-btn-secondary {
+  border-color: #dddde3;
+}
+html[data-theme="light"] .fw-char-core {
+  background: linear-gradient(135deg, #ffffff, #eef0f4);
+  border-color: #e4e4ea;
+  box-shadow:
+    0 16px 32px rgba(140, 146, 170, 0.22),
+    inset 0 0 16px rgba(13, 131, 232, 0.08);
+}
+html[data-theme="light"] .fw-char-screen {
+  background: #f3f5f9;
+}
+html[data-theme="light"] .fw-orbit {
+  border-color: rgba(22, 22, 32, 0.12);
+}
+html[data-theme="light"] .fw-particle {
+  background: var(--fw-accent);
+  box-shadow: 0 0 10px var(--fw-accent);
+}
+html[data-theme="light"] .fw-cursor svg {
+  filter: drop-shadow(0 4px 8px rgba(140, 146, 170, 0.35));
+}

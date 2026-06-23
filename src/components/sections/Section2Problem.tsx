@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { FigmaWorkspace } from "@/components/sections/figma/FigmaWorkspace";
+import { FigmaParticles } from "@/components/sections/problem/FigmaParticles";
 
 const DESIGN_W = 1100;
 const DESIGN_H = 680;
@@ -170,6 +171,11 @@ export function Section2Problem() {
             style={{ top: "62%", left: "18%", ["--d" as string]: "7.5s" }}
           />
         </div>
+
+        {/* Particle halo — drifts in from the sides and gathers around the
+            rising screen, then follows it as it parks. Behind the card so it
+            surrounds the edges rather than covering the UI. */}
+        <FigmaParticles progress={p} isWide={isWide} reduced={reduced} />
 
         {/* Workspace — the rising design canvas */}
         <motion.div className="problem-figma" style={figStyle}>

@@ -14,7 +14,8 @@ import "./connect.css";
 
 type Option = {
   label: string;
-  hint: string;
+  /** The clickable handle/value shown under the label. */
+  value: string;
   href: string;
   external: boolean;
   icon: React.ReactNode;
@@ -53,7 +54,7 @@ const LinkedInIcon = () => (
 const OPTIONS: Option[] = [
   {
     label: "WhatsApp",
-    hint: "Quickest way to reach me",
+    value: "Anoshaan",
     href: "https://wa.me/94772695809",
     external: true,
     icon: <WhatsAppIcon />,
@@ -61,7 +62,7 @@ const OPTIONS: Option[] = [
   },
   {
     label: "Email",
-    hint: "For project details and longer notes",
+    value: "anoshaan@gmail.com",
     href: "mailto:anoshaan@gmail.com?subject=Project%20Inquiry%20from%20Portfolio",
     external: false,
     icon: <EmailIcon />,
@@ -69,7 +70,7 @@ const OPTIONS: Option[] = [
   },
   {
     label: "LinkedIn",
-    hint: "For professional connections",
+    value: "Anoshaan Nagendra Rajah",
     href: "https://www.linkedin.com/in/anoshaan-nagendra-rajah",
     external: true,
     icon: <LinkedInIcon />,
@@ -100,17 +101,16 @@ export function ConnectHero() {
                 {...(opt.external
                   ? { target: "_blank", rel: "noopener noreferrer" }
                   : {})}
-                className="connect-card"
+                className="connect-link"
                 data-cursor-precise
+                aria-label={`${opt.label} — ${opt.value}`}
                 style={{ ["--tint" as string]: opt.tint }}
               >
-                <span className="connect-card-icon" aria-hidden>
+                <span className="connect-link-icon" aria-hidden>
                   {opt.icon}
                 </span>
-                <span className="connect-card-text">
-                  <span className="connect-card-label">{opt.label}</span>
-                  <span className="connect-card-hint">{opt.hint}</span>
-                </span>
+                <span className="connect-link-label">{opt.label}</span>
+                <span className="connect-link-value">{opt.value}</span>
               </a>
             </Reveal>
           ))}

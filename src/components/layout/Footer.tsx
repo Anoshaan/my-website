@@ -11,11 +11,11 @@ import {
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const links = [
-  { label: "Labs", href: "/labs" },
-  { label: "Systems", href: "/systems" },
-  { label: "Brand", href: "/brand" },
-  { label: "About", href: "/about" },
-  { label: "Connect", href: "/connect" },
+  { label: "Selected Work", href: "/selected-work" },
+  { label: "Process", href: "/process" },
+  { label: "Branding", href: "/branding" },
+  { label: "About Me", href: "/about-me" },
+  { label: "Let's Talk", href: "/lets-talk" },
 ];
 
 /**
@@ -79,7 +79,7 @@ export function Footer() {
         <button
           type="button"
           onClick={goToTop}
-          aria-label="Scroll to top"
+          aria-label="Go to top"
           data-cursor-precise
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium tracking-tight text-white/60 hover:text-white transition-colors duration-[250ms] min-h-[36px] whitespace-nowrap"
         >

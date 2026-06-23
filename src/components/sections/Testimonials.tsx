@@ -8,7 +8,7 @@ import { Reveal } from "@/components/animations/Reveal";
 
 type CategoryName =
   | "Founder"
-  | "UX Lead"
+  | "UI/UX"
   | "Dev"
   | "PM"
   | "HR"
@@ -29,7 +29,7 @@ type Testimonial = {
 /** Category order in the nav and in playback. */
 const CATEGORY_ORDER: CategoryName[] = [
   "Founder",
-  "UX Lead",
+  "UI/UX",
   "Dev",
   "PM",
   "HR",
@@ -50,7 +50,7 @@ const testimonials: Testimonial[] = [
     avatarB: "#a8b8ff",
   },
   {
-    category: "UX Lead",
+    category: "UI/UX",
     quote:
       "Anoshaan consistently delivers high-quality UX/UI work with strong creativity, ownership, and attention to detail.",
     name: "Andre Perera",
@@ -62,7 +62,7 @@ const testimonials: Testimonial[] = [
     avatarB: "#8aa6ff",
   },
   {
-    category: "UX Lead",
+    category: "UI/UX",
     quote:
       "His strong UI/UX thinking and ability to simplify complex ideas made collaboration seamless and effective.",
     name: "Ayesh Dilan",
@@ -534,6 +534,9 @@ function CategoryNav({
 export function Testimonials() {
   const [index, setIndex] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
+  // Hovering the quote area locks the current testimonial (pauses the
+  // auto-advance) while the orbit keeps rotating in the background.
+  const [paused, setPaused] = useState(false);
 
   // Start at the first category that has testimonials.
   useEffect(() => {
@@ -546,15 +549,16 @@ export function Testimonials() {
   }, [hasStarted]);
 
   // Autoplay — advance one testimonial every PLAY_MS. Reset by clicks
-  // (which re-set `index` and therefore re-run this effect).
+  // (which re-set `index` and therefore re-run this effect). Held while the
+  // quote area is hovered so the reader can stay on a quote.
   useEffect(() => {
-    if (!hasStarted) return;
+    if (!hasStarted || paused) return;
     const id = setTimeout(
       () => setIndex((i) => (i + 1) % testimonials.length),
       PLAY_MS
     );
     return () => clearTimeout(id);
-  }, [index, hasStarted]);
+  }, [index, hasStarted, paused]);
 
   const activeMeta = metaForIndex(index);
 
@@ -566,37 +570,39 @@ export function Testimonials() {
   return (
     <section className="testimonials-section relative min-h-[100svh] flex items-center py-[clamp(56px,7vw,104px)]">
       <Container size="wide" className="w-full">
-        {/* Section entry point — gives the social proof a clear, scannable
-            header so the visitor knows what they're looking at before the
-            orbit draws the eye. */}
-        <Reveal duration={0.9}>
-          <header className="orbit-header">
-            <p className="section-label">Testimonials</p>
-            <h2 className="text-section text-white orbit-title">
-              What People Say About Working With Me
-            </h2>
-            <p className="text-body orbit-supporting">
-              The experiences of founders, leads, and teams I&rsquo;ve
-              collaborated with across products and projects.
-            </p>
-          </header>
-        </Reveal>
-
         <div className="orbit-layout">
-          {/* LEFT — orbital system, pushed toward the viewport edge */}
-          <div className="orbit-stage-col">
-            <OrbitField active={index} onSelect={setIndex} />
-          </div>
-
-          {/* RIGHT — name → designation → quote → LinkedIn → role nav */}
+          {/* LEFT — all the content, left-aligned: label, heading, quote,
+              attribution, LinkedIn link, then the category nav + progress. */}
           <div className="orbit-content-col">
-            <FeaturedContent index={index} />
+            <Reveal duration={0.9}>
+              <header className="orbit-header">
+                <p className="section-label">Testimonials</p>
+                <h2 className="text-section text-white orbit-title">
+                  What People Say
+                </h2>
+              </header>
+            </Reveal>
+
+            {/* Hovering the quote pauses the auto-advance (locks this
+                testimonial); the orbit keeps rotating. */}
+            <div
+              onMouseEnter={() => setPaused(true)}
+              onMouseLeave={() => setPaused(false)}
+            >
+              <FeaturedContent index={index} />
+            </div>
+
             <div className="orbit-nav-wrap">
               <CategoryNav
                 activeCategory={activeMeta.name}
                 onSelect={jumpToCategory}
               />
             </div>
+          </div>
+
+          {/* RIGHT — the orbital system, pushed toward the viewport edge. */}
+          <div className="orbit-stage-col">
+            <OrbitField active={index} onSelect={setIndex} />
           </div>
         </div>
       </Container>

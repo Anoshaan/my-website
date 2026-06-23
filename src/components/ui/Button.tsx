@@ -17,6 +17,9 @@ type CommonProps = {
    *  to keep the site-wide rule of one rainbow treatment per page, this is
    *  OFF by default and must be set explicitly on a page's single hero CTA. */
   rainbow?: boolean;
+  /** Glow tone for the primary "river" — "work" (purple, default) or
+   *  "brand" (soft orange). Only affects the primary variant. */
+  tone?: "work" | "brand";
 };
 
 type ButtonAsButton = CommonProps &
@@ -50,6 +53,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       trailingIcon,
       leadingIcon,
       rainbow,
+      tone,
       ...rest
     } = props;
 
@@ -60,7 +64,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     // (leadingIcon, or an explicit trailingIcon when passed).
     const icon = trailingIcon;
 
-    const inner = cn("group", base, variants[variant], className);
+    const inner = cn(
+      "group",
+      base,
+      variants[variant],
+      tone === "brand" && "is-brand",
+      className
+    );
 
     const node =
       "href" in props && props.href ? (
@@ -86,9 +96,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         </button>
       );
 
-    if (showRainbow) {
-      return <span className="rainbow-shadow">{node}</span>;
-    }
+    // `rainbow` is retained for API compatibility but is now a no-op: the
+    // primary variant carries its own built-in animated river glow, so the
+    // old bottom-only halo wrapper would only double up.
+    void showRainbow;
     return node;
   }
 );

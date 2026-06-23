@@ -128,9 +128,10 @@ export function Section3Approach() {
               How I read the user before I design
             </h2>
             <p className="text-body thinking-intro">
-              I don&rsquo;t start with screens. I start with the person using
-              them: what they expect, what could confuse them, what they need to
-              trust, and what should feel obvious next.
+              I begin by listening closely: what the client wants to build, what
+              users need to understand, and where the business needs clarity.
+              From there, I turn scattered ideas into a shared direction before
+              touching the interface.
             </p>
           </header>
         </Reveal>

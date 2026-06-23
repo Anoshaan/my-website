@@ -10,7 +10,7 @@ import { BrandSupport } from "@/components/sections/brand/BrandSupport";
 import { PageCTA } from "@/components/sections/PageCTA";
 
 export const metadata = {
-  title: "Brand",
+  title: "Branding",
   description:
     "Identity, product experience, motion, 3D, video, launch assets, and storytelling. Turning ideas into complete digital brands.",
 };
@@ -31,7 +31,7 @@ export default function BrandPage() {
         title="Have a brand idea? Let's shape it properly."
         lead="Whether you're starting from scratch or improving an existing brand, I can help turn the idea into a clear digital experience."
         buttonLabel="Start a Brand Conversation"
-        href="mailto:hello@anoshaan.com"
+        href="/lets-talk"
       />
     </>
   );

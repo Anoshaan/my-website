@@ -243,7 +243,7 @@ function FeaturedWorkDesktop() {
         {slides.map(({ c, i, key }) => (
           <article key={key} data-fw-card className="featured-slide">
             <Link
-              href="/labs"
+              href="/selected-work"
               className="block h-full"
               draggable={false}
               data-cursor-precise
@@ -333,7 +333,7 @@ function FeaturedWorkMobile() {
             return (
               <div className="fw-mobile-slide" key={`${c.slug}-${i}`}>
                 <Link
-                  href="/labs"
+                  href="/selected-work"
                   className="block h-full"
                   data-cursor-precise
                   aria-hidden={isClone ? true : undefined}
@@ -384,7 +384,7 @@ export function FeaturedWork() {
             className="max-w-[680px]"
           />
           <Reveal delay={0.2}>
-            <Button href="/labs" variant="secondary" rainbow={false}>
+            <Button href="/selected-work" variant="secondary" rainbow={false}>
               Go to Labs
             </Button>
           </Reveal>

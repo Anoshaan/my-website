@@ -242,7 +242,8 @@ export function Section4StayAhead() {
         <div className="evolve-aura" aria-hidden />
         <Container size="wide" className="evolve-inner">
           <header className="evolve-header">
-            {/* Left — label + headline */}
+            {/* Label + headline — the description has been removed so the
+                heading band stays tight and the cards carry the section. */}
             <motion.div
               {...headerStates}
               transition={{ duration: 0.8, ease: easeOutExpo }}
@@ -250,17 +251,6 @@ export function Section4StayAhead() {
               <p className="evolve-eyebrow">Method</p>
               <h2 className="text-section evolve-title">This Is How I Stay Ahead</h2>
             </motion.div>
-
-            {/* Right — supporting copy, a beat later */}
-            <motion.p
-              className="text-body evolve-body"
-              {...headerStates}
-              transition={{ duration: 0.8, delay: 0.18, ease: easeOutExpo }}
-            >
-              Modern product design is no longer just about creating screens. The
-              combination of AI, design systems, and motion has fundamentally
-              changed how products are imagined, built, and experienced.
-            </motion.p>
           </header>
 
           <div className="evolve-cards">

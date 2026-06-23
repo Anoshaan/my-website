@@ -92,8 +92,8 @@ export function CaseStudyFeature() {
           </div>
 
           <div className="cs-actions">
-            <Button href="/labs" variant="secondary">
-              Explore All Labs
+            <Button href="/selected-work" variant="secondary">
+              See All Selected Work
             </Button>
           </div>
         </div>

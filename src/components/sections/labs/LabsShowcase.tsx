@@ -108,6 +108,8 @@ function ProjectRow({
           ))}
         </div>
 
+        <p className="labs-proof">{project.proof}</p>
+
         {/* What Changed | Key Insight — side by side, never stacked. */}
         <div className="labs-bottom">
           <div className="labs-changed">
@@ -138,7 +140,7 @@ function ProjectRow({
             className="labs-detail-btn"
             onClick={(e) => onOpenDetail(project.num, e.currentTarget)}
           >
-            Read Detailed Case Study
+            Explore the Work
             <span className="labs-detail-arrow" aria-hidden>
               →
             </span>

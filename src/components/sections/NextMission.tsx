@@ -7,6 +7,7 @@ import {
   useTransform,
   useReducedMotion,
 } from "motion/react";
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
 
@@ -92,14 +93,14 @@ export function NextMission() {
 
       <Container size="default" className="next-mission-content">
         <Reveal>
-          <p className="next-mission-eyebrow">Contact</p>
+          <p className="next-mission-eyebrow">Connect With Me</p>
         </Reveal>
 
         <motion.h2
           className="text-section text-white next-mission-title"
           style={{ y: headingY, scale: headingScale }}
         >
-          I&apos;m Ready for the Next Mission.
+          Let&apos;s Shape Something Useful.
         </motion.h2>
 
         <Reveal delay={0.2}>
@@ -111,14 +112,14 @@ export function NextMission() {
         </Reveal>
 
         <Reveal delay={0.32}>
-          <div className="next-mission-cta-wrap rainbow-shadow">
-            <a
-              href="mailto:hello@anoshaan.com"
+          <div className="next-mission-cta-wrap">
+            <Link
+              href="/lets-talk"
               className="next-mission-cta btn-glass"
               data-cursor-precise
             >
-              Start a Conversation
-            </a>
+              Let&apos;s Talk
+            </Link>
           </div>
         </Reveal>
       </Container>
