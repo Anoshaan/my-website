@@ -483,9 +483,9 @@ const PROMPT = "Build a clean onboarding flow\nfor a fintech mobile app.\n3 step
 function SceneAI() {
   return (
     <Sprite start={22.2} end={27.2}>
-      <FloatCard x={250} y={300} w={470} h={250} appear={0.2} leave={27 - 22.2} phase={0.3} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(58,54,50,0.96)">
-        <div style={{ height: 32, display: "flex", alignItems: "center", gap: 8, padding: "0 14px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}><IconSpark s={16} /><span style={{ color: "rgba(255,255,255,0.7)", fontFamily: MONO, fontSize: 12 }}>prompt</span></div>
-        <div style={{ padding: 18, fontFamily: MONO, fontSize: 16, lineHeight: 1.6, color: "#ffe7bd", whiteSpace: "pre-wrap" }}>
+      <FloatCard x={250} y={300} w={470} h={250} appear={0.2} leave={27 - 22.2} phase={0.3} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(242,238,232,0.96)">
+        <div style={{ height: 32, display: "flex", alignItems: "center", gap: 8, padding: "0 14px", borderBottom: "1px solid rgba(0,0,0,0.08)" }}><IconSpark s={16} /><span style={{ color: "rgba(0,0,0,0.5)", fontFamily: MONO, fontSize: 12 }}>prompt</span></div>
+        <div style={{ padding: 18, fontFamily: MONO, fontSize: 16, lineHeight: 1.6, color: INK, whiteSpace: "pre-wrap" }}>
           <At from={0.3}>{lt => { const n = Math.floor(clamp(lt / 2, 0, 1) * PROMPT.length); const blink = Math.floor(lt * 2) % 2; return <>{PROMPT.slice(0, n)}<span style={{ opacity: blink, color: ACCENT }}>&#9613;</span></>; }}</At>
         </div>
       </FloatCard>
@@ -510,8 +510,8 @@ function SceneAI() {
           <div style={{ height: 34, borderRadius: 8, background: ACCENT, marginTop: 12 }} />
         </div>
       </FloatCard>
-      <FloatCard x={900} y={580} w={300} h={100} appear={1.0} leave={27 - 22.2} phase={1.8} extra={{ padding: 14, overflow: "hidden" }} tint="rgba(58,54,50,0.94)">
-        <At from={1}>{lt => <div style={{ fontFamily: MONO, fontSize: 11.5, color: "#86efac", lineHeight: 1.7 }}>{["✓ parsing brief", "✓ generating layout", "✓ wiring components", "▐ rendering preview"].slice(0, Math.floor(clamp((lt - 1) / 2, 0, 1) * 4) + 1).map((l, i) => <div key={i} style={{ opacity: i === 3 ? 0.7 : 1 }}>{l}</div>)}</div>}</At>
+      <FloatCard x={900} y={580} w={300} h={100} appear={1.0} leave={27 - 22.2} phase={1.8} extra={{ padding: 14, overflow: "hidden" }} tint="rgba(242,238,232,0.94)">
+        <At from={1}>{lt => <div style={{ fontFamily: MONO, fontSize: 11.5, color: "#1f9d5a", lineHeight: 1.7 }}>{["✓ parsing brief", "✓ generating layout", "✓ wiring components", "▐ rendering preview"].slice(0, Math.floor(clamp((lt - 1) / 2, 0, 1) * 4) + 1).map((l, i) => <div key={i} style={{ opacity: i === 3 ? 0.7 : 1 }}>{l}</div>)}</div>}</At>
       </FloatCard>
     </Sprite>
   );
@@ -535,9 +535,9 @@ function SceneFrontEnd() {
         <div style={{ display: "flex", gap: 8, marginTop: 12 }}>{[ACCENT, "#23201b", "#1f9d5a", "#2563eb", "#a259ff"].map((c, i) => <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: c }} />)}</div>
         <div style={{ marginTop: 12 }}><Lines n={2} w={240} /></div>
       </FloatCard>
-      <FloatCard x={900} y={300} w={300} h={310} appear={1.4} leave={32 - 27} phase={1.2} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(58,54,50,0.96)">
-        <div style={{ height: 30, display: "flex", alignItems: "center", gap: 6, padding: "0 12px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>{["#ff6159", "#ffbd2e", "#28c93f"].map((c, i) => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: c }} />)}<span style={{ marginLeft: 6, color: "rgba(255,255,255,0.5)", fontFamily: MONO, fontSize: 11 }}>Product.tsx</span></div>
-        <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 9 }}>{[[70, "#7dd3fc"], [130, "#fbbf77"], [100, "#86efac"], [150, "#7dd3fc"], [80, "#c4b5fd"], [120, "#fbbf77"]].map(([w, c], i) => <At key={i} from={1.4 + i * 0.12}>{() => <div style={{ display: "flex", gap: 7, paddingLeft: i === 1 || i === 2 || i === 4 ? 14 : 0 }}><div style={{ width: 16, height: 6, background: "rgba(255,255,255,0.18)", borderRadius: 3 }} /><div style={{ width: w, height: 6, background: c, borderRadius: 3, opacity: 0.85 }} /></div>}</At>)}</div>
+      <FloatCard x={900} y={300} w={300} h={310} appear={1.4} leave={32 - 27} phase={1.2} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(242,238,232,0.96)">
+        <div style={{ height: 30, display: "flex", alignItems: "center", gap: 6, padding: "0 12px", borderBottom: "1px solid rgba(0,0,0,0.08)" }}>{["#ff6159", "#ffbd2e", "#28c93f"].map((c, i) => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: c }} />)}<span style={{ marginLeft: 6, color: "rgba(0,0,0,0.5)", fontFamily: MONO, fontSize: 11 }}>Product.tsx</span></div>
+        <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 9 }}>{[[70, "#7dd3fc"], [130, "#fbbf77"], [100, "#86efac"], [150, "#7dd3fc"], [80, "#c4b5fd"], [120, "#fbbf77"]].map(([w, c], i) => <At key={i} from={1.4 + i * 0.12}>{() => <div style={{ display: "flex", gap: 7, paddingLeft: i === 1 || i === 2 || i === 4 ? 14 : 0 }}><div style={{ width: 16, height: 6, background: "rgba(0,0,0,0.15)", borderRadius: 3 }} /><div style={{ width: w, height: 6, background: c, borderRadius: 3, opacity: 0.85 }} /></div>}</At>)}</div>
       </FloatCard>
       <FloatCard x={900} y={628} w={300} h={56} appear={1.8} leave={32 - 27} phase={1.6} glow extra={{ padding: "0 16px", display: "flex", alignItems: "center", gap: 10 }}>
         <IconSpark s={18} /><span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 13.5, color: ACCENT_DEEP }}>AI assists, I keep design control</span>
@@ -595,7 +595,7 @@ function SceneLaunchPrep() {
         <div style={{ position: "absolute", bottom: 12, right: 14, fontFamily: FONT, fontSize: 11, fontWeight: 700, color: SUB }}>Landing page</div>
       </FloatCard>
       <FloatCard x={600} y={300} w={250} h={150} appear={0.5} leave={40.8 - 36.9} phase={0.9} extra={{ padding: 0, overflow: "hidden" }}>
-        <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#2b2620,#4a4035)", position: "relative" }}><div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center" }}><IconPlay c={ACCENT_DEEP} s={24} /></div></div><div style={{ position: "absolute", bottom: 10, left: 12, fontFamily: FONT, fontSize: 12, fontWeight: 700, color: "#fff" }}>Launch video</div></div>
+        <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#e0dcd5,#b5b0a8)", position: "relative" }}><div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center" }}><IconPlay c={ACCENT_DEEP} s={24} /></div></div><div style={{ position: "absolute", bottom: 10, left: 12, fontFamily: FONT, fontSize: 12, fontWeight: 700, color: INK }}>Launch video</div></div>
       </FloatCard>
       <FloatCard x={600} y={470} w={120} h={140} appear={0.7} leave={40.8 - 36.9} phase={1.4} extra={{ padding: 11 }}><div style={{ height: 70, borderRadius: 8, background: "linear-gradient(135deg,#ffd08a,#f59e0b)", marginBottom: 8 }} /><Lines n={2} w={92} /></FloatCard>
       <FloatCard x={730} y={470} w={120} h={140} appear={0.9} leave={40.8 - 36.9} phase={1.8} extra={{ padding: 11 }}><div style={{ height: 70, borderRadius: 8, background: "linear-gradient(135deg,#9ec5e8,#5b8fd1)", marginBottom: 8 }} /><Lines n={2} w={92} /></FloatCard>
@@ -646,7 +646,7 @@ function SceneLaunched() {
         );
       }}</At>
       <At from={0.6} to={2.4}>{lt => <>{[[520, 360], [1010, 420], [500, 560], [1030, 320], [540, 640]].map((p, i) => { const o = clamp(Math.sin(lt * 2.2 + i * 1.1), 0, 1); return <div key={i} style={{ position: "absolute", left: p[0], top: p[1], width: 12, height: 12, borderRadius: "50%", background: ACCENT, opacity: o * 0.8, transform: `scale(${0.5 + o})` }} />; })}</>}</At>
-      <At from={0.9} to={3.2}>{lt => { const inT = Easing.easeOutCubic(clamp(lt / 0.6, 0, 1)); const out = Easing.easeInCubic(clamp((lt - 1.8) / 0.5, 0, 1)); return <div style={{ position: "absolute", left: "50%", top: 720, transform: "translateX(-50%)", textAlign: "center", opacity: inT * (1 - out) }}><div style={{ fontFamily: FONT, fontWeight: 800, fontSize: 44, color: INK, letterSpacing: "-0.02em" }}>The client&rsquo;s idea becomes a <span style={{ color: ACCENT }}>real product.</span></div></div>; }}</At>
+
       <At from={2.0}>{lt => { const p = clamp((lt - 2.0) / 1.0, 0, 1); return <div style={{ position: "absolute", inset: 0, opacity: p }}><Orbit bright={0.9} /></div>; }}</At>
     </Sprite>
   );

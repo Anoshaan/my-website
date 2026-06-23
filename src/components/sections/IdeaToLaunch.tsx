@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { STEPS, useProcessTimeline } from "./idea-to-launch/timeline";
 
@@ -56,7 +57,7 @@ export function IdeaToLaunch() {
             </Reveal>
 
             <Reveal delay={0.1}>
-              <ul className="-ml-0.5 mt-[clamp(16px,2.4vh,28px)] flex flex-col">
+              <ul className="-ml-0.5 mt-[clamp(16px,2.4vh,28px)] flex flex-col gap-y-[clamp(10px,1.8vh,20px)]">
                 {STEPS.map((s, i) => {
                   const active = i === activeStep;
                   return (
@@ -88,6 +89,14 @@ export function IdeaToLaunch() {
                 })}
               </ul>
             </Reveal>
+
+            <Reveal delay={0.2}>
+              <div className="mt-[clamp(24px,4vh,40px)]">
+                <Button href="/branding" tone="brand">
+                  Build a brand with me
+                </Button>
+              </div>
+            </Reveal>
           </div>
 
           {/* RIGHT — the animation as an oversized background visual layer, with
@@ -97,12 +106,12 @@ export function IdeaToLaunch() {
               {/* Stage — a tall, viewport-relative panel. The visual is scaled
                   up well past the frame so the scene fills the space and the
                   empty canvas margins crop away (the section clips them). */}
-              <div className="relative h-[clamp(360px,62vh,600px)]">
+              <div className="relative h-[clamp(340px,75vh,800px)] min-h-[340px] md:min-h-[500px]">
                 <div
                   ref={animationRef}
                   role="img"
                   aria-label="Animated walkthrough of the product process: client idea, research, competitors, UX flow, AI prototype, front-end build, dev and QA, launch prep, and launched product."
-                  className="absolute inset-0 origin-center scale-[1.55] md:scale-[1.75]"
+                  className="absolute inset-0 origin-center scale-[1.25] md:scale-[1.55] lg:scale-[1.75]"
                 >
                   <ProductProcessAnimation time={time} />
                 </div>
@@ -125,7 +134,7 @@ export function IdeaToLaunch() {
                         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                         exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
                         transition={{ duration: 0.45, ease: easeOutExpo }}
-                        className="idea-desc-text"
+                        className="idea-desc-text text-[1.1rem] md:text-[1.15rem] text-white/90"
                       >
                         {STEPS[activeStep].sub}
                       </motion.p>

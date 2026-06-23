@@ -87,12 +87,12 @@ export function Section2Problem() {
   // as it reaches centre, then parks immediately — larger than before
   // and pushed harder to the viewport edge for a more immersive frame.
   const scaleWide = useTransform(p, [0.45, 0.67, 0.7, 0.82], [1.14, 0.96, 0.96, 0.62]);
-  const scaleNarrow = useTransform(p, [0.45, 0.67, 0.7, 0.82], [1.05, 0.86, 0.86, 0.54]);
+  const scaleNarrow = useTransform(p, [0.45, 0.67, 0.7, 0.82], [1.0, 0.8, 0.8, 0.45]);
 
   // Park position: slide right (wide) or up (narrow) — quick, right after
   // it centres.
   const xWide = useTransform(p, [0.7, 0.82], ["0%", "28%"]);
-  const yNarrow = useTransform(p, [0.7, 0.82], ["0%", "-33%"]);
+  const yNarrow = useTransform(p, [0.7, 0.82], ["0%", "-45%"]);
 
   // Copy reveals in a single quick beat as the card parks; everything is
   // resolved by ~0.88 so the remaining scroll flows straight into the
@@ -103,7 +103,7 @@ export function Section2Problem() {
   let figStyle: Record<string, unknown>;
   if (reduced) {
     figStyle = {
-      transform: isWide ? "translateX(28%) scale(0.62)" : "translateY(-33%) scale(0.54)",
+      transform: isWide ? "translateX(28%) scale(0.62)" : "translateY(-45%) scale(0.45)",
       opacity: 1,
     };
   } else if (isWide) {
@@ -119,7 +119,7 @@ export function Section2Problem() {
       ref={sectionRef}
       id="problem"
       className="problem-section text-white relative z-10"
-      style={{ minHeight: reduced ? "100svh" : "150vh" }}
+      style={{ minHeight: reduced ? "100svh" : (isWide ? "150vh" : "120vh") }}
     >
       <motion.div
         ref={stickyRef}
@@ -192,11 +192,16 @@ export function Section2Problem() {
               Why Great Products Need More Than Great Interfaces
             </h2>
             <p className="text-body problem-body">
-              Most products don&rsquo;t fail because of bad technology or poor
-              visuals. They fail because they overlook the people they&rsquo;re
-              built for. Great design isn&rsquo;t just about making things look
-              better. It&rsquo;s about understanding how people think, feel,
-              and make decisions.
+              <span className="hidden md:inline">
+                Most products don&rsquo;t fail because of bad technology or poor
+                visuals. They fail because they overlook the people they&rsquo;re
+                built for. Great design isn&rsquo;t just about making things look
+                better. It&rsquo;s about understanding how people think, feel,
+                and make decisions.
+              </span>
+              <span className="inline md:hidden">
+                Most products fail because they overlook the people using them. Great design isn&rsquo;t just about looks—it&rsquo;s about understanding how people think and decide.
+              </span>
             </p>
 
             <p className="problem-subhead">What the product really needs</p>

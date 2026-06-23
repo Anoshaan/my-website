@@ -131,10 +131,16 @@ export function Hero() {
           <motion.div style={{ y: bodyY }}>
             <Reveal delay={0.18} duration={0.9}>
               <p className="text-body text-white/65 max-w-[54ch] mx-auto mt-6">
-                I design web, mobile, and AI product experiences that turn
-                complex ideas into clear, usable, scalable products. I combine
-                UX thinking, visual craft, motion, and product strategy to make
-                digital products that feel simple and human.
+                <span className="hidden md:inline">
+                  I design web, mobile, and AI product experiences that turn
+                  complex ideas into clear, usable, scalable products. I combine
+                  UX thinking, visual craft, motion, and product strategy to make
+                  digital products that feel simple and human.
+                </span>
+                <span className="inline md:hidden">
+                  I design intuitive web, mobile, and AI products. I combine UX,
+                  visual craft, and motion to make complex ideas feel simple and human.
+                </span>
               </p>
             </Reveal>
 

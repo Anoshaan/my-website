@@ -128,10 +128,15 @@ export function Section3Approach() {
               How I read the user before I design
             </h2>
             <p className="text-body thinking-intro">
-              I begin by listening closely: what the client wants to build, what
-              users need to understand, and where the business needs clarity.
-              From there, I turn scattered ideas into a shared direction before
-              touching the interface.
+              <span className="hidden md:inline">
+                I begin by listening closely: what the client wants to build, what
+                users need to understand, and where the business needs clarity.
+                From there, I turn scattered ideas into a shared direction before
+                touching the interface.
+              </span>
+              <span className="inline md:hidden">
+                I start by listening to client goals and user needs, turning scattered ideas into a clear direction before designing the interface.
+              </span>
             </p>
           </header>
         </Reveal>

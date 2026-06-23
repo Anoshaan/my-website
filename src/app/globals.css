@@ -623,7 +623,7 @@ html[data-theme="light"] .page-hero-grad--silver {
    the frame. A faint drop-shadow glow gives the metallic type a refined
    luminous outline without ever reading as a "glow effect". */
 .hero-title {
-  font-size: clamp(2.5rem, 5.8vw, 7rem);
+  font-size: clamp(1.85rem, 5.8vw, 7rem);
   font-weight: 500;
   line-height: 1.02;
   letter-spacing: -0.035em;

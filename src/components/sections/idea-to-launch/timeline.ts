@@ -118,11 +118,9 @@ export function useProcessTimeline() {
 
   const pause = useCallback(() => {
     pausedRef.current = true;
-    stopRef.current();
   }, []);
   const resume = useCallback(() => {
     pausedRef.current = false;
-    if (inViewRef.current) startRef.current();
   }, []);
 
   useEffect(() => {
@@ -135,7 +133,7 @@ export function useProcessTimeline() {
     const el = animationRef.current;
 
     const step = (ts: number) => {
-      if (!inViewRef.current || pausedRef.current) {
+      if (!inViewRef.current) {
         rafRef.current = null;
         return;
       }
@@ -144,14 +142,28 @@ export function useProcessTimeline() {
       lastRef.current = ts;
       setTime((t) => {
         let next = t + dt;
-        if (next >= DURATION) next = LOOP_START + (next - DURATION);
-        if (next < LOOP_START) next = LOOP_START;
+        
+        let a = 0;
+        for (let i = 0; i < STEPS.length; i++) {
+          if (t + 1e-6 >= STEPS[i].start) a = i;
+        }
+
+        if (pausedRef.current) {
+          const currStart = STEPS[a].start;
+          const nextStart = a < STEPS.length - 1 ? STEPS[a + 1].start : DURATION;
+          if (next >= nextStart - 0.1) {
+            next = currStart + 0.2;
+          }
+        } else {
+          if (next >= DURATION) next = LOOP_START + (next - DURATION);
+          if (next < LOOP_START) next = LOOP_START;
+        }
         return next;
       });
       rafRef.current = requestAnimationFrame(step);
     };
     const start = () => {
-      if (rafRef.current == null && !pausedRef.current) {
+      if (rafRef.current == null) {
         lastRef.current = null;
         rafRef.current = requestAnimationFrame(step);
       }
