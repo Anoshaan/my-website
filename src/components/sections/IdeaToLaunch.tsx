@@ -39,13 +39,13 @@ export function IdeaToLaunch() {
     >
       <Container size="wide">
         <div className="mx-auto grid w-full max-w-[2100px] items-center gap-x-[clamp(32px,4.5vw,112px)] gap-y-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-          {/* LEFT — header + the nine process categories. Inactive stops are
-              small and tightly spaced; the active one grows large and bright
-              so the whole list reads in one glance without overflowing. */}
-          <div className="flex flex-col">
+          {/* LEFT — header + the nine process categories. Sits above the
+              animation (z-20) so the oversized visual can bleed behind it
+              without ever covering the heading or the category list. */}
+          <div className="relative z-20 flex flex-col">
             <Reveal>
               <p className="section-label mb-2.5">Process</p>
-              <h2 className="heading-sheen text-[clamp(1.7rem,2.8vw,2.5rem)] font-semibold leading-[1.05] tracking-[-0.03em]">
+              <h2 className="text-section heading-sheen max-w-[15ch]">
                 From first idea to launch, faster with AI
               </h2>
               <p className="text-body text-white/60 mt-3 max-w-[44ch] text-[0.95rem] leading-relaxed">
@@ -107,16 +107,17 @@ export function IdeaToLaunch() {
                   <ProductProcessAnimation time={time} />
                 </div>
 
-                {/* Active step description — floats over the lower portion of
-                    the visual. A soft scrim keeps it readable on top of the
-                    animation. Hovering pauses only the text switching; the
-                    visual keeps animating via its ambient clock. */}
+                {/* Active step description — clean right-aligned text floating
+                    over the lower portion of the visual (no card / pill / box).
+                    A soft text-shadow keeps it legible on the animation.
+                    Hovering pauses only the text switching; the visual keeps
+                    animating via its ambient clock. */}
                 <div
                   onMouseEnter={pause}
                   onMouseLeave={resume}
-                  className="absolute inset-x-0 bottom-0 z-10 flex justify-end p-[clamp(8px,1.4vw,18px)]"
+                  className="absolute inset-x-0 bottom-0 z-10 flex justify-end p-[clamp(10px,1.6vw,22px)]"
                 >
-                  <div className="idea-desc-scrim max-w-[52ch] rounded-2xl px-4 py-3 text-right">
+                  <div className="idea-desc max-w-[50ch] text-right">
                     <AnimatePresence mode="wait">
                       <motion.p
                         key={activeStep}
@@ -124,7 +125,7 @@ export function IdeaToLaunch() {
                         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                         exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
                         transition={{ duration: 0.45, ease: easeOutExpo }}
-                        className="text-[0.95rem] font-medium leading-snug text-white/80"
+                        className="idea-desc-text"
                       >
                         {STEPS[activeStep].sub}
                       </motion.p>

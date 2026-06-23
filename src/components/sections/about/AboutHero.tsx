@@ -1,14 +1,14 @@
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
 import { Button } from "@/components/ui/Button";
+import { AlphaVideo } from "./AlphaVideo";
 import "./about.css";
 
 /**
- * About hero — human, but still in the dark premium product style. Left
- * column carries the two-line title (white/silver animated gradient), a
- * short intro, and the resume download. Right column holds the looping
- * personal video in a refined rounded frame with a subtle ambient glow,
- * so it reads as part of the page rather than an embedded media block.
+ * About hero — human, but still in the premium product style. The looping
+ * transparent portrait sits large on the left, with no frame, border, or
+ * box, so the character reads as part of the page itself. The copy on the
+ * right carries the two-line title, a short intro, and the resume download.
  */
 export function AboutHero() {
   return (
@@ -16,19 +16,7 @@ export function AboutHero() {
       <Container>
         <div className="ab-hero-grid">
           <Reveal variant="fade" duration={1.1} delay={0.2} className="ab-hero-media">
-            <div className="ab-hero-video-glow" aria-hidden />
-            <div className="about-video ab-hero-video">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                poster="/about/intro-poster.jpg"
-              >
-                <source src="/about/intro.mp4" type="video/mp4" />
-              </video>
-            </div>
+            <AlphaVideo />
           </Reveal>
 
           <div className="ab-hero-copy">

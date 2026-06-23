@@ -478,12 +478,12 @@ function SceneUX() {
 }
 
 // ══ 05 AI PROTOTYPE ══════════════════════════════════════════════════════════
-const AI_TOOLS = [["Claude", "#d97706"], ["Lovable", "#ff4d6d"], ["v0", "#111"], ["Antigravity", "#2563eb"]];
+const AI_TOOLS = [["Claude", "#d97706"], ["Lovable", "#ff4d6d"], ["v0", "#2b2b2b"], ["Antigravity", "#2563eb"]];
 const PROMPT = "Build a clean onboarding flow\nfor a fintech mobile app.\n3 steps, trust-first, fast.";
 function SceneAI() {
   return (
     <Sprite start={22.2} end={27.2}>
-      <FloatCard x={250} y={300} w={470} h={250} appear={0.2} leave={27 - 22.2} phase={0.3} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(30,27,22,0.95)">
+      <FloatCard x={250} y={300} w={470} h={250} appear={0.2} leave={27 - 22.2} phase={0.3} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(58,54,50,0.96)">
         <div style={{ height: 32, display: "flex", alignItems: "center", gap: 8, padding: "0 14px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}><IconSpark s={16} /><span style={{ color: "rgba(255,255,255,0.7)", fontFamily: MONO, fontSize: 12 }}>prompt</span></div>
         <div style={{ padding: 18, fontFamily: MONO, fontSize: 16, lineHeight: 1.6, color: "#ffe7bd", whiteSpace: "pre-wrap" }}>
           <At from={0.3}>{lt => { const n = Math.floor(clamp(lt / 2, 0, 1) * PROMPT.length); const blink = Math.floor(lt * 2) % 2; return <>{PROMPT.slice(0, n)}<span style={{ opacity: blink, color: ACCENT }}>&#9613;</span></>; }}</At>
@@ -510,7 +510,7 @@ function SceneAI() {
           <div style={{ height: 34, borderRadius: 8, background: ACCENT, marginTop: 12 }} />
         </div>
       </FloatCard>
-      <FloatCard x={900} y={580} w={300} h={100} appear={1.0} leave={27 - 22.2} phase={1.8} extra={{ padding: 14, overflow: "hidden" }} tint="rgba(30,27,22,0.92)">
+      <FloatCard x={900} y={580} w={300} h={100} appear={1.0} leave={27 - 22.2} phase={1.8} extra={{ padding: 14, overflow: "hidden" }} tint="rgba(58,54,50,0.94)">
         <At from={1}>{lt => <div style={{ fontFamily: MONO, fontSize: 11.5, color: "#86efac", lineHeight: 1.7 }}>{["✓ parsing brief", "✓ generating layout", "✓ wiring components", "▐ rendering preview"].slice(0, Math.floor(clamp((lt - 1) / 2, 0, 1) * 4) + 1).map((l, i) => <div key={i} style={{ opacity: i === 3 ? 0.7 : 1 }}>{l}</div>)}</div>}</At>
       </FloatCard>
     </Sprite>
@@ -535,7 +535,7 @@ function SceneFrontEnd() {
         <div style={{ display: "flex", gap: 8, marginTop: 12 }}>{[ACCENT, "#23201b", "#1f9d5a", "#2563eb", "#a259ff"].map((c, i) => <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: c }} />)}</div>
         <div style={{ marginTop: 12 }}><Lines n={2} w={240} /></div>
       </FloatCard>
-      <FloatCard x={900} y={300} w={300} h={310} appear={1.4} leave={32 - 27} phase={1.2} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(30,27,22,0.95)">
+      <FloatCard x={900} y={300} w={300} h={310} appear={1.4} leave={32 - 27} phase={1.2} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(58,54,50,0.96)">
         <div style={{ height: 30, display: "flex", alignItems: "center", gap: 6, padding: "0 12px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>{["#ff6159", "#ffbd2e", "#28c93f"].map((c, i) => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: c }} />)}<span style={{ marginLeft: 6, color: "rgba(255,255,255,0.5)", fontFamily: MONO, fontSize: 11 }}>Product.tsx</span></div>
         <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 9 }}>{[[70, "#7dd3fc"], [130, "#fbbf77"], [100, "#86efac"], [150, "#7dd3fc"], [80, "#c4b5fd"], [120, "#fbbf77"]].map(([w, c], i) => <At key={i} from={1.4 + i * 0.12}>{() => <div style={{ display: "flex", gap: 7, paddingLeft: i === 1 || i === 2 || i === 4 ? 14 : 0 }}><div style={{ width: 16, height: 6, background: "rgba(255,255,255,0.18)", borderRadius: 3 }} /><div style={{ width: w, height: 6, background: c, borderRadius: 3, opacity: 0.85 }} /></div>}</At>)}</div>
       </FloatCard>

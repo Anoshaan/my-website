@@ -59,37 +59,43 @@ html[data-theme="light"] .ab-section {
 }
 .ab-hero-media {
   position: relative;
+  /* The character should sit toward the left and may breathe past the grid
+     cell, so we don't clip it. */
+  display: flex;
+  justify-content: center;
 }
-.ab-hero-video {
-  position: relative;
-  z-index: 1;
-  aspect-ratio: 4 / 3;
-  width: 100%;
-  max-width: 560px;
-  margin-inline: auto;
-  border: 1px solid rgba(var(--c-fg-rgb), 0.08);
-  /* Soft, theme-aware lift — slate on light, black on dark — instead of a
-     heavy dark drop that looked harsh on the light field. */
-  box-shadow: 0 24px 60px rgba(var(--shadow-rgb), 0.16);
-}
-/* On desktop the media sits on the left, anchored to the left edge of its
-   column so it balances against the copy on the right. */
 @media (min-width: 901px) {
-  .ab-hero-video {
-    margin-inline: 0 auto;
+  .ab-hero-media {
+    justify-content: flex-start;
   }
 }
-.ab-hero-video-glow {
-  position: absolute;
-  inset: -14%;
-  z-index: 0;
+
+/* Transparent looping portrait. No frame, border, box, or gradient — the
+   character sits directly inside the page on its own alpha channel. */
+.about-alpha-video {
+  display: block;
+  background: transparent;
   pointer-events: none;
-  background: radial-gradient(
-    50% 50% at 50% 40%,
-    rgba(var(--c-accent-rgb), 0.16),
-    transparent 70%
-  );
-  filter: blur(18px);
+  object-fit: contain;
+  aspect-ratio: 1 / 1;
+  width: clamp(280px, 78vw, 460px);
+  height: auto;
+  margin-inline: auto;
+}
+/* Tablet and up: scale it up and left-align so it reads big and confident. */
+@media (min-width: 901px) {
+  .about-alpha-video {
+    width: clamp(420px, 46vw, 720px);
+    margin-inline: 0;
+  }
+}
+/* Large desktop: use the available width and let it lean toward the left
+   edge so it feels intentional rather than boxed in a column. */
+@media (min-width: 1400px) {
+  .about-alpha-video {
+    width: clamp(560px, 44vw, 820px);
+    margin-left: clamp(-72px, -3vw, 0px);
+  }
 }
 
 /* ---- SHARED SECTION SCAFFOLD ----------------------------- */

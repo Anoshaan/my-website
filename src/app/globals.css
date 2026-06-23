@@ -1012,12 +1012,16 @@ html[data-theme="dark"] .hero-title-shine::before {
 /* Idea-to-launch — soft scrim behind the active step description so it stays
    readable while floating on top of the enlarged process animation. Theme
    aware: a translucent wash of the page surface, never a hard slab. */
-.idea-desc-scrim {
-  background: rgba(var(--c-bg-rgb), 0.5);
-  -webkit-backdrop-filter: blur(9px) saturate(130%);
-  backdrop-filter: blur(9px) saturate(130%);
-  border: 1px solid rgba(var(--c-fg-rgb), 0.08);
-  box-shadow: 0 10px 30px rgba(var(--shadow-rgb), 0.14);
+/* Idea-to-launch active step description — clean floating text, no card. A
+   soft text-shadow (NOT a background) keeps it legible over the animation. */
+.idea-desc-text {
+  margin: 0;
+  font-size: clamp(1rem, 0.95rem + 0.35vw, 1.18rem);
+  font-weight: 500;
+  line-height: 1.65;
+  color: rgba(var(--c-fg-rgb), 0.82);
+  text-shadow: 0 1px 10px rgba(var(--c-bg-rgb), 0.85),
+    0 0 22px rgba(var(--c-bg-rgb), 0.7);
 }
 
 /* Particle halo — sits above the environmental layer but behind the card
