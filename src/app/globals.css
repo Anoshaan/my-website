@@ -874,8 +874,8 @@ html[data-theme="dark"] .hero-title-shine::before {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
-  height: clamp(180px, 30vh, 320px);
+  bottom: -50vh;
+  height: 200vh;
   z-index: 2;
   pointer-events: none;
 }

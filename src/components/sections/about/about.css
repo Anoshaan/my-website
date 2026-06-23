@@ -81,6 +81,8 @@ html[data-theme="light"] .ab-section {
   width: clamp(280px, 78vw, 460px);
   height: auto;
   margin-inline: auto;
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
 /* Tablet and up: scale it up and left-align so it reads big and confident. */
 @media (min-width: 901px) {
@@ -228,9 +230,8 @@ html[data-theme="light"] .ab-section {
 .about-xp-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: clamp(28px, 4vw, 48px);
-  max-width: 1040px;
-  margin-inline: auto;
+  gap: clamp(32px, 4vw, 56px);
+  width: 100%;
 }
 @media (min-width: 860px) {
   .about-xp-grid {
@@ -245,13 +246,13 @@ html[data-theme="light"] .ab-section {
 }
 .about-tl-rail {
   position: relative;
-  padding-top: 4px;
+  padding-top: 12px;
 }
 .about-tl-rail-line {
   position: absolute;
-  left: 8px;
-  right: 8px;
-  top: 11px;
+  left: 28px;
+  right: 16px;
+  top: 15.5px;
   height: 1px;
   /* Dashed (not a solid progress bar) — reads as a timeline. */
   background-image: linear-gradient(
@@ -260,9 +261,103 @@ html[data-theme="light"] .ab-section {
     transparent 6px 15px
   );
   background-size: 15px 1px;
+  animation: about-tl-dash 2s linear infinite;
 }
+@keyframes about-tl-dash {
+  to { background-position: -30px 0; }
+}
+
+
+.about-tl-walker-container {
+  position: absolute;
+  top: -11px;
+  right: 0;
+  width: 100%;
+  height: 30px;
+  z-index: 10;
+}
+.about-tl-walker {
+  position: absolute;
+  right: 16px;
+  transform: translateX(50%);
+  color: var(--ab-bright);
+  animation: walk-move-dynamic 15s linear infinite, journey-y 15s linear infinite;
+}
+@keyframes walk-move-dynamic {
+  0%   { right: 16px; }
+  50%  { right: calc(37.5% - 16.5px + 16px); }
+  60%  { right: calc(50% - 22px + 16px); }
+  70%  { right: calc(62.5% - 27.5px + 16px); }
+  80%  { right: calc(75% - 33px + 16px); }
+  90%  { right: calc(87.5% - 38.5px + 16px); }
+  100% { right: calc(100% - 44px + 16px); }
+}
+
+@keyframes journey-y {
+  /* Walking - smooth, no bounce */
+  0%, 50% { transform: translateX(50%) translateY(0); }
+  
+  /* Running starts at 50% */
+  /* Jump 1 (60%) */
+  57% { transform: translateX(50%) translateY(0); }
+  58% { transform: translateX(50%) translateY(2px); }
+  60% { transform: translateX(50%) translateY(-22px); }
+  62% { transform: translateX(50%) translateY(0); }
+  
+  /* Jump 2 (70%) */
+  67% { transform: translateX(50%) translateY(0); }
+  68% { transform: translateX(50%) translateY(2px); }
+  70% { transform: translateX(50%) translateY(-22px); }
+  72% { transform: translateX(50%) translateY(0); }
+  
+  /* Jump 3 (80%) */
+  77% { transform: translateX(50%) translateY(0); }
+  78% { transform: translateX(50%) translateY(2px); }
+  80% { transform: translateX(50%) translateY(-22px); }
+  82% { transform: translateX(50%) translateY(0); }
+  
+  /* Jump 4 (90%) */
+  87% { transform: translateX(50%) translateY(0); }
+  88% { transform: translateX(50%) translateY(2px); }
+  90% { transform: translateX(50%) translateY(-22px); }
+  92% { transform: translateX(50%) translateY(0); }
+
+  100% { transform: translateX(50%) translateY(0); }
+}
+
+.walker-svg {
+  transform: scaleX(-1);
+  display: block;
+}
+.walker-svg-walk { animation: walk-opacity 15s linear infinite; }
+.walker-svg-run { animation: run-opacity 15s linear infinite; position: absolute; top: 0; left: 0; }
+
+@keyframes walk-opacity {
+  0%, 50% { opacity: 1; }
+  50.001%, 100% { opacity: 0; }
+}
+@keyframes run-opacity {
+  0%, 50% { opacity: 0; }
+  50.001%, 100% { opacity: 1; }
+}
+
+.walk-arm-l { transform-origin: 12px 9px; animation: swing-arm 0.8s infinite alternate ease-in-out; }
+.walk-arm-r { transform-origin: 12px 9px; animation: swing-arm-rev 0.8s infinite alternate ease-in-out; }
+.walk-leg-l { transform-origin: 12px 17px; animation: swing-leg 0.8s infinite alternate ease-in-out; }
+.walk-leg-r { transform-origin: 12px 17px; animation: swing-leg-rev 0.8s infinite alternate ease-in-out; }
+
+.run-arm-l { transform-origin: 12px 9px; animation: swing-arm 0.3s infinite alternate ease-in-out; }
+.run-arm-r { transform-origin: 12px 9px; animation: swing-arm-rev 0.3s infinite alternate ease-in-out; }
+.run-leg-l { transform-origin: 12px 17px; animation: swing-leg 0.3s infinite alternate ease-in-out; }
+.run-leg-r { transform-origin: 12px 17px; animation: swing-leg-rev 0.3s infinite alternate ease-in-out; }
+
+@keyframes swing-arm { 0% { transform: rotate(20deg); } 100% { transform: rotate(-20deg); } }
+@keyframes swing-arm-rev { 0% { transform: rotate(-20deg); } 100% { transform: rotate(20deg); } }
+@keyframes swing-leg { 0% { transform: rotate(30deg); } 100% { transform: rotate(-30deg); } }
+@keyframes swing-leg-rev { 0% { transform: rotate(-30deg); } 100% { transform: rotate(30deg); } }
 .about-tl-years {
   position: relative;
+  z-index: 2;
   display: flex;
   justify-content: space-between;
   gap: 4px;
@@ -274,10 +369,19 @@ html[data-theme="light"] .ab-section {
   gap: 7px;
 }
 .about-tl-year-dot {
+  position: relative;
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: rgba(var(--c-fg-rgb), 0.38);
+}
+.about-tl-year-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--c-bg);
+  z-index: -1;
 }
 .about-tl-year.is-now .about-tl-year-dot {
   background: var(--color-accent);
@@ -853,6 +957,16 @@ html[data-theme="light"] .ab-section {
   .ab-loop-svg {
     max-width: 300px;
   }
+  .ab-hero-copy, .ab-split-copy {
+    text-align: center;
+    align-items: center;
+  }
+  .ab-hero-actions {
+    justify-content: center;
+  }
+  .ab-lead {
+    margin-inline: auto;
+  }
 }
 @media (max-width: 560px) {
   .ab-facets {
@@ -861,6 +975,73 @@ html[data-theme="light"] .ab-section {
   .ab-hero-actions {
     width: 100%;
   }
+}
+
+/* ---- TEAM ACTIVITIES ANIMATIONS -------------------------- */
+
+/* Badminton */
+.ab-sport-anim-racket {
+  animation: sport-racket-swing 1s infinite ease-in-out;
+}
+.ab-sport-anim-shuttle {
+  animation: sport-shuttle-fly 1s infinite ease-out;
+}
+
+@keyframes sport-racket-swing {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-35deg); }
+}
+@keyframes sport-shuttle-fly {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-15px, -20px) rotate(-60deg); }
+}
+
+/* Swimming */
+.ab-sport-anim-swimmer {
+  animation: sport-swimmer-bob 2s infinite ease-in-out;
+}
+.ab-sport-anim-swim-arm-f {
+  animation: sport-swim-arm 2s infinite linear;
+}
+.ab-sport-anim-swim-arm-b {
+  animation: sport-swim-arm 2s infinite linear;
+  animation-delay: -1s;
+}
+.ab-sport-anim-wave1 {
+  animation: sport-wave 2s infinite linear;
+}
+.ab-sport-anim-wave2 {
+  animation: sport-wave 3s infinite linear reverse;
+}
+
+@keyframes sport-swimmer-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+@keyframes sport-swim-arm {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes sport-wave {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(24px); }
+}
+
+/* Football */
+.ab-sport-anim-leg {
+  animation: sport-football-kick 1.2s infinite ease-in-out;
+}
+.ab-sport-anim-ball {
+  animation: sport-football-bounce 1.2s infinite linear;
+}
+
+@keyframes sport-football-kick {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-35deg); }
+}
+@keyframes sport-football-bounce {
+  0%, 100% { transform: translateY(-30px) rotate(180deg); }
+  50% { transform: translateY(0) rotate(0deg); }
 }
 
 /* ---- REDUCED MOTION -------------------------------------- */

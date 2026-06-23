@@ -62,10 +62,6 @@ export function BehaviorOrigin() {
 
                 {/* Minimal interface — borderless soft surface, not a boxed
                     frame, so it reads as part of the page. */}
-                <rect className="ab-bh-screen" x="16" y="20" width="228" height="160" rx="12" />
-                <line className="ab-bh-ui" x1="32" y1="36" x2="120" y2="36" />
-                <rect className="ab-bh-ui-block" x="130" y="62" width="44" height="30" rx="5" />
-                <rect className="ab-bh-ui-block" x="32" y="120" width="60" height="22" rx="5" />
 
                 {/* Attention path. */}
                 <path className="ab-bh-path" d={PATH} fill="none" />

@@ -118,7 +118,7 @@ export function Section2Problem() {
     <section
       ref={sectionRef}
       id="problem"
-      className="problem-section"
+      className="problem-section text-white relative z-10"
       style={{ minHeight: reduced ? "100svh" : "150vh" }}
     >
       <motion.div

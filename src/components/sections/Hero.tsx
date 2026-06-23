@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";
@@ -57,10 +57,18 @@ const BrandIcon = () => (
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress, scrollY } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
+
+  const [vh, setVh] = useState(typeof window !== "undefined" ? window.innerHeight : 1000);
+  useEffect(() => {
+    const update = () => setVh(window.innerHeight);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   // Parallax — title drifts up slower than the body copy. Magnitudes are
   // intentionally small so the effect reads as depth, never as motion.
@@ -73,11 +81,20 @@ export function Hero() {
   // scrolled, handing the frame over to the rising workspace below.
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, reduced ? 1 : 0]);
 
+  // Particles travel — instead of scrolling up with the hero section,
+  // they travel down into the next section to blend with the workspace particles.
+  const particlesY = useTransform(scrollYProgress, [0, 1], ["0vh", reduced ? "0vh" : "60vh"]);
+  const particlesScale = useTransform(scrollYProgress, [0, 1], [1, reduced ? 1 : 1.3]);
+  
+  // Fade out the hero particles exactly when the Figma mockup in the next section
+  // scales down and moves to the right (between 105vh and 123vh of absolute scroll).
+  const particlesOpacity = useTransform(scrollY, [vh * 1.05, vh * 1.23], [1, 0]);
+
   return (
     <section
       ref={ref}
       id="top"
-      className="relative min-h-[100svh] flex items-center overflow-hidden perspective"
+      className="relative min-h-[100svh] flex items-center overflow-x-clip perspective"
     >
       {/* Hero galaxy — a premium, low-contrast depth field (nebula glow +
           fine stars) layered behind the type with a slow parallax. Masked
@@ -147,12 +164,16 @@ export function Hero() {
 
       {/* Scroll cue — a soft cloud of glowing particles drifting slowly near
           the bottom edge, in the same dot language as the next section's field.
-          It does NOT fade with the hero: the particles stay visible through the
-          scroll so they read as one continuous flow into the workspace section
-          below, rather than vanishing the moment you start scrolling. */}
-      <div className="hero-particles-band" aria-hidden>
-        <HeroParticles reduced={reduced} />
-      </div>
+          It does NOT fade with the hero: the particles actively travel downward 
+          on scroll to lead the user into the workspace section below, merging 
+          into one continuous depth field rather than vanishing. */}
+      <motion.div 
+        className="hero-particles-band" 
+        style={{ y: particlesY, scale: particlesScale, opacity: particlesOpacity }}
+        aria-hidden
+      >
+        <HeroParticles reduced={reduced} progress={scrollYProgress} />
+      </motion.div>
     </section>
   );
 }

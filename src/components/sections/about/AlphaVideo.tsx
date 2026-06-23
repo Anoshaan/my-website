@@ -16,7 +16,6 @@ import { useEffect, useRef, useState } from "react";
  */
 export function AlphaVideo() {
   const ref = useRef<HTMLVideoElement>(null);
-  const [src, setSrc] = useState<string | null>(null);
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
@@ -24,30 +23,7 @@ export function AlphaVideo() {
       "(prefers-reduced-motion: reduce)"
     ).matches;
     setReduced(prefersReduced);
-    if (prefersReduced) return;
-
-    const ua = navigator.userAgent;
-    const isIOS =
-      /iPad|iPhone|iPod/.test(ua) ||
-      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    const isSafari =
-      /safari/i.test(ua) &&
-      !/chrome|chromium|crios|android|edg|fxios|opr/i.test(ua);
-
-    setSrc(
-      isIOS || isSafari
-        ? "/videos/about-character-fallback.mp4"
-        : "/videos/about-character-alpha.webm"
-    );
   }, []);
-
-  useEffect(() => {
-    const v = ref.current;
-    if (v && src) {
-      // Autoplay can be rejected silently on some setups; ignore the promise.
-      v.play().catch(() => {});
-    }
-  }, [src]);
 
   return (
     <video
@@ -60,7 +36,8 @@ export function AlphaVideo() {
       preload="metadata"
       poster="/videos/about-character-poster.png"
       aria-hidden="true"
-      src={reduced ? undefined : src ?? undefined}
-    />
+    >
+      {!reduced && <source src="/videos/about-master2.webm" type="video/webm" />}
+    </video>
   );
 }
