@@ -1053,6 +1053,130 @@ html[data-theme="dark"] .hero-title-shine::before {
   filter: drop-shadow(0 60px 120px rgba(var(--shadow-rgb), 0.55));
 }
 
+/* =========================================================
+   HERO ORBIT ICONS — tool/brand logos that ring the rising
+   workspace. The box matches the card's fixed 1100×680 design
+   space and is centred over it, so icon offsets lock to the card
+   edges. It sits BEHIND .problem-fit (earlier in the DOM) so the
+   icons emerge from behind the card as the group scales out.
+   `--orbit-spread` lets responsive tiers pull the ring tighter.
+   ========================================================= */
+.problem-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1100px;
+  height: 680px;
+  margin-left: -550px;
+  margin-top: -340px;
+  transform-origin: 50% 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  --orbit-spread: 1;
+}
+.orbit-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--s) * 1px);
+  height: calc(var(--s) * 1px);
+  margin-left: calc(var(--s) * -0.5px);
+  margin-top: calc(var(--s) * -0.5px);
+  transform: translate(
+    calc(var(--x) * var(--orbit-spread) * 1px),
+    calc(var(--y) * var(--orbit-spread) * 1px)
+  );
+}
+/* Inner element carries the continuous, GPU-cheap float + subtle rotate so
+   it never fights the positioning transform on .orbit-icon. */
+.orbit-icon-float {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 24%;
+  background: rgba(252, 252, 255, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 10px 26px -8px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  animation: orbit-float var(--fd, 12s) ease-in-out var(--dl, 0s) infinite alternate;
+  will-change: transform;
+}
+.orbit-icon.is-ccw .orbit-icon-float {
+  animation-name: orbit-float-ccw;
+}
+html[data-theme="light"] .orbit-icon-float {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(20, 20, 40, 0.06);
+  box-shadow:
+    0 12px 28px -10px rgba(20, 20, 40, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.orbit-icon-img {
+  width: 62%;
+  height: 62%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+@keyframes orbit-float {
+  0% {
+    transform: translate(-5px, 5px) rotate(-3.5deg);
+  }
+  50% {
+    transform: translate(4px, -9px) rotate(3deg);
+  }
+  100% {
+    transform: translate(-3px, 6px) rotate(-1.5deg);
+  }
+}
+@keyframes orbit-float-ccw {
+  0% {
+    transform: translate(5px, 4px) rotate(3.5deg);
+  }
+  50% {
+    transform: translate(-4px, -8px) rotate(-3deg);
+  }
+  100% {
+    transform: translate(3px, 7px) rotate(1.5deg);
+  }
+}
+
+/* ---- Responsive tiers ---- */
+/* Tablet — trim the ring to the eight strongest anchors, pull it in. */
+@media (max-width: 900px) {
+  .problem-orbit {
+    --orbit-spread: 0.9;
+  }
+  .orbit-icon:nth-child(n + 9) {
+    display: none;
+  }
+}
+/* Mobile — a light, tight set of five so it never clutters the small card. */
+@media (max-width: 600px) {
+  .problem-orbit {
+    --orbit-spread: 0.82;
+  }
+  .orbit-icon:nth-child(n + 6) {
+    display: none;
+  }
+  .orbit-icon-float {
+    border-radius: 26%;
+  }
+}
+
+/* Reduced motion — icons settle in gently; no continuous float or rotate. */
+.problem-orbit[data-reduced="true"] .orbit-icon-float {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit-icon-float {
+    animation: none;
+  }
+}
+
 /* Copy — left column on desktop (the card parks to the right). */
 .problem-content {
   position: absolute;
@@ -4039,6 +4163,28 @@ html.lenis body {
   border-color: rgba(var(--c-fg-rgb), 0.22);
   color: var(--c-fg);
   transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------------
+   LIGHT THEME — clean white button faces.
+   On the cream light page the default color-mix face reads as a
+   muddy grey. In light theme only, give the primary + secondary
+   pills a solid white base so they look crisp and premium. Border,
+   the animated river glow (::before) and the coloured lift shadow
+   are all left untouched, so every hover/glow animation still runs
+   on top — only the base surface changes. Dark theme is unaffected.
+   --------------------------------------------------------- */
+html[data-theme="light"] .btn-glass {
+  background: linear-gradient(180deg, #ffffff, #f8f8fb);
+}
+html[data-theme="light"] .btn-glass:hover {
+  background: linear-gradient(180deg, #ffffff, #ffffff);
+}
+html[data-theme="light"] .btn-secondary {
+  background: #ffffff;
+}
+html[data-theme="light"] .btn-secondary:hover {
+  background: #ffffff;
 }
 
 /* =========================================================

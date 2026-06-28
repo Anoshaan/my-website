@@ -1,834 +1,509 @@
+/**
+ * Product Pathways — the single source of truth for the Selected Work page.
+ *
+ * The whole page (cards, filter, counts, modal) renders from `PRODUCT_PATHWAYS`
+ * and `CATEGORIES`. There are no hard-coded cards, separate detail routes, or
+ * per-card modals: one data array, one card, one modal, one filter.
+ */
+
 export type PathwayCategory =
   | "All Pathways"
-  | "Cross-Device Systems"
-  | "Dashboards & Admin Tools"
+  | "Product Platforms & Dashboards"
   | "Mobile App Experiences"
   | "Web & CMS Platforms"
   | "Commerce & Marketplace"
   | "AI & Automation UX"
-  | "Micro UI & Extensions"
-  | "Design Systems & Handoff";
+  | "Branding & Visual Identity"
+  | "Motion, Video & Lottie Systems"
+  | "Design Systems & Product Handoff";
 
-export const CATEGORIES: readonly PathwayCategory[] = [
-  "All Pathways",
-  "Cross-Device Systems",
-  "Dashboards & Admin Tools",
-  "Mobile App Experiences",
-  "Web & CMS Platforms",
-  "Commerce & Marketplace",
-  "AI & Automation UX",
-  "Micro UI & Extensions",
-  "Design Systems & Handoff",
-];
+/** Stable icon keys consumed by the filter (see CategoryFilter). */
+export type CategoryIconKey =
+  | "compass"
+  | "dashboard"
+  | "smartphone"
+  | "globe"
+  | "shoppingBag"
+  | "sparkles"
+  | "palette"
+  | "clapperboard"
+  | "component";
 
-// Helper to provide a completely neutral active state styling
-export const getCategoryStyles = (category: string) => {
-  return {
-    highlight: "bg-[var(--color-fg)] text-[var(--color-bg)] shadow-md",
-  };
-};
+/** Lightweight placeholder layouts. Real mockups can be restored later. */
+export type MockupType =
+  | "dashboard"
+  | "mobile"
+  | "website"
+  | "commerce"
+  | "documentation"
+  | "ai"
+  | "admin"
+  | "fintech"
+  | "booking"
+  | "marketplace"
+  | "branding"
+  | "video"
+  | "designSystem";
 
-export interface MainProductPathway {
-  id: string;
-  slug: string;
-  title: string;
-  category: PathwayCategory; // Used for filtering
-  displayCategory: string; // Used for display
-  tags: string[];
-  accentColor: string;
-  softAccentColor: string;
-  question: string;
-  story: string[];
-  proof: string;
-  summary: string;
-  domain: string;
-  platform: string;
-  role: string;
-  focusAreas: string;
-  stats: string[];
-  ideaToLaunchSteps: string[];
-  screenShowcaseItems: string[];
-  whatChanged: string[];
-  keyInsight: string;
-  visualType: 'component' | 'image';
-  visualComponentName: string;
-  imageFallback: string;
+export interface CategoryMeta {
+  label: PathwayCategory;
+  icon: CategoryIconKey;
+  /** Accent used for the active filter chip + count badge. */
+  accent: string;
+  softBg: string;
+  border: string;
 }
 
-export const MAIN_PATHWAYS: MainProductPathway[] = [
+/**
+ * The final 9-category system. "Product Platforms & Dashboards" merges the old
+ * Cross-Device Systems + Dashboard & Admin Tools. Each category gets a unique
+ * icon and a distinct pastel accent so active states stay readable.
+ */
+export const CATEGORY_META: CategoryMeta[] = [
+  // "All" uses a warm neutral so it never reads as a coloured/purple filter.
+  { label: "All Pathways", icon: "compass", accent: "#C9B79C", softBg: "#F4EEE3", border: "#E6DAC8" },
+  { label: "Product Platforms & Dashboards", icon: "dashboard", accent: "#8FB8FF", softBg: "#EEF5FF", border: "#C9DCFF" },
+  { label: "Mobile App Experiences", icon: "smartphone", accent: "#7DD3FC", softBg: "#ECFAFF", border: "#BDEFFF" },
+  { label: "Web & CMS Platforms", icon: "globe", accent: "#6EE7B7", softBg: "#ECFDF5", border: "#A7F3D0" },
+  { label: "Commerce & Marketplace", icon: "shoppingBag", accent: "#FFB86B", softBg: "#FFF4E8", border: "#FFD9AD" },
+  { label: "AI & Automation UX", icon: "sparkles", accent: "#B69CFF", softBg: "#F4F0FF", border: "#D9CCFF" },
+  { label: "Branding & Visual Identity", icon: "palette", accent: "#F0ABFC", softBg: "#FDF4FF", border: "#F5D0FE" },
+  { label: "Motion, Video & Lottie Systems", icon: "clapperboard", accent: "#FCA5A5", softBg: "#FEF2F2", border: "#FECACA" },
+  { label: "Design Systems & Product Handoff", icon: "component", accent: "#94A3B8", softBg: "#F1F5F9", border: "#E2E8F0" },
+];
+
+export const CATEGORIES: readonly PathwayCategory[] = CATEGORY_META.map((c) => c.label);
+
+export const getCategoryMeta = (category: PathwayCategory): CategoryMeta =>
+  CATEGORY_META.find((c) => c.label === category) ?? CATEGORY_META[0];
+
+export interface ExternalLink {
+  label: string;
+  url: string;
+}
+
+export interface ProductPathway {
+  id: number;
+  title: string;
+  shortTitle: string;
+  question: string;
+  description: string;
+  summaryLine: string;
+  categories: PathwayCategory[];
+  tags: string[];
+  whatChanged: string[];
+  keyInsight: string;
+  accentColor: string;
+  accentSoftBg: string;
+  accentBorder: string;
+  /** Default ordering rank (1 = first). Also used to sort filtered results. */
+  priority: number;
+  mockupType: MockupType;
+  externalLinks?: ExternalLink[];
+  status?: "placeholder";
+}
+
+export const PRODUCT_PATHWAYS: ProductPathway[] = [
   {
-    id: "workforce-platform",
-    slug: "workforce-platform",
+    id: 1,
     title: "Workforce Time & Resource Management Platform",
-    category: "Dashboards & Admin Tools",
-    displayCategory: "Enterprise SaaS / Workforce Management",
-    tags: ["Enterprise SaaS", "Workforce", "Dashboards"],
-    accentColor: "#7BCDBA",
-    softAccentColor: "#E8F8F4",
+    shortTitle: "Workforce Time & Resource",
     question: "How do you reduce noise across large teams?",
-    summary: "Large organizations manage many projects at the same time, but employees only need to see the work assigned to them. This platform connected planning, task allocation, time tracking, and resource visibility into one structured workflow.",
-    story: [
-      "Large organizations often manage hundreds of projects simultaneously. While managers need visibility across teams, employees only need access to the work assigned to them.",
-      "This platform connected planning, task allocation, and time tracking through a structured workflow that reduced complexity and improved day-to-day efficiency."
-    ],
-    proof: "Built around role-based clarity, so people see only the work that is theirs while managers keep the full picture.",
-    domain: "Enterprise SaaS, Workforce Management, Resource Planning",
-    platform: "Web dashboard",
-    role: "UX/UI Design, Product Flow, Dashboard Experience",
-    focusAreas: "Role-based visibility, time tracking, project allocation",
-    stats: [
-      "Reduced unnecessary task visibility by 40%",
-      "Improved weekly reporting clarity by 55%",
-      "Simplified time-entry steps by 35%"
-    ],
-    ideaToLaunchSteps: [
-      "Understand team roles and permission levels",
-      "Map manager and employee workflows separately",
-      "Reduce screen noise through role-based views",
-      "Build dashboard, timesheet, and reporting flows",
-      "Support dev handoff and responsive states"
-    ],
-    screenShowcaseItems: [
-      "Dashboard overview",
-      "Timesheet flow",
-      "Project allocation table",
-      "Team reporting view"
-    ],
+    description:
+      "Large organizations often manage hundreds of projects, schedules, and responsibilities at the same time. This platform connected planning, task allocation, resource visibility, and time tracking into one structured workflow so managers could see the full picture while employees only saw what mattered to them.",
+    summaryLine:
+      "Built around role-based clarity, so people see only the work that is theirs while managers keep the full picture.",
+    categories: ["Product Platforms & Dashboards", "Design Systems & Product Handoff"],
+    tags: ["Workforce", "Time Tracking", "Resource Planning"],
     whatChanged: [
       "Simplified task visibility",
       "Reduced information overload",
-      "Embedded time tracking into daily workflows"
+      "Embedded time tracking into daily workflows",
     ],
-    keyInsight: "Users don't need more visibility. They need relevant visibility.",
-    visualType: "component",
-    visualComponentName: "Desktop workforce dashboard placeholder",
-    imageFallback: "/images/placeholders/workforce.jpg"
+    keyInsight: "Users do not need more visibility. They need relevant visibility.",
+    accentColor: "#7BCDBA",
+    accentSoftBg: "#E8F8F4",
+    accentBorder: "#B9E6DC",
+    priority: 1,
+    mockupType: "dashboard",
+    status: "placeholder",
   },
   {
-    id: "analytics-intelligence",
-    slug: "analytics-intelligence",
+    id: 2,
     title: "Analytics Intelligence Platform",
-    category: "Dashboards & Admin Tools",
-    displayCategory: "Analytics / SaaS Dashboard",
-    tags: ["Analytics", "SaaS", "BI"],
-    accentColor: "#8EC5FF",
-    softAccentColor: "#EEF7FF",
+    shortTitle: "Analytics Intelligence",
     question: "How do you turn data into action?",
-    summary: "Most dashboards show information, but few guide users toward the next decision. This platform focused on surfacing meaningful signals, prioritizing insights, and helping teams act faster.",
-    story: [
-      "Most dashboards present information. Few help users understand what requires attention next.",
-      "This platform focused on surfacing meaningful signals and guiding users toward faster, more informed decisions."
-    ],
-    proof: "Structured to move users from raw data to the next decision faster.",
-    domain: "Analytics, SaaS, Business Intelligence",
-    platform: "Web dashboard",
-    role: "UX/UI Design, Data Visualization, Product Experience",
-    focusAreas: "KPI hierarchy, reporting workflows, decision support",
-    stats: [
-      "Improved dashboard scan speed by 45%",
-      "Reduced visual noise across KPI views by 50%",
-      "Improved insight discovery flow by 35%"
-    ],
-    ideaToLaunchSteps: [
-      "Audit existing data points",
-      "Group insights by user decision needs",
-      "Design dashboard hierarchy",
-      "Create KPI cards, trend views, and drilldowns",
-      "Prototype responsive data states"
-    ],
-    screenShowcaseItems: [
-      "Executive dashboard",
-      "KPI summary cards",
-      "Trend analysis view",
-      "Report builder / filter state"
-    ],
+    description:
+      "Most dashboards show information, but very few help users understand what needs attention next. This platform focused on surfacing meaningful signals, reducing dashboard noise, and guiding users toward faster, more confident decisions.",
+    summaryLine: "Structured to move users from raw data to the next decision faster.",
+    categories: ["Product Platforms & Dashboards", "AI & Automation UX"],
+    tags: ["Analytics", "Business Intelligence", "Decision Support"],
     whatChanged: [
       "Improved information hierarchy",
       "Prioritized actionable insights",
-      "Reduced cognitive load"
+      "Reduced cognitive load",
     ],
     keyInsight: "Data is only valuable when it changes a decision.",
-    visualType: "component",
-    visualComponentName: "Executive dashboard placeholder",
-    imageFallback: "/images/placeholders/analytics.jpg"
+    accentColor: "#8FB8FF",
+    accentSoftBg: "#EEF5FF",
+    accentBorder: "#C9DCFF",
+    priority: 2,
+    mockupType: "dashboard",
+    status: "placeholder",
   },
   {
-    id: "enterprise-software-website",
-    slug: "enterprise-software-website",
-    title: "Aeturnum Website Experience",
-    category: "Web & CMS Platforms",
-    displayCategory: "Enterprise Website / Webflow CMS / B2B SaaS Services",
-    tags: ["Website", "CMS", "Lead Gen"],
-    accentColor: "#F4B6C2",
-    softAccentColor: "#FFF1F5",
-    question: "How do you turn a complex enterprise technology company into a clear, scalable website experience?",
-    summary: "Aeturnum is a technology partner for startups and ISVs, offering AI-powered product engineering, software development, cybersecurity, compliance, and enterprise SaaS integration. The website experience was structured to explain a complex service offering in a simple, buyer-friendly way while supporting scalable content management through Webflow CMS and lead capture through HubSpot.",
-    story: [
-      "Enterprise products often contain extensive capabilities that can overwhelm potential customers during evaluation.",
-      "The experience was designed to communicate business value before product features, making decision-making easier for buyers."
-    ],
-    proof: "Designed to lead with business value before features, so evaluation feels easier.",
-    domain: "Enterprise Technology, B2B Services, AI Product Engineering, SaaS Development",
-    platform: "Responsive website built with Webflow CMS",
-    role: "Website UX/UI Design, CMS Structure, Responsive Web Experience, Conversion Flow",
-    focusAreas: "Clear positioning, buyer pathway structure, scalable CMS content, service discovery, HubSpot contact flow",
-    stats: [
-      "Improved service communication clarity by 60%",
-      "Created scalable CMS structure for future content updates",
-      "Connected contact and lead-capture flow through HubSpot",
-      "Reduced buyer confusion by separating Startup and ISV pathways"
-    ],
-    ideaToLaunchSteps: [
-      "Understand Aeturnum’s business positioning and service model",
-      "Separate audience journeys for Startups and ISVs",
-      "Structure the homepage around proof, service clarity, and conversion",
-      "Design reusable Webflow CMS components for scalable updates",
-      "Create clear service sections for AI, software development, cybersecurity, and enterprise SaaS",
-      "Connect the contact experience with HubSpot for lead capture",
-      "Prepare responsive layouts for desktop, tablet, and mobile"
-    ],
-    screenShowcaseItems: [
-      "Homepage hero with audience selection",
-      "Startup and ISV pathway sections",
-      "AI/product engineering service area",
-      "CMS-driven client/logo/proof sections",
-      "Testimonials and trust-building content",
-      "HubSpot-connected contact CTA"
-    ],
+    id: 3,
+    title: "Enterprise Software Website Experience",
+    shortTitle: "Enterprise Software Website",
+    question: "How do you explain complex products simply?",
+    description:
+      "Enterprise products often contain deep capabilities that can overwhelm potential customers during evaluation. This experience was designed to communicate business value before product features, making the buying journey easier to understand.",
+    summaryLine: "Designed to lead with business value before features, so evaluation feels easier.",
+    categories: ["Web & CMS Platforms", "Branding & Visual Identity"],
+    tags: ["Website", "CMS", "B2B"],
     whatChanged: [
       "Simplified product communication",
       "Improved content structure",
-      "Reduced evaluation friction"
+      "Reduced evaluation friction",
     ],
     keyInsight: "People buy outcomes, not functionality.",
-    visualType: "component",
-    visualComponentName: "WebflowMarketingSite",
-    imageFallback: "/images/placeholders/enterprise.jpg"
+    accentColor: "#C7A7FF",
+    accentSoftBg: "#F5F0FF",
+    accentBorder: "#DECFFF",
+    priority: 3,
+    mockupType: "website",
+    status: "placeholder",
   },
   {
-    id: "smart-food-ordering",
-    slug: "smart-food-ordering",
+    id: 4,
     title: "Smart Food Ordering Platform",
-    category: "Commerce & Marketplace",
-    displayCategory: "Food Tech / Mobile Commerce",
-    tags: ["Food Tech", "Mobile App", "Commerce"],
-    accentColor: "#FFD08A",
-    softAccentColor: "#FFF7E8",
+    shortTitle: "Smart Food Ordering",
     question: "How do you help people decide faster?",
-    summary: "Food ordering often happens when users are busy, hungry, and low on patience. This platform simplified vendor discovery, menu browsing, ordering, checkout, and pickup into a faster mobile-first flow.",
-    story: [
-      "Ordering food often happens in busy environments where users have limited time and attention.",
-      "This experience streamlined browsing, selection, and checkout to support faster decision-making."
-    ],
-    proof: "Designed to reduce decision fatigue and speed up everyday ordering.",
-    domain: "Food Tech, Mobile Commerce, Multi-Vendor Ordering",
-    platform: "Mobile app plus vendor system",
-    role: "UX/UI Design, Mobile Flow, Checkout UX",
-    focusAreas: "Location-aware discovery, ordering flow, checkout clarity",
-    stats: [
-      "Reduced ordering flow friction by 45%",
-      "Improved vendor discovery clarity by 50%",
-      "Shortened checkout decision steps by 30%"
-    ],
-    ideaToLaunchSteps: [
-      "Map hungry-user decision behavior",
-      "Create vendor discovery and filtering flow",
-      "Design menu, cart, and checkout screens",
-      "Add pickup and order tracking states",
-      "Prepare vendor-side order management UI"
-    ],
-    screenShowcaseItems: [
-      "Food court discovery",
-      "Vendor menu screen",
-      "Cart and checkout",
-      "Pickup/order status"
-    ],
+    description:
+      "Ordering food often happens in busy environments where users have limited time and attention. This product streamlined browsing, item selection, customization, and checkout to support faster everyday decisions.",
+    summaryLine: "Designed to reduce decision fatigue and speed up everyday ordering.",
+    categories: ["Mobile App Experiences", "Commerce & Marketplace"],
+    tags: ["Food Tech", "Mobile", "Checkout"],
     whatChanged: [
       "Reduced decision fatigue",
       "Streamlined ordering flows",
-      "Improved checkout experience"
+      "Improved checkout experience",
     ],
-    keyInsight: "Hungry users don't explore. They choose.",
-    visualType: "component",
-    visualComponentName: "Food court discovery screen placeholder",
-    imageFallback: "/images/placeholders/food.jpg"
+    keyInsight: "Hungry users do not explore. They choose.",
+    accentColor: "#FFB86B",
+    accentSoftBg: "#FFF4E8",
+    accentBorder: "#FFD9AD",
+    priority: 4,
+    mockupType: "commerce",
+    status: "placeholder",
   },
   {
-    id: "cannabis-commerce",
-    slug: "cannabis-commerce",
+    id: 5,
     title: "Cannabis Commerce & Wellness Platform",
-    category: "Commerce & Marketplace",
-    displayCategory: "E-Commerce / Regulated Commerce",
-    tags: ["E-Commerce", "Regulated", "Wellness"],
-    accentColor: "#B7D99C",
-    softAccentColor: "#F1FAEC",
+    shortTitle: "Cannabis Commerce & Wellness",
     question: "How do you build trust in regulated industries?",
-    summary: "Regulated commerce requires clear product information, compliance visibility, and calm guidance. This platform made cannabis product discovery, wellness education, and checkout feel more trustworthy and less intimidating.",
-    story: [
-      "Regulated industries require balancing compliance, transparency, and usability without overwhelming customers.",
-      "The platform focused on creating confidence through clear communication and guided product discovery."
-    ],
-    proof: "Built to make compliance feel clear, so trust comes before the transaction.",
-    domain: "E-Commerce, Cannabis, Wellness, Mobile Commerce",
-    platform: "Mobile-first web/app experience",
-    role: "UX/UI Design, Commerce Flow, Compliance UX",
-    focusAreas: "Product discovery, trust, education, checkout",
-    stats: [
-      "Improved product comparison clarity by 45%",
-      "Reduced compliance communication friction by 35%",
-      "Strengthened checkout confidence through guided states"
-    ],
-    ideaToLaunchSteps: [
-      "Understand regulated purchase concerns",
-      "Structure product information clearly",
-      "Design category and product-detail flows",
-      "Add compliance-friendly checkout messaging",
-      "Build trust-focused review and education areas"
-    ],
-    screenShowcaseItems: [
-      "Product discovery grid",
-      "Product detail page",
-      "Medical/wellness information",
-      "Checkout and verification flow"
-    ],
+    description:
+      "Regulated industries require a careful balance between compliance, transparency, product education, and usability. This platform focused on guided product discovery, clear communication, and confidence-building UX.",
+    summaryLine: "Built to make compliance feel clear, so trust comes before the transaction.",
+    categories: ["Commerce & Marketplace", "Web & CMS Platforms"],
+    tags: ["E-Commerce", "Regulated", "Wellness"],
     whatChanged: [
       "Improved transparency",
       "Simplified compliance communication",
-      "Strengthened user confidence"
+      "Strengthened user confidence",
     ],
     keyInsight: "Clarity creates confidence.",
-    visualType: "component",
-    visualComponentName: "Product listing placeholder",
-    imageFallback: "/images/placeholders/cannabis.jpg"
+    accentColor: "#9AD29A",
+    accentSoftBg: "#F0FAF0",
+    accentBorder: "#C7EBC7",
+    priority: 5,
+    mockupType: "commerce",
+    status: "placeholder",
   },
   {
-    id: "defence-ops",
-    slug: "defence-ops",
-    title: "Defence Operations Documentation Platform",
-    category: "Cross-Device Systems",
-    displayCategory: "Defence Tech / Secure Documentation",
-    tags: ["Defence", "Secure", "Enterprise"],
-    accentColor: "#A8B8C8",
-    softAccentColor: "#F2F5F8",
+    id: 6,
+    title: "Defence Documentation Platform",
+    shortTitle: "Defence Documentation",
     question: "How do you make critical information easier to access?",
-    summary: "Operational environments depend on fast access to accurate information. This platform organized complex aviation and defence documentation into secure, searchable, cross-platform workflows.",
-    story: [
-      "Operational environments depend on quick access to accurate information, especially as documentation grows in scale.",
-      "This platform focused on organizing complex information into a structure that improved discoverability and retrieval."
-    ],
-    proof: "Structured so critical information stays fast to find under pressure.",
-    domain: "Defence Tech, Enterprise Systems, Secure Documentation",
-    platform: "Web and mobile",
-    role: "UX/UI Design, Information Architecture, Enterprise Workflow",
-    focusAreas: "Secure access, documentation retrieval, structured operations",
-    stats: [
-      "Improved critical document findability by 50%",
-      "Reduced navigation depth by 40%",
-      "Strengthened cross-device access consistency"
-    ],
-    ideaToLaunchSteps: [
-      "Map operational document types",
-      "Define secure access hierarchy",
-      "Design search and category structures",
-      "Build checklist and document states",
-      "Support responsive web/mobile access"
-    ],
-    screenShowcaseItems: [
-      "Secure dashboard",
-      "Document search",
-      "Operational checklist",
-      "Mobile document view"
-    ],
+    description:
+      "Operational environments depend on quick access to accurate information, especially when documentation grows in scale. This platform organized complex documentation into a searchable, structured, and more usable system.",
+    summaryLine: "Structured so critical information stays fast to find under pressure.",
+    categories: ["Product Platforms & Dashboards", "Web & CMS Platforms"],
+    tags: ["Defence", "Documentation", "Search"],
     whatChanged: [
       "Improved information architecture",
       "Enhanced discoverability",
-      "Simplified navigation"
+      "Simplified navigation",
     ],
     keyInsight: "Accuracy is a usability feature.",
-    visualType: "component",
-    visualComponentName: "Secure document dashboard placeholder",
-    imageFallback: "/images/placeholders/defence.jpg"
+    accentColor: "#A8B5C8",
+    accentSoftBg: "#F2F5F8",
+    accentBorder: "#D5DDE8",
+    priority: 6,
+    mockupType: "documentation",
+    status: "placeholder",
   },
   {
-    id: "ai-assisted-product",
-    slug: "ai-assisted-product",
-    title: "AI-Assisted Product Experience",
-    category: "AI & Automation UX",
-    displayCategory: "AI Platform / Enterprise Tool",
-    tags: ["AI", "Enterprise", "Automation"],
-    accentColor: "#F7C6A3",
-    softAccentColor: "#FFF3EA",
-    question: "How do you introduce AI without overwhelming users?",
-    summary: "AI can improve efficiency, but only when users understand how and why it is supporting their work. The experience focused on transparency, guidance, and maintaining user control throughout the workflow.",
-    story: [
-      "AI can improve efficiency, but only when users understand how and why it is supporting their work.",
-      "The experience focused on transparency, guidance, and maintaining user control throughout the workflow."
-    ],
-    proof: "Designed to keep people in control as AI supports their work.",
-    domain: "AI Products, Enterprise Systems",
-    platform: "Web platform",
-    role: "UX/UI Design, AI Interaction",
-    focusAreas: "AI workflows, transparency, user control",
-    stats: [
-      "Increased user trust in AI suggestions by 40%",
-      "Reduced AI-assist abandonment by 35%",
-      "Created clearer control mechanisms"
-    ],
-    ideaToLaunchSteps: [
-      "Understand AI capability and user expectations",
-      "Design transparent AI feedback loops",
-      "Create human-in-the-loop workflows",
-      "Build trust through clear UI states",
-      "Support edge cases and errors"
-    ],
-    screenShowcaseItems: [
-      "AI suggestion state",
-      "User control override",
-      "Workflow automation",
-      "Feedback loop"
-    ],
-    whatChanged: [
-      "Integrated AI into familiar workflows",
-      "Increased transparency",
-      "Preserved user control"
-    ],
-    keyInsight: "Trust matters more than intelligence.",
-    visualType: "component",
-    visualComponentName: "AI feature integration screen goes here",
-    imageFallback: "/images/placeholders/ai.jpg"
-  },
-  {
-    id: "equestrian-fitness",
-    slug: "equestrian-fitness",
-    title: "Equestrian Fitness & Wellness Platform",
-    category: "Mobile App Experiences",
-    displayCategory: "Health & Fitness / Subscription App",
-    tags: ["Health", "Fitness", "Subscription"],
-    accentColor: "#DDB892",
-    softAccentColor: "#FBF3EA",
-    question: "How do you design wellness for a niche athlete community?",
-    summary: "A mobile wellness platform for equestrian athletes combining guided workouts, recovery content, habit tracking, community support, and subscription access.",
-    story: [
-      "A mobile wellness platform for equestrian athletes combining guided workouts, recovery content, habit tracking, community support, and subscription access."
-    ],
-    proof: "A mobile wellness platform for equestrian athletes combining guided workouts, recovery content, habit tracking, community support, and subscription access.",
-    domain: "Health & Fitness, Wellness, Mobile App",
-    platform: "Mobile app",
-    role: "UX/UI Design, Mobile UX, Subscription Flow",
-    focusAreas: "Guided workouts, recovery, progress, community",
-    stats: [
-      "Improved program discovery by 40%",
-      "Reduced workout selection friction by 35%",
-      "Created clearer subscription content access"
-    ],
-    ideaToLaunchSteps: [
-      "Understand equestrian training routines",
-      "Organize workouts by goal and difficulty",
-      "Design progress and recovery tracking",
-      "Create content access/subscription states",
-      "Build community support touchpoints"
-    ],
-    screenShowcaseItems: [
-      "Workout program list",
-      "Training detail",
-      "Progress tracking",
-      "Subscription content"
-    ],
-    whatChanged: [
-      "Structured niche wellness content",
-      "Improved mobile workout discovery",
-      "Simplified progress tracking",
-      "Made subscription access clearer"
-    ],
-    keyInsight: "Niche products work best when the experience respects the user's lifestyle.",
-    visualType: "component",
-    visualComponentName: "Workout plan or progress tracking screen goes here",
-    imageFallback: "/images/placeholders/fitness.jpg"
-  },
-  {
-    id: "workplace-safety-retail",
-    slug: "workplace-safety-retail",
+    id: 7,
     title: "Workforce Scheduling & Operations Platform",
-    category: "Cross-Device Systems",
-    displayCategory: "Retail Tech / Operations",
-    tags: ["Retail", "Operations", "Safety"],
-    accentColor: "#FFB3A7",
-    softAccentColor: "#FFF0ED",
+    shortTitle: "Workforce Scheduling & Operations",
     question: "How do you simplify operational workflows?",
-    summary: "A mobile-first workplace safety and retail operations platform designed to help teams handle incidents, audits, product access, store information, and customer engagement from one clear interface.",
-    story: [
-      "Managing schedules, resources, and operational responsibilities often requires navigating multiple disconnected systems.",
-      "This platform unified workflows into a more structured and efficient experience."
-    ],
-    proof: "Built to fold scattered operational tasks into one calmer daily flow.",
-    domain: "Retail Tech, Workplace Safety, Enterprise Mobility",
-    platform: "Mobile app",
-    role: "UX/UI Design, Mobile Operations UX, Information Architecture",
-    focusAreas: "Safety workflows, store operations, customer engagement",
-    stats: [
-      "Reduced incident reporting steps by 35%",
-      "Improved store-status visibility by 45%",
-      "Centralized operational tasks into one mobile flow"
-    ],
-    ideaToLaunchSteps: [
-      "Map store team pain points",
-      "Group safety, audit, and product tasks",
-      "Design mobile-first action cards",
-      "Create alert and acknowledgement flows",
-      "Support operational reporting states"
-    ],
-    screenShowcaseItems: [
-      "Safety alert dashboard",
-      "Incident report",
-      "Store locator/product access",
-      "Audit summary"
-    ],
+    description:
+      "Managing schedules, resources, audits, incidents, and daily operations often requires users to move between disconnected systems. This platform unified those operational tasks into a calmer, clearer workflow.",
+    summaryLine: "Built to fold scattered operational tasks into one calmer daily flow.",
+    categories: ["Product Platforms & Dashboards", "Mobile App Experiences"],
+    tags: ["Operations", "Scheduling", "Workflows"],
     whatChanged: [
       "Centralized operational workflows",
       "Improved resource coordination",
-      "Reduced process friction"
+      "Reduced process friction",
     ],
     keyInsight: "The best workflow is the one users barely notice.",
-    visualType: "component",
-    visualComponentName: "Safety alert dashboard placeholder",
-    imageFallback: "/images/placeholders/retail.jpg"
+    accentColor: "#FFD166",
+    accentSoftBg: "#FFF8E6",
+    accentBorder: "#FFE5A3",
+    priority: 7,
+    mockupType: "admin",
+    status: "placeholder",
   },
   {
-    id: "peer-lending-fintech",
-    slug: "peer-lending-fintech",
-    title: "Peer-to-Peer Lending & Financial Services Platform",
-    category: "Commerce & Marketplace",
-    displayCategory: "FinTech / Digital Lending",
-    tags: ["FinTech", "Lending", "Finance"],
-    accentColor: "#9DD9D2",
-    softAccentColor: "#ECFAF8",
-    question: "How do you make financial actions feel safer and easier?",
-    summary: "A fintech platform designed to simplify peer-to-peer lending, secure transactions, onboarding, loan tracking, and financial dashboards across mobile and web.",
-    story: [
-      "A fintech platform designed to simplify peer-to-peer lending, secure transactions, onboarding, loan tracking, and financial dashboards across mobile and web."
-    ],
-    proof: "A fintech platform designed to simplify peer-to-peer lending, secure transactions, onboarding, loan tracking, and financial dashboards across mobile and web.",
-    domain: "FinTech, Digital Lending, Financial Services",
-    platform: "Mobile and web",
-    role: "UX/UI Design, Transaction Flow, Dashboard UX",
-    focusAreas: "Lending, onboarding, secure payments, repayment clarity",
-    stats: [
-      "Reduced loan-status confusion by 45%",
-      "Improved repayment visibility by 50%",
-      "Simplified financial action entry points"
-    ],
-    ideaToLaunchSteps: [
-      "Map borrower and lender journeys",
-      "Design trust-first onboarding",
-      "Create lending and repayment flows",
-      "Build dashboard and transaction states",
-      "Add security and confirmation patterns"
-    ],
-    screenShowcaseItems: [
-      "Wallet dashboard",
-      "Loan detail",
-      "Repayment schedule",
-      "Send/request flow"
-    ],
+    id: 8,
+    title: "AI-Assisted Product Experience",
+    shortTitle: "AI-Assisted Product",
+    question: "How do you introduce AI without overwhelming users?",
+    description:
+      "AI can improve efficiency, but only when users understand how and why it is supporting their work. This experience focused on transparency, guidance, and keeping users in control throughout the workflow.",
+    summaryLine: "Designed to keep people in control as AI supports their work.",
+    categories: ["AI & Automation UX", "Product Platforms & Dashboards"],
+    tags: ["AI", "Automation", "Transparency"],
     whatChanged: [
-      "Simplified lending workflows",
-      "Improved financial visibility",
-      "Strengthened transaction confidence",
-      "Made repayment information easier to understand"
+      "Integrated AI into familiar workflows",
+      "Increased transparency",
+      "Preserved user control",
     ],
-    keyInsight: "In finance, clarity is part of trust.",
-    visualType: "component",
-    visualComponentName: "Borrower dashboard placeholder",
-    imageFallback: "/images/placeholders/finance.jpg"
+    keyInsight: "Trust matters more than intelligence.",
+    accentColor: "#B69CFF",
+    accentSoftBg: "#F4F0FF",
+    accentBorder: "#D9CCFF",
+    priority: 8,
+    mockupType: "ai",
+    status: "placeholder",
   },
   {
-    id: "education-learning",
-    slug: "education-learning",
-    title: "Educational Learning & Revision Platform",
-    category: "Web & CMS Platforms",
-    displayCategory: "EdTech / Student Productivity",
-    tags: ["Education", "Learning", "Productivity"],
-    accentColor: "#B5D6FF",
-    softAccentColor: "#EFF7FF",
-    question: "How do you help students study without feeling overwhelmed?",
-    summary: "A mobile learning and revision platform designed around structured lessons, flashcards, exam preparation, progress tracking, and accessible learning content.",
-    story: [
-      "A mobile learning and revision platform designed around structured lessons, flashcards, exam preparation, progress tracking, and accessible learning content."
+    id: 9,
+    title: "Cross-Device Product Ecosystem",
+    shortTitle: "Cross-Device Ecosystem",
+    question: "How do you keep one product feeling consistent across devices?",
+    description:
+      "Users often move between desktop, tablet, and mobile while completing the same workflow. This product ecosystem focused on consistent interaction patterns, responsive layouts, and device-aware experiences without making every screen feel identical.",
+    summaryLine: "Designed so the experience feels connected across devices, not copied across devices.",
+    categories: [
+      "Product Platforms & Dashboards",
+      "Mobile App Experiences",
+      "Web & CMS Platforms",
     ],
-    proof: "A mobile learning and revision platform designed around structured lessons, flashcards, exam preparation, progress tracking, and accessible learning content.",
-    domain: "Education, E-Learning, Mobile App",
-    platform: "Mobile app",
-    role: "UX/UI Design, Learning Flow, Student UX",
-    focusAreas: "Revision, flashcards, progress, learning accessibility",
-    stats: [
-      "Improved revision-path clarity by 45%",
-      "Reduced content discovery friction by 40%",
-      "Created more structured study progress visibility"
-    ],
-    ideaToLaunchSteps: [
-      "Understand student revision behavior",
-      "Group learning content by goal",
-      "Design flashcard and practice flows",
-      "Create progress and exam-prep views",
-      "Support accessible mobile learning states"
-    ],
-    screenShowcaseItems: [
-      "Study dashboard",
-      "Flashcards",
-      "Revision plan",
-      "Progress tracking"
-    ],
+    tags: ["Responsive", "Cross-Device", "Systems"],
     whatChanged: [
-      "Structured learning content",
-      "Improved exam-prep visibility",
-      "Simplified revision tools",
-      "Made progress easier to understand"
+      "Unified patterns across breakpoints",
+      "Improved responsive behavior",
+      "Reduced context switching between devices",
     ],
-    keyInsight: "Students need direction before they need more content.",
-    visualType: "component",
-    visualComponentName: "Flashcard or quiz flow screen goes here",
-    imageFallback: "/images/placeholders/education.jpg"
+    keyInsight: "Consistency is not sameness. It is predictability.",
+    accentColor: "#7DD3FC",
+    accentSoftBg: "#ECFAFF",
+    accentBorder: "#BDEFFF",
+    priority: 9,
+    mockupType: "dashboard",
+    status: "placeholder",
   },
   {
-    id: "mental-wellness-tracking",
-    slug: "mental-wellness-tracking",
-    title: "Mental Wellness & Lifestyle Tracking Platform",
-    category: "Mobile App Experiences",
-    displayCategory: "Wellness Tech / Mood Tracking",
-    tags: ["Wellness", "Tracking", "Health"],
-    accentColor: "#C7CEEA",
-    softAccentColor: "#F3F4FF",
-    question: "How do you design personal tracking without making it feel clinical?",
-    summary: "A mobile wellness platform designed to support emotional wellbeing through mood tracking, lifestyle journaling, habit visualization, and personal insight patterns.",
-    story: [
-      "A mobile wellness platform designed to support emotional wellbeing through mood tracking, lifestyle journaling, habit visualization, and personal insight patterns."
-    ],
-    proof: "A mobile wellness platform designed to support emotional wellbeing through mood tracking, lifestyle journaling, habit visualization, and personal insight patterns.",
-    domain: "Wellness Tech, Mental Wellness, Lifestyle Tracking",
-    platform: "Mobile app",
-    role: "UX/UI Design, Behavioral Tracking, Mobile UX",
-    focusAreas: "Mood tracking, journaling, lifestyle insights, calm interaction",
-    stats: [
-      "Reduced check-in friction by 40%",
-      "Improved weekly insight readability by 45%",
-      "Created a calmer emotional tracking experience"
-    ],
-    ideaToLaunchSteps: [
-      "Define low-pressure wellness interactions",
-      "Design quick mood check-ins",
-      "Create journaling and lifestyle tracking flows",
-      "Build weekly insight visualization",
-      "Support calm, non-clinical UI states"
-    ],
-    screenShowcaseItems: [
-      "Mood check-in",
-      "Journal entry",
-      "Lifestyle graph",
-      "Weekly insights"
-    ],
+    id: 10,
+    title: "Dashboard & Admin Tools System",
+    shortTitle: "Dashboard & Admin Tools",
+    question: "How do you make admin tools feel less heavy?",
+    description:
+      "Admin tools often become dense because every function feels important. This system focused on hierarchy, grouped actions, clearer table patterns, reusable dashboard components, and predictable admin workflows.",
+    summaryLine: "Built to make complex admin work feel structured, clear, and manageable.",
+    categories: ["Product Platforms & Dashboards", "Design Systems & Product Handoff"],
+    tags: ["Admin", "Dashboards", "Tables"],
     whatChanged: [
-      "Made emotional tracking feel softer",
-      "Simplified daily check-ins",
-      "Improved insight readability",
-      "Reduced clinical visual pressure"
+      "Improved dashboard hierarchy",
+      "Standardized admin patterns",
+      "Reduced dense interface clutter",
     ],
-    keyInsight: "Wellness design should feel supportive, not demanding.",
-    visualType: "component",
-    visualComponentName: "Mood tracker or journal screen goes here",
-    imageFallback: "/images/placeholders/wellness1.jpg"
+    keyInsight: "Admin users need speed, but they also need calm.",
+    accentColor: "#93C5FD",
+    accentSoftBg: "#EFF6FF",
+    accentBorder: "#BFDBFE",
+    priority: 10,
+    mockupType: "admin",
+    status: "placeholder",
   },
   {
-    id: "mindfulness-growth",
-    slug: "mindfulness-growth",
-    title: "Mindfulness & Personal Growth Platform",
-    category: "Mobile App Experiences",
-    displayCategory: "Wellness Tech / Mindfulness",
-    tags: ["Mindfulness", "Growth", "Wellness"],
-    accentColor: "#CDB4DB",
-    softAccentColor: "#F8F0FC",
-    question: "How do you guide people toward better habits without pressure?",
-    summary: "A mindfulness-focused mobile platform designed around guided sessions, habit building, emotional assessments, personal progress, and reflection.",
-    story: [
-      "A mindfulness-focused mobile platform designed around guided sessions, habit building, emotional assessments, personal progress, and reflection."
-    ],
-    proof: "A mindfulness-focused mobile platform designed around guided sessions, habit building, emotional assessments, personal progress, and reflection.",
-    domain: "Wellness Tech, Mindfulness, Personal Growth",
-    platform: "Mobile app",
-    role: "UX/UI Design, Behavioral UX, Mobile Experience",
-    focusAreas: "Guided mindfulness, habit building, reflection, progress",
-    stats: [
-      "Improved daily session discovery by 40%",
-      "Reduced habit-entry friction by 35%",
-      "Created clearer reflection and progress loops"
-    ],
-    ideaToLaunchSteps: [
-      "Map personal growth behaviors",
-      "Design guided session discovery",
-      "Create habit and reflection flows",
-      "Build progress and assessment states",
-      "Support gentle reminders and continuation patterns"
-    ],
-    screenShowcaseItems: [
-      "Daily mindfulness session",
-      "Breathing timer",
-      "Habit tracking",
-      "Progress/reflection screen"
-    ],
+    id: 11,
+    title: "FinTech Wallet & Lending Experience",
+    shortTitle: "FinTech Wallet & Lending",
+    question: "How do you make financial actions feel clear and safe?",
+    description:
+      "Financial products need to communicate balances, loans, repayments, transfers, and risk in a way that feels simple and trustworthy. This experience focused on clear action states, payment visibility, and confidence-building UI.",
+    summaryLine: "Designed to make money movement feel simple, visible, and controlled.",
+    categories: ["Mobile App Experiences", "Commerce & Marketplace"],
+    tags: ["FinTech", "Wallet", "Lending"],
     whatChanged: [
-      "Simplified personal growth flows",
-      "Improved habit visibility",
-      "Made guided sessions easier to continue",
-      "Created a calmer emotional experience"
+      "Clarified key financial actions",
+      "Improved repayment visibility",
+      "Strengthened trust through interface clarity",
     ],
-    keyInsight: "Personal growth products need gentle momentum, not pressure.",
-    visualType: "component",
-    visualComponentName: "Meditation or habit progress screen goes here",
-    imageFallback: "/images/placeholders/wellness2.jpg"
+    keyInsight: "People do not trust what they cannot understand.",
+    accentColor: "#6EE7B7",
+    accentSoftBg: "#ECFDF5",
+    accentBorder: "#A7F3D0",
+    priority: 11,
+    mockupType: "fintech",
+    status: "placeholder",
   },
   {
-    id: "brand-advocacy",
-    slug: "brand-advocacy",
-    title: "Brand Advocacy & Referral Engagement Platform",
-    category: "Web & CMS Platforms",
-    displayCategory: "Marketing Tech / Community Engagement",
-    tags: ["Marketing", "Community", "Referrals"],
-    accentColor: "#F6D365",
-    softAccentColor: "#FFF8E3",
-    question: "How do you turn community participation into measurable engagement?",
-    summary: "A referral and brand advocacy platform connecting brands with ambassadors through campaigns, rewards, onboarding, referral tracking, and community participation.",
-    story: [
-      "A referral and brand advocacy platform connecting brands with ambassadors through campaigns, rewards, onboarding, referral tracking, and community participation."
+    id: 12,
+    title: "Booking & Reservation Platform",
+    shortTitle: "Booking & Reservation",
+    question: "How do you make booking feel effortless?",
+    description:
+      "Booking flows can quickly become frustrating when users need to compare availability, pricing, choices, and confirmation details. This experience focused on reducing friction from discovery to confirmation.",
+    summaryLine: "Designed to help users move from intent to confirmed booking with fewer doubts.",
+    categories: [
+      "Mobile App Experiences",
+      "Commerce & Marketplace",
+      "Web & CMS Platforms",
     ],
-    proof: "A referral and brand advocacy platform connecting brands with ambassadors through campaigns, rewards, onboarding, referral tracking, and community participation.",
-    domain: "Marketing Tech, Referral Platform, Campaigns",
-    platform: "Web and mobile",
-    role: "UX/UI Design, Campaign Workflow, Engagement UX",
-    focusAreas: "Referrals, campaigns, rewards, ambassador onboarding",
-    stats: [
-      "Improved campaign setup clarity by 45%",
-      "Reduced referral tracking confusion by 40%",
-      "Created clearer reward progress visibility"
-    ],
-    ideaToLaunchSteps: [
-      "Map brand and ambassador needs",
-      "Design campaign creation flow",
-      "Create referral tracking and reward states",
-      "Build onboarding and community participation screens",
-      "Support dashboard/reporting patterns"
-    ],
-    screenShowcaseItems: [
-      "Campaign dashboard",
-      "Referral tracking",
-      "Reward progress",
-      "Ambassador onboarding"
-    ],
+    tags: ["Booking", "Reservations", "Availability"],
     whatChanged: [
-      "Simplified campaign workflows",
-      "Improved engagement visibility",
-      "Made rewards easier to understand",
-      "Created stronger onboarding direction"
+      "Simplified availability selection",
+      "Improved confirmation clarity",
+      "Reduced booking-step friction",
     ],
-    keyInsight: "People engage more when the reward path is visible.",
-    visualType: "component",
-    visualComponentName: "Campaign dashboard or reward flow screen goes here",
-    imageFallback: "/images/placeholders/advocacy.jpg"
+    keyInsight: "A booking flow succeeds when users feel certain before they pay.",
+    accentColor: "#FDBA74",
+    accentSoftBg: "#FFF7ED",
+    accentBorder: "#FED7AA",
+    priority: 12,
+    mockupType: "booking",
+    status: "placeholder",
   },
   {
-    id: "digital-publishing",
-    slug: "digital-publishing",
-    title: "Digital Publishing & Content Experience Platform",
-    category: "Web & CMS Platforms",
-    displayCategory: "Media Tech / Content Platform",
-    tags: ["Media", "Publishing", "Content"],
-    accentColor: "#A7C7E7",
-    softAccentColor: "#F0F7FF",
-    question: "How do you make large content systems easier to explore?",
-    summary: "A digital publishing platform designed to support editorial workflows, content discovery, media management, responsive reading, and scalable content organization.",
-    story: [
-      "A digital publishing platform designed to support editorial workflows, content discovery, media management, responsive reading, and scalable content organization."
-    ],
-    proof: "A digital publishing platform designed to support editorial workflows, content discovery, media management, responsive reading, and scalable content organization.",
-    domain: "Media Tech, Digital Publishing, CMS",
-    platform: "Web platform",
-    role: "UX/UI Design, Content UX, Information Architecture",
-    focusAreas: "Editorial publishing, media management, discovery, platform scalability",
-    stats: [
-      "Improved content discovery clarity by 45%",
-      "Reduced editorial navigation depth by 35%",
-      "Created scalable content structure for future publishing"
-    ],
-    ideaToLaunchSteps: [
-      "Audit content types and editorial workflows",
-      "Design publishing and media structures",
-      "Create reader and discovery layouts",
-      "Build CMS-friendly content patterns",
-      "Support responsive editorial states"
-    ],
-    screenShowcaseItems: [
-      "Editorial dashboard",
-      "Article listing",
-      "Media library",
-      "Reader experience"
-    ],
+    id: 13,
+    title: "Marketplace Mobile App Experience",
+    shortTitle: "Marketplace Mobile App",
+    question: "How do you help users discover, compare, and choose?",
+    description:
+      "Marketplace experiences need to balance discovery, trust, product comparison, and transaction confidence. This mobile experience focused on clearer browsing, better item cards, and a smoother path from search to action.",
+    summaryLine: "Built to make discovery feel useful instead of overwhelming.",
+    categories: ["Mobile App Experiences", "Commerce & Marketplace"],
+    tags: ["Marketplace", "Discovery", "Mobile"],
     whatChanged: [
-      "Improved content organization",
-      "Simplified editorial workflows",
-      "Strengthened digital publishing structure",
-      "Made content easier to discover and manage"
+      "Improved product/service discovery",
+      "Strengthened comparison patterns",
+      "Reduced friction between browsing and action",
     ],
-    keyInsight: "Content platforms need structure before they need more content.",
-    visualType: "component",
-    visualComponentName: "Editorial dashboard or article management screen goes here",
-    imageFallback: "/images/placeholders/publishing.jpg"
+    keyInsight: "Marketplaces work best when choice feels guided.",
+    accentColor: "#F9A8D4",
+    accentSoftBg: "#FDF2F8",
+    accentBorder: "#FBCFE8",
+    priority: 13,
+    mockupType: "marketplace",
+    status: "placeholder",
   },
   {
-    id: "endless-runner-game",
-    slug: "endless-runner-game",
-    title: "Endless Runner Mobile Game Experience",
-    category: "Mobile App Experiences",
-    displayCategory: "Game UI / Mobile Entertainment",
-    tags: ["Game UI", "Mobile", "Entertainment"],
-    accentColor: "#FFAFCC",
-    softAccentColor: "#FFF0F6",
-    question: "How do you make fast gameplay feel simple and rewarding?",
-    summary: "A mobile game experience inspired by endless runner mechanics, character progression, rewards, obstacles, and fast repeat-play loops.",
-    story: [
-      "A mobile game experience inspired by endless runner mechanics, character progression, rewards, obstacles, and fast repeat-play loops."
-    ],
-    proof: "A mobile game experience inspired by endless runner mechanics, character progression, rewards, obstacles, and fast repeat-play loops.",
-    domain: "Gaming, Mobile App, Entertainment, Gamification",
-    platform: "Mobile app",
-    role: "Game UI Design, Mobile Interaction, Gamification UX",
-    focusAreas: "Player engagement, reward loops, progression, mobile controls",
-    stats: [
-      "Improved reward visibility by 45%",
-      "Reduced menu friction before gameplay by 35%",
-      "Created clearer progression and mission feedback"
-    ],
-    ideaToLaunchSteps: [
-      "Define core gameplay loop",
-      "Design start, mission, and reward screens",
-      "Create character and progression states",
-      "Build obstacle and feedback UI",
-      "Support replay and level-up interactions"
-    ],
-    screenShowcaseItems: [
-      "Start screen",
-      "Gameplay HUD",
-      "Reward screen",
-      "Character/progression"
-    ],
+    id: 14,
+    title: "Branding & Visual Identity Case Studies",
+    shortTitle: "Branding & Visual Identity",
+    question: "How do you make a product or business feel memorable?",
+    description:
+      "Branding is not only about a logo. It is about creating a visual system that makes a product feel clear, trustworthy, and recognizable across touchpoints. This pathway showcases selected branding, graphic design, identity exploration, and visual direction work.",
+    summaryLine:
+      "A place to show brand thinking, graphic design, identity systems, and visual storytelling.",
+    categories: ["Branding & Visual Identity"],
+    tags: ["Branding", "Graphic Design", "Identity"],
     whatChanged: [
-      "Improved player feedback",
-      "Simplified game menu structure",
-      "Made rewards more visible",
-      "Strengthened repeat-play motivation"
+      "Created clearer visual direction",
+      "Improved brand consistency",
+      "Connected graphic design with product communication",
     ],
-    keyInsight: "Fast games need instant clarity before excitement.",
-    visualType: "component",
-    visualComponentName: "Game home screen or reward progress screen goes here",
-    imageFallback: "/images/placeholders/game.jpg"
-  }
+    keyInsight: "A strong brand makes the product easier to remember.",
+    accentColor: "#F0ABFC",
+    accentSoftBg: "#FDF4FF",
+    accentBorder: "#F5D0FE",
+    priority: 15,
+    mockupType: "branding",
+    status: "placeholder",
+  },
+  {
+    id: 15,
+    title: "Aeturnum Insights Podcast Production",
+    shortTitle: "Aeturnum Insights Podcast",
+    question: "How do you turn recorded conversations into polished content?",
+    description:
+      "This pathway showcases podcast production, video editing, visual cleanup, pacing, sound-led storytelling, and content presentation work. The two YouTube examples below show the final published output: long-form video edited for pacing, clarity, and presentation.",
+    summaryLine:
+      "A video and podcast production case study showing editing, pacing, content structure, and final publishing output.",
+    categories: ["Motion, Video & Lottie Systems", "Branding & Visual Identity"],
+    tags: ["Video Editing", "Podcast", "Pacing"],
+    whatChanged: [
+      "Edited long-form video content",
+      "Improved pacing and presentation",
+      "Prepared polished podcast/video output for publishing",
+    ],
+    keyInsight: "Good editing makes content easier to understand, not just nicer to watch.",
+    accentColor: "#FCA5A5",
+    accentSoftBg: "#FEF2F2",
+    accentBorder: "#FECACA",
+    priority: 16,
+    mockupType: "video",
+    externalLinks: [
+      { label: "Watch episode on YouTube", url: "https://www.youtube.com/watch?v=cauWpirDw9w" },
+      { label: "Watch episode on YouTube", url: "https://www.youtube.com/watch?v=6XAW9OmWaIY" },
+    ],
+    status: "placeholder",
+  },
+  {
+    id: 16,
+    title: "Design System & Product Handoff Library",
+    shortTitle: "Design System & Handoff",
+    question: "How do you help teams build faster without losing quality?",
+    description:
+      "Product teams move faster when patterns, components, documentation, and handoff rules are clear. This pathway showcases reusable UI systems, component logic, design tokens, developer handoff, and consistency across product screens.",
+    summaryLine: "Built to reduce repeated design decisions and make product delivery more consistent.",
+    categories: ["Design Systems & Product Handoff", "Product Platforms & Dashboards"],
+    tags: ["Design System", "Components", "Handoff"],
+    whatChanged: [
+      "Standardized reusable components",
+      "Improved design-to-development handoff",
+      "Reduced inconsistency across screens",
+    ],
+    keyInsight: "A design system is not a file. It is a shared way of working.",
+    accentColor: "#CBD5E1",
+    accentSoftBg: "#F8FAFC",
+    accentBorder: "#E2E8F0",
+    priority: 14,
+    mockupType: "designSystem",
+    status: "placeholder",
+  },
 ];
 
-export const ADDITIONAL_DIRECTIONS: any[] = [];
+/** True when a pathway belongs to the given category ("All Pathways" matches all). */
+export const pathwayInCategory = (pathway: ProductPathway, category: PathwayCategory): boolean =>
+  category === "All Pathways" || pathway.categories.includes(category);
+
+/** Pathways for a category, ordered by priority (strongest first). */
+export const getPathwaysForCategory = (category: PathwayCategory): ProductPathway[] =>
+  PRODUCT_PATHWAYS.filter((p) => pathwayInCategory(p, category)).sort(
+    (a, b) => a.priority - b.priority
+  );
+
+/** Live counts per category, derived from the data (never hard-coded). */
+export const getCategoryCounts = (): Record<PathwayCategory, number> => {
+  const counts = {} as Record<PathwayCategory, number>;
+  CATEGORIES.forEach((cat) => {
+    counts[cat] = PRODUCT_PATHWAYS.filter((p) => pathwayInCategory(p, cat)).length;
+  });
+  return counts;
+};

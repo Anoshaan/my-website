@@ -1,109 +1,111 @@
 import React from "react";
-import { MainProductPathway } from "@/lib/product-pathways";
-import { PlaceholderVisual } from "@/components/ui/PlaceholderVisual";
-import { featuredCaseStudies } from "@/lib/case-studies";
-import { CaseStudyMedia } from "@/components/mockups/CaseStudyMedia";
+import { ProductPathway } from "@/lib/product-pathways";
+import { PathwayPlaceholder } from "./PathwayPlaceholder";
 
 interface PathwayCardProps {
-  pathway: MainProductPathway;
+  pathway: ProductPathway;
+  /** Full-width horizontal layout (visual beside the text). */
   featured?: boolean;
   className?: string;
-  onClickPathway?: (pathway: MainProductPathway) => void;
+  onOpen: (pathway: ProductPathway) => void;
 }
 
-export function PathwayCard({ pathway, featured = false, className = "", onClickPathway }: PathwayCardProps) {
-  const cardStyle = {
-    '--card-accent': pathway.accentColor,
-    '--card-soft-bg': pathway.softAccentColor,
+/**
+ * One card for every pathway. Cards are flex columns with the action button
+ * pinned to the bottom (`mt-auto`) and stretch to `h-full`, so two cards in a
+ * row always match height regardless of body length. Featured cards lay the
+ * visual beside the text and may have their own height.
+ */
+export function PathwayCard({ pathway, featured = false, className = "", onOpen }: PathwayCardProps) {
+  const accentStyle = {
+    "--card-accent": pathway.accentColor,
+    "--card-soft-bg": pathway.accentSoftBg,
+    "--card-border": pathway.accentBorder,
   } as React.CSSProperties;
 
-  const oldCaseStudy = featuredCaseStudies.find(c => 
-    c.title === pathway.title || c.slug === pathway.slug || pathway.title.includes(c.title) || c.title.includes(pathway.title)
-  );
-
   return (
-    <article 
-      style={cardStyle}
+    <article
+      style={accentStyle}
       className={`
-        group relative flex flex-col bg-[var(--color-card)] 
-        rounded-[2rem] border border-[var(--color-card-border)] overflow-hidden 
-        transition-all duration-500 shadow-sm hover:shadow-xl hover:border-[var(--color-card-border-hover)]
-        ${featured ? 'md:grid md:grid-cols-2 md:gap-8 lg:gap-12' : 'gap-4'}
+        group relative flex h-full flex-col overflow-hidden rounded-[2rem]
+        border border-[var(--color-card-border)] bg-[var(--color-card)]
+        shadow-sm transition-all duration-500 hover:border-[var(--color-card-border-hover)] hover:shadow-xl
+        ${featured ? "md:grid md:grid-cols-2 md:items-stretch" : ""}
         ${className}
       `}
     >
-      <div className={`flex flex-col p-8 sm:p-10 ${featured ? 'pr-0 justify-center' : 'pb-0'}`}>
-        
-        {pathway.question && (
-          <p className="text-sm font-medium opacity-60 mb-2">
-            {pathway.question}
-          </p>
-        )}
-        
-        <h3 className={`font-semibold tracking-tight mb-6 ${featured ? 'text-3xl lg:text-4xl' : 'text-2xl'}`}>
+      {/* Visual */}
+      <div className={`p-6 sm:p-8 ${featured ? "order-2 md:order-2 md:pl-0" : "pb-0"}`}>
+        <div className="relative h-full min-h-[220px] overflow-hidden rounded-2xl transition-transform duration-700 group-hover:-translate-y-1 group-hover:scale-[1.02]">
+          <PathwayPlaceholder type={pathway.mockupType} accent={pathway.accentColor} />
+        </div>
+      </div>
+
+      {/* Text */}
+      <div className={`flex flex-1 flex-col p-8 sm:p-10 ${featured ? "order-1 justify-center md:pr-0" : "pt-6"}`}>
+        <p className="mb-2 text-sm font-medium" style={{ color: "var(--color-fg)", opacity: 0.55 }}>
+          {pathway.question}
+        </p>
+
+        <h3
+          className={`mb-4 font-semibold tracking-tight ${featured ? "text-3xl lg:text-4xl" : "text-2xl"}`}
+        >
           {pathway.title}
         </h3>
-        
-        <div className="flex flex-col gap-4 text-base opacity-80 leading-relaxed mb-6 max-w-xl">
-          {pathway.story && pathway.story.length > 0 ? (
-            pathway.story.map((paragraph, i) => (
-              <p key={i}>{paragraph}</p>
-            ))
-          ) : (
-             <p>{pathway.summary}</p>
-          )}
+
+        <p className="mb-5 max-w-xl text-base leading-relaxed opacity-80">{pathway.description}</p>
+
+        {/* Tags — soft accent background, neutral readable text */}
+        <div className="mb-6 flex flex-wrap gap-2">
+          {pathway.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full px-3 py-1 text-xs font-medium text-[var(--color-fg)]"
+              style={{
+                backgroundColor: pathway.accentSoftBg,
+                border: `1px solid ${pathway.accentBorder}`,
+              }}
+            >
+              {tag}
+            </span>
+          ))}
         </div>
 
-        {pathway.proof && (
-          <p className="text-base font-medium opacity-90 mb-8 max-w-xl border-l-2 border-[var(--card-accent)] pl-4">
-            {pathway.proof}
-          </p>
-        )}
-        
-        <div className={`flex flex-col gap-6 mb-8 ${featured ? '' : ''}`}>
-          {pathway.whatChanged && pathway.whatChanged.length > 0 && (
-            <div className="flex flex-col gap-3">
-              <span className="text-sm font-semibold">What changed</span>
-              <ul className="flex flex-col gap-2">
-                {pathway.whatChanged.map((item, i) => (
-                  <li key={i} className="text-sm opacity-80 flex items-start gap-2">
-                    <span className="opacity-50 mt-0.5">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+        <p
+          className="mb-8 max-w-xl border-l-2 pl-4 text-base font-medium opacity-90"
+          style={{ borderColor: pathway.accentColor }}
+        >
+          {pathway.summaryLine}
+        </p>
 
-          {pathway.keyInsight && (
-            <div className="flex flex-col gap-1 mt-2">
-              <span className="text-sm font-semibold">Key insight</span>
-              <p className="text-sm opacity-80">{pathway.keyInsight}</p>
-            </div>
-          )}
-        </div>
-        
-        <div className={`mt-auto flex items-start pt-4 ${featured ? '' : 'w-full'}`}>
-          <button 
-            onClick={() => onClickPathway?.(pathway)}
-            className="group/btn inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 border border-[var(--color-line)] hover:bg-[var(--color-surface-2)] text-[var(--color-fg)]"
+        <div className="mt-auto flex items-start pt-2">
+          <button
+            type="button"
+            onClick={() => onOpen(pathway)}
+            className="group/btn inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-[var(--color-fg)] transition-all duration-300"
+            style={{
+              backgroundColor: pathway.accentSoftBg,
+              border: `1px solid ${pathway.accentBorder}`,
+            }}
+            aria-label={`View Product Pathway: ${pathway.title}`}
           >
             View Product Pathway
-            <svg className="transition-transform duration-300 group-hover/btn:translate-x-1 opacity-70" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              className="opacity-70 transition-transform duration-300 group-hover/btn:translate-x-1"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
               <path d="M5 12h14" />
               <path d="M12 5l7 7-7 7" />
             </svg>
           </button>
-        </div>
-      </div>
-      
-      <div className={`p-6 sm:p-8 ${featured ? 'pl-0 flex items-center' : 'pt-0'}`}>
-        <div className="w-full h-full min-h-[300px] rounded-2xl overflow-hidden transition-transform duration-700 group-hover:scale-[1.02] group-hover:-translate-y-1 bg-[var(--color-surface)] relative flex items-center justify-center">
-          {oldCaseStudy ? (
-            <CaseStudyMedia caseStudy={oldCaseStudy} index={0} icon="scan" />
-          ) : (
-            <PlaceholderVisual label={pathway.visualComponentName} className="bg-[var(--color-surface)] w-full h-full" />
-          )}
         </div>
       </div>
     </article>

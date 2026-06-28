@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { FigmaWorkspace } from "@/components/sections/figma/FigmaWorkspace";
 import { FigmaParticles } from "@/components/sections/problem/FigmaParticles";
+import { HeroOrbitIcons } from "@/components/sections/problem/HeroOrbitIcons";
 
 const DESIGN_W = 1100;
 const DESIGN_H = 680;
@@ -177,8 +178,11 @@ export function Section2Problem() {
             surrounds the edges rather than covering the UI. */}
         <FigmaParticles progress={p} isWide={isWide} reduced={reduced} />
 
-        {/* Workspace — the rising design canvas */}
+        {/* Workspace — the rising design canvas. The orbit icons render first
+            so they sit BEHIND the card and emerge from behind it; both share
+            this layer's scroll transform so they move/scale as one system. */}
         <motion.div className="problem-figma" style={figStyle}>
+          <HeroOrbitIcons progress={p} reduced={reduced} />
           <div className="problem-fit" style={{ transform: `scale(${fit})` }}>
             <FigmaWorkspace />
           </div>

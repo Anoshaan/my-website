@@ -1,149 +1,128 @@
 "use client";
 
-import React, { Suspense, useState, useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { PathwayCategory, MAIN_PATHWAYS, MainProductPathway } from "@/lib/product-pathways";
+import React, { useState, useRef, useMemo } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import {
+  PathwayCategory,
+  ProductPathway,
+  getPathwaysForCategory,
+} from "@/lib/product-pathways";
 import { Container } from "@/components/ui/Container";
 import { CategoryFilter } from "@/components/ui/CategoryFilter";
 import { Button } from "@/components/ui/Button";
 import { PathwayCard } from "./PathwayCard";
-import { Reveal } from "@/components/animations/Reveal";
-import { motion, AnimatePresence } from "framer-motion";
+import { PathwayModalContent } from "./PathwayModalContent";
 import { CaseStudyOverlay } from "@/components/sections/labs/CaseStudyOverlay";
-import { caseStudyDetails } from "@/lib/case-study-details";
 
-const PATHWAY_TO_NUM: Record<string, string> = {
-  "workforce-platform": "01",
-  "analytics-intelligence": "02",
-  "enterprise-software-website": "03",
-  "smart-food-ordering": "04",
-  "cannabis-commerce": "05",
-};
+export function PathwaysGrid() {
+  const reduced = useReducedMotion();
 
-function PathwaysGridInner() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const categoryParam = searchParams.get('category') as PathwayCategory | null;
-  
-  const activeCategory = categoryParam || "All Pathways";
+  // Filtering is state-only — no URL/hash changes, so a filter click never
+  // triggers browser jump-to-anchor behaviour.
+  const [activeCategory, setActiveCategory] = useState<PathwayCategory>("All Pathways");
 
+  // One modal for all pathways. `renderPathway` stays set through the close
+  // animation so content does not vanish mid-exit.
   const [open, setOpen] = useState(false);
-  const [renderNum, setRenderNum] = useState<string | null>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [renderPathway, setRenderPathway] = useState<ProductPathway | null>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  const handleOpenPathway = (pathway: MainProductPathway) => {
-    const num = PATHWAY_TO_NUM[pathway.slug];
-    if (num && caseStudyDetails[num]) {
-      setRenderNum(num);
-      setOpen(true);
-    } else {
-      router.push(`/selected-work/${pathway.slug}`);
-    }
+  const pathways = useMemo(() => getPathwaysForCategory(activeCategory), [activeCategory]);
+
+  const handleSelectCategory = (category: PathwayCategory) => {
+    if (category === activeCategory) return;
+    setActiveCategory(category);
+    // Gently keep the grid in view if the user has scrolled past its top —
+    // never a jump to a random position or the bottom of the page.
+    requestAnimationFrame(() => {
+      const el = gridRef.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top;
+      if (top < 80) {
+        const y = window.scrollY + top - 120;
+        window.scrollTo({ top: y, behavior: reduced ? "auto" : "smooth" });
+      }
+    });
   };
 
-  const active = renderNum ? caseStudyDetails[renderNum] : null;
-
-  const setActiveCategory = (category: PathwayCategory) => {
-    if (category === "All Pathways") {
-      router.push('/selected-work', { scroll: false });
-    } else {
-      router.push(`/selected-work?category=${encodeURIComponent(category)}`, { scroll: false });
-    }
+  const handleOpen = (pathway: ProductPathway) => {
+    triggerRef.current = document.activeElement as HTMLElement | null;
+    setRenderPathway(pathway);
+    setOpen(true);
   };
 
-  const filteredMain = MAIN_PATHWAYS.filter(pathway => {
-    if (activeCategory === "All Pathways") return true;
-    return pathway.category === activeCategory;
+  const cardTransition = (idx: number) => ({
+    duration: reduced ? 0 : 0.4,
+    ease: "easeOut" as const,
+    delay: reduced ? 0 : 0.04 * Math.min(idx, 6),
   });
 
+  const [featured, ...rest] = pathways;
+
   return (
-    <section className="py-12 md:py-20 relative">
+    <section className="relative py-12 md:py-20">
       <Container>
-        <CategoryFilter activeCategory={activeCategory} onSelectCategory={setActiveCategory} />
-        
-        {/* Main Pathways */}
-        {filteredMain.length > 0 && (
-          <motion.div layout className="flex flex-col gap-8 md:gap-12 mb-24">
-            <AnimatePresence mode="popLayout">
-              {filteredMain.map((pathway, idx) => {
-                const isFeatured = idx === 0;
-                
-                if (isFeatured) {
-                  return (
-                    <motion.div 
-                      layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
-                      key={pathway.slug}
-                    >
-                      <PathwayCard pathway={pathway} featured={true} onClickPathway={handleOpenPathway} />
-                    </motion.div>
-                  );
-                }
-                return null;
-              })}
-            </AnimatePresence>
-            
-            {filteredMain.length > 1 && (
-              <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-                <AnimatePresence mode="popLayout">
-                  {filteredMain.slice(1).map((pathway, idx) => {
-                    const isLastOdd = idx === filteredMain.slice(1).length - 1 && filteredMain.slice(1).length % 2 !== 0;
+        <CategoryFilter activeCategory={activeCategory} onSelectCategory={handleSelectCategory} />
+
+        <div ref={gridRef} className="scroll-mt-28">
+          {pathways.length > 0 ? (
+            <div className="mb-24 flex flex-col gap-8 md:gap-10">
+              {/* Featured (strongest) — full-width horizontal card. Keyed by
+                  category so it re-animates in on each filter change. */}
+              {featured && (
+                <motion.div
+                  key={`${activeCategory}-featured-${featured.id}`}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={cardTransition(0)}
+                >
+                  <PathwayCard pathway={featured} featured onOpen={handleOpen} />
+                </motion.div>
+              )}
+
+              {/* Remaining — equal-height 2-column grid */}
+              {rest.length > 0 && (
+                <div className="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 md:gap-10">
+                  {rest.map((pathway, idx) => {
+                    const isLastOdd = idx === rest.length - 1 && rest.length % 2 !== 0;
                     return (
-                      <motion.div 
-                        layout
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.4, ease: "easeInOut", delay: 0.05 * (idx % 2) }}
-                        key={pathway.slug} 
-                        className={`h-full ${isLastOdd ? 'md:col-span-2' : ''}`}
+                      <motion.div
+                        key={`${activeCategory}-${pathway.id}`}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={cardTransition(idx + 1)}
+                        className={`h-full ${isLastOdd ? "md:col-span-2" : ""}`}
                       >
-                        <PathwayCard pathway={pathway} featured={isLastOdd} onClickPathway={handleOpenPathway} />
+                        <PathwayCard pathway={pathway} featured={isLastOdd} onOpen={handleOpen} />
                       </motion.div>
                     );
                   })}
-                </AnimatePresence>
-              </motion.div>
-            )}
-          </motion.div>
-        )}
-        
-        {filteredMain.length === 0 && (
-          <div className="py-32 flex flex-col items-center justify-center text-center opacity-60">
-            <p>No pathways found for this category.</p>
-            <Button 
-              onClick={() => setActiveCategory("All Pathways")}
-              variant="ghost"
-              className="mt-6"
-            >
-              View all pathways
-            </Button>
-          </div>
-        )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-32 text-center opacity-60">
+              <p>No pathways found for this category.</p>
+              <Button onClick={() => handleSelectCategory("All Pathways")} variant="ghost" className="mt-6">
+                View all pathways
+              </Button>
+            </div>
+          )}
+        </div>
       </Container>
-      
-      {active && (
+
+      {renderPathway && (
         <CaseStudyOverlay
           open={open}
           onClose={() => setOpen(false)}
-          onExited={() => setRenderNum(null)}
-          title={active.title}
+          onExited={() => setRenderPathway(null)}
+          title={renderPathway.title}
           returnFocusRef={triggerRef}
         >
-          <active.Body />
+          <PathwayModalContent pathway={renderPathway} />
         </CaseStudyOverlay>
       )}
     </section>
-  );
-}
-
-export function PathwaysGrid() {
-  return (
-    <Suspense fallback={<div className="h-screen" />}>
-      <PathwaysGridInner />
-    </Suspense>
   );
 }

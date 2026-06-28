@@ -40,19 +40,24 @@
   max-width: 52ch;
 }
 
-/* ---- Contact options — simple horizontal row, no boxes ---- */
+/* ---- Contact options — a balanced, symmetric trio. Three equal
+   columns keep WhatsApp · Email · LinkedIn evenly spaced with the
+   email anchored dead-centre under the heading. ---- */
 .connect-options {
   width: 100%;
   max-width: 760px;
   margin-top: clamp(40px, 5vw, 68px);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: clamp(28px, 6vw, 80px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-items: center;
+  align-items: start;
+  gap: clamp(28px, 6vw, 64px);
 }
 .connect-reveal {
-  flex: 0 1 auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 .connect-link {
   position: relative;
@@ -112,8 +117,9 @@
 
 @media (max-width: 560px) {
   .connect-options {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
+    justify-items: center;
     gap: clamp(26px, 7vw, 36px);
+    max-width: 320px;
   }
 }
