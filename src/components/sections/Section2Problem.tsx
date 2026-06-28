@@ -81,14 +81,12 @@ export function Section2Problem() {
 
   // Card appears as it rises; never dims (it stays a crisp visual).
   const cardOpacity = useTransform(p, [0.06, 0.16], [0, 1]);
-  const rotateX = useTransform(p, [0.18, 0.5], [8, 0]);
+  const rotateX = useTransform(p, [0.18, 0.45, 0.55], [8, -1.5, 0]);
 
   // Scale: oversized while rising → brief settle centre → shrink as it
-  // parks. With a 150vh section the pin lands ~0.67, so it settles right
-  // as it reaches centre, then parks immediately — larger than before
-  // and pushed harder to the viewport edge for a more immersive frame.
-  const scaleWide = useTransform(p, [0.45, 0.67, 0.7, 0.82], [1.14, 0.96, 0.96, 0.62]);
-  const scaleNarrow = useTransform(p, [0.45, 0.67, 0.7, 0.82], [1.0, 0.8, 0.8, 0.45]);
+  // parks. With a bounce overshoot at 0.63 before settling at 0.67.
+  const scaleWide = useTransform(p, [0.45, 0.63, 0.67, 0.7, 0.82], [1.14, 0.94, 0.96, 0.96, 0.62]);
+  const scaleNarrow = useTransform(p, [0.45, 0.63, 0.67, 0.7, 0.82], [1.0, 0.78, 0.8, 0.8, 0.45]);
 
   // Park position: slide right (wide) or up (narrow) — quick, right after
   // it centres.

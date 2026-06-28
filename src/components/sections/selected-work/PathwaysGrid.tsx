@@ -33,14 +33,13 @@ export function PathwaysGrid() {
   const handleSelectCategory = (category: PathwayCategory) => {
     if (category === activeCategory) return;
     setActiveCategory(category);
-    // Gently keep the grid in view if the user has scrolled past its top —
-    // never a jump to a random position or the bottom of the page.
+    
+    // Always align the user to the filter heading when a category is selected
     requestAnimationFrame(() => {
-      const el = gridRef.current;
-      if (!el) return;
-      const top = el.getBoundingClientRect().top;
-      if (top < 80) {
-        const y = window.scrollY + top - 120;
+      const heading = document.getElementById("category-filter-heading");
+      if (heading) {
+        const top = heading.getBoundingClientRect().top;
+        const y = window.scrollY + top - 100; // 100px padding from top to leave breathing room
         window.scrollTo({ top: y, behavior: reduced ? "auto" : "smooth" });
       }
     });

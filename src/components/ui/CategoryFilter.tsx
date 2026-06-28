@@ -153,10 +153,14 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
           className={`
             flex flex-shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full border
             px-4 py-2.5 text-sm font-medium transition-all duration-300
+            select-none focus:outline-none focus:ring-0 [-webkit-tap-highlight-color:transparent]
             ${inactiveClasses}
           `}
         >
-          <span style={isActive ? { color: isAll ? "#7a6a52" : meta.accent } : undefined} className="opacity-80">
+          <span 
+            className="flex items-center justify-center"
+            style={isActive ? { color: meta.accent } : { opacity: 0.8 }}
+          >
             {getCategoryIcon(meta.icon)}
           </span>
           <span>{meta.label}</span>
@@ -181,7 +185,7 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
       <div ref={containerRef} className="relative z-20 mb-12 w-full overflow-hidden bg-transparent py-4">
         <div className="flex flex-col items-center gap-8 text-center">
           <div className="px-4">
-            <h3 className="text-3xl font-medium tracking-tight">
+            <h3 id="category-filter-heading" className="text-3xl font-medium tracking-tight">
               Find the work that matches what you’re building
             </h3>
             <p className="mx-auto mt-3 max-w-2xl text-base opacity-70">
@@ -191,7 +195,28 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
           </div>
 
           <div className="relative mx-auto w-full max-w-[1200px] px-4">
-            <div className="flex flex-wrap justify-center gap-3">{renderButtons()}</div>
+            <div className="hidden md:flex flex-col items-center gap-3 pb-2">
+              <div className="flex justify-center gap-3">{renderButtons().slice(0, 5)}</div>
+              <div className="flex justify-center gap-3">{renderButtons().slice(5)}</div>
+            </div>
+            <div className="flex md:hidden justify-center w-full">
+              <select 
+                value={activeCategory} 
+                onChange={(e) => onSelectCategory(e.target.value as PathwayCategory)}
+                className="w-full max-w-[300px] appearance-none rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] px-5 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--color-line)]"
+                style={{
+                   backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M4 6l4 4 4-4'/%3e%3c/svg%3e")`,
+                   backgroundRepeat: 'no-repeat',
+                   backgroundPosition: 'right 16px center'
+                }}
+              >
+                {CATEGORY_META.map(meta => (
+                  <option key={meta.label} value={meta.label}>
+                    {meta.label} ({counts[meta.label] ?? 0})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -203,11 +228,34 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
         }`}
       >
         <div
-          className={`pointer-events-auto flex max-h-[60vh] flex-wrap items-center justify-center gap-2 overflow-y-auto rounded-3xl border border-[var(--color-line)] bg-[var(--color-bg)]/85 p-3 backdrop-blur-xl transition-transform duration-300 hide-scrollbar lg:p-4 ${
+          className={`pointer-events-auto hidden md:flex flex-col items-center justify-center gap-2 rounded-3xl border border-[var(--color-line)] bg-[var(--color-bg)]/85 p-3 backdrop-blur-xl transition-transform duration-300 hide-scrollbar lg:p-4 ${
             isFloating ? "scale-100" : "scale-95"
           }`}
         >
-          {renderButtons()}
+          <div className="flex justify-center gap-2">{renderButtons().slice(0, 5)}</div>
+          <div className="flex justify-center gap-2">{renderButtons().slice(5)}</div>
+        </div>
+        <div
+          className={`pointer-events-auto flex md:hidden max-h-[60vh] flex-wrap items-center justify-center gap-2 rounded-3xl border border-[var(--color-line)] bg-[var(--color-bg)]/85 p-2 backdrop-blur-xl transition-transform duration-300 hide-scrollbar ${
+            isFloating ? "scale-100" : "scale-95"
+          }`}
+        >
+            <select 
+              value={activeCategory} 
+              onChange={(e) => onSelectCategory(e.target.value as PathwayCategory)}
+              className="w-[240px] appearance-none rounded-full border border-transparent bg-transparent px-4 py-2 text-sm font-medium focus:outline-none"
+              style={{
+                 backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M4 6l4 4 4-4'/%3e%3c/svg%3e")`,
+                 backgroundRepeat: 'no-repeat',
+                 backgroundPosition: 'right 12px center'
+              }}
+            >
+              {CATEGORY_META.map(meta => (
+                <option key={meta.label} value={meta.label}>
+                  {meta.label} ({counts[meta.label] ?? 0})
+                </option>
+              ))}
+            </select>
         </div>
       </div>
     </>
