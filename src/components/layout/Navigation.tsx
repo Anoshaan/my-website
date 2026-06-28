@@ -63,7 +63,10 @@ export function Navigation() {
         if (now - lastUpTs > UP_IDLE_RESET_MS) upAccum = 0;
         lastUpTs = now;
         upAccum += -dy;
-        if (upAccum >= SHOW_THRESHOLD) setHidden(false);
+        // Disable scroll-up reveal on the Selected Work page (so it doesn't overlap the floating filter)
+        if (upAccum >= SHOW_THRESHOLD && !pathname.startsWith("/selected-work")) {
+          setHidden(false);
+        }
       }
       lastY = y;
     };
@@ -78,7 +81,7 @@ export function Navigation() {
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [pathname]);
 
   // Close the mobile menu on route change.
   useEffect(() => {

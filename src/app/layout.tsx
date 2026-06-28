@@ -1,3 +1,4 @@
+import React from "react";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { GeistSans } from "geist/font/sans";

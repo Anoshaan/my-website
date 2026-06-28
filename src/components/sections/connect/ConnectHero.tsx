@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/animations/Reveal";

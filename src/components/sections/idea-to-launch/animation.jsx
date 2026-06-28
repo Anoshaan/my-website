@@ -188,12 +188,12 @@ function StageView({ width = 1920, height = 1080, time = 0, duration = 44, child
 }
 
 // ── Movie tokens ─────────────────────────────────────────────────────────────
-const ACCENT = "#f59e0b";
-const ACCENT_DEEP = "#e07a00";
-const ACCENT_SOFT = "#ffe7bd";
-const INK = "#23201b";
-const SUB = "#8a8076";
-const CARD = "rgba(255,255,255,0.92)";
+const ACCENT = "var(--color-accent)";
+const ACCENT_DEEP = "var(--color-accent)";
+const ACCENT_SOFT = "rgba(var(--c-accent-rgb), 0.15)";
+const INK = "var(--color-fg)";
+const SUB = "var(--color-fg-muted)";
+const CARD = "var(--color-card)";
 const FONT = "var(--font-geist-sans), system-ui, sans-serif";
 const MONO = "var(--font-geist-mono), ui-monospace, monospace";
 
@@ -248,7 +248,7 @@ function FloatCard({ x, y, w, h, appear = 0, leave = null, phase = 0, drift = 5,
       transform: `translateY(${ty + fl}px) scale(${sc}) rotate(${fr}deg)`,
       opacity: op, borderRadius: r, background: tint,
       backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-      border: "1px solid rgba(255,255,255,0.9)",
+      border: "1px solid var(--color-card-border)",
       boxShadow: glow
         ? "0 18px 46px -12px rgba(240,150,20,0.42), 0 3px 12px rgba(60,40,10,0.08), inset 0 1px 0 rgba(255,255,255,0.95)"
         : "0 18px 40px -18px rgba(60,48,30,0.30), 0 2px 8px rgba(60,48,30,0.05), inset 0 1px 0 rgba(255,255,255,0.95)",
@@ -263,12 +263,12 @@ function FloatCard({ x, y, w, h, appear = 0, leave = null, phase = 0, drift = 5,
 const Lab = ({ children, c = INK, s = 16 }) => <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: s, color: c, letterSpacing: "-0.01em" }}>{children}</div>;
 const Mut = ({ children, s = 12.5 }) => <div style={{ fontFamily: FONT, fontWeight: 500, fontSize: s, color: SUB, marginTop: 2 }}>{children}</div>;
 function Chip({ children, active, dot }) {
-  return <span style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "7px 13px", borderRadius: 20, fontFamily: FONT, fontWeight: 700, fontSize: 13, background: active ? ACCENT : "rgba(255,255,255,0.85)", color: active ? "#fff" : INK, border: active ? "none" : "1px solid #ece4d6", boxShadow: "0 2px 8px rgba(60,48,30,0.05)" }}>{dot && <span style={{ width: 8, height: 8, borderRadius: 3, background: dot }} />}{children}</span>;
+  return <span style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "7px 13px", borderRadius: 20, fontFamily: FONT, fontWeight: 700, fontSize: 13, background: active ? ACCENT : "var(--color-card)", color: active ? "var(--color-bg)" : INK, border: active ? "none" : "1px solid var(--color-card-border)", boxShadow: "0 2px 8px rgba(var(--shadow-rgb), 0.05)" }}>{dot && <span style={{ width: 8, height: 8, borderRadius: 3, background: dot }} />}{children}</span>;
 }
 function Bars({ h = 56, accentIdx = 3, vals = [0.5, 0.75, 0.55, 0.95, 0.68], w = 22 }) {
-  return <svg width={vals.length * w} height={h} viewBox={`0 0 ${vals.length * w} ${h}`}>{vals.map((b, i) => <rect key={i} x={4 + i * w} y={h - b * (h - 4)} width={w - 9} height={b * (h - 4)} rx="3" fill={i === accentIdx ? ACCENT : "#ddd5c8"} />)}</svg>;
+  return <svg width={vals.length * w} height={h} viewBox={`0 0 ${vals.length * w} ${h}`}>{vals.map((b, i) => <rect key={i} x={4 + i * w} y={h - b * (h - 4)} width={w - 9} height={b * (h - 4)} rx="3" fill={i === accentIdx ? ACCENT : "var(--color-line-2)"} />)}</svg>;
 }
-function Lines({ n = 3, w = 130, c = "#ded6c8", g = 8 }) {
+function Lines({ n = 3, w = 130, c = "var(--color-line-2)", g = 8 }) {
   return <div style={{ display: "flex", flexDirection: "column", gap: g }}>{Array.from({ length: n }).map((_, i) => <div key={i} style={{ height: 6, width: i === n - 1 ? w * 0.6 : w, background: c, borderRadius: 4 }} />)}</div>;
 }
 
@@ -329,7 +329,7 @@ function SceneIdea() {
         })}</>;
       }}</At>
 
-      <FloatCard x={250} y={300} w={230} h={170} appear={0.4} leave={4.4} phase={1} extra={{ padding: 18, transform: "rotate(-3deg)" }} tint="rgba(255,247,228,0.95)">
+      <FloatCard x={250} y={300} w={230} h={170} appear={0.4} leave={4.4} phase={1} extra={{ padding: 18, transform: "rotate(-3deg)" }}>
         <Lab s={14} c={ACCENT_DEEP}>Rough idea</Lab>
         <div style={{ marginTop: 12 }}><Lines n={4} w={180} c="#e7cf9c" /></div>
         <div style={{ position: "absolute", right: 14, top: 14 }}><IconBulb s={26} /></div>
@@ -392,12 +392,12 @@ function SceneResearch() {
 function MiniBrowser({ accentBar, gap }) {
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <div style={{ height: 26, display: "flex", alignItems: "center", gap: 5, padding: "0 11px", background: "rgba(255,255,255,0.5)", borderBottom: "1px solid rgba(0,0,0,0.05)", borderRadius: "16px 16px 0 0" }}>
+      <div style={{ height: 26, display: "flex", alignItems: "center", gap: 5, padding: "0 11px", background: "var(--color-surface)", borderBottom: "1px solid var(--color-line)", borderRadius: "16px 16px 0 0" }}>
         {["#ff6159", "#ffbd2e", "#28c93f"].map((c, i) => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: c }} />)}
         <div style={{ marginLeft: 5, height: 8, width: 90, borderRadius: 5, background: "#e6ddcf" }} />
       </div>
       <div style={{ flex: 1, padding: 12 }}>
-        <div style={{ height: 26, borderRadius: 6, background: accentBar ? ACCENT_SOFT : "#efe7da", marginBottom: 9 }} />
+        <div style={{ height: 26, borderRadius: 6, background: accentBar ? ACCENT_SOFT : "var(--color-surface)", marginBottom: 9 }} />
         <div style={{ display: "flex", gap: 8 }}><div style={{ flex: 1 }}><Lines n={2} w={90} /></div><Bars h={40} accentIdx={-1} vals={[0.5, 0.8, 0.6]} w={16} /></div>
         {gap && <div style={{ position: "absolute", top: 8, right: 8, width: 12, height: 12, borderRadius: "50%", background: ACCENT, boxShadow: `0 0 10px ${ACCENT}` }} />}
       </div>
@@ -439,9 +439,9 @@ function SceneCompetitors() {
 function WF({ phone, accent }) {
   return (
     <div style={{ height: "100%", padding: 11, display: "flex", flexDirection: "column", gap: 6 }}>
-      <div style={{ height: 18, borderRadius: 5, background: "#e7dfd2" }} />
-      <div style={{ flex: 1, borderRadius: 8, border: "1.5px dashed #cdc2b0", padding: 8, display: "flex", flexDirection: "column", gap: 5 }}>
-        <div style={{ height: phone ? 26 : 36, borderRadius: 6, background: "#ece4d8" }} />
+      <div style={{ height: 18, borderRadius: 5, background: "var(--color-surface)" }} />
+      <div style={{ flex: 1, borderRadius: 8, border: "1.5px dashed var(--color-line-2)", padding: 8, display: "flex", flexDirection: "column", gap: 5 }}>
+        <div style={{ height: phone ? 26 : 36, borderRadius: 6, background: "var(--color-surface-2)" }} />
         <div style={{ height: 6, width: "78%", borderRadius: 4, background: "#ded6c8" }} />
         <div style={{ height: 6, width: "92%", borderRadius: 4, background: "#ded6c8" }} />
       </div>
@@ -483,7 +483,7 @@ const PROMPT = "Build a clean onboarding flow\nfor a fintech mobile app.\n3 step
 function SceneAI() {
   return (
     <Sprite start={22.2} end={27.2}>
-      <FloatCard x={250} y={300} w={470} h={250} appear={0.2} leave={27 - 22.2} phase={0.3} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(242,238,232,0.96)">
+      <FloatCard x={250} y={300} w={470} h={250} appear={0.2} leave={27 - 22.2} phase={0.3} extra={{ padding: 0, overflow: "hidden" }}>
         <div style={{ height: 32, display: "flex", alignItems: "center", gap: 8, padding: "0 14px", borderBottom: "1px solid rgba(0,0,0,0.08)" }}><IconSpark s={16} /><span style={{ color: "rgba(0,0,0,0.5)", fontFamily: MONO, fontSize: 12 }}>prompt</span></div>
         <div style={{ padding: 18, fontFamily: MONO, fontSize: 16, lineHeight: 1.6, color: INK, whiteSpace: "pre-wrap" }}>
           <At from={0.3}>{lt => { const n = Math.floor(clamp(lt / 2, 0, 1) * PROMPT.length); const blink = Math.floor(lt * 2) % 2; return <>{PROMPT.slice(0, n)}<span style={{ opacity: blink, color: ACCENT }}>&#9613;</span></>; }}</At>
@@ -501,7 +501,7 @@ function SceneAI() {
           {Array.from({ length: 9 }).map((_, i) => <At key={i} from={1.4 + i * 0.12}>{() => <div style={{ height: 48, borderRadius: 7, background: "rgba(245,166,35,0.16)", border: `1.5px solid ${ACCENT}` }} />}</At>)}
         </div>
       </FloatCard>
-      <FloatCard x={1240} y={300} w={260} h={330} appear={3.0} leave={27 - 22.2} phase={1.3} extra={{ overflow: "hidden", padding: 0 }} tint="rgba(255,255,255,0.96)">
+      <FloatCard x={1240} y={300} w={260} h={330} appear={3.0} leave={27 - 22.2} phase={1.3} extra={{ overflow: "hidden", padding: 0 }}>
         <div style={{ height: 38, background: ACCENT, display: "flex", alignItems: "center", padding: "0 14px" }}><div style={{ height: 9, width: 90, borderRadius: 5, background: "rgba(255,255,255,0.7)" }} /></div>
         <div style={{ padding: 15 }}>
           <div style={{ height: 70, borderRadius: 9, background: "linear-gradient(120deg,#ffe6bf,#ffd08a)", marginBottom: 11 }} />
@@ -510,7 +510,7 @@ function SceneAI() {
           <div style={{ height: 34, borderRadius: 8, background: ACCENT, marginTop: 12 }} />
         </div>
       </FloatCard>
-      <FloatCard x={900} y={580} w={300} h={100} appear={1.0} leave={27 - 22.2} phase={1.8} extra={{ padding: 14, overflow: "hidden" }} tint="rgba(242,238,232,0.94)">
+      <FloatCard x={900} y={580} w={300} h={100} appear={1.0} leave={27 - 22.2} phase={1.8} extra={{ padding: 14, overflow: "hidden" }}>
         <At from={1}>{lt => <div style={{ fontFamily: MONO, fontSize: 11.5, color: "#1f9d5a", lineHeight: 1.7 }}>{["✓ parsing brief", "✓ generating layout", "✓ wiring components", "▐ rendering preview"].slice(0, Math.floor(clamp((lt - 1) / 2, 0, 1) * 4) + 1).map((l, i) => <div key={i} style={{ opacity: i === 3 ? 0.7 : 1 }}>{l}</div>)}</div>}</At>
       </FloatCard>
     </Sprite>
@@ -535,7 +535,7 @@ function SceneFrontEnd() {
         <div style={{ display: "flex", gap: 8, marginTop: 12 }}>{[ACCENT, "#23201b", "#1f9d5a", "#2563eb", "#a259ff"].map((c, i) => <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: c }} />)}</div>
         <div style={{ marginTop: 12 }}><Lines n={2} w={240} /></div>
       </FloatCard>
-      <FloatCard x={900} y={300} w={300} h={310} appear={1.4} leave={32 - 27} phase={1.2} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(242,238,232,0.96)">
+      <FloatCard x={900} y={300} w={300} h={310} appear={1.4} leave={32 - 27} phase={1.2} extra={{ padding: 0, overflow: "hidden" }}>
         <div style={{ height: 30, display: "flex", alignItems: "center", gap: 6, padding: "0 12px", borderBottom: "1px solid rgba(0,0,0,0.08)" }}>{["#ff6159", "#ffbd2e", "#28c93f"].map((c, i) => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: c }} />)}<span style={{ marginLeft: 6, color: "rgba(0,0,0,0.5)", fontFamily: MONO, fontSize: 11 }}>Product.tsx</span></div>
         <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 9 }}>{[[70, "#7dd3fc"], [130, "#fbbf77"], [100, "#86efac"], [150, "#7dd3fc"], [80, "#c4b5fd"], [120, "#fbbf77"]].map(([w, c], i) => <At key={i} from={1.4 + i * 0.12}>{() => <div style={{ display: "flex", gap: 7, paddingLeft: i === 1 || i === 2 || i === 4 ? 14 : 0 }}><div style={{ width: 16, height: 6, background: "rgba(0,0,0,0.15)", borderRadius: 3 }} /><div style={{ width: w, height: 6, background: c, borderRadius: 3, opacity: 0.85 }} /></div>}</At>)}</div>
       </FloatCard>
@@ -547,8 +547,8 @@ function SceneFrontEnd() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>{Array.from({ length: 6 }).map((_, i) => <div key={i} style={{ height: 32, borderRadius: 7, background: i % 3 === 0 ? ACCENT_SOFT : "#f0e9dd", border: "1px solid #ece4d6" }} />)}</div>
       </FloatCard>
       <FloatCard x={1240} y={470} w={260} h={210} appear={2.0} leave={32 - 27} phase={2} extra={{ padding: 16, display: "flex", gap: 10, alignItems: "center", justifyContent: "center" }}>
-        <div style={{ width: 130, height: 100, borderRadius: 8, background: "#fff", border: "1px solid #ece4d6", padding: 8 }}><div style={{ height: 20, background: ACCENT_SOFT, borderRadius: 4, marginBottom: 6 }} /><div style={{ height: 6, background: "#e7dfd2", borderRadius: 3, marginBottom: 5 }} /><div style={{ height: 6, width: "70%", background: "#e7dfd2", borderRadius: 3 }} /></div>
-        <div style={{ width: 56, height: 80, borderRadius: 8, background: "#fff", border: "1px solid #ece4d6", padding: 6 }}><div style={{ height: 14, background: ACCENT_SOFT, borderRadius: 3, marginBottom: 5 }} /><div style={{ height: 5, background: "#e7dfd2", borderRadius: 2, marginBottom: 4 }} /><div style={{ height: 5, width: "60%", background: "#e7dfd2", borderRadius: 2 }} /></div>
+        <div style={{ width: 130, height: 100, borderRadius: 8, background: "#fff", border: "1px solid #ece4d6", padding: 8 }}><div style={{ height: 20, background: ACCENT_SOFT, borderRadius: 4, marginBottom: 6 }} /><div style={{ height: 6, background: "var(--color-surface)", borderRadius: 3, marginBottom: 5 }} /><div style={{ height: 6, width: "70%", background: "var(--color-surface)", borderRadius: 3 }} /></div>
+        <div style={{ width: 56, height: 80, borderRadius: 8, background: "#fff", border: "1px solid #ece4d6", padding: 6 }}><div style={{ height: 14, background: ACCENT_SOFT, borderRadius: 3, marginBottom: 5 }} /><div style={{ height: 5, background: "var(--color-surface)", borderRadius: 2, marginBottom: 4 }} /><div style={{ height: 5, width: "60%", background: "var(--color-surface)", borderRadius: 2 }} /></div>
         <div style={{ width: 34, height: 64, borderRadius: 7, background: "#fff", border: "1px solid #ece4d6", padding: 5 }}><div style={{ height: 11, background: ACCENT_SOFT, borderRadius: 3 }} /></div>
       </FloatCard>
     </Sprite>
@@ -589,7 +589,7 @@ function SceneDev() {
 function SceneLaunchPrep() {
   return (
     <Sprite start={36.9} end={41}>
-      <FloatCard x={250} y={300} w={320} h={250} appear={0.2} leave={40.8 - 36.9} phase={0.3} extra={{ padding: 0, overflow: "hidden" }} tint="rgba(255,255,255,0.96)">
+      <FloatCard x={250} y={300} w={320} h={250} appear={0.2} leave={40.8 - 36.9} phase={0.3} extra={{ padding: 0, overflow: "hidden" }}>
         <div style={{ height: 36, background: ACCENT, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 14px" }}><div style={{ height: 9, width: 80, borderRadius: 5, background: "rgba(255,255,255,0.7)" }} /><div style={{ height: 16, width: 42, borderRadius: 8, background: "rgba(255,255,255,0.5)" }} /></div>
         <div style={{ padding: 16 }}><div style={{ height: 80, borderRadius: 9, background: "linear-gradient(120deg,#ffe6bf,#ffd08a)", marginBottom: 11 }} /><Lines n={2} w={270} /><div style={{ height: 28, width: 110, borderRadius: 8, background: ACCENT, marginTop: 12 }} /></div>
         <div style={{ position: "absolute", bottom: 12, right: 14, fontFamily: FONT, fontSize: 11, fontWeight: 700, color: SUB }}>Landing page</div>
@@ -680,3 +680,4 @@ export default function ProductProcessAnimation({ time = 0 }) {
     </StageView>
   );
 }
+

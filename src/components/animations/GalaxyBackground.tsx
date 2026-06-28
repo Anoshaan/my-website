@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * GalaxyBackground — one fixed, full-viewport deep-space backdrop for
  * the entire site. Intentionally quiet: layered nebula washes, three

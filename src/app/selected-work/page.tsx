@@ -1,18 +1,19 @@
 import { LabsHero } from "@/components/sections/labs/LabsHero";
-import { LabsShowcase } from "@/components/sections/labs/LabsShowcase";
+import { PathwaysGrid } from "@/components/sections/selected-work/PathwaysGrid";
+import { ClosingCTA } from "@/components/sections/selected-work/ClosingCTA";
 
 export const metadata = {
-  title: "Selected Work",
+  title: "Selected Product Pathways",
   description:
-    "A curated showcase of real product work across enterprise systems, analytics platforms, commerce, and emerging technologies.",
+    "A collection of product journeys showing how ideas move from early problem framing to launch-ready experiences.",
 };
 
 export default function SelectedWorkPage() {
   return (
     <>
       <LabsHero />
-
-      <LabsShowcase />
+      <PathwaysGrid />
+      <ClosingCTA />
     </>
   );
 }

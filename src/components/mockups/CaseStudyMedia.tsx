@@ -1,3 +1,4 @@
+import React from "react";
 import type { CaseStudy } from "@/lib/case-studies";
 import { ChronosMockup } from "./ChronosMockup";
 import { ScrollingImage } from "./ScrollingImage";

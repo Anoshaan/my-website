@@ -125,18 +125,19 @@ export function LabsHero() {
         <div className="labs-hero-content">
           <Reveal delay={0.1}>
             <h1 className="page-hero-title">
-              <span className="page-hero-line">Lessons learned through</span>
+              <span className="page-hero-line">Selected</span>
               <span className="page-hero-grad page-hero-grad--purple">
-                building digital products.
+                Product Pathways.
               </span>
             </h1>
           </Reveal>
           <Reveal delay={0.2}>
-            <div className="labs-intro-desc">
+            <div className="labs-intro-desc flex flex-col gap-4">
               <p>
-                Real-world challenges, design decisions, and product thinking
-                across enterprise systems, analytics, commerce, and emerging
-                technology.
+                A collection of product journeys showing how ideas move from early problem framing to UX structure, interface design, system thinking, and launch-ready experiences.
+              </p>
+              <p className="text-sm opacity-60">
+                Experience-led product studies shaped from real workflows, product patterns, and design problems I have worked across.
               </p>
             </div>
           </Reveal>
