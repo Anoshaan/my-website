@@ -41,8 +41,9 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
         ${className}
       `}
     >
-      {/* Visual */}
-      <div className={`p-6 sm:p-8 ${featured ? "order-2 md:order-2 md:pl-0" : "pb-0"}`}>
+      {/* Visual — min-w-0 so, in the featured 2-col grid, the text column can
+          shrink and wrap instead of being pushed under the media. */}
+      <div className={`min-w-0 p-6 sm:p-8 ${featured ? "order-2 md:order-2 md:pl-0" : "pb-0"}`}>
         <div
           className={`relative overflow-hidden rounded-2xl transition-transform duration-700 group-hover:-translate-y-1 group-hover:scale-[1.02] ${
             isCaseEmbed
@@ -63,7 +64,14 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
                 scrolling="no"
               />
             ) : (
-              <img src={pathway.imageUrl} alt={pathway.previewTitle} className="h-full w-full object-cover object-center" />
+              // eslint-disable-next-line @next/next/no-img-element -- below-the-fold card preview; lazy raw <img> avoids next/image fill layout constraints
+              <img
+                src={pathway.imageUrl}
+                alt={pathway.previewTitle}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover object-center"
+              />
             )
           ) : (
             <PathwayPlaceholder type={pathway.mockupType} accent={pathway.accentColor} />
@@ -71,26 +79,28 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
         </div>
       </div>
 
-      {/* Text */}
-      <div className={`flex flex-1 flex-col p-8 sm:p-10 ${featured ? "order-1 justify-center md:pr-0" : "pt-6"}`}>
-        <p className="mb-2 text-sm font-medium" style={{ color: "var(--color-fg)", opacity: 0.55 }}>
+      {/* Text — min-w-0 + break-words guarantee long titles, descriptions, tags
+          and CTA labels wrap onto new lines and never run under the preview. */}
+      <div className={`flex min-w-0 flex-1 flex-col p-8 sm:p-10 ${featured ? "order-1 justify-center md:pr-0" : "pt-6"}`}>
+        <p className="mb-2 break-words text-sm font-medium" style={{ color: "var(--color-fg)", opacity: 0.55 }}>
           {pathway.previewProblem}
         </p>
 
         <h3
-          className={`mb-4 font-semibold tracking-tight ${featured ? "text-3xl lg:text-4xl" : "text-2xl"}`}
+          className={`mb-4 break-words font-semibold tracking-tight ${featured ? "text-3xl lg:text-4xl" : "text-2xl"}`}
         >
           {pathway.previewTitle}
         </h3>
 
-        <p className="mb-5 max-w-xl text-base leading-relaxed opacity-80">{pathway.previewDescription}</p>
+        <p className="mb-5 max-w-xl break-words text-base leading-relaxed opacity-80">{pathway.previewDescription}</p>
 
-        {/* Tags — soft accent background, neutral readable text */}
-        <div className="mb-6 flex flex-wrap gap-2">
+        {/* Tags — soft accent background, neutral readable text. flex-wrap keeps
+            long tag rows from pushing into or under the preview media. */}
+        <div className="mb-6 flex min-w-0 flex-wrap gap-2">
           {pathway.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full px-3 py-1 text-xs font-medium text-[var(--color-fg)]"
+              className="max-w-full break-words rounded-full px-3 py-1 text-xs font-medium text-[var(--color-fg)]"
               style={{
                 backgroundColor: pathway.accentSoftBg,
                 border: `1px solid ${pathway.accentBorder}`,
@@ -102,7 +112,7 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
         </div>
 
         <p
-          className="mb-8 max-w-xl border-l-2 pl-4 text-base font-medium opacity-90"
+          className="mb-8 max-w-xl break-words border-l-2 pl-4 text-base font-medium opacity-90"
           style={{ borderColor: pathway.accentColor }}
         >
           {pathway.previewOutcome}
@@ -112,16 +122,16 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
           <button
             type="button"
             onClick={() => onOpen(pathway)}
-            className="group/btn inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-[var(--color-fg)] transition-all duration-300"
+            className="group/btn inline-flex max-w-full items-center gap-2 rounded-full px-5 py-2.5 text-left text-sm font-medium text-[var(--color-fg)] transition-all duration-300"
             style={{
               backgroundColor: pathway.accentSoftBg,
               border: `1px solid ${pathway.accentBorder}`,
             }}
             aria-label={`${pathway.uniqueCTA}: ${pathway.previewTitle}`}
           >
-            {pathway.uniqueCTA}
+            <span className="min-w-0 break-words">{pathway.uniqueCTA}</span>
             <svg
-              className="opacity-70 transition-transform duration-300 group-hover/btn:translate-x-1"
+              className="flex-shrink-0 opacity-70 transition-transform duration-300 group-hover/btn:translate-x-1"
               width="16"
               height="16"
               viewBox="0 0 24 24"

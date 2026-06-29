@@ -47,6 +47,8 @@ export type MockupType =
 
 export interface CategoryMeta {
   label: PathwayCategory;
+  /** Compact label for the vertical rail where horizontal space is tight. */
+  short: string;
   icon: CategoryIconKey;
   /** Accent used for the active filter chip + count badge. */
   accent: string;
@@ -61,15 +63,15 @@ export interface CategoryMeta {
  */
 export const CATEGORY_META: CategoryMeta[] = [
   // "All" uses a warm neutral so it never reads as a coloured/purple filter.
-  { label: "All Pathways", icon: "compass", accent: "#C9B79C", softBg: "#F4EEE3", border: "#E6DAC8" },
-  { label: "Product Platforms & Dashboards", icon: "dashboard", accent: "#8FB8FF", softBg: "#EEF5FF", border: "#C9DCFF" },
-  { label: "Mobile App Experiences", icon: "smartphone", accent: "#7DD3FC", softBg: "#ECFAFF", border: "#BDEFFF" },
-  { label: "Web & CMS Platforms", icon: "globe", accent: "#6EE7B7", softBg: "#ECFDF5", border: "#A7F3D0" },
-  { label: "Commerce & Marketplace", icon: "shoppingBag", accent: "#FFB86B", softBg: "#FFF4E8", border: "#FFD9AD" },
-  { label: "AI & Automation UX", icon: "sparkles", accent: "#B69CFF", softBg: "#F4F0FF", border: "#D9CCFF" },
-  { label: "Branding & Design Systems", icon: "palette", accent: "#F0ABFC", softBg: "#FDF4FF", border: "#F5D0FE" },
-  { label: "Motion, Video & Lottie Systems", icon: "clapperboard", accent: "#FCA5A5", softBg: "#FEF2F2", border: "#FECACA" },
-  { label: "Product Handoff", icon: "component", accent: "#94A3B8", softBg: "#F1F5F9", border: "#E2E8F0" },
+  { label: "All Pathways", short: "All Work", icon: "compass", accent: "#C9B79C", softBg: "#F4EEE3", border: "#E6DAC8" },
+  { label: "Product Platforms & Dashboards", short: "Dashboards", icon: "dashboard", accent: "#8FB8FF", softBg: "#EEF5FF", border: "#C9DCFF" },
+  { label: "Mobile App Experiences", short: "Mobile Apps", icon: "smartphone", accent: "#7DD3FC", softBg: "#ECFAFF", border: "#BDEFFF" },
+  { label: "Web & CMS Platforms", short: "Web & CMS", icon: "globe", accent: "#6EE7B7", softBg: "#ECFDF5", border: "#A7F3D0" },
+  { label: "Commerce & Marketplace", short: "Commerce", icon: "shoppingBag", accent: "#FFB86B", softBg: "#FFF4E8", border: "#FFD9AD" },
+  { label: "AI & Automation UX", short: "AI & Automation", icon: "sparkles", accent: "#B69CFF", softBg: "#F4F0FF", border: "#D9CCFF" },
+  { label: "Branding & Design Systems", short: "Branding", icon: "palette", accent: "#F0ABFC", softBg: "#FDF4FF", border: "#F5D0FE" },
+  { label: "Motion, Video & Lottie Systems", short: "Motion & Video", icon: "clapperboard", accent: "#FCA5A5", softBg: "#FEF2F2", border: "#FECACA" },
+  { label: "Product Handoff", short: "Handoff", icon: "component", accent: "#94A3B8", softBg: "#F1F5F9", border: "#E2E8F0" },
 ];
 
 export const CATEGORIES: readonly PathwayCategory[] = CATEGORY_META.map((c) => c.label);
@@ -97,6 +99,12 @@ export interface ProductPathway {
   // New properties from UX Overhaul
   title: string;
   primaryCategory: PathwayCategory;
+  /**
+   * Every category this pathway belongs to (including its primary). A card can
+   * live in several categories at once, so it counts and appears in each. When
+   * omitted, the card belongs only to `primaryCategory`.
+   */
+  categories?: PathwayCategory[];
   domain?: string;
   previewTitle: string;
   previewDescription: string;
@@ -1594,18 +1602,650 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
       "Bug report ticket mockup.",
       "Responsive testing grid."
     ]
+  },
+  {
+    "id": 24,
+    "title": "FinTech Account & Activity Flow",
+    "primaryCategory": "Mobile App Experiences" as PathwayCategory,
+    "categories": ["Mobile App Experiences", "Commerce & Marketplace"],
+    "mockupType": "fintech",
+    "accentColor": "#5B8DEF",
+    "accentSoftBg": "#EEF3FF",
+    "accentBorder": "#C9DAFF",
+    "priority": 24,
+    "previewTitle": "FinTech Account & Activity Flow",
+    "previewDescription": "A mobile banking-style UX flow focused on account overview, transaction clarity, status feedback, and secure action confirmation.",
+    "previewProblem": "Users needed a clear way to review account activity, understand transaction status, and move through financial actions without confusion.",
+    "previewOutcome": "The experience was structured around quick scanning, clear transaction states, confirmation screens, and reduced uncertainty during key financial actions.",
+    "tags": [
+      "FinTech UX",
+      "Mobile App",
+      "Account Flow",
+      "Transaction UX",
+      "Status Design"
+    ],
+    "uniqueCTA": "View FinTech Flow",
+    "detailHero": "Helping people read their money at a glance and act with confidence.",
+    "productStory": "Money apps live or die on trust. The goal here was to make account activity feel calm and readable, so a user can open the app, understand where their balance stands, and complete a payment or transfer without second-guessing what just happened.",
+    "problem": "Financial flows often hide status. A payment is sent but the user is unsure if it cleared. A balance updates but the recent activity does not explain why. That uncertainty is where people lose confidence and start contacting support.",
+    "users": [
+      "Everyday account holders checking balances",
+      "Users sending or scheduling payments",
+      "Support teams reducing repeat questions",
+      "Product owners tracking activation"
+    ],
+    "solution": "Design a mobile flow built around scanning first and acting second. The account view answers what changed, the activity list explains every state in plain language, and each money action ends with a clear confirmation the user can trust.",
+    "keyFeatures": [
+      "Account overview summary",
+      "Plain-language transaction states",
+      "Pending vs completed clarity",
+      "Secure action confirmation",
+      "Recent activity timeline",
+      "Quick action shortcuts",
+      "Receipt and detail view",
+      "Empty and error states"
+    ],
+    "uxDecisions": [
+      "Show status before showing numbers.",
+      "Use clear words like pending, sent, and received instead of codes.",
+      "Confirm every money action with a calm review step.",
+      "Keep balances and activity on one readable surface."
+    ],
+    "motionDirection": [
+      "Animate balance counters on open.",
+      "Use soft state transitions from pending to completed.",
+      "Add a confirmation checkmark for completed actions.",
+      "Use bottom-sheet transitions for action details."
+    ],
+    "visualSuggestions": [
+      "Mobile account home screen.",
+      "Transaction activity list with states.",
+      "Payment confirmation screen.",
+      "Receipt detail view."
+    ]
+  },
+  {
+    "id": 25,
+    "title": "Portfolio Website + AI Rapid Production",
+    "primaryCategory": "Web & CMS Platforms" as PathwayCategory,
+    "categories": ["Web & CMS Platforms", "AI & Automation UX", "Branding & Design Systems"],
+    "mockupType": "website",
+    "accentColor": "#6EE7B7",
+    "accentSoftBg": "#ECFDF5",
+    "accentBorder": "#A7F3D0",
+    "priority": 25,
+    "previewTitle": "Portfolio Website + AI Rapid Production",
+    "previewDescription": "A responsive portfolio website built through a fast AI-assisted production workflow, combining product storytelling, visual experimentation, content structure, and front-end iteration.",
+    "previewProblem": "The portfolio needed to be redesigned quickly for job applications while still feeling custom, thoughtful, and different from a standard template.",
+    "previewOutcome": "The website became a live portfolio system that shows design range, AI-assisted speed, and the ability to move from concept to polished execution quickly.",
+    "tags": [
+      "Portfolio UX",
+      "AI Workflow",
+      "Responsive Web",
+      "Creative Direction",
+      "UI Production"
+    ],
+    "uniqueCTA": "Open AI Website Build",
+    "detailHero": "From a blank repo to a living portfolio in a fast, controlled sprint.",
+    "productStory": "This site is the work and the proof at the same time. The goal was to rebuild the portfolio quickly enough for an active job search, while keeping it personal, crafted, and clearly not a template. AI handled the repetitive production so the time could go into story, layout, and polish.",
+    "problem": "A fast portfolio rebuild usually means a generic template. The challenge was to keep speed without losing craft, so the site still reads as a designer's own point of view rather than a starter kit.",
+    "users": [
+      "Recruiters and hiring managers",
+      "Design leads reviewing range",
+      "Product teams scanning case studies",
+      "The designer maintaining it over time"
+    ],
+    "solution": "Use an AI-assisted front-end workflow where the design direction, layout intent, and motion stay human-led, and AI accelerates component production, content structure, and iteration. Every screen passes a design review before it ships.",
+    "keyFeatures": [
+      "Responsive page system",
+      "Case study structure",
+      "Reusable section components",
+      "Motion and reveal layer",
+      "Light and dark theming",
+      "AI-assisted iteration loop",
+      "Content-first information architecture",
+      "Performance tuning pass"
+    ],
+    "uxDecisions": [
+      "Keep the design direction human and let AI speed up production.",
+      "Make every section answer a hiring question.",
+      "Design for range without making every page look the same.",
+      "Treat the site itself as a portfolio piece."
+    ],
+    "motionDirection": [
+      "Section reveals on scroll.",
+      "Desktop and mobile preview switching.",
+      "Card and grid entrance motion.",
+      "Subtle hover and CTA states."
+    ],
+    "visualSuggestions": [
+      "Portfolio homepage mockup.",
+      "Case study layout.",
+      "Responsive desktop and mobile frames.",
+      "AI production workflow strip."
+    ]
+  },
+  {
+    "id": 26,
+    "title": "SaaS Marketing Website + CMS Structure",
+    "primaryCategory": "Web & CMS Platforms" as PathwayCategory,
+    "categories": ["Web & CMS Platforms", "Product Handoff"],
+    "mockupType": "website",
+    "accentColor": "#34D399",
+    "accentSoftBg": "#ECFDF5",
+    "accentBorder": "#A7F3D0",
+    "priority": 26,
+    "previewTitle": "SaaS Marketing Website + CMS Structure",
+    "previewDescription": "A SaaS website structure focused on product positioning, feature storytelling, lead generation, reusable CMS sections, and scalable content blocks.",
+    "previewProblem": "A product-led business needed a web presence that explained value clearly while supporting reusable content and future growth.",
+    "previewOutcome": "The site structure helped organize product messaging, feature education, trust sections, and conversion points into a reusable CMS-friendly system.",
+    "tags": [
+      "SaaS Website",
+      "CMS UX",
+      "Marketing Site",
+      "Lead Generation",
+      "Web System"
+    ],
+    "uniqueCTA": "View SaaS Web System",
+    "detailHero": "A marketing site that explains the product and stays easy to grow.",
+    "productStory": "A product-led company needed a site that could sell the value and keep up with a fast roadmap. The work focused as much on the content system behind the pages as on the pages themselves, so the team could add features and stories without rebuilding layouts.",
+    "problem": "SaaS sites go stale fast. New features ship, but the marketing site cannot keep up because every page is hand-built. The structure needed to make updates feel like filling in content, not redesigning.",
+    "users": [
+      "Prospects evaluating the product",
+      "Marketing teams updating content",
+      "Sales teams pointing to proof",
+      "Founders shaping positioning"
+    ],
+    "solution": "Build a modular site on reusable CMS blocks: hero, feature stories, social proof, pricing, and conversion sections. Each block is a content type the team can reorder and reuse, so the site scales with the product.",
+    "keyFeatures": [
+      "Positioning-led homepage",
+      "Feature storytelling sections",
+      "Reusable CMS content blocks",
+      "Pricing and plan layout",
+      "Trust and proof sections",
+      "Lead capture and CTA system",
+      "Blog and resource structure",
+      "SEO-ready page templates"
+    ],
+    "uxDecisions": [
+      "Lead with the value, not the feature list.",
+      "Design sections as reusable content types.",
+      "Keep conversion points visible but calm.",
+      "Make the CMS match how the team writes."
+    ],
+    "motionDirection": [
+      "Feature sections revealing on scroll.",
+      "Hero message transitions.",
+      "Logo and proof marquee.",
+      "CTA hover states."
+    ],
+    "visualSuggestions": [
+      "SaaS homepage mockup.",
+      "Feature section blocks.",
+      "CMS content model diagram.",
+      "Pricing layout."
+    ]
+  },
+  {
+    "id": 27,
+    "title": "Local Service Website + Booking Path",
+    "primaryCategory": "Web & CMS Platforms" as PathwayCategory,
+    "categories": ["Web & CMS Platforms", "Mobile App Experiences"],
+    "mockupType": "website",
+    "accentColor": "#10B981",
+    "accentSoftBg": "#ECFDF5",
+    "accentBorder": "#A7F3D0",
+    "priority": 27,
+    "previewTitle": "Local Service Website + Booking Path",
+    "previewDescription": "A service-business web experience combining service pages, trust-building sections, inquiry paths, contact actions, and lightweight booking logic.",
+    "previewProblem": "Small service businesses often need a simple website that builds trust quickly and turns visitors into inquiries without a complex platform.",
+    "previewOutcome": "The website was structured to make services easy to understand, reduce friction in the contact journey, and support future content updates.",
+    "tags": [
+      "Service Website",
+      "Booking UX",
+      "Local Business",
+      "CMS",
+      "Lead Flow"
+    ],
+    "uniqueCTA": "View Service Web Flow",
+    "detailHero": "Turning a local service into clear pages and an easy way to get in touch.",
+    "productStory": "A local service business does not need a heavy platform. It needs to look credible, explain what it does, and make booking or contact effortless on a phone. The work focused on trust and a short path from interest to inquiry.",
+    "problem": "Service sites often bury the offer and the contact action. Visitors cannot quickly tell what the business does or how to book, so they leave before reaching out.",
+    "users": [
+      "People searching for a local service",
+      "Returning customers rebooking",
+      "Business owners updating content",
+      "Mobile visitors on the go"
+    ],
+    "solution": "Design a focused site with clear service pages, trust sections, and a short booking or inquiry path. The contact action stays within reach on mobile, and content stays editable for the owner.",
+    "keyFeatures": [
+      "Clear service pages",
+      "Trust and review sections",
+      "Lightweight booking path",
+      "Mobile-first contact actions",
+      "Inquiry and quote form",
+      "Gallery or work samples",
+      "FAQ section",
+      "Editable CMS content"
+    ],
+    "uxDecisions": [
+      "Make the offer obvious on the first screen.",
+      "Keep the contact action one tap away on mobile.",
+      "Use trust signals near decision points.",
+      "Keep booking light, not a heavy platform."
+    ],
+    "motionDirection": [
+      "Service cards revealing on scroll.",
+      "Booking step transitions.",
+      "Sticky mobile contact bar.",
+      "Form confirmation state."
+    ],
+    "visualSuggestions": [
+      "Service homepage mockup.",
+      "Booking or inquiry flow.",
+      "Mobile contact section.",
+      "Trust and reviews block."
+    ]
+  },
+  {
+    "id": 28,
+    "title": "Subscription Plan & Checkout Flow",
+    "primaryCategory": "Commerce & Marketplace" as PathwayCategory,
+    "categories": ["Commerce & Marketplace", "Product Platforms & Dashboards"],
+    "mockupType": "commerce",
+    "accentColor": "#FFB86B",
+    "accentSoftBg": "#FFF4E8",
+    "accentBorder": "#FFD9AD",
+    "priority": 28,
+    "previewTitle": "Subscription Plan & Checkout Flow",
+    "previewDescription": "A subscription checkout journey focused on plan comparison, pricing clarity, add-on selection, confirmation states, and payment confidence.",
+    "previewProblem": "Users needed to compare plans, understand what they were paying for, and complete checkout without feeling uncertain.",
+    "previewOutcome": "The flow improved decision clarity by making plan differences, costs, selected options, and next steps visible before payment.",
+    "tags": [
+      "Checkout UX",
+      "Subscription Flow",
+      "Pricing UX",
+      "Commerce",
+      "Conversion Design"
+    ],
+    "uniqueCTA": "View Checkout Flow",
+    "detailHero": "Making plan choice and payment feel clear instead of risky.",
+    "productStory": "Subscription checkout is where good products lose people. The goal was to help a user compare plans, see exactly what they are paying for, and reach payment without that last-second hesitation that kills conversion.",
+    "problem": "When plan differences and total costs are unclear, users stall right before paying. Hidden add-ons and vague summaries make checkout feel like a risk rather than a decision.",
+    "users": [
+      "New subscribers choosing a plan",
+      "Users upgrading or adding options",
+      "Billing and growth teams",
+      "Support teams handling refunds"
+    ],
+    "solution": "Design a flow that makes the decision visible. Plans compare side by side, add-ons show their cost impact live, and a clear review step confirms exactly what the user is buying before payment.",
+    "keyFeatures": [
+      "Side-by-side plan comparison",
+      "Transparent pricing breakdown",
+      "Add-on selection with live totals",
+      "Order review step",
+      "Confirmation and receipt states",
+      "Payment method clarity",
+      "Trust and security cues",
+      "Error and retry handling"
+    ],
+    "uxDecisions": [
+      "Show the total cost before the payment step.",
+      "Make plan differences scannable, not buried.",
+      "Confirm the selection before charging.",
+      "Keep trust cues near the payment action."
+    ],
+    "motionDirection": [
+      "Animate totals updating with add-ons.",
+      "Plan card selection states.",
+      "Step progress through checkout.",
+      "Confirmation success state."
+    ],
+    "visualSuggestions": [
+      "Plan comparison screen.",
+      "Checkout review step.",
+      "Pricing breakdown panel.",
+      "Confirmation screen."
+    ]
+  },
+  {
+    "id": 29,
+    "title": "Vendor Onboarding & Listing Flow",
+    "primaryCategory": "Commerce & Marketplace" as PathwayCategory,
+    "categories": ["Commerce & Marketplace", "Product Handoff"],
+    "mockupType": "marketplace",
+    "accentColor": "#FB923C",
+    "accentSoftBg": "#FFF4E8",
+    "accentBorder": "#FFD9AD",
+    "priority": 29,
+    "previewTitle": "Vendor Onboarding & Listing Flow",
+    "previewDescription": "A seller-side marketplace flow covering onboarding, listing creation, product detail entry, verification, and publishing readiness.",
+    "previewProblem": "Marketplace sellers needed a guided way to create profiles, add listings, manage product details, and understand approval status.",
+    "previewOutcome": "The seller experience was structured into clear steps so vendors could publish complete, trustworthy listings with fewer mistakes.",
+    "tags": [
+      "Marketplace UX",
+      "Seller Flow",
+      "Onboarding",
+      "Listing UX",
+      "Admin Tools"
+    ],
+    "uniqueCTA": "Open Seller Flow",
+    "detailHero": "Guiding sellers from sign-up to a complete, publish-ready listing.",
+    "productStory": "A marketplace is only as good as its listings. The work focused on the seller side: making onboarding and listing creation feel guided, so vendors publish complete, trustworthy products instead of half-finished ones that hurt buyer confidence.",
+    "problem": "Sellers drop off when onboarding is long and listing forms are confusing. Incomplete listings and unclear approval status create friction for both vendors and the marketplace team.",
+    "users": [
+      "New sellers setting up shop",
+      "Vendors managing listings",
+      "Marketplace review and admin teams",
+      "Buyers who benefit from complete listings"
+    ],
+    "solution": "Break the seller journey into clear steps: profile setup, listing creation, product detail entry, verification, and a readiness check before publishing. Status is visible at every stage so sellers always know what is left.",
+    "keyFeatures": [
+      "Guided onboarding steps",
+      "Listing creation wizard",
+      "Product detail entry",
+      "Media and pricing inputs",
+      "Verification and approval status",
+      "Publish readiness checklist",
+      "Draft and saved states",
+      "Seller dashboard overview"
+    ],
+    "uxDecisions": [
+      "Break long forms into clear, savable steps.",
+      "Show what a complete listing needs up front.",
+      "Make approval status visible at all times.",
+      "Reduce mistakes with inline guidance."
+    ],
+    "motionDirection": [
+      "Step progress through onboarding.",
+      "Listing completeness meter.",
+      "Status transitions from draft to live.",
+      "Inline validation feedback."
+    ],
+    "visualSuggestions": [
+      "Seller onboarding steps.",
+      "Listing creation wizard.",
+      "Approval status view.",
+      "Seller dashboard."
+    ]
+  },
+  {
+    "id": 30,
+    "title": "Startup Brand + Launch Identity",
+    "primaryCategory": "Branding & Design Systems" as PathwayCategory,
+    "categories": ["Branding & Design Systems", "Web & CMS Platforms"],
+    "mockupType": "branding",
+    "accentColor": "#F0ABFC",
+    "accentSoftBg": "#FDF4FF",
+    "accentBorder": "#F5D0FE",
+    "priority": 30,
+    "previewTitle": "Startup Brand + Launch Identity",
+    "previewDescription": "A brand identity pathway covering logo direction, color system, typography, graphic language, social templates, and digital launch assets.",
+    "previewProblem": "A new business needed more than a logo. It needed a practical identity system that could work across web, social, packaging, and pitch materials.",
+    "previewOutcome": "The identity was turned into a usable launch system with clear visual rules, reusable assets, and a consistent digital presence.",
+    "tags": [
+      "Brand Identity",
+      "Visual System",
+      "Launch Kit",
+      "Graphic Design",
+      "Digital Brand"
+    ],
+    "uniqueCTA": "View Brand Launch Kit",
+    "detailHero": "Building a startup brand that holds up the moment it goes live.",
+    "productStory": "A new business needs a brand that works on day one, across a website, a pitch deck, and social. The work moved past a single logo into a practical identity system the team could actually apply without a designer in the room for every asset.",
+    "problem": "Early brands often stop at a logo. Then the website, deck, and social posts all look different because there are no rules. The identity needed to be a system, not a single file.",
+    "users": [
+      "Founders launching the business",
+      "Early customers forming a first impression",
+      "Marketing and content creators",
+      "Designers applying the brand"
+    ],
+    "solution": "Create a launch-ready identity system: logo direction, color, typography, graphic language, and ready templates for social and web. The system ships with examples so the team can stay consistent as they grow.",
+    "keyFeatures": [
+      "Logo direction and usage",
+      "Color and typography system",
+      "Graphic and visual language",
+      "Social media templates",
+      "Web style direction",
+      "Pitch and presentation assets",
+      "Brand guideline reference",
+      "Reusable launch asset kit"
+    ],
+    "uxDecisions": [
+      "Design the brand as a reusable system.",
+      "Ship templates so the team stays consistent.",
+      "Make the digital use cases first-class.",
+      "Keep rules practical, not decorative."
+    ],
+    "motionDirection": [
+      "Logo construction reveal.",
+      "Color and type specimen animation.",
+      "Template cards sliding into a kit.",
+      "Before and after brand transformation."
+    ],
+    "visualSuggestions": [
+      "Brand board.",
+      "Logo and color system.",
+      "Social template set.",
+      "Launch asset kit."
+    ]
+  },
+  {
+    "id": 31,
+    "title": "Brand Motion & Social Cutdown System",
+    "primaryCategory": "Motion, Video & Lottie Systems" as PathwayCategory,
+    "categories": ["Motion, Video & Lottie Systems", "Branding & Design Systems"],
+    "mockupType": "video",
+    "accentColor": "#FCA5A5",
+    "accentSoftBg": "#FEF2F2",
+    "accentBorder": "#FECACA",
+    "priority": 31,
+    "previewTitle": "Brand Motion & Social Cutdown System",
+    "previewDescription": "A motion design system for turning brand elements into short animated content, social cutdowns, intros, outros, and reusable motion patterns.",
+    "previewProblem": "Static brand assets needed to feel more alive across social content, short videos, and launch materials.",
+    "previewOutcome": "The motion system created a more consistent visual rhythm across video content, social edits, and branded digital communication.",
+    "tags": [
+      "Motion Design",
+      "Social Video",
+      "Brand Animation",
+      "Content System",
+      "Visual Editing"
+    ],
+    "uniqueCTA": "View Motion System",
+    "detailHero": "Giving a static brand a consistent voice in motion.",
+    "productStory": "A brand that only lives in static assets feels flat on social. The work built a motion system that turns existing brand elements into short animated content, so every clip, intro, and cutdown shares the same rhythm and feels like the same brand.",
+    "problem": "Without a motion system, every video is made from scratch and they all feel slightly different. The brand loses consistency the moment it starts moving.",
+    "users": [
+      "Social and content teams",
+      "Brand and marketing leads",
+      "Editors producing cutdowns",
+      "The audience watching the content"
+    ],
+    "solution": "Build reusable motion patterns from the brand: animated logo, intros and outros, lower thirds, transitions, and social cutdown templates. Editors assemble on-brand video quickly instead of reinventing each time.",
+    "keyFeatures": [
+      "Animated logo and bumpers",
+      "Intro and outro sequences",
+      "Lower thirds and titles",
+      "Transition patterns",
+      "Social cutdown templates",
+      "Reusable motion presets",
+      "Aspect ratio variants",
+      "Export-ready delivery"
+    ],
+    "uxDecisions": [
+      "Treat motion as part of the brand system.",
+      "Make patterns reusable across clips.",
+      "Keep timing consistent so it feels familiar.",
+      "Prepare variants for each platform."
+    ],
+    "motionDirection": [
+      "Animated logo reveal.",
+      "Lower-third entrance patterns.",
+      "Transition wipes and cuts.",
+      "Social crop and reframe motion."
+    ],
+    "visualSuggestions": [
+      "Motion system overview board.",
+      "Intro and outro frames.",
+      "Lower-third examples.",
+      "Social cutdown templates."
+    ]
+  },
+  {
+    "id": 32,
+    "title": "Product Explainer UI Animation",
+    "primaryCategory": "Motion, Video & Lottie Systems" as PathwayCategory,
+    "categories": ["Motion, Video & Lottie Systems", "AI & Automation UX"],
+    "mockupType": "video",
+    "accentColor": "#F87171",
+    "accentSoftBg": "#FEF2F2",
+    "accentBorder": "#FECACA",
+    "priority": 32,
+    "previewTitle": "Product Explainer UI Animation",
+    "previewDescription": "A UI animation pathway using product screens, transitions, callouts, and lightweight motion to explain how a digital product works.",
+    "previewProblem": "Some product ideas are easier to understand when the interface is shown in motion instead of as static screens.",
+    "previewOutcome": "The animation helped communicate product value, flow, and interaction logic in a faster and more engaging way.",
+    "tags": [
+      "UI Animation",
+      "Product Explainer",
+      "Motion UX",
+      "Prototype",
+      "Demo Flow"
+    ],
+    "uniqueCTA": "Play UI Explainer",
+    "detailHero": "Showing how a product works by putting the interface in motion.",
+    "productStory": "Some products are hard to explain with static screens. The work turned key flows into a short UI animation, using real product screens, transitions, and callouts so a viewer can understand the value and the interaction logic in seconds.",
+    "problem": "Static screenshots cannot show flow. People do not understand how a product moves from one step to the next, so the value gets lost in a wall of images.",
+    "users": [
+      "Prospects evaluating the product",
+      "Sales and demo teams",
+      "Product owners pitching the idea",
+      "New users learning the flow"
+    ],
+    "solution": "Animate the product story: real screens move through the core flow, callouts highlight what matters, and lightweight motion keeps the focus on the interaction rather than decoration.",
+    "keyFeatures": [
+      "Real product screens in motion",
+      "Step-by-step flow animation",
+      "Callouts and highlights",
+      "Cursor and interaction cues",
+      "Lightweight transitions",
+      "Looping demo option",
+      "Aspect ratio variants",
+      "Export-ready delivery"
+    ],
+    "uxDecisions": [
+      "Use motion to explain flow, not to decorate.",
+      "Highlight one idea at a time.",
+      "Keep the pace fast but readable.",
+      "Show real interface, not abstract shapes."
+    ],
+    "motionDirection": [
+      "Screen-to-screen flow transitions.",
+      "Callout and highlight reveals.",
+      "Cursor movement cues.",
+      "Looping demo sequence."
+    ],
+    "visualSuggestions": [
+      "Product screen sequence.",
+      "Animated callouts.",
+      "Flow transition frames.",
+      "Looping demo preview."
+    ]
   }
 ];
 
+/** Every category a pathway belongs to (its primary plus any extras). */
+export const pathwayCategories = (pathway: ProductPathway): PathwayCategory[] =>
+  pathway.categories && pathway.categories.length > 0
+    ? pathway.categories
+    : [pathway.primaryCategory];
+
 /** True when a pathway belongs to the given category ("All Pathways" matches all). */
 export const pathwayInCategory = (pathway: ProductPathway, category: PathwayCategory): boolean =>
-  category === "All Pathways" || pathway.primaryCategory === category;
+  category === "All Pathways" || pathwayCategories(pathway).includes(category);
 
-/** Pathways for a category, ordered by priority (strongest first). */
-export const getPathwaysForCategory = (category: PathwayCategory): ProductPathway[] =>
-  PRODUCT_PATHWAYS.filter((p) => pathwayInCategory(p, category)).sort(
-    (a, b) => a.priority - b.priority
+/**
+ * "All Pathways" order. Instead of grouping by category, the view leads with a
+ * hand-picked, round-robin sequence so range is obvious immediately (no run of
+ * dashboards or same-category cards up top), then interleaves the remaining
+ * pathways across categories so the mix continues all the way down.
+ */
+const ALL_LEAD_ORDER: number[] = [
+  1, // Workforce Time & Resource Management — Dashboard
+  5, // Mobile Booking & Service Flow — Mobile
+  9, // Service Business Website + CMS — Web/CMS
+  11, // AI + Figma MCP Design Workflow — AI
+  15, // Brand Identity + Digital System — Branding
+  10, // E-Commerce Product Catalog — Commerce
+  19, // Lottie Micro Interaction System — Motion/Lottie
+  20, // Design-to-Development Handoff System — Handoff
+  2, // Enterprise Operations Command Center — Dashboard/Admin
+  6, // Marketplace Mobile Experience — Marketplace/Mobile
+  25, // Portfolio Website + AI Rapid Production — Web/AI
+  18, // Podcast Production & Video Editing — Motion/Video
+];
+
+/** Order used to interleave the remaining pathways after the lead sequence. */
+const ROUND_ROBIN_CATEGORIES: PathwayCategory[] = CATEGORIES.filter(
+  (c) => c !== "All Pathways"
+);
+
+const getAllPathwaysOrdered = (): ProductPathway[] => {
+  const byId = new Map(PRODUCT_PATHWAYS.map((p) => [p.id, p]));
+  const used = new Set<number>();
+  const ordered: ProductPathway[] = [];
+
+  // 1. Hand-picked lead sequence.
+  for (const id of ALL_LEAD_ORDER) {
+    const p = byId.get(id);
+    if (p && !used.has(p.id)) {
+      ordered.push(p);
+      used.add(p.id);
+    }
+  }
+
+  // 2. Remaining pathways, bucketed by primary category and interleaved
+  //    round-robin so adjacent cards keep switching domains.
+  const buckets = ROUND_ROBIN_CATEGORIES.map((cat) =>
+    PRODUCT_PATHWAYS.filter((p) => !used.has(p.id) && p.primaryCategory === cat).sort(
+      (a, b) => a.priority - b.priority
+    )
   );
+
+  let added = true;
+  while (added) {
+    added = false;
+    for (const bucket of buckets) {
+      const next = bucket.shift();
+      if (next && !used.has(next.id)) {
+        ordered.push(next);
+        used.add(next.id);
+        added = true;
+      }
+    }
+  }
+
+  // 3. Safety net: anything not placed yet (shouldn't happen) by priority.
+  for (const p of [...PRODUCT_PATHWAYS].sort((a, b) => a.priority - b.priority)) {
+    if (!used.has(p.id)) {
+      ordered.push(p);
+      used.add(p.id);
+    }
+  }
+
+  return ordered;
+};
+
+/**
+ * Pathways for a category. "All Pathways" uses the mixed round-robin order;
+ * a specific category filters to its members, ordered by priority.
+ */
+export const getPathwaysForCategory = (category: PathwayCategory): ProductPathway[] =>
+  category === "All Pathways"
+    ? getAllPathwaysOrdered()
+    : PRODUCT_PATHWAYS.filter((p) => pathwayInCategory(p, category)).sort(
+        (a, b) => a.priority - b.priority
+      );
 
 /** Live counts per category, derived from the data (never hard-coded). */
 export const getCategoryCounts = (): Record<PathwayCategory, number> => {

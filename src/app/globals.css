@@ -197,12 +197,21 @@ body {
   letter-spacing: -0.01em;
   line-height: 1.7;
   min-height: 100vh;
+  /* Clip horizontal overflow at the scroll root so intentionally
+     off-canvas decorative layers never produce a sideways scrollbar.
+     `clip` keeps vertical scroll, sticky positioning and Lenis intact. */
+  overflow-x: clip;
 }
 
 body {
   /* Base surface is token-driven so it flips with the theme. The
      atmospheric depth lives in the fixed <GalaxyBackground /> layer. */
   background-color: var(--color-bg);
+  /* Guard against horizontal scroll from decorative, intentionally
+     off-canvas layers (hero domain-flow streaks, nebula bleed, parked
+     scroll scenes). `clip` — not `hidden` — so it never establishes a
+     scroll container that would break the sticky nav/filter or Lenis. */
+  overflow-x: clip;
 }
 
 /* Light backdrop — not a flat sheet of white. A soft vertical wash from

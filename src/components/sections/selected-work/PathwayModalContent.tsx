@@ -103,7 +103,14 @@ export function PathwayModalContent({ pathway }: { pathway: ProductPathway }) {
               scrolling="no"
             />
           ) : (
-            <img src={pathway.imageUrl} alt={pathway.title} className="h-full w-full object-cover object-center" />
+            // eslint-disable-next-line @next/next/no-img-element -- in-modal preview; lazy raw <img> avoids next/image fill layout constraints
+            <img
+              src={pathway.imageUrl}
+              alt={pathway.title}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover object-center"
+            />
           )
         ) : (
           <PathwayPlaceholder type={pathway.mockupType} accent={pathway.accentColor} />

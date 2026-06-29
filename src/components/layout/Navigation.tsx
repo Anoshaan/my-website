@@ -63,8 +63,10 @@ export function Navigation() {
         if (now - lastUpTs > UP_IDLE_RESET_MS) upAccum = 0;
         lastUpTs = now;
         upAccum += -dy;
-        // Disable scroll-up reveal on the Selected Work page (so it doesn't overlap the floating filter)
-        if (upAccum >= SHOW_THRESHOLD && !pathname.startsWith("/selected-work")) {
+        // Reveal only on sustained upward intent. The Selected Work filter now
+        // lives in a right-side rail / bottom pill, so the top nav no longer
+        // conflicts with it and uses the same calm reveal as every other page.
+        if (upAccum >= SHOW_THRESHOLD) {
           setHidden(false);
         }
       }

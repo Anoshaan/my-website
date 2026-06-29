@@ -186,18 +186,21 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
         <div className="flex flex-col items-center gap-8 text-center">
           <div className="px-4">
             <h3 id="category-filter-heading" className="text-3xl font-medium tracking-tight">
-              Find the work that matches what you’re building
+              Explore the range of product thinking
             </h3>
             <p className="mx-auto mt-3 max-w-2xl text-base opacity-70">
-              Choose a direction and the page will shape itself around the kind of product story you
-              want to explore.
+              A curated view of product platforms, mobile flows, web systems, AI-assisted workflows,
+              brand foundations, motion work, and launch-ready handoff processes. Organized to show
+              how I approach different product challenges from idea to execution.
             </p>
           </div>
 
           <div className="relative mx-auto w-full max-w-[1200px] px-4">
-            <div className="hidden md:flex flex-col items-center gap-3 pb-2">
-              <div className="flex justify-center gap-3">{renderButtons().slice(0, 5)}</div>
-              <div className="flex justify-center gap-3">{renderButtons().slice(5)}</div>
+            {/* Auto-balancing wrapped row: chips reflow across rows as the
+                viewport narrows instead of being clipped by a fixed 5/4 split.
+                Rendered once (the old slice() called renderButtons twice). */}
+            <div className="hidden md:flex flex-wrap justify-center gap-3 pb-2">
+              {renderButtons()}
             </div>
             <div className="flex md:hidden justify-center w-full">
               <select 
@@ -221,41 +224,39 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
         </div>
       </div>
 
-      {/* Floating filter bar — soft, no heavy shadow. */}
+      {/*
+        Mobile/tablet sticky filter — a compact dropdown pinned to the BOTTOM of
+        the viewport once the inline filter scrolls away. Bottom placement keeps
+        it clear of the main navigation up top and never blocks the cards. On
+        lg+, the vertical PathwayRail (rendered beside the cards) takes over, so
+        this is hidden there.
+      */}
       <div
-        className={`pointer-events-none fixed left-1/2 top-4 z-50 w-fit max-w-[95vw] -translate-x-1/2 transition-all duration-500 ease-out ${
-          isFloating ? "translate-y-0 opacity-100" : "-translate-y-8 opacity-0"
+        className={`pointer-events-none fixed bottom-4 left-1/2 z-50 w-fit max-w-[95vw] -translate-x-1/2 lg:hidden transition-all duration-500 ease-out ${
+          isFloating ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         }`}
       >
-        <div
-          className={`pointer-events-auto hidden md:flex flex-col items-center justify-center gap-2 rounded-3xl border border-[var(--color-line)] bg-[var(--color-bg)]/85 p-3 backdrop-blur-xl transition-transform duration-300 hide-scrollbar lg:p-4 ${
-            isFloating ? "scale-100" : "scale-95"
-          }`}
-        >
-          <div className="flex justify-center gap-2">{renderButtons().slice(0, 5)}</div>
-          <div className="flex justify-center gap-2">{renderButtons().slice(5)}</div>
-        </div>
-        <div
-          className={`pointer-events-auto flex md:hidden max-h-[60vh] flex-wrap items-center justify-center gap-2 rounded-3xl border border-[var(--color-line)] bg-[var(--color-bg)]/85 p-2 backdrop-blur-xl transition-transform duration-300 hide-scrollbar ${
-            isFloating ? "scale-100" : "scale-95"
-          }`}
-        >
-            <select 
-              value={activeCategory} 
+        <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-[var(--color-line)] bg-[var(--color-bg)]/90 py-1.5 pl-4 pr-1.5 shadow-lg backdrop-blur-xl">
+          <span className="text-xs font-medium opacity-55">Pathway</span>
+          <div className="relative">
+            <select
+              aria-label="Filter pathways"
+              value={activeCategory}
               onChange={(e) => onSelectCategory(e.target.value as PathwayCategory)}
-              className="w-[240px] appearance-none rounded-full border border-transparent bg-transparent px-4 py-2 text-sm font-medium focus:outline-none"
+              className="w-[210px] appearance-none rounded-full border border-[var(--color-line)] bg-[var(--color-surface)] py-2 pl-4 pr-9 text-sm font-medium focus:outline-none"
               style={{
-                 backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M4 6l4 4 4-4'/%3e%3c/svg%3e")`,
-                 backgroundRepeat: 'no-repeat',
-                 backgroundPosition: 'right 12px center'
+                backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M4 6l4 4 4-4'/%3e%3c/svg%3e")`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "right 14px center",
               }}
             >
-              {CATEGORY_META.map(meta => (
+              {CATEGORY_META.map((meta) => (
                 <option key={meta.label} value={meta.label}>
                   {meta.label} ({counts[meta.label] ?? 0})
                 </option>
               ))}
             </select>
+          </div>
         </div>
       </div>
     </>
