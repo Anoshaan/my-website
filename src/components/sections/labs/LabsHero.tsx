@@ -134,10 +134,10 @@ export function LabsHero() {
           <Reveal delay={0.2}>
             <div className="labs-intro-desc flex flex-col gap-4">
               <p>
-                A collection of product journeys showing how ideas move from early problem framing to UX structure, interface design, system thinking, and launch-ready experiences.
+                A focused collection of product, AI, brand, motion, and handoff systems showing how ideas move from early client conversations into structured UX, clear interfaces, launch-ready assets, and scalable product experiences.
               </p>
               <p className="text-sm opacity-60">
-                Experience-led product studies shaped from real workflows, product patterns, and design problems I have worked across.
+                Each pathway shows how I think through the problem, shape the user journey, design the interface, guide the handoff, and use motion or AI where it helps the product feel clearer.
               </p>
             </div>
           </Reveal>

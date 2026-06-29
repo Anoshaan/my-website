@@ -1,5 +1,6 @@
 import React from "react";
 import type { CaseStudy } from "@/lib/case-studies";
+import { LabsEmbed } from "@/components/sections/labs/LabsEmbed";
 import { ChronosMockup } from "./ChronosMockup";
 import { ScrollingImage } from "./ScrollingImage";
 import {
@@ -56,7 +57,21 @@ type Props = {
   icon: AnimatedIconName;
 };
 
+const EMBED_REGISTRY: Record<string, string> = {
+  "workforce-time-resource-platform": "/labs/case-study-1.html",
+  "predictive-analytics-intelligence": "/labs/case-study-3.html",
+  "enterprise-software-website": "/labs/case-study-2.html",
+  "smart-food-court-ordering": "/labs/case-study-5.html",
+  "cannabis-commerce-wellness": "/labs/case-study-4.html",
+  "pet-centric-social": "/labs/case-study-6.html",
+  "mental-wellness-tracking": "/labs/case-study-7.html",
+  "educational-learning-revision": "/labs/case-study-8.html",
+};
+
 export function CaseStudyMedia({ caseStudy, index, icon }: Props) {
+  const embedUrl = EMBED_REGISTRY[caseStudy.slug];
+  if (embedUrl) return <LabsEmbed src={embedUrl} title={caseStudy.title} />;
+
   const Bespoke = MOCKUP_REGISTRY[caseStudy.slug];
   if (Bespoke) return <Bespoke />;
 

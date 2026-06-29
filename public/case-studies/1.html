@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WorkPulse Animated Workforce Dashboard</title>
+  <style>
+    :root {
+      --bg: #f5f8fc;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --border: #e5edf7;
+      --text: #0f172a;
+      --muted: #667085;
+      --soft-muted: #98a2b3;
+      --blue: #2563eb;
+      --blue-soft: #eaf2ff;
+      --green: #16a34a;
+      --green-soft: #e9f9ef;
+      --purple: #7c3aed;
+      --purple-soft: #f1eaff;
+      --red: #ef4444;
+      --red-soft: #fff0f0;
+      --amber: #f59e0b;
+      --amber-soft: #fff7e6;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 10px 28px rgba(15, 23, 42, 0.06);
+      --radius-xl: 22px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(22, 163, 74, 0.10), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .stage {
+      width: min(100vw, 1600px);
+      aspect-ratio: 16 / 9;
+      min-height: 720px;
+      background: linear-gradient(180deg, #fbfdff 0%, #f5f8fc 100%);
+      border: 1px solid rgba(229, 237, 247, 0.9);
+      box-shadow: 0 35px 90px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(37, 99, 235, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37, 99, 235, 0.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      pointer-events: none;
+      mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+    }
+
+    .topbar {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px 0 22px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(18px);
+      position: relative;
+      z-index: 4;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 780;
+      letter-spacing: -0.03em;
+      font-size: 19px;
+    }
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      color: white;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      box-shadow: 0 9px 20px rgba(37, 99, 235, 0.28);
+      animation: logoPulse 4.5s ease-in-out infinite;
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    .top-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 720;
+      letter-spacing: -0.02em;
+      margin-left: 30px;
+    }
+
+    .menu-icon {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      gap: 3px;
+    }
+
+    .menu-icon span {
+      display: block;
+      height: 2px;
+      border-radius: 999px;
+      background: #475467;
+    }
+
+    .top-left,
+    .top-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .search {
+      width: 360px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #f7f9fc;
+      color: var(--muted);
+      font-size: 13px;
+      margin-right: 18px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      margin-left: 8px;
+      position: relative;
+      color: #475467;
+    }
+
+    .notification-dot {
+      position: absolute;
+      top: -4px;
+      right: -3px;
+      width: 16px;
+      height: 16px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: white;
+      background: var(--red);
+      font-size: 9px;
+      font-weight: 800;
+      border: 2px solid white;
+      animation: pingDot 2.8s infinite;
+    }
+
+    @keyframes pingDot {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.18); }
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-left: 16px;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e293b, #f59e0b);
+      box-shadow: inset 0 0 0 2px white, 0 8px 20px rgba(15, 23, 42, 0.14);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar::before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #f7c79b;
+    }
+
+    .avatar::after {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 22px;
+      width: 25px;
+      height: 20px;
+      border-radius: 16px 16px 0 0;
+      background: #111827;
+    }
+
+    .profile strong {
+      display: block;
+      font-size: 12px;
+      line-height: 1.1;
+    }
+
+    .profile span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      height: calc(100% - 62px);
+      position: relative;
+      z-index: 2;
+    }
+
+    .sidebar {
+      padding: 20px 16px;
+      background: rgba(255, 255, 255, 0.75);
+      border-right: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 7px;
+    }
+
+    .nav-item {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px;
+      border-radius: 13px;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 650;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-item svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2;
+    }
+
+    .nav-item.active {
+      color: var(--blue);
+      background: linear-gradient(90deg, #eef5ff, #f7fbff);
+    }
+
+    .nav-item.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
+      bottom: 9px;
+      width: 3px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .tracking-card,
+    .upgrade-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow-soft);
+      padding: 15px;
+    }
+
+    .tracking-head {
+      display: flex;
+      justify-content: space-between;
+      color: #344054;
+      font-size: 11px;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--green);
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 11px;
+    }
+
+    .live::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 6px rgba(22, 163, 74, 0.12);
+      animation: livePulse 1.8s infinite;
+    }
+
+    @keyframes livePulse {
+      0%, 100% { box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.10); }
+      50% { box-shadow: 0 0 0 9px rgba(22, 163, 74, 0.02); }
+    }
+
+    .timer {
+      margin-top: 28px;
+      font-size: 22px;
+      font-weight: 790;
+      letter-spacing: -0.04em;
+    }
+
+    .timer-label {
+      color: #344054;
+      font-size: 12px;
+      line-height: 1.55;
+      margin-top: 5px;
+    }
+
+    .primary-btn {
+      height: 37px;
+      margin-top: 14px;
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      color: white;
+      font-weight: 760;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .upgrade-card {
+      margin-top: auto;
+      background: linear-gradient(180deg, #f8fbff, #eef6ff);
+    }
+
+    .upgrade-card strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .upgrade-card p {
+      margin: 0 0 14px;
+      color: #475467;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .ghost-btn {
+      width: 100%;
+      height: 34px;
+      border-radius: 9px;
+      border: 1px solid #bfd4f8;
+      color: var(--blue);
+      background: white;
+      font-weight: 750;
+    }
+
+    .content {
+      padding: 28px 32px 28px;
+      overflow: hidden;
+    }
+
+    .page-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .page-head h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: -0.06em;
+    }
+
+    .page-head p {
+      margin: 8px 0 0;
+      color: #475467;
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .date-select,
+    .export-btn {
+      height: 40px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .date-select {
+      border: 1px solid var(--border);
+      background: white;
+      color: #344054;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .export-btn {
+      border: 0;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      padding: 0 17px;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .metric-card,
+    .panel {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card {
+      min-height: 140px;
+      padding: 18px;
+      animation: cardRise 700ms ease both;
+    }
+
+    .metric-card:nth-child(2) { animation-delay: 80ms; }
+    .metric-card:nth-child(3) { animation-delay: 160ms; }
+    .metric-card:nth-child(4) { animation-delay: 240ms; }
+    .metric-card:nth-child(5) { animation-delay: 320ms; }
+
+    @keyframes cardRise {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .metric-card::before,
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.75) 45%, transparent 68%);
+      transform: translateX(-120%);
+      animation: sheen 8s ease-in-out infinite;
+    }
+
+    .metric-card:nth-child(2)::before,
+    .panel:nth-child(2)::before { animation-delay: 1.2s; }
+    .metric-card:nth-child(3)::before,
+    .panel:nth-child(3)::before { animation-delay: 2.1s; }
+
+    @keyframes sheen {
+      0%, 70%, 100% { transform: translateX(-120%); }
+      84% { transform: translateX(120%); }
+    }
+
+    .metric-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: #1f2937;
+      font-weight: 760;
+    }
+
+    .metric-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .metric-icon.green { background: var(--green-soft); color: var(--green); }
+    .metric-icon.purple { background: var(--purple-soft); color: var(--purple); }
+    .metric-icon.red { background: var(--red-soft); color: var(--red); }
+
+    .metric-value {
+      margin-top: 14px;
+      font-size: 24px;
+      letter-spacing: -0.05em;
+      font-weight: 820;
+    }
+
+    .metric-change {
+      margin-top: 7px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .metric-change.down { color: #dc2626; }
+
+    .sparkline {
+      position: absolute;
+      right: 18px;
+      bottom: 17px;
+      width: 96px;
+      height: 34px;
+    }
+
+    .sparkline path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 150;
+      stroke-dashoffset: 150;
+      animation: drawSpark 2.4s ease-in-out infinite;
+    }
+
+    @keyframes drawSpark {
+      0% { stroke-dashoffset: 150; opacity: .35; }
+      45%, 70% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: -150; opacity: .35; }
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.72fr 0.78fr;
+      grid-template-rows: 300px 1fr;
+      gap: 16px;
+      height: calc(100% - 220px);
+      min-height: 432px;
+    }
+
+    .panel {
+      padding: 18px;
+      animation: cardRise 700ms ease both;
+      animation-delay: 360ms;
+    }
+
+    .panel.large-chart {
+      grid-column: 1 / 2;
+    }
+
+    .panel.activities {
+      grid-column: 3 / 4;
+      grid-row: 1 / 3;
+    }
+
+    .panel.table-panel {
+      grid-column: 1 / 2;
+      grid-row: 2 / 3;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: -0.03em;
+    }
+
+    .small-select {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      height: 32px;
+      padding: 0 10px;
+      font-size: 12px;
+      color: #344054;
+      background: white;
+      font-weight: 650;
+    }
+
+    .legend {
+      display: flex;
+      gap: 18px;
+      font-size: 12px;
+      color: #344054;
+      margin: 3px 0 18px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--blue);
+    }
+
+    .dot.light-blue { background: #93c5fd; }
+    .dot.red { background: #fb7185; }
+    .dot.green { background: var(--green); border-radius: 50%; }
+    .dot.amber { background: var(--amber); border-radius: 50%; }
+    .dot.gray { background: #cbd5e1; border-radius: 50%; }
+
+    .bar-chart {
+      height: 200px;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+    }
+
+    .y-axis {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 11px;
+      padding-bottom: 26px;
+    }
+
+    .bars-wrap {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: end;
+      gap: 17px;
+      padding: 8px 3px 28px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .bars-wrap::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 6px;
+      bottom: 28px;
+      background: repeating-linear-gradient(to bottom, transparent 0, transparent 39px, #edf2f7 40px);
+      pointer-events: none;
+    }
+
+    .bar-group {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      position: relative;
+    }
+
+    .stack {
+      width: 28px;
+      height: var(--h);
+      max-height: 162px;
+      display: flex;
+      flex-direction: column-reverse;
+      border-radius: 6px 6px 0 0;
+      overflow: hidden;
+      transform-origin: bottom;
+      animation: growBar 1.3s cubic-bezier(.2,.9,.25,1.08) both;
+      animation-delay: var(--delay);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.12);
+    }
+
+    @keyframes growBar {
+      from { transform: scaleY(0.08); opacity: .35; }
+      to { transform: scaleY(1); opacity: 1; }
+    }
+
+    .seg.billable { height: 54%; background: linear-gradient(180deg, #3b82f6, #2563eb); }
+    .seg.nonbillable { height: 31%; background: #93c5fd; }
+    .seg.overtime { height: 15%; background: #fb7185; }
+
+    .bar-label {
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: #475467;
+      font-size: 10px;
+      line-height: 1.2;
+      width: 54px;
+    }
+
+    .donut-wrap {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      align-items: center;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .donut {
+      width: 154px;
+      height: 154px;
+      border-radius: 50%;
+      background:
+        conic-gradient(var(--green) 0 28%, var(--blue) 28% 72%, var(--amber) 72% 83%, #cbd5e1 83% 100%);
+      position: relative;
+      display: grid;
+      place-items: center;
+      animation: rotateIn 1.6s cubic-bezier(.18,.9,.2,1) both, donutFloat 4.4s ease-in-out infinite 1.6s;
+    }
+
+    .donut::before {
+      content: "";
+      position: absolute;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: inset 0 0 0 1px #e5edf7;
+    }
+
+    @keyframes rotateIn {
+      from { transform: rotate(-90deg) scale(.86); opacity: 0; }
+      to { transform: rotate(0deg) scale(1); opacity: 1; }
+    }
+
+    @keyframes donutFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .donut-center {
+      position: relative;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .donut-center strong {
+      display: block;
+      font-size: 26px;
+      letter-spacing: -0.05em;
+    }
+
+    .donut-center span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 14px;
+      font-size: 12px;
+      color: #344054;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-row b {
+      color: #475467;
+      font-weight: 760;
+    }
+
+    .panel-link {
+      height: 38px;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #bfd4f8;
+      color: var(--blue);
+      background: linear-gradient(180deg, #ffffff, #f4f8ff);
+      font-weight: 760;
+      margin-top: 22px;
+    }
+
+    .activities-list {
+      display: grid;
+      gap: 0;
+      margin-top: 10px;
+    }
+
+    .activity {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      padding: 16px 0;
+      border-bottom: 1px solid #edf2f7;
+      animation: slideActivity 4.8s ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    .activity:nth-child(2) { --delay: .4s; }
+    .activity:nth-child(3) { --delay: .8s; }
+    .activity:nth-child(4) { --delay: 1.2s; }
+    .activity:nth-child(5) { --delay: 1.6s; }
+
+    @keyframes slideActivity {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(3px); }
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .activity-icon.blue { background: var(--blue-soft); color: var(--blue); }
+    .activity-icon.purple { background: var(--purple-soft); color: var(--purple); }
+
+    .activity strong {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+
+    .activity p {
+      margin: 0;
+      color: #475467;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .activity time {
+      display: block;
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th {
+      text-align: left;
+      color: #344054;
+      font-size: 11px;
+      background: #f8fafc;
+      padding: 10px 8px;
+      font-weight: 780;
+    }
+
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #edf2f7;
+      color: #1f2937;
+      font-weight: 590;
+    }
+
+    .member {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .face {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #64748b, #f59e0b);
+      box-shadow: inset 0 0 0 2px white;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 760;
+    }
+
+    .pill.high { color: var(--green); background: var(--green-soft); }
+    .pill.medium { color: #b45309; background: var(--amber-soft); }
+    .pill.low { color: #dc2626; background: var(--red-soft); }
+
+    .horizontal-bars {
+      display: grid;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .hbar-row {
+      display: grid;
+      grid-template-columns: 1fr 70px;
+      gap: 12px;
+      align-items: center;
+      font-size: 12px;
+      color: #1f2937;
+      font-weight: 700;
+    }
+
+    .hbar-label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .track {
+      height: 6px;
+      background: #edf2f7;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      width: var(--w);
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2563eb, #0ea5e9);
+      animation: fillWidth 1.6s cubic-bezier(.18,.9,.2,1) both;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes fillWidth {
+      from { width: 0; }
+      to { width: var(--w); }
+    }
+
+    .path-line {
+      position: absolute;
+      width: 160px;
+      height: 80px;
+      opacity: .75;
+      pointer-events: none;
+      color: rgba(37, 99, 235, .18);
+    }
+
+    .path-line.one {
+      top: 88px;
+      right: 420px;
+    }
+
+    .path-line.two {
+      bottom: 78px;
+      left: 245px;
+      color: rgba(22, 163, 74, .16);
+    }
+
+    .path-line path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-dasharray: 8 10;
+      animation: dashMove 12s linear infinite;
+    }
+
+    @keyframes dashMove {
+      to { stroke-dashoffset: -260; }
+    }
+
+    svg { display: block; }
+
+    @media (max-width: 1100px) {
+      .stage {
+        width: 100vw;
+        min-height: 100vh;
+        aspect-ratio: auto;
+      }
+
+      .layout {
+        grid-template-columns: 76px 1fr;
+      }
+
+      .sidebar {
+        padding: 16px 10px;
+      }
+
+      .nav-item span,
+      .tracking-card,
+      .upgrade-card,
+      .brand span,
+      .profile div,
+      .search {
+        display: none;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        height: auto;
+        overflow: auto;
+      }
+
+      .panel.activities,
+      .panel.table-panel,
+      .panel.large-chart {
+        grid-column: auto;
+        grid-row: auto;
+      }
+    }
+  </style>
+  <style>
+    /* perf-tune: this preview is mounted alongside others on the portfolio
+       page, so any perpetual animation multiplies into scroll jank. Play
+       every entrance once, settle, then stop. Keep compositing cheap. */
+    *, *::before, *::after {
+      animation-iteration-count: 1 !important;
+      animation-fill-mode: both !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" aria-label="Animated workforce time and resource management dashboard">
+    <svg class="path-line one" viewBox="0 0 160 80" aria-hidden="true">
+      <path d="M4 58 C42 8, 85 14, 156 28" />
+    </svg>
+    <svg class="path-line two" viewBox="0 0 160 80" aria-hidden="true">
+      <path d="M2 18 C38 62, 90 68, 154 36" />
+    </svg>
+
+    <header class="topbar">
+      <div class="top-left">
+        <div class="brand">
+          <div class="logo">W</div>
+          <span>WorkPulse</span>
+        </div>
+        <div class="top-title">
+          <div class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></div>
+          <span>Dashboard</span>
+        </div>
+      </div>
+
+      <div class="top-right">
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          Search projects, tasks, people...
+        </div>
+        <div class="icon-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span class="notification-dot">3</span>
+        </div>
+        <div class="icon-btn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 1 1 5.8 1c-.9 1.4-2.9 1.6-2.9 3"/><path d="M12 17h.01"/></svg>
+        </div>
+        <div class="profile">
+          <div class="avatar"></div>
+          <div><strong>Anoshan Design</strong><span>Product Owner</span></div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#667085"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <section class="layout">
+      <aside class="sidebar">
+        <nav class="nav" aria-label="Dashboard navigation">
+          <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg><span>Dashboard</span></div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Time Tracking</span></div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16v13H4z"/><path d="M8 7V4h8v3"/></svg><span>Projects</span></div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Tasks</span></div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Resources</span></div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="m9 14 2 2 4-4"/></svg><span>Timesheets</span></div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="m7 14 3-3 3 2 5-7"/></svg><span>Reports</span></div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg><span>Calendar</span></div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M8 8h8"/><path d="M8 12h8"/><path d="M8 16h5"/></svg><span>Invoices</span></div>
+          <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 1 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.3 7A2 2 0 1 1 7.1 4.2l.1.1a1.7 1.7 0 0 0 1.9.3h.1a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6h.1a1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 1 1 20 7.1l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.8 1Z"/></svg><span>Settings</span></div>
+        </nav>
+
+        <div class="tracking-card">
+          <div class="tracking-head"><span>Tracking Status</span><span class="live">Live</span></div>
+          <div class="timer" id="timer">02:45:18</div>
+          <div class="timer-label">Design System<br/>WorkPulse Redesign</div>
+          <button class="primary-btn">End Session</button>
+        </div>
+
+        <div class="upgrade-card">
+          <strong>💎 Upgrade to Pro</strong>
+          <p>Unlock advanced reports, custom roles, and workload forecasting.</p>
+          <button class="ghost-btn">Upgrade Now</button>
+        </div>
+      </aside>
+
+      <section class="content">
+        <div class="page-head">
+          <div>
+            <h1>Dashboard</h1>
+            <p>Overview of your team's productivity and project status.</p>
+          </div>
+          <div class="actions">
+            <div class="date-select">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+              May 12 – May 18, 2025
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <button class="export-btn">Export Report</button>
+          </div>
+        </div>
+
+        <section class="metrics">
+          <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Total Hours Tracked</span><span class="metric-icon green"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div>
+            <div class="metric-value">1,248h 35m</div>
+            <div class="metric-change">+12.5% vs last week</div>
+            <svg class="sparkline" viewBox="0 0 100 36" style="color:#16a34a"><path d="M3 23 C14 21, 18 31, 30 28 S48 18, 58 22 S70 33, 79 19 S89 18, 97 25"/></svg>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Active Projects</span><span class="metric-icon"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16v13H4z"/><path d="M8 7V4h8v3"/></svg></span></div>
+            <div class="metric-value">18</div>
+            <div class="metric-change">+2 vs last week</div>
+            <svg class="sparkline" viewBox="0 0 100 36" style="color:#2563eb"><path d="M3 25 C16 24, 20 18, 31 23 S47 28, 55 19 S69 8, 80 18 S91 23, 97 20"/></svg>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Team Utilization</span><span class="metric-icon green"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span></div>
+            <div class="metric-value">82%</div>
+            <div class="metric-change">+6% vs last week</div>
+            <svg class="sparkline" viewBox="0 0 100 36" style="color:#16a34a"><path d="M3 26 C16 27, 23 24, 34 22 S50 29, 60 18 S76 8, 86 21 S92 23, 98 22"/></svg>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Pending Tasks</span><span class="metric-icon purple"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span></div>
+            <div class="metric-value">32</div>
+            <div class="metric-change down">-8 vs last week</div>
+            <svg class="sparkline" viewBox="0 0 100 36" style="color:#7c3aed"><path d="M3 25 C15 24, 23 19, 35 23 S50 29, 60 19 S74 7, 84 20 S92 26, 98 22"/></svg>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span class="metric-label">Overtime Hours</span><span class="metric-icon red"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg></span></div>
+            <div class="metric-value">48h 15m</div>
+            <div class="metric-change down">-5% vs last week</div>
+            <svg class="sparkline" viewBox="0 0 100 36" style="color:#ef4444"><path d="M3 20 C13 19, 20 28, 31 25 S44 20, 54 25 S67 7, 81 17 S92 27, 98 24"/></svg>
+          </article>
+        </section>
+
+        <section class="dashboard-grid">
+          <article class="panel large-chart">
+            <div class="panel-title"><h2>Time Tracking Overview</h2><button class="small-select">This Week⌄</button></div>
+            <div class="legend"><span><i class="dot"></i>Billable</span><span><i class="dot light-blue"></i>Non-billable</span><span><i class="dot red"></i>Overtime</span></div>
+            <div class="bar-chart">
+              <div class="y-axis"><span>200h</span><span>150h</span><span>100h</span><span>50h</span><span>0h</span></div>
+              <div class="bars-wrap">
+                <div class="bar-group"><div class="stack" style="--h:142px;--delay:.1s"><span class="seg billable"></span><span class="seg nonbillable"></span><span class="seg overtime"></span></div><span class="bar-label">May 12<br/>Mon</span></div>
+                <div class="bar-group"><div class="stack" style="--h:166px;--delay:.2s"><span class="seg billable"></span><span class="seg nonbillable"></span><span class="seg overtime"></span></div><span class="bar-label">May 13<br/>Tue</span></div>
+                <div class="bar-group"><div class="stack" style="--h:148px;--delay:.3s"><span class="seg billable"></span><span class="seg nonbillable"></span><span class="seg overtime"></span></div><span class="bar-label">May 14<br/>Wed</span></div>
+                <div class="bar-group"><div class="stack" style="--h:174px;--delay:.4s"><span class="seg billable"></span><span class="seg nonbillable"></span><span class="seg overtime"></span></div><span class="bar-label">May 15<br/>Thu</span></div>
+                <div class="bar-group"><div class="stack" style="--h:152px;--delay:.5s"><span class="seg billable"></span><span class="seg nonbillable"></span><span class="seg overtime"></span></div><span class="bar-label">May 16<br/>Fri</span></div>
+                <div class="bar-group"><div class="stack" style="--h:158px;--delay:.6s"><span class="seg billable"></span><span class="seg nonbillable"></span><span class="seg overtime"></span></div><span class="bar-label">May 17<br/>Sat</span></div>
+                <div class="bar-group"><div class="stack" style="--h:138px;--delay:.7s"><span class="seg billable"></span><span class="seg nonbillable"></span><span class="seg overtime"></span></div><span class="bar-label">May 18<br/>Sun</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-title"><h2>Project Status</h2></div>
+            <div class="donut-wrap">
+              <div class="donut"><div class="donut-center"><strong>18</strong><span>Total Projects</span></div></div>
+              <div class="status-list">
+                <div class="status-row"><span><i class="dot green"></i> Completed</span><b>5 (28%)</b></div>
+                <div class="status-row"><span><i class="dot"></i> In Progress</span><b>8 (44%)</b></div>
+                <div class="status-row"><span><i class="dot amber"></i> On Hold</span><b>2 (11%)</b></div>
+                <div class="status-row"><span><i class="dot gray"></i> Not Started</span><b>3 (17%)</b></div>
+              </div>
+            </div>
+            <button class="panel-link">View All Projects</button>
+          </article>
+
+          <article class="panel activities">
+            <div class="panel-title"><h2>Recent Activities</h2></div>
+            <div class="activities-list">
+              <div class="activity"><div class="activity-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></div><div><strong>Design System v2.1</strong><p>Task completed by Sarah J.</p><time>10 min ago</time></div></div>
+              <div class="activity"><div class="activity-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><strong>Mobile App Redesign</strong><p>Time logged: 2h 15m</p><time>1 hour ago</time></div></div>
+              <div class="activity"><div class="activity-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg></div><div><strong>Marketing Website</strong><p>Task completed by Mike L.</p><time>2 hours ago</time></div></div>
+              <div class="activity"><div class="activity-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg></div><div><strong>API Integration</strong><p>Comment added by James P.</p><time>3 hours ago</time></div></div>
+              <div class="activity"><div class="activity-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><strong>Dashboard UI Kit</strong><p>Time logged: 3h 40m</p><time>5 hours ago</time></div></div>
+            </div>
+            <button class="panel-link" style="position:absolute;left:18px;right:18px;bottom:18px;width:calc(100% - 36px)">View All Activity</button>
+          </article>
+
+          <article class="panel table-panel">
+            <div class="panel-title"><h2>Team Utilization</h2></div>
+            <table>
+              <thead><tr><th>Team Member</th><th>Role</th><th>Tracked Hours</th><th>Utilization</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><span class="member"><i class="face"></i>Sarah Johnson</span></td><td>UI/UX Designer</td><td>38h 20m</td><td>92%</td><td><span class="pill high">● High</span></td></tr>
+                <tr><td><span class="member"><i class="face"></i>Mike Lewis</span></td><td>Frontend Developer</td><td>42h 15m</td><td>85%</td><td><span class="pill high">● High</span></td></tr>
+                <tr><td><span class="member"><i class="face"></i>James Parker</span></td><td>Backend Developer</td><td>37h 45m</td><td>78%</td><td><span class="pill medium">● Medium</span></td></tr>
+                <tr><td><span class="member"><i class="face"></i>Emily Carter</span></td><td>Product Designer</td><td>35h 00m</td><td>70%</td><td><span class="pill medium">● Medium</span></td></tr>
+                <tr><td><span class="member"><i class="face"></i>Daniel Kim</span></td><td>Project Manager</td><td>30h 30m</td><td>60%</td><td><span class="pill low">● Low</span></td></tr>
+              </tbody>
+            </table>
+            <button class="panel-link" style="width:120px;margin-top:14px">View Full Report</button>
+          </article>
+
+          <article class="panel">
+            <div class="panel-title"><h2>Top Projects by Hours</h2><button class="small-select">This Week⌄</button></div>
+            <div class="horizontal-bars">
+              <div class="hbar-row"><div class="hbar-label">WorkPulse Redesign<div class="track"><div class="fill" style="--w:96%;--delay:.2s"></div></div></div><span>245h 30m</span></div>
+              <div class="hbar-row"><div class="hbar-label">Mobile App Redesign<div class="track"><div class="fill" style="--w:78%;--delay:.35s"></div></div></div><span>189h 20m</span></div>
+              <div class="hbar-row"><div class="hbar-label">Marketing Website<div class="track"><div class="fill" style="--w:66%;--delay:.5s"></div></div></div><span>156h 45m</span></div>
+              <div class="hbar-row"><div class="hbar-label">API Integration<div class="track"><div class="fill" style="--w:48%;--delay:.65s"></div></div></div><span>98h 15m</span></div>
+              <div class="hbar-row"><div class="hbar-label">Dashboard UI Kit<div class="track"><div class="fill" style="--w:38%;--delay:.8s"></div></div></div><span>78h 30m</span></div>
+            </div>
+            <button class="panel-link">View All Projects</button>
+          </article>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const timer = document.getElementById('timer');
+    let seconds = (2 * 60 * 60) + (45 * 60) + 18;
+
+    function updateTimer() {
+      seconds += 1;
+      const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+      const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      timer.textContent = `${h}:${m}:${s}`;
+    }
+
+    setInterval(updateTimer, 1000);
+
+    document.querySelectorAll('.metric-card, .panel').forEach((card) => {
+      card.addEventListener('mousemove', (event) => {
+        const rect = card.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const rx = ((y / rect.height) - 0.5) * -2;
+        const ry = ((x / rect.width) - 0.5) * 2;
+        card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0)';
+      });
+    });
+  </script>
+</body>
+</html>

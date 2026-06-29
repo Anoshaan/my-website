@@ -1,12 +1,11 @@
 import React from "react";
 import { ProductPathway } from "@/lib/product-pathways";
 import { PathwayPlaceholder } from "./PathwayPlaceholder";
+import { LabsEmbed } from "@/components/sections/labs/LabsEmbed";
 
 /**
- * The shared body rendered inside CaseStudyOverlay for every pathway. All 16
- * pathways use this one structure, populated entirely from the pathway data:
- * title, intro, categories/tags, the challenge, what changed, product thinking,
- * key insight, a placeholder visual, and optional external links.
+ * The shared body rendered inside CaseStudyOverlay for every pathway. All
+ * pathways use this one structure, populated entirely from the pathway data.
  */
 
 function Section({
@@ -29,90 +28,87 @@ function Section({
   );
 }
 
+function ListSection({
+  label,
+  accent,
+  items,
+}: {
+  label: string;
+  accent: string;
+  items: string[];
+}) {
+  if (!items || items.length === 0) return null;
+  return (
+    <Section label={label} accent={accent}>
+      <ul className="flex flex-col gap-2.5">
+        {items.map((item, index) => (
+          <li key={index} className="flex items-start gap-3 text-base opacity-80">
+            <span
+              className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full"
+              style={{ background: accent }}
+              aria-hidden
+            />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  );
+}
+
 export function PathwayModalContent({ pathway }: { pathway: ProductPathway }) {
+  // The Lottie pathway (id 19) is a square animation; every other .html
+  // mockup is a 16:9 interactive stage rendered through LabsEmbed.
+  const isLottie = pathway.id === 19;
+  const isHtml = !!pathway.imageUrl?.endsWith(".html");
+  const isCaseEmbed = isHtml && !isLottie;
+
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-10 text-[var(--c-fg)]">
       {/* Header */}
       <header className="flex flex-col gap-5">
         <div className="flex flex-wrap gap-2">
-          {pathway.categories.map((cat) => (
-            <span
-              key={cat}
-              className="rounded-full px-3 py-1 text-xs font-medium"
-              style={{
-                backgroundColor: pathway.accentSoftBg,
-                border: `1px solid ${pathway.accentBorder}`,
-                color: "#1a1a1a",
-              }}
-            >
-              {cat}
-            </span>
-          ))}
+          <span
+            className="rounded-full px-3 py-1 text-xs font-medium"
+            style={{
+              backgroundColor: pathway.accentSoftBg,
+              border: `1px solid ${pathway.accentBorder}`,
+              color: "#1a1a1a",
+            }}
+          >
+            {pathway.primaryCategory}
+          </span>
         </div>
         <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">{pathway.title}</h2>
-        <p className="text-lg leading-relaxed opacity-80">{pathway.summaryLine}</p>
+        <p className="text-xl font-medium leading-relaxed opacity-90">{pathway.detailHero}</p>
       </header>
 
-      {/* Visual */}
-      <div className="relative h-64 w-full overflow-hidden rounded-2xl border border-[rgba(var(--c-fg-rgb),0.08)] md:h-80">
-        <PathwayPlaceholder type={pathway.mockupType} accent={pathway.accentColor} />
+      <div
+        className={`relative w-full overflow-hidden rounded-2xl border border-[rgba(var(--c-fg-rgb),0.08)] ${
+          isCaseEmbed
+            ? "aspect-video bg-[#0a0e1a]"
+            : isLottie
+              ? "aspect-video flex items-center justify-center"
+              : "flex items-center justify-center h-64 md:h-80"
+        }`}
+      >
+        {pathway.imageUrl ? (
+          isCaseEmbed ? (
+            <LabsEmbed src={pathway.imageUrl} title={pathway.title} />
+          ) : isHtml ? (
+            <iframe
+              src={pathway.imageUrl}
+              title={pathway.title}
+              className="h-full aspect-square border-0 pointer-events-none"
+              scrolling="no"
+            />
+          ) : (
+            <img src={pathway.imageUrl} alt={pathway.title} className="h-full w-full object-cover object-center" />
+          )
+        ) : (
+          <PathwayPlaceholder type={pathway.mockupType} accent={pathway.accentColor} />
+        )}
       </div>
-
-      {/* The challenge */}
-      <Section label="The challenge" accent={pathway.accentColor}>
-        <p className="text-base font-medium opacity-90">{pathway.question}</p>
-        <p className="text-base leading-relaxed opacity-75">{pathway.description}</p>
-      </Section>
-
-      {/* What changed */}
-      <Section label="What changed" accent={pathway.accentColor}>
-        <ul className="flex flex-col gap-2.5">
-          {pathway.whatChanged.map((item) => (
-            <li key={item} className="flex items-start gap-3 text-base opacity-80">
-              <span
-                className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                style={{ background: pathway.accentColor }}
-                aria-hidden
-              />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      </Section>
-
-      {/* Product thinking */}
-      <Section label="Product thinking" accent={pathway.accentColor}>
-        <p className="text-base leading-relaxed opacity-80">{pathway.summaryLine}</p>
-        <div className="flex flex-wrap gap-2 pt-1">
-          {pathway.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full px-3 py-1 text-xs font-medium"
-              style={{
-                backgroundColor: pathway.accentSoftBg,
-                border: `1px solid ${pathway.accentBorder}`,
-                color: "#1a1a1a",
-              }}
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </Section>
-
-      {/* Key insight */}
-      <Section label="Key insight" accent={pathway.accentColor}>
-        <blockquote
-          className="rounded-2xl px-6 py-5 text-lg font-medium italic"
-          style={{
-            backgroundColor: pathway.accentSoftBg,
-            border: `1px solid ${pathway.accentBorder}`,
-            color: "#1a1a1a",
-          }}
-        >
-          “{pathway.keyInsight}”
-        </blockquote>
-      </Section>
 
       {/* External links */}
       {pathway.externalLinks && pathway.externalLinks.length > 0 && (
@@ -153,6 +149,55 @@ export function PathwayModalContent({ pathway }: { pathway: ProductPathway }) {
           </div>
         </Section>
       )}
+
+      {/* Product Story */}
+      <Section label="Product story" accent={pathway.accentColor}>
+        <p className="text-base leading-relaxed opacity-85">{pathway.productStory}</p>
+      </Section>
+
+      {/* The Problem */}
+      <Section label="The problem" accent={pathway.accentColor}>
+        <p className="text-base leading-relaxed opacity-85">{pathway.problem}</p>
+      </Section>
+
+      {/* The Solution */}
+      <Section label="The solution" accent={pathway.accentColor}>
+        <p className="text-base leading-relaxed opacity-85">{pathway.solution}</p>
+      </Section>
+
+      {/* Users */}
+      <ListSection label="Users" accent={pathway.accentColor} items={pathway.users} />
+
+      {/* Key Features */}
+      <ListSection label="Key features" accent={pathway.accentColor} items={pathway.keyFeatures} />
+
+      {/* UX Decisions */}
+      <ListSection label="UX decisions" accent={pathway.accentColor} items={pathway.uxDecisions} />
+
+      {/* Motion Direction */}
+      <ListSection label="Motion direction" accent={pathway.accentColor} items={pathway.motionDirection} />
+
+      {/* Visual Suggestions */}
+      <ListSection label="Visual suggestions" accent={pathway.accentColor} items={pathway.visualSuggestions} />
+
+      {/* Tags */}
+      <Section label="Tags" accent={pathway.accentColor}>
+        <div className="flex flex-wrap gap-2 pt-1">
+          {pathway.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full px-3 py-1 text-xs font-medium"
+              style={{
+                backgroundColor: pathway.accentSoftBg,
+                border: `1px solid ${pathway.accentBorder}`,
+                color: "#1a1a1a",
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </Section>
     </div>
   );
 }

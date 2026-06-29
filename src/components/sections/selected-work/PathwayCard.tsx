@@ -1,6 +1,7 @@
 import React from "react";
 import { ProductPathway } from "@/lib/product-pathways";
 import { PathwayPlaceholder } from "./PathwayPlaceholder";
+import { LabsEmbed } from "@/components/sections/labs/LabsEmbed";
 
 interface PathwayCardProps {
   pathway: ProductPathway;
@@ -23,6 +24,12 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
     "--card-border": pathway.accentBorder,
   } as React.CSSProperties;
 
+  // The Lottie pathway (id 19) is a square animation; every other .html
+  // mockup is a 16:9 interactive stage rendered through LabsEmbed.
+  const isLottie = pathway.id === 19;
+  const isHtml = !!pathway.imageUrl?.endsWith(".html");
+  const isCaseEmbed = isHtml && !isLottie;
+
   return (
     <article
       style={accentStyle}
@@ -36,24 +43,47 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
     >
       {/* Visual */}
       <div className={`p-6 sm:p-8 ${featured ? "order-2 md:order-2 md:pl-0" : "pb-0"}`}>
-        <div className="relative h-full min-h-[220px] overflow-hidden rounded-2xl transition-transform duration-700 group-hover:-translate-y-1 group-hover:scale-[1.02]">
-          <PathwayPlaceholder type={pathway.mockupType} accent={pathway.accentColor} />
+        <div
+          className={`relative overflow-hidden rounded-2xl transition-transform duration-700 group-hover:-translate-y-1 group-hover:scale-[1.02] ${
+            isCaseEmbed
+              ? "aspect-video w-full bg-[#0a0e1a]"
+              : isLottie
+                ? "aspect-video w-full flex items-center justify-center"
+                : "flex items-center justify-center h-full min-h-[220px]"
+          }`}
+        >
+          {pathway.imageUrl ? (
+            isCaseEmbed ? (
+              <LabsEmbed src={pathway.imageUrl} title={pathway.previewTitle} />
+            ) : isHtml ? (
+              <iframe
+                src={pathway.imageUrl}
+                title={pathway.previewTitle}
+                className="h-full aspect-square border-0 pointer-events-none"
+                scrolling="no"
+              />
+            ) : (
+              <img src={pathway.imageUrl} alt={pathway.previewTitle} className="h-full w-full object-cover object-center" />
+            )
+          ) : (
+            <PathwayPlaceholder type={pathway.mockupType} accent={pathway.accentColor} />
+          )}
         </div>
       </div>
 
       {/* Text */}
       <div className={`flex flex-1 flex-col p-8 sm:p-10 ${featured ? "order-1 justify-center md:pr-0" : "pt-6"}`}>
         <p className="mb-2 text-sm font-medium" style={{ color: "var(--color-fg)", opacity: 0.55 }}>
-          {pathway.question}
+          {pathway.previewProblem}
         </p>
 
         <h3
           className={`mb-4 font-semibold tracking-tight ${featured ? "text-3xl lg:text-4xl" : "text-2xl"}`}
         >
-          {pathway.title}
+          {pathway.previewTitle}
         </h3>
 
-        <p className="mb-5 max-w-xl text-base leading-relaxed opacity-80">{pathway.description}</p>
+        <p className="mb-5 max-w-xl text-base leading-relaxed opacity-80">{pathway.previewDescription}</p>
 
         {/* Tags — soft accent background, neutral readable text */}
         <div className="mb-6 flex flex-wrap gap-2">
@@ -75,7 +105,7 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
           className="mb-8 max-w-xl border-l-2 pl-4 text-base font-medium opacity-90"
           style={{ borderColor: pathway.accentColor }}
         >
-          {pathway.summaryLine}
+          {pathway.previewOutcome}
         </p>
 
         <div className="mt-auto flex items-start pt-2">
@@ -87,9 +117,9 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
               backgroundColor: pathway.accentSoftBg,
               border: `1px solid ${pathway.accentBorder}`,
             }}
-            aria-label={`View Product Pathway: ${pathway.title}`}
+            aria-label={`${pathway.uniqueCTA}: ${pathway.previewTitle}`}
           >
-            View Product Pathway
+            {pathway.uniqueCTA}
             <svg
               className="opacity-70 transition-transform duration-300 group-hover/btn:translate-x-1"
               width="16"

@@ -84,16 +84,15 @@ export function PathwaysGrid() {
               {rest.length > 0 && (
                 <div className="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 md:gap-10">
                   {rest.map((pathway, idx) => {
-                    const isLastOdd = idx === rest.length - 1 && rest.length % 2 !== 0;
                     return (
                       <motion.div
                         key={`${activeCategory}-${pathway.id}`}
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={cardTransition(idx + 1)}
-                        className={`h-full ${isLastOdd ? "md:col-span-2" : ""}`}
+                        className="h-full"
                       >
-                        <PathwayCard pathway={pathway} featured={isLastOdd} onOpen={handleOpen} />
+                        <PathwayCard pathway={pathway} featured={false} onOpen={handleOpen} />
                       </motion.div>
                     );
                   })}

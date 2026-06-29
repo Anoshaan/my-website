@@ -25,7 +25,7 @@ export function MobileTimesheet() {
       {/* Task List */}
       <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
         <div className="flex justify-between items-center mb-1">
-          <span className="text-xs font-semibold uppercase tracking-wider opacity-50">Today's Tasks</span>
+          <span className="text-xs font-semibold uppercase tracking-wider opacity-50">Today&apos;s Tasks</span>
           <span className="text-xs font-medium opacity-60">4h 30m</span>
         </div>
         

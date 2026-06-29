@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GrowGrid Smart Agriculture Control</title>
+  <style>
+    :root {
+      --bg: #edf5ed;
+      --panel: rgba(255, 255, 249, .9);
+      --panel-soft: rgba(248, 252, 244, .86);
+      --line: #dce9d6;
+      --line-dark: #c8d9c1;
+      --text: #153026;
+      --soft: #4f675c;
+      --muted: #789083;
+      --green: #1f8f5f;
+      --green-2: #3fbf7f;
+      --green-soft: #e9f9ef;
+      --mint: #72d7b1;
+      --blue: #2294c7;
+      --blue-soft: #e7f7fd;
+      --amber: #c77d18;
+      --amber-soft: #fff5dd;
+      --red: #cc4b4b;
+      --red-soft: #fff0ee;
+      --leaf-dark: #226b45;
+      --leaf: #38a968;
+      --leaf-light: #7fdc9a;
+      --soil: #7a5637;
+      --water: #53b7df;
+      --shadow: 0 28px 80px rgba(37, 74, 48, .16);
+      --shadow-soft: 0 12px 30px rgba(37, 74, 48, .09);
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 14% 10%, rgba(63, 191, 127, .20), transparent 28%),
+        radial-gradient(circle at 86% 16%, rgba(34, 148, 199, .14), transparent 32%),
+        radial-gradient(circle at 54% 100%, rgba(31, 143, 95, .12), transparent 34%),
+        linear-gradient(180deg, #fbfff9 0%, var(--bg) 100%);
+      font-family: var(--font);
+      color: var(--text);
+    }
+
+    .frame {
+      width: min(100vw, 1600px);
+      aspect-ratio: 16 / 9;
+      border-radius: 32px;
+      border: 1px solid rgba(184, 207, 175, .7);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(167, 193, 159, .18) 1px, transparent 1px),
+        linear-gradient(rgba(167, 193, 159, .16) 1px, transparent 1px),
+        linear-gradient(145deg, #fbfff9 0%, #ecf6ec 100%);
+      background-size: 42px 42px, 42px 42px, 100% 100%;
+      padding: 24px;
+      position: relative;
+      animation: enter .75s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(18px) scale(.984); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .frame::before {
+      content: "";
+      position: absolute;
+      inset: -10%;
+      background:
+        radial-gradient(circle, rgba(31,143,95,.10) 0 1px, transparent 2px),
+        radial-gradient(circle, rgba(34,148,199,.07) 0 1px, transparent 2px);
+      background-size: 80px 80px, 126px 126px;
+      opacity: .45;
+      animation: airMove 22s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes airMove {
+      to { transform: translate3d(90px, 80px, 0); }
+    }
+
+    .system {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 310px 1fr 330px;
+      grid-template-rows: 94px 1fr 146px;
+      gap: 16px;
+    }
+
+    .hero {
+      grid-column: 1 / -1;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      padding: 18px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: 22%;
+      top: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(114, 215, 177, .22), transparent 62%);
+      animation: greenhouseGlow 7s ease-in-out infinite;
+    }
+
+    @keyframes greenhouseGlow {
+      50% { transform: translate(28px, 16px) scale(1.08); }
+    }
+
+    .hero-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+    }
+
+    .farm-mark {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 52% 68%, #fff 0 5px, transparent 6px),
+        linear-gradient(135deg, #1f8f5f, #72d7b1);
+      box-shadow: 0 14px 28px rgba(31, 143, 95, .24);
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .farm-mark::before,
+    .farm-mark::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 28px;
+      border-radius: 100% 0 100% 0;
+      background: white;
+      left: 14px;
+      top: 14px;
+      transform: rotate(-35deg);
+      transform-origin: bottom right;
+      opacity: .92;
+    }
+
+    .farm-mark::after {
+      left: 22px;
+      transform: rotate(35deg) scaleX(-1);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 27px;
+      line-height: 1.05;
+      letter-spacing: -.055em;
+    }
+
+    .hero p {
+      margin: 6px 0 0;
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.45;
+      max-width: 780px;
+    }
+
+    .hero-status {
+      display: flex;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      white-space: nowrap;
+    }
+
+    .status-pill {
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.78);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 13px;
+      color: var(--soft);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--tone);
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--tone) 36%, transparent);
+      animation: pulse 1.9s infinite;
+    }
+
+    @keyframes pulse {
+      70% { box-shadow: 0 0 0 9px transparent; }
+    }
+
+    .panel {
+      border-radius: 26px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      min-height: 0;
+      animation: panelIn .65s cubic-bezier(.22, 1, .36, 1) both;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-head {
+      height: 52px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: -.025em;
+    }
+
+    .panel-head span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .batch-panel {
+      grid-row: 2 / 4;
+      display: grid;
+      grid-template-rows: 52px 1fr;
+    }
+
+    .batch-list {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .batch {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.62);
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 12px;
+      min-height: 92px;
+      position: relative;
+      overflow: hidden;
+      animation: batchFloat 6s ease-in-out infinite;
+      animation-delay: var(--float);
+    }
+
+    @keyframes batchFloat {
+      50% { transform: translateY(-3px); border-color: color-mix(in srgb, var(--tone) 30%, var(--line)); }
+    }
+
+    .batch::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 4px;
+      background: var(--tone);
+      width: var(--w);
+      transform-origin: left;
+      animation: fillOnce 1.4s cubic-bezier(.22, 1, .36, 1) both;
+      animation-delay: var(--float);
+    }
+
+    @keyframes fillOnce {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    .plant-pot {
+      width: 62px;
+      height: 68px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, transparent 0 38px, #dac6a9 39px 100%);
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .plant-pot::after {
+      content: "";
+      position: absolute;
+      width: 42px;
+      height: 18px;
+      border-radius: 50%;
+      bottom: 10px;
+      background: var(--soil);
+      box-shadow: inset 0 5px 8px rgba(0,0,0,.16);
+    }
+
+    .leaf {
+      position: absolute;
+      width: 19px;
+      height: 31px;
+      border-radius: 100% 0 100% 0;
+      background: var(--leaf);
+      left: 22px;
+      top: 12px;
+      transform-origin: bottom center;
+      animation: leafSway 3.4s ease-in-out infinite;
+    }
+
+    .leaf.l2 {
+      left: 30px;
+      top: 15px;
+      background: var(--leaf-light);
+      transform: rotate(42deg);
+      animation-delay: .3s;
+    }
+
+    .leaf.l3 {
+      left: 13px;
+      top: 18px;
+      background: var(--leaf-dark);
+      transform: rotate(-42deg);
+      animation-delay: .6s;
+    }
+
+    @keyframes leafSway {
+      0%, 100% { transform: rotate(-8deg); }
+      50% { transform: rotate(8deg); }
+    }
+
+    .batch h3 {
+      margin: 0 0 5px;
+      font-size: 13px;
+      line-height: 1.2;
+      letter-spacing: -.015em;
+    }
+
+    .batch p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .batch-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tiny-pill {
+      border-radius: 999px;
+      padding: 5px 8px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .greenhouse {
+      grid-column: 2;
+      grid-row: 2;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(114, 215, 177, .18), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,.88), rgba(244, 251, 240, .92));
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+      padding: 18px;
+      animation: panelIn .65s cubic-bezier(.22, 1, .36, 1) both;
+      animation-delay: .18s;
+    }
+
+    .greenhouse-roof {
+      position: absolute;
+      left: 44px;
+      right: 44px;
+      top: 22px;
+      height: 92px;
+      border: 2px solid rgba(143, 173, 133, .28);
+      border-bottom: 0;
+      border-radius: 42px 42px 0 0;
+      background:
+        linear-gradient(90deg, transparent 24%, rgba(143, 173, 133, .16) 25%, transparent 26%),
+        linear-gradient(90deg, transparent 49%, rgba(143, 173, 133, .16) 50%, transparent 51%),
+        linear-gradient(90deg, transparent 74%, rgba(143, 173, 133, .16) 75%, transparent 76%);
+      pointer-events: none;
+    }
+
+    .greenhouse-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .greenhouse h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -.045em;
+      line-height: 1.1;
+    }
+
+    .greenhouse p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      max-width: 520px;
+    }
+
+    .zone-toggle {
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.72);
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .zone-toggle span {
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 850;
+      color: var(--muted);
+    }
+
+    .zone-toggle .active {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 8px 16px rgba(31,143,95,.16);
+    }
+
+    .grow-area {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 108px;
+      bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.4), rgba(232,246,229,.6)),
+        linear-gradient(90deg, transparent 0 18%, rgba(143,173,133,.12) 19%, transparent 20%),
+        linear-gradient(90deg, transparent 0 39%, rgba(143,173,133,.12) 40%, transparent 41%),
+        linear-gradient(90deg, transparent 0 60%, rgba(143,173,133,.12) 61%, transparent 62%),
+        linear-gradient(90deg, transparent 0 81%, rgba(143,173,133,.12) 82%, transparent 83%);
+      overflow: hidden;
+      perspective: 900px;
+    }
+
+    .air-line {
+      position: absolute;
+      left: -20%;
+      width: 150%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(31,143,95,.25), transparent);
+      animation: airLine 6s linear infinite;
+      opacity: .65;
+    }
+
+    .air-line:nth-child(1) { top: 20%; animation-delay: 0s; }
+    .air-line:nth-child(2) { top: 42%; animation-delay: 1.4s; }
+    .air-line:nth-child(3) { top: 66%; animation-delay: 2.7s; }
+
+    @keyframes airLine {
+      from { transform: translateX(-20%); }
+      to { transform: translateX(20%); }
+    }
+
+    .rack {
+      position: absolute;
+      left: 9%;
+      right: 9%;
+      height: 78px;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.9), rgba(238,246,236,.92));
+      border: 1px solid #cfe2c7;
+      box-shadow: 0 18px 28px rgba(37, 74, 48, .10);
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      padding: 12px 16px;
+      transform: rotateX(9deg);
+      animation: rackGlow 6s ease-in-out infinite;
+      animation-delay: var(--rack-delay);
+    }
+
+    @keyframes rackGlow {
+      50% { box-shadow: 0 20px 38px rgba(31, 143, 95, .15); }
+    }
+
+    .rack.r1 { top: 36px; }
+    .rack.r2 { top: 150px; }
+    .rack.r3 { top: 264px; }
+
+    .plant-cell {
+      position: relative;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle, rgba(122,86,55,.25) 0 24%, transparent 25%),
+        rgba(255,255,255,.5);
+      border: 1px solid rgba(207,226,199,.86);
+      overflow: hidden;
+    }
+
+    .plant-cell::before,
+    .plant-cell::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 28px;
+      border-radius: 100% 0 100% 0;
+      background: var(--leaf);
+      left: 50%;
+      top: 16px;
+      transform-origin: bottom center;
+      animation: cellLeaf 3.2s ease-in-out infinite;
+      animation-delay: var(--sway);
+    }
+
+    .plant-cell::before {
+      transform: translateX(-80%) rotate(-38deg);
+      background: var(--leaf-dark);
+    }
+
+    .plant-cell::after {
+      transform: translateX(-10%) rotate(38deg);
+      background: var(--leaf-light);
+    }
+
+    @keyframes cellLeaf {
+      0%, 100% { filter: saturate(1); }
+      50% { filter: saturate(1.2); top: 13px; }
+    }
+
+    .rail {
+      position: absolute;
+      left: 9%;
+      right: 9%;
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(83,183,223,.22), rgba(83,183,223,.7), rgba(83,183,223,.22));
+      overflow: hidden;
+    }
+
+    .rail::after {
+      content: "";
+      position: absolute;
+      width: 30%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.75), transparent);
+      animation: railFlow 2.8s linear infinite;
+    }
+
+    @keyframes railFlow {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(380%); }
+    }
+
+    .rail.ra { top: 122px; }
+    .rail.rb { top: 236px; }
+    .rail.rc { top: 350px; }
+
+    .right-stack {
+      grid-column: 3;
+      grid-row: 2 / 4;
+      display: grid;
+      grid-template-rows: .95fr .75fr;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .tank-panel {
+      display: grid;
+      grid-template-rows: 52px 1fr;
+    }
+
+    .tank-body {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 126px 1fr;
+      gap: 16px;
+      min-height: 0;
+      align-items: center;
+    }
+
+    .tank {
+      height: 238px;
+      border: 2px solid #b7d7e5;
+      border-radius: 32px;
+      background: rgba(255,255,255,.64);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 18px rgba(34,148,199,.12);
+    }
+
+    .tank::before {
+      content: "";
+      position: absolute;
+      left: -18%;
+      width: 136%;
+      height: 74%;
+      bottom: -4%;
+      background:
+        radial-gradient(ellipse at 45% 0%, rgba(255,255,255,.8) 0 9%, transparent 10%),
+        linear-gradient(180deg, rgba(83,183,223,.78), rgba(34,148,199,.92));
+      border-radius: 42% 48% 0 0;
+      animation: waterWave 4s ease-in-out infinite;
+    }
+
+    .tank::after {
+      content: "72%";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 48%;
+      text-align: center;
+      color: white;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -.06em;
+      text-shadow: 0 2px 8px rgba(0,0,0,.16);
+    }
+
+    @keyframes waterWave {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      50% { transform: translateX(12px) rotate(2deg); }
+    }
+
+    .sensor-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .sensor {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.64);
+      padding: 12px;
+      min-width: 0;
+    }
+
+    .sensor-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .sensor-value {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 900;
+    }
+
+    .sensor-value strong {
+      font-size: 22px;
+      letter-spacing: -.06em;
+    }
+
+    .sensor-value small {
+      color: var(--tone);
+      font-size: 10px;
+    }
+
+    .sensor-bar {
+      margin-top: 9px;
+      height: 7px;
+      border-radius: 999px;
+      background: #edf5ec;
+      overflow: hidden;
+    }
+
+    .sensor-fill {
+      height: 100%;
+      width: var(--w);
+      border-radius: 999px;
+      background: var(--tone);
+      transform-origin: left;
+      animation: sensorFill 1.3s cubic-bezier(.22,1,.36,1) both, sensorBreath 4s ease-in-out infinite;
+      animation-delay: var(--sensor-delay);
+    }
+
+    @keyframes sensorFill {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes sensorBreath {
+      50% { opacity: .72; }
+    }
+
+    .tasks-panel {
+      display: grid;
+      grid-template-rows: 52px 1fr;
+    }
+
+    .task-list {
+      padding: 14px 16px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .task {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,.64);
+      padding: 10px;
+      animation: taskMove 6s ease-in-out infinite;
+      animation-delay: var(--task-delay);
+    }
+
+    @keyframes taskMove {
+      50% { transform: translateX(3px); border-color: #bee6c8; }
+    }
+
+    .check {
+      width: 28px;
+      height: 28px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: var(--soft-bg);
+      color: var(--tone);
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .task strong {
+      display: block;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .task span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .task small {
+      color: var(--tone);
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .bottom-center {
+      grid-column: 2;
+      grid-row: 3;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .harvest-panel,
+    .alerts-panel {
+      border-radius: 26px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 52px 1fr;
+      animation: panelIn .65s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .harvest-panel { animation-delay: .26s; }
+    .alerts-panel { animation-delay: .32s; }
+
+    .timeline {
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .day {
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: rgba(255,255,255,.62);
+      padding: 10px;
+      position: relative;
+      overflow: hidden;
+      min-height: 70px;
+    }
+
+    .day::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--w);
+      background: linear-gradient(90deg, var(--soft-bg), transparent);
+      animation: dayFill 1.6s cubic-bezier(.22,1,.36,1) both;
+      animation-delay: var(--day-delay);
+    }
+
+    @keyframes dayFill {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+
+    .day span,
+    .day strong,
+    .day small {
+      position: relative;
+      z-index: 1;
+      display: block;
+    }
+
+    .day span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .day strong {
+      margin-top: 5px;
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .day small {
+      margin-top: 4px;
+      color: var(--tone);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .alert-list {
+      padding: 12px 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .alert {
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--tone);
+      border-radius: 16px;
+      background: rgba(255,255,255,.65);
+      padding: 10px 11px;
+      animation: alertPulse 4s ease-in-out infinite;
+      animation-delay: var(--alert-delay);
+    }
+
+    @keyframes alertPulse {
+      50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--tone) 10%, transparent); }
+    }
+
+    .alert strong {
+      display: block;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .alert span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    @media (max-width: 1150px) {
+      body { overflow: auto; }
+      .frame {
+        width: 100vw;
+        min-height: 100vh;
+        aspect-ratio: auto;
+        border-radius: 0;
+      }
+
+      .system {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+
+      .hero,
+      .batch-panel,
+      .greenhouse,
+      .right-stack,
+      .bottom-center {
+        grid-column: 1;
+        grid-row: auto;
+      }
+
+      .greenhouse { min-height: 560px; }
+      .right-stack, .bottom-center { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-status { flex-wrap: wrap; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+  <style>
+    /* perf-tune: this preview is mounted alongside others on the portfolio
+       page, so any perpetual animation multiplies into scroll jank. Play
+       every entrance once, settle, then stop. Keep compositing cheap. */
+    *, *::before, *::after {
+      animation-iteration-count: 1 !important;
+      animation-fill-mode: both !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="frame">
+    <main class="system">
+      <header class="hero">
+        <div class="hero-title">
+          <div class="farm-mark"></div>
+          <div>
+            <h1>Smart Agriculture Control Dashboard</h1>
+            <p>Monitor plant batches, nutrients, water activity, environment conditions, and harvest readiness from one calm growing-system view.</p>
+          </div>
+        </div>
+
+        <div class="hero-status">
+          <div class="status-pill" style="--tone:var(--green);">System stable</div>
+          <div class="status-pill" style="--tone:var(--blue);">Zone A active</div>
+          <div class="status-pill" style="--tone:var(--amber);">2 alerts</div>
+        </div>
+      </header>
+
+      <aside class="panel batch-panel" style="--delay:.1s;">
+        <div class="panel-head">
+          <h2>Plant Batches</h2>
+          <span>Live growth</span>
+        </div>
+
+        <div class="batch-list">
+          <article class="batch" style="--tone:var(--green); --soft-bg:var(--green-soft); --w:86%; --float:.1s;">
+            <div class="plant-pot"><i class="leaf"></i><i class="leaf l2"></i><i class="leaf l3"></i></div>
+            <div>
+              <h3>Lettuce Batch A</h3>
+              <p>Harvest window opens in 3 days. Roots and canopy look healthy.</p>
+              <div class="batch-meta">
+                <span class="tiny-pill">86% ready</span>
+                <span class="tiny-pill">Healthy</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="batch" style="--tone:var(--green); --soft-bg:var(--green-soft); --w:72%; --float:.35s;">
+            <div class="plant-pot"><i class="leaf"></i><i class="leaf l2"></i><i class="leaf l3"></i></div>
+            <div>
+              <h3>Basil Batch C</h3>
+              <p>Strong growth pattern. Keep current nutrient cycle.</p>
+              <div class="batch-meta">
+                <span class="tiny-pill">72% grown</span>
+                <span class="tiny-pill">Stable</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="batch" style="--tone:var(--amber); --soft-bg:var(--amber-soft); --w:54%; --float:.6s;">
+            <div class="plant-pot"><i class="leaf"></i><i class="leaf l2"></i><i class="leaf l3"></i></div>
+            <div>
+              <h3>Mint Batch B</h3>
+              <p>Nutrient reading is slightly low. Check the mix before evening cycle.</p>
+              <div class="batch-meta">
+                <span class="tiny-pill">Check EC</span>
+                <span class="tiny-pill">Watch</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="batch" style="--tone:var(--blue); --soft-bg:var(--blue-soft); --w:38%; --float:.85s;">
+            <div class="plant-pot"><i class="leaf"></i><i class="leaf l2"></i><i class="leaf l3"></i></div>
+            <div>
+              <h3>Coriander Batch D</h3>
+              <p>New batch settled into early growth stage after transplant.</p>
+              <div class="batch-meta">
+                <span class="tiny-pill">Day 5</span>
+                <span class="tiny-pill">Early stage</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </aside>
+
+      <section class="greenhouse">
+        <div class="greenhouse-roof"></div>
+
+        <div class="greenhouse-head">
+          <div>
+            <h2>Greenhouse Zone A</h2>
+            <p>Aeroponic rack monitoring with live water flow, plant rows, and environment response.</p>
+          </div>
+
+          <div class="zone-toggle">
+            <span class="active">Zone A</span>
+            <span>Zone B</span>
+            <span>Nursery</span>
+          </div>
+        </div>
+
+        <div class="grow-area">
+          <i class="air-line"></i>
+          <i class="air-line"></i>
+          <i class="air-line"></i>
+
+          <div class="rack r1" style="--rack-delay:.1s;">
+            <i class="plant-cell" style="--sway:.1s;"></i><i class="plant-cell" style="--sway:.2s;"></i><i class="plant-cell" style="--sway:.3s;"></i><i class="plant-cell" style="--sway:.4s;"></i>
+            <i class="plant-cell" style="--sway:.5s;"></i><i class="plant-cell" style="--sway:.6s;"></i><i class="plant-cell" style="--sway:.7s;"></i><i class="plant-cell" style="--sway:.8s;"></i>
+          </div>
+          <div class="rail ra"></div>
+
+          <div class="rack r2" style="--rack-delay:.35s;">
+            <i class="plant-cell" style="--sway:.8s;"></i><i class="plant-cell" style="--sway:.7s;"></i><i class="plant-cell" style="--sway:.6s;"></i><i class="plant-cell" style="--sway:.5s;"></i>
+            <i class="plant-cell" style="--sway:.4s;"></i><i class="plant-cell" style="--sway:.3s;"></i><i class="plant-cell" style="--sway:.2s;"></i><i class="plant-cell" style="--sway:.1s;"></i>
+          </div>
+          <div class="rail rb"></div>
+
+          <div class="rack r3" style="--rack-delay:.6s;">
+            <i class="plant-cell" style="--sway:.2s;"></i><i class="plant-cell" style="--sway:.4s;"></i><i class="plant-cell" style="--sway:.6s;"></i><i class="plant-cell" style="--sway:.8s;"></i>
+            <i class="plant-cell" style="--sway:1s;"></i><i class="plant-cell" style="--sway:1.2s;"></i><i class="plant-cell" style="--sway:1.4s;"></i><i class="plant-cell" style="--sway:1.6s;"></i>
+          </div>
+          <div class="rail rc"></div>
+        </div>
+      </section>
+
+      <section class="right-stack">
+        <aside class="panel tank-panel" style="--delay:.22s;">
+          <div class="panel-head">
+            <h2>Water & Nutrients</h2>
+            <span>Reservoir A</span>
+          </div>
+
+          <div class="tank-body">
+            <div class="tank"></div>
+
+            <div class="sensor-list">
+              <article class="sensor" style="--tone:var(--green); --w:76%; --sensor-delay:.1s;">
+                <div class="sensor-top"><span>pH level</span><span>Target 5.8–6.4</span></div>
+                <div class="sensor-value"><strong>6.1</strong><small>Normal</small></div>
+                <div class="sensor-bar"><div class="sensor-fill"></div></div>
+              </article>
+
+              <article class="sensor" style="--tone:var(--amber); --w:58%; --sensor-delay:.25s;">
+                <div class="sensor-top"><span>EC level</span><span>Target 1.6–2.0</span></div>
+                <div class="sensor-value"><strong>1.8</strong><small>Check soon</small></div>
+                <div class="sensor-bar"><div class="sensor-fill"></div></div>
+              </article>
+
+              <article class="sensor" style="--tone:var(--blue); --w:72%; --sensor-delay:.4s;">
+                <div class="sensor-top"><span>Water flow</span><span>Pump cycle</span></div>
+                <div class="sensor-value"><strong>72%</strong><small>Active</small></div>
+                <div class="sensor-bar"><div class="sensor-fill"></div></div>
+              </article>
+            </div>
+          </div>
+        </aside>
+
+        <aside class="panel tasks-panel" style="--delay:.30s;">
+          <div class="panel-head">
+            <h2>Daily Farm Tasks</h2>
+            <span>Today</span>
+          </div>
+
+          <div class="task-list">
+            <article class="task" style="--tone:var(--amber); --soft-bg:var(--amber-soft); --task-delay:.1s;">
+              <div class="check">1</div>
+              <div><strong>Refill nutrient tank</strong><span>Required before evening cycle</span></div>
+              <small>Due</small>
+            </article>
+
+            <article class="task" style="--tone:var(--green); --soft-bg:var(--green-soft); --task-delay:.35s;">
+              <div class="check">2</div>
+              <div><strong>Inspect lettuce roots</strong><span>Batch A harvest check</span></div>
+              <small>Next</small>
+            </article>
+
+            <article class="task" style="--tone:var(--blue); --soft-bg:var(--blue-soft); --task-delay:.6s;">
+              <div class="check">3</div>
+              <div><strong>Prepare harvest bottles</strong><span>Delivery batch planning</span></div>
+              <small>3 days</small>
+            </article>
+          </div>
+        </aside>
+      </section>
+
+      <section class="bottom-center">
+        <aside class="harvest-panel">
+          <div class="panel-head">
+            <h2>Harvest Readiness Timeline</h2>
+            <span>Next 7 days</span>
+          </div>
+
+          <div class="timeline">
+            <article class="day" style="--tone:var(--blue); --soft-bg:var(--blue-soft); --w:42%; --day-delay:.1s;">
+              <span>Today</span>
+              <strong>Check EC</strong>
+              <small>Mint B</small>
+            </article>
+            <article class="day" style="--tone:var(--green); --soft-bg:var(--green-soft); --w:58%; --day-delay:.25s;">
+              <span>Day 2</span>
+              <strong>Root check</strong>
+              <small>Lettuce A</small>
+            </article>
+            <article class="day" style="--tone:var(--green); --soft-bg:var(--green-soft); --w:86%; --day-delay:.4s;">
+              <span>Day 3</span>
+              <strong>Harvest prep</strong>
+              <small>Lettuce A</small>
+            </article>
+            <article class="day" style="--tone:var(--amber); --soft-bg:var(--amber-soft); --w:36%; --day-delay:.55s;">
+              <span>Day 5</span>
+              <strong>Delivery plan</strong>
+              <small>Fresh packs</small>
+            </article>
+          </div>
+        </aside>
+
+        <aside class="alerts-panel">
+          <div class="panel-head">
+            <h2>Active Alerts</h2>
+            <span>2 open</span>
+          </div>
+
+          <div class="alert-list">
+            <article class="alert" style="--tone:var(--amber); --alert-delay:.1s;">
+              <strong>Mint Batch B nutrient check</strong>
+              <span>EC is trending lower than ideal range.</span>
+            </article>
+
+            <article class="alert" style="--tone:var(--blue); --alert-delay:.45s;">
+              <strong>Water tank refill forecast</strong>
+              <span>Reservoir may need refill within 18 hours.</span>
+            </article>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </section>
+</body>
+</html>

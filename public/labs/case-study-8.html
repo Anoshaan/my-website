@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Study 08 - EdTech Learning Mobile App</title>
+  <style>
+    :root {
+      --canvas: #eef1ff;
+      --ink: #172033;
+      --soft: #4d5b72;
+      --muted: #8290a8;
+      --line: #dfe5f4;
+      --phone: #111827;
+      --screen: #fbfcff;
+      --indigo: #4f46e5;
+      --indigo-soft: #eef2ff;
+      --cyan: #0891b2;
+      --cyan-soft: #ecfeff;
+      --green: #16a34a;
+      --green-soft: #ecfdf5;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --rose: #e11d48;
+      --rose-soft: #fff1f2;
+      --purple: #9333ea;
+      --purple-soft: #faf5ff;
+      --shadow: 0 34px 95px rgba(34, 45, 86, .16);
+      --phone-shadow: 0 28px 58px rgba(17, 24, 39, .25);
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(79, 70, 229, .15), transparent 30%),
+        radial-gradient(circle at 88% 18%, rgba(8, 145, 178, .12), transparent 32%),
+        radial-gradient(circle at 52% 94%, rgba(147, 51, 234, .10), transparent 34%),
+        linear-gradient(180deg, #ffffff 0%, var(--canvas) 100%);
+    }
+
+    .stage {
+      width: min(100vw, 1600px);
+      aspect-ratio: 16 / 9;
+      border-radius: 34px;
+      border: 1px solid rgba(210, 218, 240, .95);
+      box-shadow: var(--shadow);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.74), transparent 38%),
+        linear-gradient(90deg, rgba(126, 144, 184, .05) 1px, transparent 1px),
+        linear-gradient(rgba(126, 144, 184, .045) 1px, transparent 1px),
+        linear-gradient(145deg, #ffffff, #edf2ff);
+      background-size: 100% 100%, 42px 42px, 42px 42px, 100% 100%;
+      overflow: hidden;
+      padding: 26px 34px 28px;
+      position: relative;
+      animation: stageIn .72s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes stageIn {
+      from { opacity: 0; transform: translateY(18px) scale(.984); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .stage::before {
+      content: "Aa 01 ∑ ✓ Aa 02 ∑ ✓ Aa 03";
+      position: absolute;
+      left: -8%;
+      top: 44%;
+      width: 130%;
+      color: rgba(79, 70, 229, .055);
+      font-size: 84px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      white-space: nowrap;
+      transform: rotate(-8deg);
+      animation: lessonDrift 26s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes lessonDrift {
+      to { transform: rotate(-8deg) translateX(-220px); }
+    }
+
+    .intro {
+      position: relative;
+      z-index: 2;
+      height: 94px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 0;
+    }
+
+    .app-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 68% 30%, rgba(255,255,255,.9) 0 12%, transparent 13%),
+        linear-gradient(135deg, #4f46e5, #0891b2);
+      box-shadow: 0 18px 34px rgba(79, 70, 229, .22);
+      position: relative;
+      flex: 0 0 auto;
+      overflow: hidden;
+    }
+
+    .app-badge::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: 17px;
+      height: 26px;
+      border-radius: 7px 13px 13px 7px;
+      background: rgba(255,255,255,.9);
+      transform: skewY(-8deg);
+    }
+
+    .app-badge::after {
+      content: "";
+      position: absolute;
+      left: 19px;
+      right: 19px;
+      top: 23px;
+      height: 3px;
+      border-radius: 999px;
+      background: #4f46e5;
+      box-shadow: 0 7px 0 #4f46e5;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -.06em;
+      line-height: 1.05;
+    }
+
+    .title p {
+      margin: 6px 0 0;
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.42;
+      max-width: 760px;
+    }
+
+    .learning-tags {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.84);
+      color: var(--soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 13px;
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+      box-shadow: 0 10px 22px rgba(34,45,86,.06);
+    }
+
+    .tag::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--tone);
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--tone) 32%, transparent);
+      animation: dotPulse 2s infinite;
+    }
+
+    @keyframes dotPulse {
+      70% { box-shadow: 0 0 0 9px transparent; }
+    }
+
+    .screens {
+      position: relative;
+      z-index: 1;
+      height: calc(100% - 94px);
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 22px;
+      align-items: center;
+      padding-bottom: 8px;
+    }
+
+    .flow-line {
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 49%;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(79,70,229,.20), rgba(8,145,178,.24), transparent);
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .flow-line::after {
+      content: "";
+      position: absolute;
+      top: -4px;
+      width: 92px;
+      height: 11px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--indigo), var(--cyan), transparent);
+      animation: flowMove 6s cubic-bezier(.55, 0, .2, 1) infinite;
+    }
+
+    @keyframes flowMove {
+      from { left: -100px; opacity: 0; }
+      10%, 82% { opacity: 1; }
+      to { left: 100%; opacity: 0; }
+    }
+
+    .phone-group {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      justify-items: center;
+      gap: 11px;
+      animation: phoneIn .68s cubic-bezier(.22,1,.36,1) both;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes phoneIn {
+      from { opacity: 0; transform: translateY(24px) rotate(var(--rot)); }
+      to { opacity: 1; transform: translateY(0) rotate(var(--rot)); }
+    }
+
+    .step-label {
+      height: 33px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.88);
+      box-shadow: 0 10px 22px rgba(34,45,86,.06);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 13px;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .step-label span {
+      width: 18px;
+      height: 18px;
+      border-radius: 8px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+    }
+
+    .phone {
+      width: min(100%, 276px);
+      aspect-ratio: 9 / 18.7;
+      border-radius: 42px;
+      background: var(--phone);
+      padding: 10px;
+      box-shadow: var(--phone-shadow), inset 0 0 0 1px rgba(255,255,255,.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 8px;
+      width: 74px;
+      height: 22px;
+      border-radius: 0 0 15px 15px;
+      background: var(--phone);
+      transform: translateX(-50%);
+      z-index: 5;
+    }
+
+    .screen {
+      height: 100%;
+      border-radius: 33px;
+      overflow: hidden;
+      background: var(--screen);
+      position: relative;
+    }
+
+    .statusbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 28px;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      color: rgba(23,32,51,.78);
+      font-size: 9px;
+      font-weight: 850;
+      pointer-events: none;
+    }
+
+    .m-top {
+      height: 76px;
+      padding: 31px 16px 12px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .m-top strong {
+      display: block;
+      font-size: 14px;
+      letter-spacing: -.02em;
+      line-height: 1;
+    }
+
+    .m-top small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 50% 36%, #f1c7a7 0 27%, transparent 28%),
+        radial-gradient(circle at 50% 75%, #1f2937 0 34%, transparent 35%),
+        linear-gradient(135deg, #e2e8f0, #94a3b8);
+      border: 2px solid white;
+      box-shadow: 0 8px 16px rgba(34,45,86,.10);
+      flex: 0 0 auto;
+    }
+
+    .m-body {
+      position: absolute;
+      inset: 76px 0 64px;
+      padding: 0 14px;
+      overflow: hidden;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 11px;
+      height: 50px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 12px 22px rgba(34,45,86,.08);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      align-items: center;
+      z-index: 4;
+    }
+
+    .nav-item {
+      display: grid;
+      justify-items: center;
+      gap: 3px;
+      color: var(--muted);
+      font-size: 8.5px;
+      font-weight: 850;
+    }
+
+    .nav-icon {
+      width: 21px;
+      height: 21px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: inherit;
+      font-size: 12px;
+    }
+
+    .nav-item.active {
+      color: var(--tone);
+    }
+
+    .nav-item.active .nav-icon {
+      background: var(--soft-bg);
+    }
+
+    .home-hero {
+      border-radius: 28px;
+      padding: 16px;
+      background:
+        radial-gradient(circle at 86% 0%, rgba(79,70,229,.18), transparent 42%),
+        linear-gradient(145deg, #ffffff, #f4f7ff);
+      border: 1px solid #dfe5f4;
+      box-shadow: 0 12px 24px rgba(79,70,229,.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .home-hero h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -.065em;
+      line-height: 1.05;
+    }
+
+    .home-hero p {
+      margin: 6px 0 0;
+      color: var(--soft);
+      font-size: 11px;
+      line-height: 1.35;
+      max-width: 150px;
+    }
+
+    .lesson-ring {
+      position: absolute;
+      right: 13px;
+      top: 18px;
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: conic-gradient(var(--indigo) 0deg 230deg, #dfe5f4 230deg 360deg);
+      display: grid;
+      place-items: center;
+      animation: ringPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes ringPulse {
+      50% { transform: scale(1.035); filter: saturate(1.16); }
+    }
+
+    .lesson-ring::after {
+      content: "";
+      position: absolute;
+      width: 59px;
+      height: 59px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .lesson-ring strong {
+      position: relative;
+      z-index: 1;
+      font-size: 17px;
+      letter-spacing: -.055em;
+    }
+
+    .course-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .course {
+      min-height: 58px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.88);
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      box-shadow: 0 8px 16px rgba(34,45,86,.05);
+      animation: courseLift 5.2s ease-in-out infinite;
+      animation-delay: var(--cd);
+    }
+
+    @keyframes courseLift {
+      50% { transform: translateX(4px); border-color: color-mix(in srgb, var(--tone) 24%, var(--line)); }
+    }
+
+    .course-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      font-weight: 950;
+    }
+
+    .course strong {
+      display: block;
+      font-size: 12px;
+      line-height: 1.16;
+      letter-spacing: -.01em;
+    }
+
+    .course small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 9.5px;
+      font-weight: 760;
+    }
+
+    .course-status {
+      color: var(--tone);
+      font-size: 10px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .lesson-player {
+      height: 190px;
+      border-radius: 0 0 34px 34px;
+      background:
+        radial-gradient(circle at 50% 52%, rgba(255,255,255,.42) 0 20%, transparent 21%),
+        linear-gradient(145deg, #4f46e5, #0891b2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .play-card {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      top: 58px;
+      height: 86px;
+      border-radius: 26px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 22px 40px rgba(17,24,39,.18);
+      display: grid;
+      place-items: center;
+      animation: playerFloat 4.2s ease-in-out infinite;
+    }
+
+    @keyframes playerFloat {
+      50% { transform: translateY(-5px) rotate(-1deg); }
+    }
+
+    .play-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--indigo);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 20px;
+      box-shadow: 0 12px 22px rgba(79,70,229,.26);
+      animation: playPulse 2.8s ease-in-out infinite;
+    }
+
+    @keyframes playPulse {
+      50% { transform: scale(1.09); }
+    }
+
+    .lesson-body {
+      padding: 14px;
+    }
+
+    .lesson-body h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -.06em;
+      line-height: 1.05;
+    }
+
+    .lesson-body p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.35;
+    }
+
+    .chapter-list {
+      margin-top: 13px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .chapter {
+      height: 42px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: white;
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .chapter-no {
+      width: 28px;
+      height: 28px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: var(--soft-bg);
+      color: var(--tone);
+      font-size: 10px;
+      font-weight: 950;
+    }
+
+    .chapter strong {
+      font-size: 11px;
+      line-height: 1.1;
+    }
+
+    .chapter span {
+      color: var(--muted);
+      font-size: 9.5px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .primary-btn {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 78px;
+      height: 48px;
+      border: 0;
+      border-radius: 18px;
+      color: white;
+      background: var(--indigo);
+      font-size: 13px;
+      font-weight: 950;
+      box-shadow: 0 14px 24px rgba(79,70,229,.22);
+      animation: btnBreath 3.2s ease-in-out infinite;
+    }
+
+    @keyframes btnBreath {
+      50% { transform: translateY(-2px); filter: saturate(1.12); }
+    }
+
+    .quiz-card {
+      border-radius: 28px;
+      padding: 16px;
+      background:
+        radial-gradient(circle at 84% 0%, rgba(217,119,6,.14), transparent 40%),
+        white;
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 20px rgba(34,45,86,.05);
+    }
+
+    .quiz-card label {
+      color: var(--amber);
+      background: var(--amber-soft);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 10px;
+      font-weight: 950;
+    }
+
+    .quiz-card h2 {
+      margin: 12px 0 0;
+      font-size: 21px;
+      letter-spacing: -.065em;
+      line-height: 1.06;
+    }
+
+    .quiz-card p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.35;
+    }
+
+    .answer-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 13px;
+    }
+
+    .answer {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.9);
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: center;
+      animation: answerFloat 5.4s ease-in-out infinite;
+      animation-delay: var(--ad);
+    }
+
+    @keyframes answerFloat {
+      50% { transform: translateX(3px); border-color: color-mix(in srgb, var(--tone) 26%, var(--line)); }
+    }
+
+    .answer.active {
+      background: var(--green-soft);
+      border-color: #bbf7d0;
+    }
+
+    .answer span {
+      width: 28px;
+      height: 28px;
+      border-radius: 11px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 950;
+    }
+
+    .answer strong {
+      font-size: 11.5px;
+      line-height: 1.18;
+    }
+
+    .explain {
+      margin-top: 12px;
+      border-radius: 20px;
+      background: var(--green-soft);
+      border: 1px solid #bbf7d0;
+      padding: 12px;
+    }
+
+    .explain strong {
+      display: block;
+      color: var(--green);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .explain p {
+      margin: 0;
+      color: var(--soft);
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    .progress-hero {
+      border-radius: 28px;
+      padding: 16px;
+      background:
+        radial-gradient(circle at 85% 0%, rgba(22,163,74,.14), transparent 40%),
+        white;
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 20px rgba(34,45,86,.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-hero h2 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.05;
+      letter-spacing: -.065em;
+    }
+
+    .progress-hero p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.35;
+      max-width: 142px;
+    }
+
+    .badge-medal {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      width: 72px;
+      height: 90px;
+      animation: medalSwing 4s ease-in-out infinite;
+      transform-origin: top center;
+    }
+
+    @keyframes medalSwing {
+      50% { transform: rotate(4deg) translateY(-3px); }
+    }
+
+    .badge-medal::before {
+      content: "";
+      position: absolute;
+      left: 22px;
+      top: 0;
+      width: 28px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--indigo), var(--cyan));
+      clip-path: polygon(0 0, 100% 0, 72% 100%, 50% 78%, 28% 100%);
+    }
+
+    .badge-medal::after {
+      content: "A";
+      position: absolute;
+      left: 9px;
+      top: 32px;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #facc15, #d97706);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 22px;
+      font-weight: 950;
+      box-shadow: 0 14px 24px rgba(217,119,6,.22);
+    }
+
+    .week-chart {
+      margin-top: 14px;
+      height: 116px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(to bottom, transparent 24%, #edf2f7 25%, transparent 26%),
+        linear-gradient(to bottom, transparent 49%, #edf2f7 50%, transparent 51%),
+        linear-gradient(to bottom, transparent 74%, #edf2f7 75%, transparent 76%),
+        #fff;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      align-items: end;
+      padding: 14px 12px 22px;
+      position: relative;
+    }
+
+    .bar {
+      border-radius: 12px 12px 5px 5px;
+      background: linear-gradient(180deg, var(--tone), color-mix(in srgb, var(--tone) 70%, black));
+      height: var(--h);
+      transform-origin: bottom;
+      animation: barGrow 1.25s cubic-bezier(.22,1,.36,1) both, barBreathe 4.2s ease-in-out infinite;
+      animation-delay: var(--bd);
+      position: relative;
+    }
+
+    @keyframes barGrow {
+      from { transform: scaleY(0); }
+      to { transform: scaleY(1); }
+    }
+
+    @keyframes barBreathe {
+      50% { opacity: .74; transform: scaleY(.94); }
+    }
+
+    .bar::after {
+      content: attr(data-day);
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 850;
+    }
+
+    .achievement-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .achievement {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.9);
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      animation: achievementMove 5.6s ease-in-out infinite;
+      animation-delay: var(--aid);
+    }
+
+    @keyframes achievementMove {
+      50% { transform: translateX(-3px); border-color: color-mix(in srgb, var(--tone) 26%, var(--line)); }
+    }
+
+    .ach-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .achievement strong {
+      display: block;
+      font-size: 11.5px;
+      line-height: 1.18;
+    }
+
+    .achievement span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 9.5px;
+      font-weight: 760;
+    }
+
+    .tap {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(79,70,229,.16);
+      border: 2px solid rgba(79,70,229,.36);
+      z-index: 8;
+      pointer-events: none;
+      animation: tap 4.8s ease-in-out infinite;
+      animation-delay: var(--tap-delay);
+    }
+
+    .tap::after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 50%;
+      background: var(--indigo);
+    }
+
+    @keyframes tap {
+      0%, 12% { opacity: 0; transform: scale(.55); }
+      22%, 32% { opacity: 1; transform: scale(1); }
+      44%, 100% { opacity: 0; transform: scale(1.42); }
+    }
+
+    .t1 { right: 26px; top: 218px; --tap-delay:.2s; }
+    .t2 { left: 50%; bottom: 90px; --tap-delay:.65s; }
+    .t3 { right: 34px; top: 253px; --tap-delay:1.1s; }
+    .t4 { right: 36px; top: 151px; --tap-delay:1.55s; }
+
+    @media (max-width: 1150px) {
+      body { overflow: auto; }
+      .stage {
+        width: 100vw;
+        min-height: 100vh;
+        aspect-ratio: auto;
+        border-radius: 0;
+      }
+
+      .intro {
+        height: auto;
+        grid-template-columns: 1fr;
+        align-items: start;
+        margin-bottom: 20px;
+      }
+
+      .learning-tags { justify-content: flex-start; }
+      .screens {
+        height: auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow-line { display: none; }
+      .phone { max-width: 274px; }
+    }
+
+    @media (max-width: 720px) {
+      .screens { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="stage">
+    <header class="intro">
+      <div class="title">
+        <div class="app-badge"></div>
+        <div>
+          <h1>EdTech Learning Mobile App</h1>
+          <p>A mobile learning journey that helps students continue lessons, watch bite-sized content, answer quizzes, and track progress with clear feedback.</p>
+        </div>
+      </div>
+
+      <div class="learning-tags">
+        <div class="tag" style="--tone:var(--indigo);">Course journey</div>
+        <div class="tag" style="--tone:var(--amber);">Interactive quiz</div>
+        <div class="tag" style="--tone:var(--green);">Progress tracking</div>
+      </div>
+    </header>
+
+    <main class="screens">
+      <div class="flow-line"></div>
+
+      <section class="phone-group" style="--delay:.1s; --rot:-2deg;">
+        <div class="step-label" style="--tone:var(--indigo); --soft-bg:var(--indigo-soft);"><span>1</span> Course home</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+
+            <div class="m-top">
+              <div><strong>Hi, Anya</strong><small>Continue your learning path</small></div>
+              <div class="avatar"></div>
+            </div>
+
+            <div class="m-body">
+              <section class="home-hero">
+                <h2>UX Foundations</h2>
+                <p>You are 64% through the beginner product design track.</p>
+                <div class="lesson-ring"><strong>64%</strong></div>
+              </section>
+
+              <div class="course-list">
+                <article class="course" style="--tone:var(--indigo); --soft-bg:var(--indigo-soft); --cd:.1s;">
+                  <div class="course-icon">▶</div>
+                  <div><strong>User research basics</strong><small>Lesson 08 · 12 min</small></div>
+                  <div class="course-status">Next</div>
+                </article>
+
+                <article class="course" style="--tone:var(--cyan); --soft-bg:var(--cyan-soft); --cd:.35s;">
+                  <div class="course-icon">✎</div>
+                  <div><strong>Wireframe practice</strong><small>Activity · 8 min</small></div>
+                  <div class="course-status">Start</div>
+                </article>
+
+                <article class="course" style="--tone:var(--amber); --soft-bg:var(--amber-soft); --cd:.6s;">
+                  <div class="course-icon">?</div>
+                  <div><strong>Quiz checkpoint</strong><small>5 questions</small></div>
+                  <div class="course-status">Ready</div>
+                </article>
+
+                <article class="course" style="--tone:var(--green); --soft-bg:var(--green-soft); --cd:.85s;">
+                  <div class="course-icon">✓</div>
+                  <div><strong>Persona exercise</strong><small>Completed yesterday</small></div>
+                  <div class="course-status">Done</div>
+                </article>
+              </div>
+
+              <div class="tap t1"></div>
+            </div>
+
+            <nav class="bottom-nav">
+              <div class="nav-item active" style="--tone:var(--indigo); --soft-bg:var(--indigo-soft);"><span class="nav-icon">⌂</span>Home</div>
+              <div class="nav-item"><span class="nav-icon">▶</span>Learn</div>
+              <div class="nav-item"><span class="nav-icon">?</span>Quiz</div>
+              <div class="nav-item"><span class="nav-icon">★</span>Stats</div>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone-group" style="--delay:.22s; --rot:1.5deg;">
+        <div class="step-label" style="--tone:var(--cyan); --soft-bg:var(--cyan-soft);"><span>2</span> Lesson player</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+
+            <section class="lesson-player">
+              <div class="play-card">
+                <div class="play-btn">▶</div>
+              </div>
+            </section>
+
+            <div class="lesson-body">
+              <h2>User research basics</h2>
+              <p>Learn how to identify user needs, plan interviews, and turn notes into insight themes.</p>
+
+              <div class="chapter-list">
+                <article class="chapter" style="--tone:var(--green); --soft-bg:var(--green-soft);">
+                  <div class="chapter-no">1</div>
+                  <strong>What research answers</strong>
+                  <span>Done</span>
+                </article>
+
+                <article class="chapter" style="--tone:var(--cyan); --soft-bg:var(--cyan-soft);">
+                  <div class="chapter-no">2</div>
+                  <strong>Interview planning</strong>
+                  <span>Now</span>
+                </article>
+
+                <article class="chapter" style="--tone:var(--indigo); --soft-bg:var(--indigo-soft);">
+                  <div class="chapter-no">3</div>
+                  <strong>Turning notes into themes</strong>
+                  <span>Next</span>
+                </article>
+              </div>
+            </div>
+
+            <button class="primary-btn">Continue lesson</button>
+            <div class="tap t2"></div>
+
+            <nav class="bottom-nav">
+              <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+              <div class="nav-item active" style="--tone:var(--cyan); --soft-bg:var(--cyan-soft);"><span class="nav-icon">▶</span>Learn</div>
+              <div class="nav-item"><span class="nav-icon">?</span>Quiz</div>
+              <div class="nav-item"><span class="nav-icon">★</span>Stats</div>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone-group" style="--delay:.34s; --rot:-1.25deg;">
+        <div class="step-label" style="--tone:var(--amber); --soft-bg:var(--amber-soft);"><span>3</span> Quiz feedback</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+
+            <div class="m-top">
+              <div><strong>Quick quiz</strong><small>Question 3 of 5</small></div>
+              <div class="avatar"></div>
+            </div>
+
+            <div class="m-body">
+              <section class="quiz-card">
+                <label>Research methods</label>
+                <h2>What is the main goal of a user interview?</h2>
+                <p>Choose the answer that best explains the purpose of early research.</p>
+              </section>
+
+              <div class="answer-list">
+                <article class="answer" style="--tone:var(--rose); --soft-bg:var(--rose-soft); --ad:.1s;">
+                  <span>A</span><strong>To confirm the first idea is correct</strong>
+                </article>
+
+                <article class="answer active" style="--tone:var(--green); --soft-bg:var(--green-soft); --ad:.35s;">
+                  <span>B</span><strong>To understand user needs and context</strong>
+                </article>
+
+                <article class="answer" style="--tone:var(--indigo); --soft-bg:var(--indigo-soft); --ad:.6s;">
+                  <span>C</span><strong>To collect final UI preferences</strong>
+                </article>
+              </div>
+
+              <section class="explain">
+                <strong>Correct answer</strong>
+                <p>Interviews help teams learn why users behave a certain way before deciding what to build.</p>
+              </section>
+
+              <div class="tap t3"></div>
+            </div>
+
+            <nav class="bottom-nav">
+              <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+              <div class="nav-item"><span class="nav-icon">▶</span>Learn</div>
+              <div class="nav-item active" style="--tone:var(--amber); --soft-bg:var(--amber-soft);"><span class="nav-icon">?</span>Quiz</div>
+              <div class="nav-item"><span class="nav-icon">★</span>Stats</div>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone-group" style="--delay:.46s; --rot:2deg;">
+        <div class="step-label" style="--tone:var(--green); --soft-bg:var(--green-soft);"><span>4</span> Progress</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="statusbar"><span>9:41</span><span>● ● ●</span></div>
+
+            <div class="m-top">
+              <div><strong>Progress</strong><small>Weekly learning pattern</small></div>
+              <div class="avatar"></div>
+            </div>
+
+            <div class="m-body">
+              <section class="progress-hero">
+                <h2>Track completed</h2>
+                <p>You passed the research module and unlocked wireframing basics.</p>
+                <div class="badge-medal"></div>
+              </section>
+
+              <div class="week-chart">
+                <i class="bar" data-day="M" style="--tone:var(--indigo); --h:44%; --bd:.1s;"></i>
+                <i class="bar" data-day="T" style="--tone:var(--cyan); --h:58%; --bd:.22s;"></i>
+                <i class="bar" data-day="W" style="--tone:var(--purple); --h:52%; --bd:.34s;"></i>
+                <i class="bar" data-day="T" style="--tone:var(--amber); --h:68%; --bd:.46s;"></i>
+                <i class="bar" data-day="F" style="--tone:var(--green); --h:76%; --bd:.58s;"></i>
+                <i class="bar" data-day="S" style="--tone:var(--cyan); --h:62%; --bd:.7s;"></i>
+                <i class="bar" data-day="S" style="--tone:var(--green); --h:82%; --bd:.82s;"></i>
+              </div>
+
+              <div class="achievement-list">
+                <article class="achievement" style="--tone:var(--green); --soft-bg:var(--green-soft); --aid:.1s;">
+                  <div class="ach-icon">✓</div>
+                  <div><strong>5 lessons completed</strong><span>Best weekly streak so far</span></div>
+                </article>
+
+                <article class="achievement" style="--tone:var(--indigo); --soft-bg:var(--indigo-soft); --aid:.35s;">
+                  <div class="ach-icon">★</div>
+                  <div><strong>Research badge unlocked</strong><span>Ready for the next module</span></div>
+                </article>
+              </div>
+
+              <div class="tap t4"></div>
+            </div>
+
+            <nav class="bottom-nav">
+              <div class="nav-item"><span class="nav-icon">⌂</span>Home</div>
+              <div class="nav-item"><span class="nav-icon">▶</span>Learn</div>
+              <div class="nav-item"><span class="nav-icon">?</span>Quiz</div>
+              <div class="nav-item active" style="--tone:var(--green); --soft-bg:var(--green-soft);"><span class="nav-icon">★</span>Stats</div>
+            </nav>
+          </div>
+        </div>
+      </section>
+    </main>
+  </section>
+</body>
+</html>

@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpsDesk Enterprise Operations Console</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --line: #e5eaf2;
+      --line-strong: #d7deea;
+      --text: #111827;
+      --text-soft: #334155;
+      --muted: #64748b;
+      --muted-2: #94a3b8;
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --green: #059669;
+      --green-soft: #ecfdf5;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --red: #dc2626;
+      --red-soft: #fef2f2;
+      --violet: #7c3aed;
+      --violet-soft: #f5f3ff;
+      --shadow: 0 18px 50px rgba(15, 23, 42, .08);
+      --shadow-soft: 0 10px 24px rgba(15, 23, 42, .06);
+      --radius: 18px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(37, 99, 235, .10), transparent 30%),
+        radial-gradient(circle at 90% 8%, rgba(124, 58, 237, .08), transparent 32%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+      font-family: var(--font);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    .stage {
+      width: min(100vw, 1600px);
+      aspect-ratio: 16 / 9;
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      box-shadow: 0 30px 90px rgba(15, 23, 42, .12);
+      display: grid;
+      grid-template-rows: 64px 1fr;
+      animation: stageIn .7s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    @keyframes stageIn {
+      from { opacity: 0; transform: translateY(18px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .topbar {
+      background: rgba(255, 255, 255, .92);
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 240px 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 0 22px;
+      backdrop-filter: blur(20px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #111827;
+      color: #fff;
+      font-weight: 900;
+      letter-spacing: -.05em;
+      box-shadow: 0 10px 22px rgba(17, 24, 39, .14);
+      flex: 0 0 auto;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 16px;
+      letter-spacing: -.04em;
+      line-height: 1.1;
+    }
+
+    .brand-text span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .search-wrap {
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface-soft);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 13px;
+      color: var(--muted);
+      font-size: 13px;
+      min-width: 260px;
+      max-width: 520px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-end;
+      white-space: nowrap;
+    }
+
+    .top-chip,
+    .export-btn {
+      height: 40px;
+      border-radius: 13px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 13px;
+      color: var(--text-soft);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .export-btn {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, .18);
+      animation: exportPulse 3.8s ease-in-out infinite;
+    }
+
+    @keyframes exportPulse {
+      50% { box-shadow: 0 16px 30px rgba(37, 99, 235, .28); }
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 38%, #f5c7a9 0 28%, transparent 29%),
+        radial-gradient(circle at 48% 72%, #1e293b 0 36%, transparent 37%),
+        linear-gradient(135deg, #cbd5e1, #94a3b8);
+      border: 2px solid white;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, .12);
+      flex: 0 0 auto;
+    }
+
+    .content {
+      min-height: 0;
+      padding: 18px 22px 22px;
+      display: grid;
+      grid-template-columns: 310px 1fr 360px;
+      grid-template-rows: auto 1fr 180px;
+      gap: 14px;
+    }
+
+    .page-head {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: 58px;
+    }
+
+    .page-head h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: -.055em;
+      line-height: 1.1;
+    }
+
+    .page-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      max-width: 650px;
+    }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      min-width: 520px;
+    }
+
+    .summary-item {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 13px;
+      box-shadow: var(--shadow-soft);
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+      animation: itemIn .55s cubic-bezier(.22, 1, .36, 1) both;
+      animation-delay: calc(var(--i) * 70ms);
+    }
+
+    @keyframes itemIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .summary-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--tone);
+    }
+
+    .summary-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .summary-item strong {
+      font-size: 22px;
+      letter-spacing: -.06em;
+      line-height: 1;
+    }
+
+    .summary-item small {
+      margin-left: 4px;
+      color: var(--tone);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .panel {
+      min-height: 0;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      animation: panelIn .65s cubic-bezier(.22, 1, .36, 1) both;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-head {
+      height: 52px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 15px;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: -.025em;
+      line-height: 1;
+    }
+
+    .panel-head span,
+    .panel-head button {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-soft);
+      height: 30px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .queue-panel {
+      grid-row: 2 / 4;
+      display: grid;
+      grid-template-rows: 52px 46px 1fr;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .tab {
+      border-radius: 11px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+      display: grid;
+      place-items: center;
+    }
+
+    .tab.active {
+      color: var(--blue);
+      border-color: #bfdbfe;
+      background: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, .08);
+    }
+
+    .request-list {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      overflow: hidden;
+    }
+
+    .request-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      padding: 12px;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+      animation: requestFloat 5.8s ease-in-out infinite;
+      animation-delay: var(--float);
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    .request-card:hover {
+      border-color: #bfdbfe;
+      box-shadow: 0 10px 26px rgba(37, 99, 235, .10);
+      transform: translateY(-2px);
+    }
+
+    @keyframes requestFloat {
+      50% { transform: translateY(-2px); }
+    }
+
+    .request-card.selected {
+      border-color: #93c5fd;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      box-shadow: 0 12px 28px rgba(37, 99, 235, .11);
+    }
+
+    .request-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 4px;
+      border-radius: 99px;
+      background: var(--tone);
+    }
+
+    .request-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    .request-id {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .04em;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 5px 8px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      font-size: 10px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .request-card h3 {
+      margin: 0 0 6px;
+      padding-left: 4px;
+      font-size: 13px;
+      letter-spacing: -.015em;
+      line-height: 1.25;
+      font-weight: 760;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .request-card p {
+      margin: 0;
+      padding-left: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.4;
+      min-height: 31px;
+    }
+
+    .request-meta {
+      padding-left: 4px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .avatars {
+      display: flex;
+      align-items: center;
+    }
+
+    .mini-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #cbd5e1, #64748b);
+      border: 2px solid #fff;
+      margin-left: -6px;
+    }
+
+    .mini-avatar:first-child { margin-left: 0; }
+
+    .work-panel {
+      grid-column: 2;
+      grid-row: 2;
+      display: grid;
+      grid-template-rows: 52px 1fr;
+    }
+
+    .work-table-wrap {
+      overflow: hidden;
+      padding: 0 14px 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 12px;
+    }
+
+    thead th {
+      text-align: left;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .055em;
+      padding: 12px 8px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    tbody td {
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+      color: var(--text-soft);
+      font-weight: 650;
+    }
+
+    tbody tr {
+      animation: rowPulse 6s ease-in-out infinite;
+      animation-delay: var(--r);
+    }
+
+    @keyframes rowPulse {
+      50% { background: #f8fbff; }
+    }
+
+    .request-name {
+      color: var(--text);
+      font-weight: 760;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .subtext {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 8px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      font-size: 10px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--tone);
+    }
+
+    .sla-cell {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 7px;
+      border-radius: 999px;
+      background: #edf2f7;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: var(--w);
+      height: 100%;
+      border-radius: 999px;
+      background: var(--tone);
+      transform-origin: left;
+      animation: fillBar 1.4s cubic-bezier(.22, 1, .36, 1) both, liveBar 4.2s ease-in-out infinite;
+    }
+
+    @keyframes fillBar {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    @keyframes liveBar {
+      50% { opacity: .72; }
+    }
+
+    .detail-panel {
+      grid-column: 3;
+      grid-row: 2 / 4;
+      display: grid;
+      grid-template-rows: 52px auto auto 1fr auto;
+    }
+
+    .detail-body {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .detail-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--amber);
+      background: var(--amber-soft);
+      border: 1px solid #fde68a;
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 10px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .detail-label::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 0 0 rgba(217, 119, 6, .35);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      70% { box-shadow: 0 0 0 8px rgba(217, 119, 6, 0); }
+    }
+
+    .detail-body h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      letter-spacing: -.035em;
+      line-height: 1.22;
+      font-weight: 800;
+    }
+
+    .detail-body p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .field-grid {
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .field {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .field span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .055em;
+      margin-bottom: 5px;
+    }
+
+    .field strong {
+      display: block;
+      font-size: 12px;
+      line-height: 1.3;
+      color: var(--text-soft);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .approval-flow {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .flow-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .flow-title strong {
+      font-size: 13px;
+      letter-spacing: -.015em;
+    }
+
+    .flow-title span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .steps {
+      display: grid;
+      gap: 9px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 44px;
+    }
+
+    .step-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: var(--soft-bg);
+      color: var(--tone);
+      font-size: 11px;
+      font-weight: 900;
+      position: relative;
+    }
+
+    .step-dot::after {
+      content: "";
+      position: absolute;
+      top: 30px;
+      left: 13px;
+      width: 2px;
+      height: 22px;
+      background: var(--line);
+    }
+
+    .step:last-child .step-dot::after { display: none; }
+
+    .step strong {
+      display: block;
+      color: var(--text-soft);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .step span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .step small {
+      color: var(--tone);
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .notes {
+      padding: 14px 16px;
+      overflow: hidden;
+    }
+
+    .note {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 14px;
+      padding: 11px;
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+      animation: noteIn 5s ease-in-out infinite;
+      animation-delay: var(--n);
+    }
+
+    @keyframes noteIn {
+      50% { transform: translateY(-2px); border-color: #bfdbfe; }
+    }
+
+    .detail-actions {
+      border-top: 1px solid var(--line);
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: rgba(255,255,255,.92);
+    }
+
+    .detail-actions button {
+      height: 40px;
+      border-radius: 13px;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text-soft);
+      font-weight: 850;
+      font-size: 12px;
+    }
+
+    .detail-actions .primary {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+      box-shadow: 0 10px 22px rgba(5, 150, 105, .18);
+    }
+
+    .bottom-left {
+      grid-column: 2;
+      grid-row: 3;
+      display: grid;
+      grid-template-rows: 52px 1fr;
+    }
+
+    .chart-area {
+      position: relative;
+      padding: 10px 16px 16px;
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      height: 128px;
+    }
+
+    .line-chart {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background:
+        linear-gradient(to bottom, transparent 24%, #edf2f7 25%, transparent 26%),
+        linear-gradient(to bottom, transparent 49%, #edf2f7 50%, transparent 51%),
+        linear-gradient(to bottom, transparent 74%, #edf2f7 75%, transparent 76%),
+        #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .line-chart svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .trend-line {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 420;
+      stroke-dashoffset: 420;
+      animation: drawLine 3.4s ease-in-out infinite;
+    }
+
+    .trend-area {
+      fill: rgba(37, 99, 235, .08);
+      opacity: .85;
+    }
+
+    @keyframes drawLine {
+      0% { stroke-dashoffset: 420; opacity: .35; }
+      42%, 72% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: -420; opacity: .35; }
+    }
+
+    .dept-bars {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 9px;
+    }
+
+    .dept-row {
+      display: grid;
+      grid-template-columns: 78px 1fr 34px;
+      align-items: center;
+      gap: 9px;
+      font-size: 11px;
+      color: var(--text-soft);
+      font-weight: 750;
+    }
+
+    .dept-row span:last-child {
+      color: var(--muted);
+      text-align: right;
+    }
+
+    svg.icon {
+      width: 16px;
+      height: 16px;
+      stroke-width: 2.2;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 1150px) {
+      body { overflow: auto; }
+      .stage {
+        width: 100vw;
+        min-height: 100vh;
+        aspect-ratio: auto;
+        border-radius: 0;
+      }
+      .topbar { grid-template-columns: 1fr; height: auto; padding: 14px; }
+      .top-actions { justify-content: flex-start; flex-wrap: wrap; }
+      .content { grid-template-columns: 1fr; grid-template-rows: auto; overflow: auto; }
+      .page-head { flex-direction: column; }
+      .summary-strip { min-width: 0; width: 100%; grid-template-columns: repeat(2, 1fr); }
+      .queue-panel, .work-panel, .detail-panel, .bottom-left { grid-column: 1; grid-row: auto; }
+      .detail-panel { min-height: 700px; }
+      .work-panel { min-height: 520px; }
+      .queue-panel { min-height: 680px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">O</div>
+        <div class="brand-text">
+          <strong>OpsDesk</strong>
+          <span>Enterprise operations console</span>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        Search by request ID, owner, department, or status
+      </div>
+
+      <div class="top-actions">
+        <div class="top-chip">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          May 12 – May 18
+        </div>
+        <div class="top-chip">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg>
+          SLA Health 94%
+        </div>
+        <button class="export-btn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          Export
+        </button>
+        <div class="avatar"></div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="page-head">
+        <div>
+          <h1>Operations Command Center</h1>
+          <p>Centralized request tracking for approvals, ownership, SLA risk, and next actions across internal teams.</p>
+        </div>
+
+        <div class="summary-strip">
+          <div class="summary-item" style="--tone:var(--blue); --i:1;">
+            <span>Open requests</span>
+            <strong data-count="148">0</strong><small>+18</small>
+          </div>
+          <div class="summary-item" style="--tone:var(--amber); --i:2;">
+            <span>Waiting approval</span>
+            <strong data-count="34">0</strong><small>due</small>
+          </div>
+          <div class="summary-item" style="--tone:var(--red); --i:3;">
+            <span>SLA at risk</span>
+            <strong data-count="12">0</strong><small>-4</small>
+          </div>
+          <div class="summary-item" style="--tone:var(--green); --i:4;">
+            <span>Completed</span>
+            <strong data-count="286">0</strong><small>+21%</small>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel queue-panel" style="--delay:.08s;">
+        <div class="panel-head">
+          <h2>Request Queue</h2>
+          <span>Priority first</span>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active">All</div>
+          <div class="tab">Approval</div>
+          <div class="tab">At risk</div>
+        </div>
+
+        <div class="request-list">
+          <article class="request-card selected" style="--tone:var(--amber); --soft-bg:var(--amber-soft); --float:.1s;">
+            <div class="request-top">
+              <span class="request-id">REQ-4181</span>
+              <span class="badge">Approval</span>
+            </div>
+            <h3>Budget transfer approval</h3>
+            <p>Finance reviewed the request. Department lead approval is still required.</p>
+            <div class="request-meta">
+              <span>Due in 6h 20m</span>
+              <div class="avatars"><i class="mini-avatar"></i><i class="mini-avatar"></i></div>
+            </div>
+          </article>
+
+          <article class="request-card" style="--tone:var(--red); --soft-bg:var(--red-soft); --float:.4s;">
+            <div class="request-top">
+              <span class="request-id">REQ-4208</span>
+              <span class="badge">At risk</span>
+            </div>
+            <h3>Enterprise access issue</h3>
+            <p>IT owner action is needed before the request breaches SLA.</p>
+            <div class="request-meta">
+              <span>2h 14m left</span>
+              <div class="avatars"><i class="mini-avatar"></i></div>
+            </div>
+          </article>
+
+          <article class="request-card" style="--tone:var(--violet); --soft-bg:var(--violet-soft); --float:.7s;">
+            <div class="request-top">
+              <span class="request-id">REQ-4173</span>
+              <span class="badge">Review</span>
+            </div>
+            <h3>Policy exception request</h3>
+            <p>Legal reviewer added questions for product owner response.</p>
+            <div class="request-meta">
+              <span>Updated 18m ago</span>
+              <div class="avatars"><i class="mini-avatar"></i><i class="mini-avatar"></i></div>
+            </div>
+          </article>
+
+          <article class="request-card" style="--tone:var(--blue); --soft-bg:var(--blue-soft); --float:1s;">
+            <div class="request-top">
+              <span class="request-id">REQ-4139</span>
+              <span class="badge">New</span>
+            </div>
+            <h3>Vendor onboarding setup</h3>
+            <p>Compliance checklist and account owner need to be assigned.</p>
+            <div class="request-meta">
+              <span>New request</span>
+              <div class="avatars"><i class="mini-avatar"></i></div>
+            </div>
+          </article>
+
+          <article class="request-card" style="--tone:var(--green); --soft-bg:var(--green-soft); --float:1.3s;">
+            <div class="request-top">
+              <span class="request-id">REQ-4116</span>
+              <span class="badge">Ready</span>
+            </div>
+            <h3>Asset handover confirmation</h3>
+            <p>All approval steps are completed and ready for closure.</p>
+            <div class="request-meta">
+              <span>Ready to close</span>
+              <div class="avatars"><i class="mini-avatar"></i><i class="mini-avatar"></i></div>
+            </div>
+          </article>
+        </div>
+      </aside>
+
+      <section class="panel work-panel" style="--delay:.16s;">
+        <div class="panel-head">
+          <h2>Operational Worklist</h2>
+          <button>Saved view: Ops review</button>
+        </div>
+
+        <div class="work-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 34%;">Request</th>
+                <th style="width: 17%;">Owner</th>
+                <th style="width: 18%;">Status</th>
+                <th style="width: 18%;">SLA</th>
+                <th style="width: 13%;">Next action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="--r:.1s;">
+                <td><span class="request-name">Budget transfer approval</span><span class="subtext">REQ-4181 · Finance operations</span></td>
+                <td>Mike Lewis</td>
+                <td><span class="status-pill" style="--tone:var(--amber); --soft-bg:var(--amber-soft);">Waiting approval</span></td>
+                <td><div class="sla-cell" style="--tone:var(--amber); --w:68%;"><span>68% elapsed</span><div class="bar-track"><div class="bar-fill"></div></div></div></td>
+                <td>Approve</td>
+              </tr>
+              <tr style="--r:.3s;">
+                <td><span class="request-name">Enterprise access issue</span><span class="subtext">REQ-4208 · IT service desk</span></td>
+                <td>James Parker</td>
+                <td><span class="status-pill" style="--tone:var(--red); --soft-bg:var(--red-soft);">At risk</span></td>
+                <td><div class="sla-cell" style="--tone:var(--red); --w:86%;"><span>86% elapsed</span><div class="bar-track"><div class="bar-fill"></div></div></div></td>
+                <td>Escalate</td>
+              </tr>
+              <tr style="--r:.5s;">
+                <td><span class="request-name">Policy exception request</span><span class="subtext">REQ-4173 · Legal review</span></td>
+                <td>Emily Carter</td>
+                <td><span class="status-pill" style="--tone:var(--violet); --soft-bg:var(--violet-soft);">In review</span></td>
+                <td><div class="sla-cell" style="--tone:var(--violet); --w:42%;"><span>42% elapsed</span><div class="bar-track"><div class="bar-fill"></div></div></div></td>
+                <td>Reply</td>
+              </tr>
+              <tr style="--r:.7s;">
+                <td><span class="request-name">Vendor onboarding setup</span><span class="subtext">REQ-4139 · Procurement</span></td>
+                <td>Sarah Johnson</td>
+                <td><span class="status-pill" style="--tone:var(--blue); --soft-bg:var(--blue-soft);">New</span></td>
+                <td><div class="sla-cell" style="--tone:var(--blue); --w:24%;"><span>24% elapsed</span><div class="bar-track"><div class="bar-fill"></div></div></div></td>
+                <td>Assign</td>
+              </tr>
+              <tr style="--r:.9s;">
+                <td><span class="request-name">Asset handover confirmation</span><span class="subtext">REQ-4116 · Admin operations</span></td>
+                <td>Daniel Kim</td>
+                <td><span class="status-pill" style="--tone:var(--green); --soft-bg:var(--green-soft);">Ready to close</span></td>
+                <td><div class="sla-cell" style="--tone:var(--green); --w:22%;"><span>Within target</span><div class="bar-track"><div class="bar-fill"></div></div></div></td>
+                <td>Close</td>
+              </tr>
+              <tr style="--r:1.1s;">
+                <td><span class="request-name">Supplier document follow-up</span><span class="subtext">REQ-4092 · Vendor operations</span></td>
+                <td>Nadia Perera</td>
+                <td><span class="status-pill" style="--tone:var(--amber); --soft-bg:var(--amber-soft);">Pending info</span></td>
+                <td><div class="sla-cell" style="--tone:var(--amber); --w:57%;"><span>57% elapsed</span><div class="bar-track"><div class="bar-fill"></div></div></div></td>
+                <td>Remind</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="panel detail-panel" style="--delay:.24s;">
+        <div class="panel-head">
+          <h2>Selected Request</h2>
+          <span>REQ-4181</span>
+        </div>
+
+        <div class="detail-body">
+          <div class="detail-label">Approval needed</div>
+          <h2>Budget transfer approval for Q3 campaign support</h2>
+          <p>The request is financially verified and now needs department lead approval before it moves to implementation.</p>
+        </div>
+
+        <div class="field-grid">
+          <div class="field"><span>Department</span><strong>Marketing</strong></div>
+          <div class="field"><span>Owner</span><strong>Mike Lewis</strong></div>
+          <div class="field"><span>Amount</span><strong>$18,400</strong></div>
+          <div class="field"><span>Due</span><strong>Today, 4:30 PM</strong></div>
+        </div>
+
+        <div class="approval-flow">
+          <div class="flow-title">
+            <strong>Approval path</strong>
+            <span>3 of 4 steps</span>
+          </div>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step-dot" style="--tone:var(--green); --soft-bg:var(--green-soft);">1</div>
+              <div><strong>Request submitted</strong><span>Sarah J. · 9:12 AM</span></div>
+              <small style="--tone:var(--green);">Done</small>
+            </div>
+            <div class="step">
+              <div class="step-dot" style="--tone:var(--green); --soft-bg:var(--green-soft);">2</div>
+              <div><strong>Finance verified</strong><span>Budget code checked</span></div>
+              <small style="--tone:var(--green);">Done</small>
+            </div>
+            <div class="step">
+              <div class="step-dot" style="--tone:var(--amber); --soft-bg:var(--amber-soft);">3</div>
+              <div><strong>Lead approval</strong><span>Waiting for department lead</span></div>
+              <small style="--tone:var(--amber);">Active</small>
+            </div>
+            <div class="step">
+              <div class="step-dot" style="--tone:var(--muted); --soft-bg:#f1f5f9;">4</div>
+              <div><strong>Move to implementation</strong><span>Auto-routes after approval</span></div>
+              <small style="--tone:var(--muted);">Next</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="notes">
+          <div class="note" style="--n:.1s;">Finance note: amount and budget code are verified. No changes needed before approval.</div>
+          <div class="note" style="--n:.6s;">System note: this request will move to the risk queue if no action is taken before the approval window closes.</div>
+        </div>
+
+        <div class="detail-actions">
+          <button>Request changes</button>
+          <button class="primary">Approve request</button>
+        </div>
+      </aside>
+
+      <section class="panel bottom-left" style="--delay:.32s;">
+        <div class="panel-head">
+          <h2>SLA Trend & Department Load</h2>
+          <span>Live update</span>
+        </div>
+
+        <div class="chart-area">
+          <div class="line-chart">
+            <svg viewBox="0 0 420 120" preserveAspectRatio="none" aria-hidden="true">
+              <path class="trend-area" d="M0 88 C55 82, 65 62, 110 68 S185 92, 225 58 S292 34, 332 42 S385 62, 420 44 L420 120 L0 120 Z"></path>
+              <path class="trend-line" d="M0 88 C55 82, 65 62, 110 68 S185 92, 225 58 S292 34, 332 42 S385 62, 420 44"></path>
+            </svg>
+          </div>
+
+          <div class="dept-bars">
+            <div class="dept-row" style="--tone:var(--blue); --w:82%;"><span>IT</span><div class="bar-track"><div class="bar-fill"></div></div><span>82%</span></div>
+            <div class="dept-row" style="--tone:var(--amber); --w:64%;"><span>Finance</span><div class="bar-track"><div class="bar-fill"></div></div><span>64%</span></div>
+            <div class="dept-row" style="--tone:var(--violet); --w:48%;"><span>Legal</span><div class="bar-track"><div class="bar-fill"></div></div><span>48%</span></div>
+            <div class="dept-row" style="--tone:var(--green); --w:36%;"><span>Admin</span><div class="bar-track"><div class="bar-fill"></div></div><span>36%</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const counters = document.querySelectorAll("[data-count]");
+    const easeOut = t => 1 - Math.pow(1 - t, 4);
+
+    counters.forEach(counter => {
+      const target = Number(counter.dataset.count);
+      const start = performance.now();
+      const duration = 1200 + target * 2.5;
+
+      function update(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        counter.textContent = Math.round(easeOut(progress) * target).toLocaleString();
+        if (progress < 1) requestAnimationFrame(update);
+      }
+
+      requestAnimationFrame(update);
+    });
+
+    document.querySelectorAll(".panel, .request-card, .summary-item").forEach(card => {
+      card.addEventListener("pointermove", event => {
+        const rect = card.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - .5;
+        const y = (event.clientY - rect.top) / rect.height - .5;
+        card.style.transform = `perspective(900px) rotateX(${(-y * 1.6).toFixed(2)}deg) rotateY(${(x * 1.6).toFixed(2)}deg) translateY(-1px)`;
+      });
+
+      card.addEventListener("pointerleave", () => {
+        card.style.transform = "";
+      });
+    });
+  </script>
+</body>
+</html>

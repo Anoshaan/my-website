@@ -5,7 +5,7 @@ import { ClosingCTA } from "@/components/sections/selected-work/ClosingCTA";
 export const metadata = {
   title: "Selected Product Pathways",
   description:
-    "A collection of product journeys showing how ideas move from early problem framing to launch-ready experiences.",
+    "A focused collection of product, AI, brand, motion, and handoff systems showing how ideas move from early client conversations into scalable product experiences.",
 };
 
 export default function SelectedWorkPage() {

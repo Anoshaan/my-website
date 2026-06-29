@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Study 06 - Marketplace Mobile Experience</title>
+  <style>
+    :root {
+      --canvas: #f6efe5;
+      --ink: #1f2a22;
+      --soft: #546253;
+      --muted: #8a9588;
+      --paper: #fffaf1;
+      --paper-2: #fdf4e3;
+      --line: #eadcc8;
+      --phone: #151a17;
+      --screen: #fffdf7;
+      --green: #1d8b5f;
+      --green-soft: #e9f8ef;
+      --orange: #e07828;
+      --orange-soft: #fff0df;
+      --blue: #2878d9;
+      --blue-soft: #e9f2ff;
+      --rose: #d94d65;
+      --rose-soft: #fff0f3;
+      --yellow: #e5a927;
+      --yellow-soft: #fff6d9;
+      --brown: #8b5d35;
+      --brown-soft: #f4eadf;
+      --shadow: 0 34px 95px rgba(71, 50, 28, .18);
+      --phone-shadow: 0 28px 56px rgba(30, 36, 31, .24);
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 16%, rgba(224, 120, 40, .15), transparent 30%),
+        radial-gradient(circle at 86% 12%, rgba(29, 139, 95, .13), transparent 30%),
+        radial-gradient(circle at 56% 96%, rgba(229, 169, 39, .12), transparent 32%),
+        linear-gradient(180deg, #fffaf1 0%, var(--canvas) 100%);
+    }
+
+    .stage {
+      width: min(100vw, 1600px);
+      aspect-ratio: 16 / 9;
+      border-radius: 34px;
+      border: 1px solid rgba(234, 220, 200, .9);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(255,255,255,.65), transparent 38%),
+        linear-gradient(90deg, rgba(139, 93, 53, .035) 1px, transparent 1px),
+        linear-gradient(rgba(139, 93, 53, .035) 1px, transparent 1px),
+        linear-gradient(145deg, #fffaf1, #f3eadc);
+      background-size: 100% 100%, 40px 40px, 40px 40px, 100% 100%;
+      padding: 26px 34px 28px;
+      animation: stageIn .75s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes stageIn {
+      from { opacity: 0; transform: translateY(18px) scale(.984); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle, rgba(29,139,95,.08) 0 1px, transparent 2px),
+        radial-gradient(circle, rgba(224,120,40,.07) 0 1px, transparent 2px);
+      background-size: 96px 96px, 140px 140px;
+      opacity: .54;
+      animation: marketAir 26s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes marketAir {
+      to { transform: translate(96px, 78px); }
+    }
+
+    .intro {
+      position: relative;
+      z-index: 2;
+      height: 96px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 0;
+    }
+
+    .market-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, #fdf1ce 0 30%, #1d8b5f 31% 100%);
+      box-shadow: 0 18px 34px rgba(29,139,95,.2);
+      position: relative;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .market-badge::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 10px;
+      height: 20px;
+      background:
+        repeating-linear-gradient(90deg, #e07828 0 12px, #fffaf1 12px 24px);
+      border-radius: 12px 12px 4px 4px;
+      box-shadow: 0 5px 0 rgba(0,0,0,.08);
+    }
+
+    .market-badge::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 12px;
+      height: 18px;
+      border-radius: 9px 9px 3px 3px;
+      background: rgba(255,255,255,.86);
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -.06em;
+      line-height: 1.05;
+    }
+
+    .title p {
+      margin: 6px 0 0;
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.42;
+      max-width: 760px;
+    }
+
+    .journey-tags {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tag {
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,250,241,.82);
+      color: var(--soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 13px;
+      font-size: 12px;
+      font-weight: 850;
+      box-shadow: 0 10px 22px rgba(71,50,28,.06);
+      white-space: nowrap;
+    }
+
+    .tag::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--tone);
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--tone) 35%, transparent);
+      animation: dotPulse 2s infinite;
+    }
+
+    @keyframes dotPulse {
+      70% { box-shadow: 0 0 0 9px transparent; }
+    }
+
+    .showcase {
+      position: relative;
+      z-index: 1;
+      height: calc(100% - 96px);
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 22px;
+      align-items: center;
+      padding-bottom: 8px;
+    }
+
+    .path-line {
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 49%;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(224,120,40,.20), rgba(29,139,95,.24), transparent);
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .path-line::after {
+      content: "";
+      position: absolute;
+      top: -4px;
+      width: 82px;
+      height: 11px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--orange), var(--green), transparent);
+      animation: pathMove 5.8s cubic-bezier(.55, 0, .2, 1) infinite;
+    }
+
+    @keyframes pathMove {
+      from { left: -100px; opacity: 0; }
+      10%, 82% { opacity: 1; }
+      to { left: 100%; opacity: 0; }
+    }
+
+    .phone-group {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      justify-items: center;
+      gap: 11px;
+      animation: phoneIn .68s cubic-bezier(.22,1,.36,1) both;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes phoneIn {
+      from { opacity: 0; transform: translateY(24px) rotate(var(--rot)); }
+      to { opacity: 1; transform: translateY(0) rotate(var(--rot)); }
+    }
+
+    .step-label {
+      height: 33px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,250,241,.86);
+      box-shadow: 0 10px 22px rgba(71,50,28,.07);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 13px;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .step-label span {
+      width: 18px;
+      height: 18px;
+      border-radius: 8px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+    }
+
+    .phone {
+      width: min(100%, 276px);
+      aspect-ratio: 9 / 18.7;
+      border-radius: 42px;
+      background: var(--phone);
+      padding: 10px;
+      box-shadow: var(--phone-shadow), inset 0 0 0 1px rgba(255,255,255,.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 8px;
+      width: 74px;
+      height: 22px;
+      border-radius: 0 0 15px 15px;
+      background: var(--phone);
+      transform: translateX(-50%);
+      z-index: 5;
+    }
+
+    .screen {
+      height: 100%;
+      border-radius: 33px;
+      overflow: hidden;
+      background: var(--screen);
+      position: relative;
+    }
+
+    .m-top {
+      height: 64px;
+      padding: 24px 16px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(255,255,255,.76);
+      border-bottom: 1px solid #f0e4d6;
+      position: relative;
+      z-index: 2;
+    }
+
+    .m-top strong {
+      font-size: 13px;
+      letter-spacing: -.02em;
+    }
+
+    .m-top small {
+      display: block;
+      color: var(--muted);
+      font-size: 9.5px;
+      font-weight: 800;
+      margin-top: 2px;
+    }
+
+    .m-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 12px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    .m-body {
+      position: absolute;
+      inset: 64px 0 0;
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .search-card {
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 80% 0, rgba(29,139,95,.12), transparent 38%),
+        #fff;
+      border: 1px solid #efe2d2;
+      padding: 14px;
+      box-shadow: 0 10px 22px rgba(71,50,28,.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .search-card h2 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.02;
+      letter-spacing: -.065em;
+    }
+
+    .search-card p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.35;
+    }
+
+    .search-box {
+      margin-top: 12px;
+      height: 40px;
+      border-radius: 15px;
+      background: #fff8ed;
+      border: 1px solid #efe2d2;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .search-box::before {
+      content: "⌕";
+      color: var(--orange);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .category-strip {
+      margin-top: 13px;
+      display: flex;
+      gap: 8px;
+      animation: chipFlow 7s ease-in-out infinite;
+    }
+
+    @keyframes chipFlow {
+      50% { transform: translateX(-20px); }
+    }
+
+    .category {
+      flex: 0 0 auto;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--soft-bg);
+      color: var(--tone);
+      border: 1px solid color-mix(in srgb, var(--tone) 20%, #fff);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .product-grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .product {
+      border-radius: 20px;
+      background: white;
+      border: 1px solid #efe2d2;
+      padding: 9px;
+      min-height: 138px;
+      box-shadow: 0 8px 18px rgba(71,50,28,.05);
+      position: relative;
+      animation: productLift 5.4s ease-in-out infinite;
+      animation-delay: var(--pd);
+    }
+
+    @keyframes productLift {
+      50% { transform: translateY(-4px); border-color: color-mix(in srgb, var(--tone) 26%, #efe2d2); }
+    }
+
+    .photo {
+      height: 68px;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 34% 44%, var(--tone) 0 13px, transparent 14px),
+        radial-gradient(circle at 60% 35%, color-mix(in srgb, var(--tone) 55%, white) 0 15px, transparent 16px),
+        var(--soft-bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo::after {
+      content: "";
+      position: absolute;
+      left: -30%;
+      top: 0;
+      width: 32%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.58), transparent);
+      animation: photoShine 4s ease-in-out infinite;
+      animation-delay: var(--pd);
+    }
+
+    @keyframes photoShine {
+      0%, 32% { transform: translateX(0); opacity: 0; }
+      48% { opacity: 1; }
+      80%, 100% { transform: translateX(420%); opacity: 0; }
+    }
+
+    .product strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 11px;
+      line-height: 1.15;
+      letter-spacing: -.01em;
+    }
+
+    .product small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 9.5px;
+      font-weight: 750;
+    }
+
+    .product .price {
+      position: absolute;
+      right: 9px;
+      bottom: 9px;
+      color: var(--tone);
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .detail-hero {
+      height: 190px;
+      border-radius: 0 0 30px 30px;
+      background:
+        radial-gradient(circle at 36% 44%, rgba(255,255,255,.45) 0 18%, transparent 19%),
+        radial-gradient(circle at 64% 48%, rgba(255,255,255,.36) 0 20%, transparent 21%),
+        linear-gradient(135deg, #1d8b5f, #e5a927);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .detail-hero::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 26px;
+      width: 150px;
+      height: 86px;
+      transform: translateX(-50%);
+      background:
+        radial-gradient(circle at 22% 48%, #ffefbe 0 18px, transparent 19px),
+        radial-gradient(circle at 50% 34%, #fff7d9 0 24px, transparent 25px),
+        radial-gradient(circle at 74% 52%, #ffd68f 0 19px, transparent 20px);
+      filter: drop-shadow(0 18px 18px rgba(71,50,28,.18));
+      animation: heroFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes heroFloat {
+      50% { transform: translateX(-50%) translateY(-5px) rotate(-2deg); }
+    }
+
+    .seller-badge {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      height: 34px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(255,255,255,.7);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 10px;
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--green);
+    }
+
+    .favorite {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.88);
+      display: grid;
+      place-items: center;
+      color: var(--rose);
+      font-size: 16px;
+      animation: heartBeat 2.8s ease-in-out infinite;
+    }
+
+    @keyframes heartBeat {
+      50% { transform: scale(1.12); }
+    }
+
+    .detail-content {
+      padding: 14px;
+    }
+
+    .detail-content h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -.06em;
+      line-height: 1.05;
+    }
+
+    .detail-content p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.38;
+    }
+
+    .rating-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .rating {
+      border-radius: 999px;
+      background: var(--yellow-soft);
+      color: var(--amber);
+      padding: 6px 9px;
+      font-size: 10px;
+      font-weight: 950;
+    }
+
+    .stock {
+      color: var(--green);
+      background: var(--green-soft);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 10px;
+      font-weight: 950;
+    }
+
+    .option-card {
+      margin-top: 13px;
+      border-radius: 18px;
+      border: 1px solid #efe2d2;
+      background: white;
+      padding: 12px;
+    }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0e4d6;
+      color: var(--soft);
+      font-size: 10.5px;
+      font-weight: 800;
+    }
+
+    .option-row:last-child { border-bottom: 0; }
+
+    .option-row strong {
+      color: var(--ink);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .chat-area {
+      padding: 14px;
+      position: absolute;
+      inset: 64px 0 64px;
+      background:
+        radial-gradient(circle at 50% 0, rgba(29,139,95,.08), transparent 32%),
+        var(--screen);
+    }
+
+    .chat-card {
+      border-radius: 22px;
+      background: white;
+      border: 1px solid #efe2d2;
+      padding: 12px;
+      box-shadow: 0 9px 20px rgba(71,50,28,.06);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .seller-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 17px;
+      background:
+        radial-gradient(circle at 50% 35%, #ffd1a8 0 27%, transparent 28%),
+        radial-gradient(circle at 50% 78%, #1f2a22 0 34%, transparent 35%),
+        linear-gradient(135deg, #f0d4b8, #b7895b);
+      flex: 0 0 auto;
+    }
+
+    .chat-card strong {
+      display: block;
+      font-size: 12px;
+      line-height: 1.1;
+    }
+
+    .chat-card span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .messages {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .bubble {
+      max-width: 84%;
+      border-radius: 18px;
+      padding: 10px 11px;
+      font-size: 10.5px;
+      line-height: 1.35;
+      font-weight: 700;
+      animation: msgIn 5s ease-in-out infinite;
+      animation-delay: var(--md);
+    }
+
+    @keyframes msgIn {
+      0%, 100% { transform: translateY(0); opacity: .88; }
+      50% { transform: translateY(-3px); opacity: 1; }
+    }
+
+    .bubble.left {
+      background: white;
+      border: 1px solid #efe2d2;
+      color: var(--soft);
+      justify-self: start;
+      border-bottom-left-radius: 7px;
+    }
+
+    .bubble.right {
+      background: var(--green);
+      color: white;
+      justify-self: end;
+      border-bottom-right-radius: 7px;
+    }
+
+    .offer-box {
+      margin-top: 14px;
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 84% 10%, rgba(224,120,40,.12), transparent 36%),
+        white;
+      border: 1px solid #efe2d2;
+      padding: 12px;
+    }
+
+    .offer-box label {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .offer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      gap: 10px;
+    }
+
+    .offer-row strong {
+      font-size: 20px;
+      letter-spacing: -.06em;
+    }
+
+    .offer-row span {
+      color: var(--orange);
+      background: var(--orange-soft);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 10px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .cart-list {
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .cart-item {
+      border-radius: 18px;
+      border: 1px solid #efe2d2;
+      background: white;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 50px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      box-shadow: 0 8px 18px rgba(71,50,28,.05);
+      animation: cartSlide 5.6s ease-in-out infinite;
+      animation-delay: var(--cart-delay);
+    }
+
+    @keyframes cartSlide {
+      50% { transform: translateX(-3px); border-color: color-mix(in srgb, var(--tone) 25%, #efe2d2); }
+    }
+
+    .cart-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 17px;
+      background:
+        radial-gradient(circle at 34% 44%, var(--tone) 0 10px, transparent 11px),
+        radial-gradient(circle at 60% 40%, color-mix(in srgb, var(--tone) 50%, white) 0 12px, transparent 13px),
+        var(--soft-bg);
+    }
+
+    .cart-item strong {
+      display: block;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .cart-item small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 9.5px;
+      font-weight: 750;
+    }
+
+    .cart-price {
+      color: var(--tone);
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .delivery-card {
+      margin: 4px 14px 0;
+      border-radius: 22px;
+      border: 1px solid #d5eadb;
+      background:
+        radial-gradient(circle at 82% 0, rgba(29,139,95,.12), transparent 32%),
+        var(--green-soft);
+      padding: 13px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .route {
+      height: 46px;
+      margin-top: 9px;
+      border-radius: 16px;
+      border: 1px dashed rgba(29,139,95,.34);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .route::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 50%;
+      border-top: 2px dashed rgba(29,139,95,.4);
+    }
+
+    .scooter {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      font-size: 18px;
+      animation: scooterMove 4.5s ease-in-out infinite;
+    }
+
+    @keyframes scooterMove {
+      50% { left: calc(100% - 42px); }
+    }
+
+    .delivery-card h3 {
+      margin: 0;
+      font-size: 13px;
+      letter-spacing: -.02em;
+    }
+
+    .delivery-card p {
+      margin: 5px 0 0;
+      color: var(--soft);
+      font-size: 10.5px;
+      line-height: 1.35;
+    }
+
+    .bottom-action {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      height: 48px;
+      border: 0;
+      border-radius: 18px;
+      color: white;
+      background: var(--green);
+      font-size: 13px;
+      font-weight: 950;
+      box-shadow: 0 14px 24px rgba(29,139,95,.24);
+      animation: actionBreath 3.2s ease-in-out infinite;
+    }
+
+    .bottom-action.orange { background: var(--orange); box-shadow: 0 14px 24px rgba(224,120,40,.22); }
+    .bottom-action.blue { background: var(--blue); box-shadow: 0 14px 24px rgba(40,120,217,.22); }
+
+    @keyframes actionBreath {
+      50% { transform: translateY(-2px); filter: saturate(1.12); }
+    }
+
+    .tap {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(29,139,95,.16);
+      border: 2px solid rgba(29,139,95,.35);
+      z-index: 8;
+      pointer-events: none;
+      animation: tap 4.7s ease-in-out infinite;
+      animation-delay: var(--tap-delay);
+    }
+
+    .tap::after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    @keyframes tap {
+      0%, 12% { opacity: 0; transform: scale(.55); }
+      22%, 32% { opacity: 1; transform: scale(1); }
+      44%, 100% { opacity: 0; transform: scale(1.42); }
+    }
+
+    .t1 { right: 22px; top: 276px; --tap-delay:.15s; }
+    .t2 { right: 26px; bottom: 22px; --tap-delay:.65s; }
+    .t3 { left: 52%; bottom: 126px; --tap-delay:1.1s; }
+    .t4 { left: 50%; bottom: 26px; --tap-delay:1.55s; }
+
+    @media (max-width: 1150px) {
+      body { overflow: auto; }
+      .stage {
+        width: 100vw;
+        min-height: 100vh;
+        aspect-ratio: auto;
+        border-radius: 0;
+      }
+
+      .intro {
+        height: auto;
+        grid-template-columns: 1fr;
+        align-items: start;
+        margin-bottom: 20px;
+      }
+
+      .journey-tags { justify-content: flex-start; }
+      .showcase {
+        height: auto;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .path-line { display: none; }
+      .phone { max-width: 274px; }
+    }
+
+    @media (max-width: 720px) {
+      .showcase { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+  <style>
+    /* perf-tune: this preview is mounted alongside others on the portfolio
+       page, so any perpetual animation multiplies into scroll jank. Play
+       every entrance once, settle, then stop. Keep compositing cheap. */
+    *, *::before, *::after {
+      animation-iteration-count: 1 !important;
+      animation-fill-mode: both !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="stage">
+    <header class="intro">
+      <div class="title">
+        <div class="market-badge"></div>
+        <div>
+          <h1>Marketplace Mobile Experience</h1>
+          <p>A buyer journey for discovering local products, comparing sellers, negotiating quickly, and checking out with delivery confidence.</p>
+        </div>
+      </div>
+
+      <div class="journey-tags">
+        <div class="tag" style="--tone:var(--orange);">Discovery</div>
+        <div class="tag" style="--tone:var(--green);">Seller trust</div>
+        <div class="tag" style="--tone:var(--blue);">Fast checkout</div>
+      </div>
+    </header>
+
+    <main class="showcase">
+      <div class="path-line"></div>
+
+      <section class="phone-group" style="--delay:.1s; --rot:-2deg;">
+        <div class="step-label" style="--tone:var(--orange); --soft-bg:var(--orange-soft);"><span>1</span> Discover</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="m-top">
+              <div><strong>LocalLoop</strong><small>Fresh near you</small></div>
+              <div class="m-icon" style="--tone:var(--orange); --soft-bg:var(--orange-soft);">⌕</div>
+            </div>
+
+            <div class="m-body">
+              <section class="search-card">
+                <h2>Find local picks</h2>
+                <p>Browse fresh products from trusted nearby sellers.</p>
+                <div class="search-box">Search herbs, greens, produce</div>
+              </section>
+
+              <div class="category-strip">
+                <span class="category" style="--tone:var(--green); --soft-bg:var(--green-soft);">Leafy greens</span>
+                <span class="category" style="--tone:var(--orange); --soft-bg:var(--orange-soft);">Fresh herbs</span>
+                <span class="category" style="--tone:var(--blue); --soft-bg:var(--blue-soft);">Home grown</span>
+                <span class="category" style="--tone:var(--rose); --soft-bg:var(--rose-soft);">Popular</span>
+              </div>
+
+              <div class="product-grid">
+                <article class="product" style="--tone:var(--green); --soft-bg:var(--green-soft); --pd:.1s;">
+                  <div class="photo"></div>
+                  <strong>Live lettuce pack</strong>
+                  <small>Moon Farms · 1.2 km</small>
+                  <span class="price">$4.80</span>
+                </article>
+
+                <article class="product" style="--tone:var(--orange); --soft-bg:var(--orange-soft); --pd:.35s;">
+                  <div class="photo"></div>
+                  <strong>Fresh basil bunch</strong>
+                  <small>Urban Grower · 2.1 km</small>
+                  <span class="price">$2.60</span>
+                </article>
+
+                <article class="product" style="--tone:var(--blue); --soft-bg:var(--blue-soft); --pd:.6s;">
+                  <div class="photo"></div>
+                  <strong>Mint bottle pack</strong>
+                  <small>Green House · 0.9 km</small>
+                  <span class="price">$3.20</span>
+                </article>
+
+                <article class="product" style="--tone:var(--rose); --soft-bg:var(--rose-soft); --pd:.85s;">
+                  <div class="photo"></div>
+                  <strong>Microgreen tray</strong>
+                  <small>Sprout Lab · 1.7 km</small>
+                  <span class="price">$5.40</span>
+                </article>
+              </div>
+
+              <div class="tap t1"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone-group" style="--delay:.22s; --rot:1.5deg;">
+        <div class="step-label" style="--tone:var(--green); --soft-bg:var(--green-soft);"><span>2</span> Product detail</div>
+        <div class="phone">
+          <div class="screen">
+            <section class="detail-hero">
+              <div class="seller-badge">Verified seller</div>
+              <div class="favorite">♥</div>
+            </section>
+
+            <div class="detail-content">
+              <h2>Live lettuce freshness pack</h2>
+              <p>Delivered with roots in water so the product stays fresh for longer after delivery.</p>
+
+              <div class="rating-row">
+                <span class="rating">★ 4.9 · 124 reviews</span>
+                <span class="stock">In stock</span>
+              </div>
+
+              <section class="option-card">
+                <div class="option-row"><span>Seller</span><strong>Moon Farms</strong></div>
+                <div class="option-row"><span>Distance</span><strong>1.2 km away</strong></div>
+                <div class="option-row"><span>Freshness</span><strong>Alive for 5–7 days</strong></div>
+                <div class="option-row"><span>Price</span><strong>$4.80 per pack</strong></div>
+              </section>
+            </div>
+
+            <div class="tap t2"></div>
+            <button class="bottom-action">Add to basket</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone-group" style="--delay:.34s; --rot:-1.25deg;">
+        <div class="step-label" style="--tone:var(--blue); --soft-bg:var(--blue-soft);"><span>3</span> Seller chat</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="m-top">
+              <div><strong>Moon Farms</strong><small>Usually replies in 5 min</small></div>
+              <div class="m-icon" style="--tone:var(--green); --soft-bg:var(--green-soft);">✓</div>
+            </div>
+
+            <div class="chat-area">
+              <section class="chat-card">
+                <div class="seller-avatar"></div>
+                <div>
+                  <strong>Direct from grower</strong>
+                  <span>Ask about harvest time, delivery, or quantity.</span>
+                </div>
+              </section>
+
+              <div class="messages">
+                <div class="bubble left" style="--md:.1s;">Today’s lettuce was harvested this morning.</div>
+                <div class="bubble right" style="--md:.45s;">Can I get 4 packs before 6 PM?</div>
+                <div class="bubble left" style="--md:.8s;">Yes, delivery is available from 4:30 PM.</div>
+              </div>
+
+              <section class="offer-box">
+                <label>Seller offer</label>
+                <div class="offer-row">
+                  <strong>$18.40</strong>
+                  <span>4 packs · delivery</span>
+                </div>
+              </section>
+
+              <div class="tap t3"></div>
+            </div>
+
+            <button class="bottom-action blue">Accept offer</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone-group" style="--delay:.46s; --rot:2deg;">
+        <div class="step-label" style="--tone:var(--green); --soft-bg:var(--green-soft);"><span>4</span> Checkout</div>
+        <div class="phone">
+          <div class="screen">
+            <div class="m-top">
+              <div><strong>Basket</strong><small>Delivery estimate ready</small></div>
+              <div class="m-icon" style="--tone:var(--green); --soft-bg:var(--green-soft);">✓</div>
+            </div>
+
+            <div class="cart-list">
+              <article class="cart-item" style="--tone:var(--green); --soft-bg:var(--green-soft); --cart-delay:.1s;">
+                <div class="cart-img"></div>
+                <div><strong>Live lettuce pack</strong><small>Qty 4 · Moon Farms</small></div>
+                <div class="cart-price">$18.40</div>
+              </article>
+
+              <article class="cart-item" style="--tone:var(--orange); --soft-bg:var(--orange-soft); --cart-delay:.35s;">
+                <div class="cart-img"></div>
+                <div><strong>Fresh basil add-on</strong><small>Optional seller bundle</small></div>
+                <div class="cart-price">$2.60</div>
+              </article>
+            </div>
+
+            <section class="delivery-card">
+              <h3>Fresh delivery window</h3>
+              <p>Courier pickup is scheduled from the grower at 4:30 PM.</p>
+              <div class="route"><span class="scooter">🛵</span></div>
+            </section>
+
+            <div class="tap t4"></div>
+            <button class="bottom-action orange">Place order</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </section>
+</body>
+</html>
