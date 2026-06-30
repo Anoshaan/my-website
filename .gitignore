@@ -22,3 +22,7 @@ Thumbs.db
 .claude/
 .vercel/
 .env*.local
+
+# Playwright / debug artifacts
+.playwright-mcp/
+live-*.jpeg
