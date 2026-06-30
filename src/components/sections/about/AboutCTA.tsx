@@ -27,7 +27,7 @@ export function AboutCTA() {
               View Selected Work
             </Button>
             <Button
-              href="/resume/Anoshaan-Resume.pdf"
+              href="/resume/Anoshaan_Resume_2026.pdf"
               variant="secondary"
               rainbow={false}
               trailingIcon={null}

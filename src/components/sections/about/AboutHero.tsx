@@ -39,7 +39,7 @@ export function AboutHero() {
             <Reveal delay={0.32}>
               <div className="ab-hero-actions">
                 <Button
-                  href="/resume/Anoshaan-Resume.pdf"
+                  href="/resume/Anoshaan_Resume_2026.pdf"
                   variant="secondary"
                   rainbow={false}
                   trailingIcon={null}

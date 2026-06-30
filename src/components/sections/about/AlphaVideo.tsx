@@ -23,8 +23,8 @@ import { useEffect, useState } from "react";
 
 type Mode = "pending" | "video" | "png" | "reduced";
 
-const POSTER = "/videos/about-character-poster.png"; // 720x720 true-RGBA, transparent
-const ALPHA_WEBM = "/videos/about-master2.webm"; // VP9 alpha (non-WebKit only)
+const POSTER = "/videos/about-poster-2026-v2.png"; // 720x720 true-RGBA, transparent
+const ALPHA_WEBM = "/videos/about-2026-v2.webm"; // VP9 alpha (non-WebKit only)
 
 export function AlphaVideo() {
   const [mode, setMode] = useState<Mode>("pending");
