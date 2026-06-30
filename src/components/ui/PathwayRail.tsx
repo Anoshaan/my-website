@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import {
   CATEGORY_META,
   PathwayCategory,
-  getCategoryCounts,
 } from "@/lib/product-pathways";
 import { getCategoryIcon } from "./CategoryFilter";
 
@@ -32,13 +31,11 @@ interface PathwayRailProps {
  * competes with the heading or the main navigation up top.
  */
 export function PathwayRail({ activeCategory, onSelectCategory, visible }: PathwayRailProps) {
-  const counts = useMemo(() => getCategoryCounts(), []);
-
   return (
     <nav
       aria-label="Filter pathways"
       aria-hidden={!visible}
-      className={`sticky top-[120px] flex flex-col gap-1.5 rounded-[1.5rem] border border-[var(--color-line)] bg-[var(--color-bg)]/70 p-2.5 backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+      className={`flex max-h-[86vh] w-[210px] flex-col gap-1.5 overflow-y-auto rounded-[1.5rem] border border-[var(--color-line)] bg-[var(--color-bg)]/80 p-2.5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
         visible
           ? "translate-x-0 opacity-100"
           : "pointer-events-none translate-x-[140%] opacity-0"
@@ -51,10 +48,12 @@ export function PathwayRail({ activeCategory, onSelectCategory, visible }: Pathw
       {CATEGORY_META.map((meta) => {
         const isActive = activeCategory === meta.label;
 
+        // Selected state is communicated by colour/fill + accent border only —
+        // no drop shadow (the rail card already carries its own elevation).
         const activeStyle: React.CSSProperties = isActive
           ? {
               backgroundColor: meta.softBg,
-              borderColor: meta.border,
+              borderColor: meta.accent,
               color: "#1a1a1a",
             }
           : {};
@@ -67,9 +66,9 @@ export function PathwayRail({ activeCategory, onSelectCategory, visible }: Pathw
             aria-pressed={isActive}
             style={activeStyle}
             title={meta.label}
-            className={`group flex items-center gap-2.5 rounded-full border px-3 py-2 text-left text-[13px] font-medium transition-all duration-300 [-webkit-tap-highlight-color:transparent] focus:outline-none ${
+            className={`group flex items-center gap-2.5 rounded-full border px-3 py-2 text-left text-[13px] font-medium transition-all duration-300 [-webkit-tap-highlight-color:transparent] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${
               isActive
-                ? ""
+                ? "font-semibold"
                 : "border-transparent text-[var(--color-fg)] opacity-70 hover:bg-[var(--color-surface-2)] hover:opacity-100"
             }`}
           >
@@ -80,24 +79,6 @@ export function PathwayRail({ activeCategory, onSelectCategory, visible }: Pathw
               {getCategoryIcon(meta.icon)}
             </span>
             <span className="min-w-0 flex-1 truncate">{meta.short}</span>
-            <span
-              className="flex flex-shrink-0 items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] font-bold tabular-nums"
-              style={
-                isActive
-                  ? { backgroundColor: meta.accent, color: "#1a1a1a" }
-                  : undefined
-              }
-            >
-              <span
-                className={
-                  isActive
-                    ? ""
-                    : "rounded-full bg-[var(--color-line)] px-1.5 py-0.5 text-[var(--color-fg)]"
-                }
-              >
-                {counts[meta.label] ?? 0}
-              </span>
-            </span>
           </button>
         );
       })}

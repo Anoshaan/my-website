@@ -961,6 +961,11 @@ html[data-theme="light"] .ab-section {
     text-align: center;
     align-items: center;
   }
+  /* The hero title has its own text-align:left for the desktop two-line
+     composition; center it on mobile so it balances with the centered copy. */
+  .ab-hero .page-hero-title {
+    text-align: center;
+  }
   .ab-hero-actions {
     justify-content: center;
   }

@@ -94,17 +94,15 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
 
         <p className="mb-5 max-w-xl break-words text-base leading-relaxed opacity-80">{pathway.previewDescription}</p>
 
-        {/* Tags — soft accent background, neutral readable text. flex-wrap keeps
-            long tag rows from pushing into or under the preview media. */}
+        {/* Tags — driven by the card's accent vars (.pw-tag in globals.css):
+            soft accent fill + neutral text on light, transparent fill with
+            accent-coloured text + border on dark so they stay readable.
+            flex-wrap keeps long tag rows from pushing under the preview media. */}
         <div className="mb-6 flex min-w-0 flex-wrap gap-2">
           {pathway.tags.map((tag) => (
             <span
               key={tag}
-              className="max-w-full break-words rounded-full px-3 py-1 text-xs font-medium text-[var(--color-fg)]"
-              style={{
-                backgroundColor: pathway.accentSoftBg,
-                border: `1px solid ${pathway.accentBorder}`,
-              }}
+              className="pw-tag max-w-full break-words rounded-full px-3 py-1 text-xs font-medium"
             >
               {tag}
             </span>
@@ -122,11 +120,7 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
           <button
             type="button"
             onClick={() => onOpen(pathway)}
-            className="group/btn inline-flex max-w-full items-center gap-2 rounded-full px-5 py-2.5 text-left text-sm font-medium text-[var(--color-fg)] transition-all duration-300"
-            style={{
-              backgroundColor: pathway.accentSoftBg,
-              border: `1px solid ${pathway.accentBorder}`,
-            }}
+            className="pw-cta group/btn inline-flex max-w-full items-center gap-2 rounded-full px-5 py-2.5 text-left text-sm font-medium transition-all duration-300"
             aria-label={`${pathway.uniqueCTA}: ${pathway.previewTitle}`}
           >
             <span className="min-w-0 break-words">{pathway.uniqueCTA}</span>

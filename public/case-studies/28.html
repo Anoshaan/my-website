@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Subscription Plan & Checkout</title>
+<style>
+  :root{
+    --bg:#fbf7f2;--surface:#fff;--border:#efe4d6;--line:#f1eadf;
+    --text:#1f1a14;--muted:#8a7d6d;
+    --accent:#f0892f;--accent-soft:#fff2e3;--accent-bd:#ffd9ad;--green:#16a34a;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 85% 0,rgba(240,137,47,.10),transparent 32%),var(--bg);overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fffdfb,#faf5ef);border:1px solid var(--border);box-shadow:0 35px 90px rgba(80,52,20,.12);
+    display:grid;grid-template-columns:1.55fr 1fr}
+  .left{padding:46px 44px;display:flex;flex-direction:column}
+  .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:760}
+  .left h1{margin:8px 0 4px;font-size:30px;letter-spacing:-.04em}
+  .left p{margin:0 0 26px;color:var(--muted);font-size:13.5px;max-width:440px;line-height:1.5}
+  .toggle{display:inline-flex;align-items:center;gap:0;background:#f2eadf;border:1px solid var(--border);border-radius:999px;padding:4px;margin-bottom:24px;width:fit-content;font-size:12px;font-weight:700}
+  .toggle span{padding:7px 16px;border-radius:999px;color:var(--muted)}
+  .toggle span.on{background:#fff;color:var(--text);box-shadow:0 4px 10px rgba(0,0,0,.06)}
+  .toggle .save{color:var(--green)}
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .plan{background:#fff;border:1px solid var(--border);border-radius:18px;padding:20px 18px;display:flex;flex-direction:column;gap:13px;position:relative;
+    animation:rise .6s ease both}
+  .plan:nth-child(2){animation-delay:.08s}.plan:nth-child(3){animation-delay:.16s}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .plan.pick{border:2px solid var(--accent);box-shadow:0 18px 40px rgba(240,137,47,.18)}
+  .pop{position:absolute;top:-11px;left:18px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:999px}
+  .pname{font-size:13px;font-weight:780}
+  .pdesc{font-size:11.5px;color:var(--muted);line-height:1.4}
+  .pprice{font-size:30px;font-weight:840;letter-spacing:-.04em}
+  .pprice s{font-size:13px;color:var(--muted);font-weight:600;margin-right:6px}
+  .pprice em{font-size:12px;color:var(--muted);font-weight:600;font-style:normal}
+  .feat{display:flex;flex-direction:column;gap:9px;margin-top:2px}
+  .feat div{display:flex;align-items:center;gap:9px;font-size:11.5px;color:#3c352c}
+  .feat i{width:16px;height:16px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:10px;flex:0 0 auto}
+  .feat .off{color:#bdb1a1}.feat .off i{background:#f2eadf;color:#bdb1a1}
+  .pbtn{margin-top:auto;height:38px;border-radius:11px;font-size:12px;font-weight:760;display:grid;place-items:center}
+  .pbtn.ghost{border:1px solid var(--border);color:#5c5145;background:#fff}
+  .pbtn.solid{background:linear-gradient(135deg,#f0892f,#f6a24a);color:#fff;box-shadow:0 12px 22px rgba(240,137,47,.26)}
+  /* checkout */
+  .right{background:#fff;border-left:1px solid var(--border);padding:38px 34px;display:flex;flex-direction:column;gap:16px}
+  .right h2{margin:0;font-size:16px;letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+  .step{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);font-weight:650;margin-top:-4px}
+  .step b{width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:10px}
+  .step b.done{background:var(--green)}
+  .step b.idle{background:#e7dccd;color:#8a7d6d}
+  .step .bar{flex:1;height:2px;background:var(--line)}
+  .card-box{border:1px solid var(--border);border-radius:14px;padding:15px}
+  .ci{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;padding:6px 0}
+  .ci .nm{font-weight:680}
+  .ci .mu{color:var(--muted);font-size:11px}
+  .addon{display:flex;align-items:center;gap:10px;font-size:12px;padding:8px 0;color:#3c352c}
+  .addon .sw{width:34px;height:20px;border-radius:999px;background:var(--accent);position:relative;flex:0 0 auto}
+  .addon .sw::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+  .addon .sw.off{background:#e7dccd}.addon .sw.off::after{right:auto;left:2px}
+  .addon .pr{margin-left:auto;font-weight:740;font-size:12px}
+  .divider{height:1px;background:var(--line)}
+  .srow{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:#5c5145}
+  .srow.tot{font-size:16px;font-weight:840;color:var(--text)}
+  .pay{height:46px;border-radius:13px;background:linear-gradient(135deg,#f0892f,#f6a24a);color:#fff;font-weight:800;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 14px 28px rgba(240,137,47,.3)}
+  .trust{display:flex;align-items:center;justify-content:center;gap:7px;font-size:10.5px;color:var(--muted)}
+</style>
+<style>
+  *,*::before,*::after{animation-iteration-count:1!important;animation-fill-mode:both!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Subscription plan comparison and checkout mockup">
+  <section class="left">
+    <span class="eyebrow">Choose your plan</span>
+    <h1>Simple pricing, no surprises</h1>
+    <p>Compare plans side by side. Add-ons update your total live, so you always see exactly what you pay before checkout.</p>
+    <div class="toggle"><span>Monthly</span><span class="on">Yearly <em class="save">save 20%</em></span></div>
+    <div class="plans">
+      <article class="plan">
+        <div class="pname">Starter</div>
+        <div class="pdesc">For individuals getting started.</div>
+        <div class="pprice">$9<em>/mo</em></div>
+        <div class="feat">
+          <div><i>✓</i>3 projects</div>
+          <div><i>✓</i>1 seat</div>
+          <div class="off"><i>✓</i>Team roles</div>
+          <div class="off"><i>✓</i>Priority support</div>
+        </div>
+        <div class="pbtn ghost">Choose Starter</div>
+      </article>
+      <article class="plan pick">
+        <span class="pop">Most popular</span>
+        <div class="pname">Growth</div>
+        <div class="pdesc">For small teams shipping fast.</div>
+        <div class="pprice"><s>$39</s>$29<em>/mo</em></div>
+        <div class="feat">
+          <div><i>✓</i>Unlimited projects</div>
+          <div><i>✓</i>5 seats</div>
+          <div><i>✓</i>Team roles</div>
+          <div class="off"><i>✓</i>Priority support</div>
+        </div>
+        <div class="pbtn solid">Selected</div>
+      </article>
+      <article class="plan">
+        <div class="pname">Scale</div>
+        <div class="pdesc">For growing companies.</div>
+        <div class="pprice">$79<em>/mo</em></div>
+        <div class="feat">
+          <div><i>✓</i>Unlimited projects</div>
+          <div><i>✓</i>20 seats</div>
+          <div><i>✓</i>Team roles</div>
+          <div><i>✓</i>Priority support</div>
+        </div>
+        <div class="pbtn ghost">Choose Scale</div>
+      </article>
+    </div>
+  </section>
+
+  <aside class="right" aria-label="Checkout review">
+    <h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Review &amp; pay</h2>
+    <div class="step"><b class="done">✓</b>Plan<span class="bar"></span><b>2</b>Add-ons<span class="bar"></span><b class="idle">3</b>Pay</div>
+
+    <div class="card-box">
+      <div class="ci"><div><div class="nm">Growth plan</div><div class="mu">Billed yearly</div></div><div style="font-weight:760">$348</div></div>
+      <div class="divider" style="margin:6px 0"></div>
+      <div class="addon"><span class="sw"></span>Extra seats ×3<span class="pr">+$36</span></div>
+      <div class="addon"><span class="sw"></span>Advanced analytics<span class="pr">+$60</span></div>
+      <div class="addon"><span class="sw off"></span>Onboarding call<span class="pr" style="color:var(--muted)">+$120</span></div>
+    </div>
+
+    <div class="srow"><span>Subtotal</span><span>$444.00</span></div>
+    <div class="srow"><span>Yearly discount</span><span style="color:var(--green);font-weight:700">−$88.80</span></div>
+    <div class="divider"></div>
+    <div class="srow tot"><span>Total due</span><span>$355.20</span></div>
+
+    <div class="pay"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Pay securely</div>
+    <div class="trust"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>256-bit encrypted · Cancel anytime</div>
+  </aside>
+</main>
+</body>
+</html>

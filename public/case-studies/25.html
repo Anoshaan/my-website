@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portfolio + AI Rapid Production</title>
+<style>
+  :root{
+    --bg:#0c1512;--text:#e9f5ef;--muted:#8fae9f;
+    --green:#34d399;--green2:#10b981;--emerald:#059669;--ink:#0c1512;--cream:#f2faf5;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);background:#08100d;overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:radial-gradient(circle at 25% 20%,rgba(52,211,153,.16),transparent 36%),linear-gradient(160deg,#10201a,#0a130f);
+    border:1px solid #1c3329;box-shadow:0 35px 90px rgba(5,30,20,.5);display:grid;grid-template-columns:1fr 290px}
+  /* left workspace */
+  .work{position:relative;padding:34px 30px}
+  .browser{width:100%;height:100%;background:#0f1a16;border:1px solid #1f3a2e;border-radius:16px;box-shadow:0 30px 70px rgba(0,0,0,.45);overflow:hidden;display:flex;flex-direction:column}
+  .bbar{height:38px;background:#13241d;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid #1f3a2e}
+  .bbar i{width:10px;height:10px;border-radius:50%}
+  .bbar .url{flex:1;height:20px;border-radius:8px;background:#0c1713;margin-left:10px;display:flex;align-items:center;padding:0 11px;font-size:10px;color:#6f9685;gap:7px}
+  .bbar .url svg{color:#34d399}
+  .site{flex:1;position:relative;overflow:hidden}
+  .topnav{display:flex;align-items:center;padding:18px 24px;gap:14px;position:relative;z-index:3}
+  .topnav .mk{font-size:15px;font-weight:840;letter-spacing:-.02em}
+  .topnav .mk span{color:var(--green)}
+  .topnav .links{margin-left:auto;display:flex;gap:18px;font-size:11px;color:#9cbcab;font-weight:600}
+  .topnav .links b{color:#e9f5ef}
+  .hero{padding:30px 24px 0;position:relative;z-index:3}
+  .hero .ey{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:760}
+  .hero h2{margin:10px 0 0;font-size:42px;line-height:1.02;letter-spacing:-.04em;font-weight:840;max-width:440px}
+  .hero h2 em{font-style:normal;background:linear-gradient(120deg,#34d399,#6ee7b7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{margin:14px 0 0;font-size:12.5px;color:#9cbcab;max-width:330px;line-height:1.5}
+  .hero .btns{display:flex;gap:11px;margin-top:18px}
+  .hero .btns .b{height:36px;border-radius:11px;display:flex;align-items:center;padding:0 18px;font-size:12px;font-weight:740}
+  .hero .btns .p{background:linear-gradient(135deg,#34d399,#059669);color:#06231a}
+  .hero .btns .g{border:1px solid #2a4d3e;color:#bfe0d1}
+  .worktiles{display:flex;gap:12px;padding:24px;margin-top:8px}
+  .wt{flex:1;height:78px;border-radius:12px;border:1px solid #1f3a2e;background:linear-gradient(135deg,#13241d,#0f1a16);position:relative;overflow:hidden}
+  .wt::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--c1),var(--c2));opacity:.85}
+  .glow{position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(52,211,153,.3),transparent 70%);top:-60px;right:-40px;z-index:1}
+  /* mobile overlap */
+  .phone{position:absolute;right:6px;bottom:18px;width:124px;height:250px;border-radius:24px;background:#0f1a16;border:6px solid #06120d;box-shadow:0 26px 50px rgba(0,0,0,.5);z-index:6;overflow:hidden;
+    animation:rise .7s cubic-bezier(.2,.9,.2,1) .2s both}
+  @keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+  .phone .pnav{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 11px;font-size:9px;font-weight:800;color:#e9f5ef}
+  .phone .pnav span{color:var(--green)}
+  .phone .pnav .mn{display:flex;flex-direction:column;gap:3px}
+  .phone .pnav .mn i{width:13px;height:2px;border-radius:2px;background:#7fae9d}
+  .phone .phh{padding:0 11px}
+  .phone .phh .e{font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);font-weight:760}
+  .phone .phh .t{font-size:17px;font-weight:840;letter-spacing:-.03em;line-height:1.05;margin-top:5px}
+  .phone .phh .b{height:24px;width:74px;border-radius:8px;background:linear-gradient(135deg,#34d399,#059669);margin-top:11px}
+  .phone .pcards{padding:11px;display:flex;flex-direction:column;gap:8px}
+  .phone .pc{height:34px;border-radius:9px;border:1px solid #1f3a2e;background:#13241d}
+  /* AI production strip */
+  .ai{background:#0a130f;border-left:1px solid #1c3329;padding:24px 18px;display:flex;flex-direction:column;gap:16px}
+  .ai-h{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:760}
+  .ai-h .lg{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#34d399,#059669);display:grid;place-items:center;color:#06231a;font-weight:800}
+  .ai-h .sub{font-size:9.5px;color:#7fae9d;font-weight:500;display:block}
+  .timeline{flex:1;position:relative;padding-left:18px}
+  .timeline::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,#34d399,#1f3a2e)}
+  .ev{position:relative;margin-bottom:15px}
+  .ev .dot{position:absolute;left:-18px;top:2px;width:12px;height:12px;border-radius:50%;background:#0a130f;border:2px solid var(--green)}
+  .ev.done .dot{background:var(--green)}
+  .ev .lbl{font-size:11.5px;font-weight:700;color:#dcefe3}
+  .ev .meta{font-size:9.5px;color:#6f9685;margin-top:2px;font-family:ui-monospace,Menlo,monospace}
+  .ev.live .dot{animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}50%{box-shadow:0 0 0 6px rgba(52,211,153,0)}}
+  .statcard{background:rgba(52,211,153,.08);border:1px solid #1f4a3a;border-radius:13px;padding:13px}
+  .statcard .row{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#9cbcab;padding:4px 0}
+  .statcard .row b{color:#e9f5ef;font-weight:760}
+  .statcard .row b.g{color:var(--green)}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .phone{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Portfolio website with AI rapid production mockup">
+  <section class="work">
+    <div class="browser">
+      <div class="bbar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i>
+        <span class="url"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>anoshaan.design</span></div>
+      <div class="site">
+        <div class="glow"></div>
+        <div class="topnav"><span class="mk">Anosh<span>·</span></span><div class="links"><b>Work</b><span>About</span><span>Process</span><span>Contact</span></div></div>
+        <div class="hero">
+          <div class="ey">Product Experience Designer</div>
+          <h2>Design that <em>ships</em> fast.</h2>
+          <p>A living portfolio, rebuilt in a controlled AI-assisted sprint. Still crafted, never a template.</p>
+          <div class="btns"><span class="b p">View work</span><span class="b g">Let's talk</span></div>
+        </div>
+        <div class="worktiles">
+          <div class="wt" style="--c1:#34d399;--c2:#059669"></div>
+          <div class="wt" style="--c1:#22d3ee;--c2:#0891b2"></div>
+          <div class="wt" style="--c1:#a78bfa;--c2:#7c3aed"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="pnav"><span class="mk">A<em style="color:#34d399;font-style:normal">·</em></span><div class="mn"><i></i><i></i></div></div>
+      <div class="phh"><div class="e">Designer</div><div class="t">Ships<br/>fast.</div><div class="b"></div></div>
+      <div class="pcards"><div class="pc"></div><div class="pc"></div><div class="pc"></div></div>
+    </div>
+  </section>
+
+  <aside class="ai">
+    <div class="ai-h"><span class="lg">AI</span><div>Production sprint<span class="sub">Designer-led · AI-assisted</span></div></div>
+    <div class="timeline">
+      <div class="ev done"><span class="dot"></span><div class="lbl">Layout system</div><div class="meta">feat: grid + theme</div></div>
+      <div class="ev done"><span class="dot"></span><div class="lbl">Case study cards</div><div class="meta">feat: 32 pathways</div></div>
+      <div class="ev done"><span class="dot"></span><div class="lbl">Motion layer</div><div class="meta">add: scroll reveals</div></div>
+      <div class="ev live"><span class="dot"></span><div class="lbl">Responsive QA</div><div class="meta">running · 3 viewports</div></div>
+      <div class="ev"><span class="dot"></span><div class="lbl">Deploy</div><div class="meta">vercel · queued</div></div>
+    </div>
+    <div class="statcard">
+      <div class="row"><span>Build time</span><b>4 days</b></div>
+      <div class="row"><span>Lighthouse</span><b class="g">96</b></div>
+      <div class="row"><span>Design review</span><b class="g">human ✓</b></div>
+    </div>
+  </aside>
+</main>
+</body>
+</html>

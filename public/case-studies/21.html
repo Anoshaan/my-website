@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Owner Delivery Pack</title>
+<style>
+  :root{
+    --bg:#f3f5f8;--surface:#fff;--border:#e3e8ee;--line:#eef1f5;
+    --text:#1d2530;--muted:#7a8494;
+    --indigo:#6366f1;--indigo-soft:#eef0ff;--green:#16a34a;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--teal:#14b8a6;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 80% 0,rgba(99,102,241,.08),transparent 30%),#eaeef3;overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fbfcfe,#f3f5f8);border:1px solid var(--border);box-shadow:0 35px 90px rgba(30,40,60,.13);
+    padding:26px 30px;display:flex;flex-direction:column}
+  .head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+  .head h1{margin:0;font-size:23px;letter-spacing:-.03em}
+  .head .sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .head .badge{font-size:10.5px;font-weight:760;color:#4f46e5;background:var(--indigo-soft);border:1px solid #d4d6ff;padding:8px 14px;border-radius:999px}
+  .grid{flex:1;display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:1.15fr .85fr;gap:16px}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 10px 26px rgba(30,40,60,.06);padding:16px;display:flex;flex-direction:column;overflow:hidden;
+    animation:rise .55s ease both}
+  .panel:nth-child(2){animation-delay:.06s}.panel:nth-child(3){animation-delay:.12s}.panel:nth-child(4){animation-delay:.18s}.panel:nth-child(5){animation-delay:.24s}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .ph{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+  .ph .ic{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;color:#fff;flex:0 0 auto}
+  .ph b{font-size:13px;letter-spacing:-.02em}
+  .ph .ct{margin-left:auto;font-size:10px;color:var(--muted);font-weight:650}
+  /* user stories */
+  .stories{grid-row:1/3}
+  .story{border:1px solid var(--line);border-left:3px solid var(--indigo);border-radius:10px;padding:11px 12px;margin-bottom:10px}
+  .story .id{font-size:9.5px;font-weight:800;color:var(--indigo);letter-spacing:.04em}
+  .story p{margin:5px 0 9px;font-size:11.5px;line-height:1.45;color:#3a4350}
+  .story p b{color:#1d2530;font-weight:700}
+  .ac{display:flex;align-items:center;gap:8px;font-size:10.5px;color:#5a6473;padding:3px 0}
+  .ac i{width:15px;height:15px;border-radius:5px;display:grid;place-items:center;font-size:9px;flex:0 0 auto}
+  .ac i.ok{background:#e9f8ef;color:var(--green)}
+  .ac i.no{background:#f1f4f8;border:1.5px solid #d3dae3;color:transparent}
+  .pts{margin-left:auto;font-size:9.5px;font-weight:800;color:#5a6473;background:#f1f4f8;border-radius:6px;padding:3px 7px}
+  /* MVP scope */
+  .scope .lane{display:flex;flex-direction:column;gap:7px}
+  .scope .lh{font-size:10px;font-weight:780;letter-spacing:.03em;text-transform:uppercase;margin:4px 0 2px;display:flex;align-items:center;gap:7px}
+  .scope .lh.in{color:var(--green)}.scope .lh.out{color:var(--muted)}
+  .chip{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;padding:7px 10px;border-radius:9px}
+  .chip.in{background:#eafaf0;color:#15803d;border:1px solid #c5edd3}
+  .chip.out{background:#f4f6f9;color:#8a93a1;border:1px dashed #d3dae3}
+  .chip .t{margin-left:auto;font-size:9px;opacity:.8}
+  /* priority matrix */
+  .matrix{position:relative}
+  .quad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:7px;flex:1}
+  .q{border-radius:10px;padding:10px;position:relative;display:flex;flex-direction:column;gap:6px;font-size:9px;color:#fff;font-weight:700}
+  .q.now{background:linear-gradient(135deg,#16a34a,#15803d)}
+  .q.next{background:linear-gradient(135deg,#3b82f6,#2563eb)}
+  .q.plan{background:linear-gradient(135deg,#f59e0b,#d97706)}
+  .q.later{background:#cdd5df;color:#5a6473}
+  .q .ql{font-size:9px;letter-spacing:.05em;text-transform:uppercase;opacity:.9}
+  .q .item{height:6px;border-radius:4px;background:rgba(255,255,255,.5)}
+  .q.later .item{background:#a9b3c0}
+  .q .item.s{width:60%}
+  .axis{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:8px}
+  /* roadmap */
+  .roadmap{grid-column:2/4}
+  .rmap{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;flex:1}
+  .phase{border:1px solid var(--line);border-radius:11px;padding:11px;display:flex;flex-direction:column;gap:8px}
+  .phase .pt{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:740}
+  .phase .pt i{width:9px;height:9px;border-radius:50%}
+  .phase .pl{height:7px;border-radius:4px;background:var(--line)}
+  .phase .pbar{height:5px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:auto}
+  .phase .pbar span{display:block;height:100%;border-radius:999px}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .panel{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Product owner delivery pack mockup">
+  <div class="head">
+    <div><h1>Delivery Pack — Sprint 4</h1><div class="sub">Stories, scope, and priority aligned so everyone builds the same product.</div></div>
+    <span class="badge">MVP · 18 stories · 42 pts</span>
+  </div>
+
+  <div class="grid">
+    <!-- user stories -->
+    <section class="panel stories">
+      <div class="ph"><span class="ic" style="background:linear-gradient(135deg,#6366f1,#4f46e5)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span><b>User stories</b><span class="ct">Backlog</span></div>
+      <div class="story">
+        <span class="id">PROJ-128 · 5 pts</span>
+        <p>As a <b>buyer</b>, I want to save items so I can compare them before deciding.</p>
+        <div class="ac"><i class="ok">✓</i>Save persists across sessions<span class="pts">AC</span></div>
+        <div class="ac"><i class="ok">✓</i>Saved badge updates instantly</div>
+      </div>
+      <div class="story">
+        <span class="id">PROJ-131 · 3 pts</span>
+        <p>As a <b>seller</b>, I want listing status visible so I know what's pending.</p>
+        <div class="ac"><i class="ok">✓</i>Status shown on every card</div>
+        <div class="ac"><i class="no">✓</i>Email on approval</div>
+      </div>
+      <div class="story">
+        <span class="id">PROJ-134 · 8 pts</span>
+        <p>As an <b>admin</b>, I want to review flagged items in one queue.</p>
+        <div class="ac"><i class="no">✓</i>Bulk approve action</div>
+      </div>
+    </section>
+
+    <!-- MVP scope -->
+    <section class="panel scope">
+      <div class="ph"><span class="ic" style="background:linear-gradient(135deg,#16a34a,#15803d)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span><b>MVP scope</b></div>
+      <div class="lane">
+        <div class="lh in">● In scope</div>
+        <span class="chip in">Browse &amp; save<span class="t">P0</span></span>
+        <span class="chip in">Checkout<span class="t">P0</span></span>
+        <span class="chip in">Seller listings<span class="t">P1</span></span>
+        <div class="lh out" style="margin-top:6px">○ Out / later</div>
+        <span class="chip out">Ratings &amp; reviews</span>
+        <span class="chip out">In-app chat</span>
+      </div>
+    </section>
+
+    <!-- priority matrix -->
+    <section class="panel matrix">
+      <div class="ph"><span class="ic" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="7"/><rect x="13" y="7" width="3" height="11"/></svg></span><b>Priority matrix</b></div>
+      <div class="quad">
+        <div class="q now"><span class="ql">Now</span><span class="item"></span><span class="item s"></span></div>
+        <div class="q next"><span class="ql">Next</span><span class="item"></span><span class="item s"></span></div>
+        <div class="q plan"><span class="ql">Plan</span><span class="item s"></span></div>
+        <div class="q later"><span class="ql">Later</span><span class="item s"></span></div>
+      </div>
+      <div class="axis"><span>↑ Impact</span><span>Effort →</span></div>
+    </section>
+
+    <!-- roadmap -->
+    <section class="panel roadmap">
+      <div class="ph"><span class="ic" style="background:linear-gradient(135deg,#14b8a6,#0d9488)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 2v4"/></svg></span><b>Roadmap</b><span class="ct">Q3</span></div>
+      <div class="rmap">
+        <div class="phase"><div class="pt"><i style="background:#16a34a"></i>Phase 1</div><div class="pl" style="width:80%"></div><div class="pl" style="width:55%"></div><div class="pbar"><span style="width:100%;background:#16a34a"></span></div></div>
+        <div class="phase"><div class="pt"><i style="background:#3b82f6"></i>Phase 2</div><div class="pl" style="width:70%"></div><div class="pl" style="width:48%"></div><div class="pbar"><span style="width:60%;background:#3b82f6"></span></div></div>
+        <div class="phase"><div class="pt"><i style="background:#f59e0b"></i>Phase 3</div><div class="pl" style="width:62%"></div><div class="pl" style="width:40%"></div><div class="pbar"><span style="width:20%;background:#f59e0b"></span></div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

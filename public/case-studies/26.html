@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SaaS Marketing Website + CMS</title>
+<style>
+  :root{
+    --bg:#eef6f1;--surface:#fff;--border:#dbeee4;--line:#eaf5ef;
+    --text:#0f221a;--muted:#6f8b7e;
+    --green:#10b981;--green2:#059669;--green-soft:#e7f8f0;--green-bd:#bfead6;--blue:#3b82f6;--violet:#8b5cf6;--amber:#f59e0b;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 80% 10%,rgba(16,185,129,.10),transparent 32%),var(--bg);overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fbfefc,#eef6f1);border:1px solid var(--border);box-shadow:0 35px 90px rgba(10,60,40,.13);
+    display:grid;grid-template-columns:1fr 296px;gap:0}
+  /* browser */
+  .work{padding:30px 26px}
+  .browser{width:100%;height:100%;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 26px 60px rgba(10,60,40,.1);overflow:hidden;display:flex;flex-direction:column}
+  .bbar{height:36px;background:#f1f8f4;display:flex;align-items:center;gap:7px;padding:0 13px;border-bottom:1px solid var(--line)}
+  .bbar i{width:9px;height:9px;border-radius:50%;background:#c2ddcf}
+  .bbar .url{flex:1;height:18px;border-radius:8px;background:#fff;margin-left:9px;display:flex;align-items:center;padding:0 10px;font-size:9px;color:#7f9c8e;gap:6px}
+  .site{flex:1;overflow:hidden;position:relative}
+  /* section markers (showing CMS block boundaries) */
+  .block{position:relative}
+  .block::before{content:attr(data-b);position:absolute;left:8px;top:8px;font-size:8px;font-weight:780;letter-spacing:.04em;color:var(--green2);background:var(--green-soft);border:1px solid var(--green-bd);border-radius:5px;padding:2px 6px;z-index:4;opacity:.92}
+  .block{outline:1.5px dashed transparent}
+  .block.sel{outline-color:#9fdcc0;background:rgba(16,185,129,.03)}
+  .nav{height:46px;display:flex;align-items:center;padding:0 22px;gap:13px;border-bottom:1px solid var(--line)}
+  .nav .lg{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#10b981,#059669)}
+  .nav .nm{font-size:13px;font-weight:820;letter-spacing:-.02em}
+  .nav .links{margin-left:auto;display:flex;gap:15px;font-size:10.5px;color:#6f8b7e;font-weight:600}
+  .nav .cta{height:28px;border-radius:8px;background:#0f221a;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;padding:0 13px}
+  .hero{padding:30px 22px 26px;text-align:center;background:linear-gradient(180deg,#e7f8f0,#fff)}
+  .hero .pill{display:inline-flex;font-size:9px;font-weight:700;color:var(--green2);background:#fff;border:1px solid var(--green-bd);border-radius:999px;padding:5px 11px;margin-bottom:13px}
+  .hero h2{margin:0;font-size:32px;line-height:1.05;letter-spacing:-.04em;font-weight:840}
+  .hero h2 em{font-style:normal;color:var(--green)}
+  .hero .s{height:8px;width:44%;margin:13px auto 0;border-radius:5px;background:#bfead6}
+  .hero .btns{display:flex;gap:10px;justify-content:center;margin-top:18px}
+  .hero .btns span{height:34px;border-radius:10px;display:flex;align-items:center;padding:0 18px;font-size:11px;font-weight:740}
+  .hero .btns .p{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+  .hero .btns .g{border:1px solid var(--green-bd);color:#0f221a}
+  .logos{display:flex;align-items:center;justify-content:center;gap:26px;padding:16px;background:#fafdfb}
+  .logos i{width:60px;height:13px;border-radius:5px;background:#dbeee4}
+  .features{padding:22px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .ft{border:1px solid var(--line);border-radius:11px;padding:13px;display:flex;flex-direction:column;gap:8px}
+  .ft .fi{width:30px;height:30px;border-radius:9px;background:var(--green-soft);display:grid;place-items:center;color:var(--green2)}
+  .ft .fl{height:7px;border-radius:4px;background:#e4f0ea}
+  .ft .fl.s{width:60%}
+  /* CMS panel */
+  .cms{background:#fff;border-left:1px solid var(--border);padding:20px 17px;display:flex;flex-direction:column;gap:15px}
+  .cms-h{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:760}
+  .cms-h .lg{width:25px;height:25px;border-radius:8px;background:linear-gradient(135deg,#10b981,#059669);display:grid;place-items:center;color:#fff}
+  .cms-h .sub{font-size:9.5px;color:var(--muted);font-weight:500;display:block}
+  .grp-h{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:#9bb3a8;font-weight:760;margin-bottom:2px}
+  .blocks{display:flex;flex-direction:column;gap:9px}
+  .cblk{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:11px;padding:10px 11px;background:#fafdfb}
+  .cblk.sel{border-color:#9fdcc0;background:var(--green-soft)}
+  .cblk .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:#fff;flex:0 0 auto}
+  .cblk .nm{font-size:11.5px;font-weight:700}
+  .cblk .ty{font-size:9px;color:var(--muted);margin-top:2px}
+  .cblk .drag{margin-left:auto;color:#c2ddcf}
+  .cblk .reuse{margin-left:auto;font-size:8.5px;font-weight:780;color:var(--green2);background:#fff;border:1px solid var(--green-bd);border-radius:5px;padding:3px 6px}
+  .add-blk{height:36px;border-radius:11px;border:1.5px dashed var(--green-bd);background:var(--green-soft);color:var(--green2);font-size:11px;font-weight:740;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:auto}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="SaaS marketing website with CMS structure mockup">
+  <section class="work">
+    <div class="browser">
+      <div class="bbar"><i></i><i></i><i></i><span class="url"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>flowbase.io</span></div>
+      <div class="site">
+        <div class="block nav-wrap" data-b="Nav"><div class="nav"><span class="lg"></span><span class="nm">Flowbase</span><div class="links"><span>Product</span><span>Pricing</span><span>Docs</span></div><span class="cta">Start free</span></div></div>
+        <div class="block sel" data-b="Hero"><div class="hero"><span class="pill">● New · Workflows 2.0</span><h2>Ship faster, <em>together.</em></h2><div class="s"></div><div class="btns"><span class="p">Start free</span><span class="g">Book demo</span></div></div></div>
+        <div class="block" data-b="Logos"><div class="logos"><i></i><i></i><i></i><i></i></div></div>
+        <div class="block" data-b="Features"><div class="features">
+          <div class="ft"><div class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div><div class="fl"></div><div class="fl s"></div></div>
+          <div class="ft"><div class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></div><div class="fl"></div><div class="fl s"></div></div>
+          <div class="ft"><div class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 3v18h18"/><path d="m7 13 3-3 3 2 5-6"/></svg></div><div class="fl"></div><div class="fl s"></div></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="cms">
+    <div class="cms-h"><span class="lg"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="7" rx="1.5"/><rect x="3" y="14" width="18" height="7" rx="1.5"/></svg></span><div>Content model<span class="sub">Reusable CMS blocks</span></div></div>
+
+    <div class="grp-h">Page blocks · drag to reorder</div>
+    <div class="blocks">
+      <div class="cblk"><span class="ic" style="background:linear-gradient(135deg,#64748b,#475569)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="4" rx="1"/></svg></span><div><div class="nm">Nav</div><div class="ty">global</div></div><span class="drag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/></svg></span></div>
+      <div class="cblk sel"><span class="ic" style="background:linear-gradient(135deg,#10b981,#059669)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5h16v10H4z"/><path d="M4 19h10"/></svg></span><div><div class="nm">Hero</div><div class="ty">heading · sub · CTA</div></div><span class="reuse">editing</span></div>
+      <div class="cblk"><span class="ic" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="17" cy="12" r="2"/></svg></span><div><div class="nm">Logo strip</div><div class="ty">repeater</div></div><span class="reuse">×8 uses</span></div>
+      <div class="cblk"><span class="ic" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="16" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg></span><div><div class="nm">Feature grid</div><div class="ty">collection</div></div><span class="reuse">×12 uses</span></div>
+      <div class="cblk"><span class="ic" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M6 8h9a3 3 0 0 1 0 6H8"/></svg></span><div><div class="nm">Pricing</div><div class="ty">plan repeater</div></div><span class="reuse">×3 uses</span></div>
+    </div>
+
+    <div class="add-blk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>Add content block</div>
+  </aside>
+</main>
+</body>
+</html>

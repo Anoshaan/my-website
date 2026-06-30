@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Product Design System in Figma</title>
+<style>
+  :root{
+    --bg:#f1f3f6;--canvas:#e9ebef;--panel:#fff;--border:#e2e6ec;--line:#eef1f5;
+    --text:#1e2530;--muted:#8b93a3;
+    --blue:#3b82f6;--blue-soft:#eef4ff;--green:#16a34a;--amber:#f59e0b;--red:#ef4444;--violet:#7c3aed;
+    --fg-figma:#a259ff;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);background:#e6e9ee;overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:var(--bg);border:1px solid var(--border);box-shadow:0 35px 90px rgba(30,40,60,.14);
+    display:grid;grid-template-columns:198px 1fr 210px;grid-template-rows:42px 1fr}
+  /* toolbar */
+  .toolbar{grid-column:1/-1;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+  .tl-left{display:flex;align-items:center;gap:13px;font-size:12.5px;font-weight:700}
+  .fig{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#a259ff,#f24e1e);display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800}
+  .tl-left .file{color:var(--muted);font-weight:600;font-size:11.5px}
+  .tools{display:flex;gap:4px}
+  .tool{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;color:#5b6472}
+  .tool.on{background:var(--blue);color:#fff}
+  .avatars{display:flex}
+  .avatars i{width:24px;height:24px;border-radius:50%;border:2px solid #fff;margin-left:-6px}
+  /* left panel: layers/assets */
+  .left{background:#fff;border-right:1px solid var(--border);padding:13px 12px;overflow:hidden}
+  .ph-tabs{display:flex;gap:14px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:13px}
+  .ph-tabs b{color:var(--text);border-bottom:2px solid var(--text);padding-bottom:5px}
+  .layer{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;font-size:11.5px;color:#3a4150}
+  .layer.sel{background:var(--blue-soft);color:var(--blue)}
+  .layer .ic{width:13px;height:13px;flex:0 0 auto;opacity:.7}
+  .layer.child{padding-left:24px;color:#6b7383}
+  .layer .comp-dot{width:9px;height:9px;border-radius:2px;background:var(--fg-figma)}
+  .sect{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:#aab2c0;font-weight:760;margin:14px 0 7px;padding:0 8px}
+  /* canvas */
+  .canvas{position:relative;background:
+    radial-gradient(circle at 1px 1px,#d4d8df 1px,transparent 0);background-size:22px 22px;overflow:hidden;padding:22px}
+  .frame{position:absolute;background:#fff;border-radius:12px;box-shadow:0 12px 30px rgba(30,40,60,.1);border:1px solid #eceef2;
+    animation:rise .55s ease both}
+  .frame .fl{position:absolute;top:-19px;left:2px;font-size:10px;font-weight:700;color:var(--fg-figma)}
+  .frame.sel{outline:2px solid var(--blue);outline-offset:2px}
+  .pad{padding:14px}
+  /* buttons frame */
+  .f-btn{left:22px;top:30px;width:230px}
+  .brow{display:flex;gap:9px;margin-bottom:10px;align-items:center}
+  .b{height:30px;border-radius:9px;padding:0 14px;display:flex;align-items:center;font-size:11px;font-weight:740}
+  .b.pri{background:var(--blue);color:#fff}.b.pri:hover{}
+  .b.sec{background:var(--blue-soft);color:var(--blue)}
+  .b.dis{background:#eef1f5;color:#aab2c0}
+  .b.dg{background:var(--red);color:#fff}
+  .vlabel{font-size:9px;color:var(--muted);margin-bottom:6px}
+  /* inputs frame */
+  .f-inp{left:22px;top:188px;width:230px}
+  .inp{height:34px;border-radius:9px;border:1.5px solid #dfe3ea;background:#fff;display:flex;align-items:center;padding:0 12px;margin-bottom:9px;font-size:11px;color:#9aa2b1}
+  .inp.focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .inp.err{border-color:var(--red);box-shadow:0 0 0 3px #fde8e8}
+  .errmsg{font-size:9.5px;color:var(--red);margin:-4px 0 8px 2px}
+  /* cards + badges frame */
+  .f-card{left:286px;top:30px;width:250px}
+  .uicard{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:11px}
+  .uicard .top{height:54px;background:linear-gradient(135deg,#93c5fd,#3b82f6)}
+  .uicard .bd{padding:11px}
+  .uicard .t{height:9px;width:65%;border-radius:5px;background:#dfe3ea;margin-bottom:7px}
+  .uicard .s{height:7px;width:45%;border-radius:4px;background:#eaedf2}
+  .badges{display:flex;gap:7px;flex-wrap:wrap}
+  .bdg{font-size:10px;font-weight:740;padding:5px 10px;border-radius:999px}
+  /* tokens frame */
+  .f-tok{left:286px;top:240px;width:250px}
+  .tok{display:flex;align-items:center;gap:9px;font-size:11px;color:#3a4150;padding:5px 0}
+  .tok .sw{width:18px;height:18px;border-radius:6px;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+  .tok code{margin-left:auto;font-family:ui-monospace,Menlo,monospace;font-size:9.5px;color:var(--muted)}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  /* right inspector */
+  .right{background:#fff;border-left:1px solid var(--border);padding:14px 13px;overflow:hidden}
+  .insp-head{font-size:11px;font-weight:760;margin-bottom:13px;display:flex;align-items:center;gap:8px}
+  .insp-head .comp-dot{width:11px;height:11px;border-radius:3px;background:var(--fg-figma)}
+  .prop{display:flex;align-items:center;justify-content:space-between;font-size:10.5px;color:#5b6472;padding:7px 0;border-bottom:1px solid var(--line)}
+  .prop b{color:var(--text);font-weight:680}
+  .variant{margin-top:14px}
+  .variant .vh{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#aab2c0;font-weight:760;margin-bottom:9px}
+  .vchips{display:flex;gap:7px;flex-wrap:wrap}
+  .vchip{font-size:10px;font-weight:700;padding:6px 10px;border-radius:8px;background:#f4f6f9;color:#5b6472;border:1px solid var(--line)}
+  .vchip.on{background:var(--blue-soft);color:var(--blue);border-color:#cfe0ff}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .frame{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Product design system in Figma mockup">
+  <header class="toolbar">
+    <div class="tl-left">
+      <span class="fig">F</span>Design System <span class="file">/ Components — Page 1</span>
+    </div>
+    <div class="tools">
+      <span class="tool"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 5 5L20 7"/></svg></span>
+      <span class="tool on"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4z"/></svg></span>
+      <span class="tool"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/></svg></span>
+      <span class="tool"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M5 12h14"/></svg></span>
+    </div>
+    <div class="avatars"><i style="background:linear-gradient(135deg,#f59e0b,#ef4444)"></i><i style="background:linear-gradient(135deg,#3b82f6,#7c3aed)"></i><i style="background:linear-gradient(135deg,#16a34a,#22d3ee)"></i></div>
+  </header>
+
+  <!-- left -->
+  <aside class="left">
+    <div class="ph-tabs"><b>Layers</b><span>Assets</span></div>
+    <div class="layer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4z"/></svg>Buttons</div>
+    <div class="layer child"><span class="comp-dot"></span>Primary</div>
+    <div class="layer child sel"><span class="comp-dot"></span>Secondary</div>
+    <div class="layer child"><span class="comp-dot"></span>Disabled</div>
+    <div class="layer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="8" width="18" height="8" rx="2"/></svg>Inputs</div>
+    <div class="layer"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/></svg>Cards</div>
+    <div class="sect">Tokens</div>
+    <div class="layer child"><span class="comp-dot" style="background:#3b82f6"></span>color/brand</div>
+    <div class="layer child"><span class="comp-dot" style="background:#16a34a"></span>color/success</div>
+    <div class="layer child"><span class="comp-dot" style="background:#1e2530"></span>type/heading</div>
+  </aside>
+
+  <!-- canvas -->
+  <section class="canvas">
+    <div class="frame f-btn sel"><span class="fl">Buttons</span><div class="pad">
+      <div class="vlabel">Default · Hover · Disabled · Danger</div>
+      <div class="brow"><span class="b pri">Save</span><span class="b sec">Cancel</span></div>
+      <div class="brow"><span class="b dis">Disabled</span><span class="b dg">Delete</span></div>
+    </div></div>
+
+    <div class="frame f-inp"><span class="fl">Inputs</span><div class="pad">
+      <div class="vlabel">Default · Focus · Error</div>
+      <div class="inp">Placeholder</div>
+      <div class="inp focus">you@team.com</div>
+      <div class="inp err">invalid</div>
+      <div class="errmsg">Enter a valid email</div>
+    </div></div>
+
+    <div class="frame f-card"><span class="fl">Cards &amp; Badges</span><div class="pad">
+      <div class="uicard"><div class="top"></div><div class="bd"><div class="t"></div><div class="s"></div></div></div>
+      <div class="badges">
+        <span class="bdg" style="background:#dcfce7;color:#16a34a">● Ready</span>
+        <span class="bdg" style="background:#fef9c3;color:#a16207">● Review</span>
+        <span class="bdg" style="background:#fee2e2;color:#dc2626">● Blocked</span>
+        <span class="bdg" style="background:#eef4ff;color:#3b82f6">New</span>
+      </div>
+    </div></div>
+
+    <div class="frame f-tok"><span class="fl">Tokens</span><div class="pad">
+      <div class="tok"><span class="sw" style="background:#3b82f6"></span>color/brand<code>#3B82F6</code></div>
+      <div class="tok"><span class="sw" style="background:#16a34a"></span>color/success<code>#16A34A</code></div>
+      <div class="tok"><span class="sw" style="background:#f59e0b"></span>color/warning<code>#F59E0B</code></div>
+      <div class="tok"><span class="sw" style="background:#1e2530"></span>text/primary<code>#1E2530</code></div>
+    </div></div>
+  </section>
+
+  <!-- inspector -->
+  <aside class="right">
+    <div class="insp-head"><span class="comp-dot"></span>Button / Secondary</div>
+    <div class="prop"><span>Width</span><b>Hug</b></div>
+    <div class="prop"><span>Padding</span><b>0 · 14</b></div>
+    <div class="prop"><span>Radius</span><b>9</b></div>
+    <div class="prop"><span>Fill</span><b>brand/50</b></div>
+    <div class="prop"><span>Text</span><b>brand/600</b></div>
+    <div class="variant">
+      <div class="vh">Variants</div>
+      <div class="vchips"><span class="vchip">Primary</span><span class="vchip on">Secondary</span><span class="vchip">Ghost</span><span class="vchip">Danger</span></div>
+    </div>
+    <div class="variant">
+      <div class="vh">State</div>
+      <div class="vchips"><span class="vchip on">Default</span><span class="vchip">Hover</span><span class="vchip">Disabled</span></div>
+    </div>
+  </aside>
+</main>
+</body>
+</html>

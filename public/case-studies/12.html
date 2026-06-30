@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Website Production Sprint</title>
+<style>
+  :root{
+    --bg:#f5f1fb;--surface:#fff;--border:#e7e0f5;--line:#efe9fa;
+    --text:#1c172a;--muted:#857a9e;
+    --violet:#8b6dff;--violet-soft:#f1ecff;--violet-bd:#d9ccff;--green:#16a34a;--cyan:#06b6d4;--amber:#f59e0b;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 20% 0,rgba(139,109,255,.12),transparent 30%),var(--bg);overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fcfaff,#f5f1fb);border:1px solid var(--border);box-shadow:0 35px 90px rgba(60,40,120,.12)}
+  .head{padding:30px 36px 12px;display:flex;align-items:flex-start;justify-content:space-between}
+  .head h1{margin:0;font-size:25px;letter-spacing:-.04em}
+  .head .sub{margin-top:6px;font-size:12.5px;color:var(--muted)}
+  .sprint{display:inline-flex;align-items:center;gap:9px;background:var(--violet-soft);border:1px solid var(--violet-bd);color:#6a4fd6;font-size:11.5px;font-weight:740;padding:8px 14px;border-radius:999px}
+  .sprint .ai{width:8px;height:8px;border-radius:50%;background:var(--violet);animation:pulse 1.8s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(139,109,255,.4)}50%{box-shadow:0 0 0 6px rgba(139,109,255,0)}}
+  /* pipeline */
+  .pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:14px 36px;height:calc(100% - 96px - 70px)}
+  .stagecol{position:relative;display:flex;flex-direction:column;animation:rise .6s ease both}
+  .stagecol:nth-child(2){animation-delay:.1s}.stagecol:nth-child(3){animation-delay:.2s}.stagecol:nth-child(4){animation-delay:.3s}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .stagecol::after{content:"";position:absolute;top:46px;right:-13px;width:18px;height:2px;background:repeating-linear-gradient(90deg,#c9b9f5 0 5px,transparent 5px 9px)}
+  .stagecol:last-child::after{display:none}
+  .stitle{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+  .snum{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;flex:0 0 auto}
+  .stitle b{font-size:13px;letter-spacing:-.02em}
+  .stitle .st{font-size:10px;color:var(--muted);display:block;font-weight:600}
+  .box{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 12px 30px rgba(60,40,120,.07);padding:14px;flex:1;display:flex;flex-direction:column;gap:10px}
+  .done-tag{margin-left:auto;font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:999px}
+  /* stage 1 notes */
+  .note{background:#faf8ff;border:1px solid var(--line);border-left:3px solid var(--violet);border-radius:8px;padding:9px 11px;font-size:11px;color:#4a4163;line-height:1.4}
+  .note b{color:#2c2545}
+  .tagline{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+  .mini{font-size:9.5px;font-weight:700;padding:4px 8px;border-radius:999px;background:var(--violet-soft);color:#6a4fd6;border:1px solid var(--violet-bd)}
+  /* stage 2 sitemap */
+  .tree{display:flex;flex-direction:column;align-items:center;gap:9px;margin-top:4px}
+  .tnode{font-size:10.5px;font-weight:700;padding:7px 12px;border-radius:9px;background:linear-gradient(135deg,#8b6dff,#6a4fd6);color:#fff;box-shadow:0 6px 14px rgba(139,109,255,.3)}
+  .tline{width:2px;height:12px;background:#d9ccff}
+  .tchild{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .tchild span{font-size:10px;font-weight:650;padding:6px 10px;border-radius:8px;background:#faf8ff;border:1px solid var(--violet-bd);color:#5b4f7a}
+  .tbar{margin-top:auto}
+  /* stage 3 layout draft = mini browser */
+  .browser{border:1px solid var(--border);border-radius:11px;overflow:hidden;background:#fff;box-shadow:0 6px 16px rgba(60,40,120,.08)}
+  .bbar{height:24px;background:#f3eefe;display:flex;align-items:center;gap:5px;padding:0 9px}
+  .bbar i{width:7px;height:7px;border-radius:50%;background:#cdbdf3}
+  .bbar .url{flex:1;height:11px;border-radius:6px;background:#fff;margin-left:6px}
+  .bcanvas{padding:10px;display:flex;flex-direction:column;gap:7px}
+  .bhero{height:34px;border-radius:7px;background:linear-gradient(135deg,#a78bfa,#7c6ae8)}
+  .brow{display:flex;gap:6px}
+  .bcard{flex:1;height:26px;border-radius:6px;background:#efe9fa}
+  .bline{height:7px;border-radius:5px;background:#efe9fa}
+  .bline.s{width:55%}
+  .devices{display:flex;gap:8px;align-items:flex-end;margin-top:auto}
+  .tablet{width:42px;height:30px;border-radius:5px;border:2px solid #cdbdf3;background:#faf8ff}
+  .phone{width:18px;height:34px;border-radius:5px;border:2px solid #cdbdf3;background:#faf8ff}
+  /* stage 4 QA */
+  .qarow{display:flex;align-items:center;gap:10px;font-size:11px;color:#3c3454;padding:6px 0;border-bottom:1px solid var(--line)}
+  .qarow:last-of-type{border-bottom:0}
+  .qarow .c{width:18px;height:18px;border-radius:6px;display:grid;place-items:center;font-size:10px;flex:0 0 auto}
+  .c.ok{background:#e9f8ef;color:var(--green)}.c.run{background:#fff4e0;color:var(--amber)}
+  .qarow .mu{margin-left:auto;font-size:10px;color:var(--muted)}
+  .launch{margin-top:auto;height:38px;border-radius:11px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-size:12px;font-weight:780;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 12px 22px rgba(22,163,74,.25)}
+  /* bottom progress */
+  .foot{position:absolute;left:36px;right:36px;bottom:22px;display:flex;align-items:center;gap:16px}
+  .ftrack{flex:1;height:7px;border-radius:999px;background:#e7e0f5;overflow:hidden}
+  .ftrack i{display:block;height:100%;width:78%;border-radius:999px;background:linear-gradient(90deg,#8b6dff,#06b6d4);animation:fill 1.5s cubic-bezier(.2,.9,.2,1) both}
+  @keyframes fill{from{width:0}to{width:78%}}
+  .foot .lbl{font-size:11.5px;font-weight:700;color:#4a4163}
+  .foot .pct{font-size:13px;font-weight:840;color:var(--violet)}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .stagecol,.ftrack i,.box{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="AI website production sprint pipeline mockup">
+  <div class="head">
+    <div><h1>Website Production Sprint</h1><div class="sub">From client notes to responsive launch in a controlled, designer-led pipeline.</div></div>
+    <span class="sprint"><span class="ai"></span>AI assisting · Day 2 of 4</span>
+  </div>
+
+  <section class="pipe">
+    <!-- 1 -->
+    <div class="stagecol">
+      <div class="stitle"><span class="snum" style="background:linear-gradient(135deg,#8b6dff,#6a4fd6)">1</span><div><b>Client notes</b><span class="st">Intake</span></div></div>
+      <div class="box">
+        <div class="note"><b>Bakery</b> · warm, family-run, 12 years. Wants online orders.</div>
+        <div class="note">Brand words: cozy, honest, fresh.</div>
+        <div class="note">Must have: menu, story, location, order CTA.</div>
+        <div class="tagline"><span class="mini">cozy</span><span class="mini">local</span><span class="mini">warm</span></div>
+      </div>
+    </div>
+    <!-- 2 -->
+    <div class="stagecol">
+      <div class="stitle"><span class="snum" style="background:linear-gradient(135deg,#7c6ae8,#06b6d4)">2</span><div><b>Sitemap</b><span class="st">Structure</span></div></div>
+      <div class="box">
+        <div class="tree">
+          <span class="tnode">Home</span>
+          <span class="tline"></span>
+          <div class="tchild"><span>Menu</span><span>Our Story</span></div>
+          <div class="tchild"><span>Order</span><span>Visit</span><span>FAQ</span></div>
+        </div>
+        <div class="tbar tagline"><span class="mini" style="background:#e0f7fb;color:#0e7490;border-color:#a5e9f4">5 pages mapped</span></div>
+      </div>
+    </div>
+    <!-- 3 -->
+    <div class="stagecol">
+      <div class="stitle"><span class="snum" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">3</span><div><b>Layout draft</b><span class="st">AI + refine</span></div></div>
+      <div class="box">
+        <div class="browser">
+          <div class="bbar"><i></i><i></i><i></i><span class="url"></span></div>
+          <div class="bcanvas">
+            <div class="bhero"></div>
+            <div class="brow"><div class="bcard"></div><div class="bcard"></div><div class="bcard"></div></div>
+            <div class="bline"></div><div class="bline s"></div>
+          </div>
+        </div>
+        <div class="devices"><div class="tablet"></div><div class="phone"></div><span class="mini" style="margin-left:auto;background:#e0f7fb;color:#0e7490;border-color:#a5e9f4">draft v3</span></div>
+      </div>
+    </div>
+    <!-- 4 -->
+    <div class="stagecol">
+      <div class="stitle"><span class="snum" style="background:linear-gradient(135deg,#16a34a,#15803d)">4</span><div><b>Responsive QA</b><span class="st">Launch ready</span></div></div>
+      <div class="box">
+        <div class="qarow"><span class="c ok">✓</span>Desktop layout<span class="mu">pass</span></div>
+        <div class="qarow"><span class="c ok">✓</span>Tablet reflow<span class="mu">pass</span></div>
+        <div class="qarow"><span class="c ok">✓</span>Mobile nav<span class="mu">pass</span></div>
+        <div class="qarow"><span class="c run">●</span>Lighthouse<span class="mu">94 / 100</span></div>
+        <div class="launch"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 5 5L20 7"/></svg>Ready to launch</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span class="lbl">Sprint progress</span>
+    <div class="ftrack"><i></i></div>
+    <span class="pct">78%</span>
+  </div>
+</main>
+</body>
+</html>

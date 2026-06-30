@@ -731,6 +731,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#FFF4E8",
     "accentBorder": "#FFD9AD",
     "priority": 10,
+    "imageUrl": "/case-studies/10.html",
     "previewTitle": "E-Commerce Product Catalog",
     "previewDescription": "A product catalog and shopping journey designed around browsing, comparison, product clarity, and faster purchase decisions.",
     "previewProblem": "Customers needed to understand product differences quickly before reaching checkout.",
@@ -795,6 +796,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F4F0FF",
     "accentBorder": "#D9CCFF",
     "priority": 11,
+    "imageUrl": "/case-studies/11.html",
     "previewTitle": "AI + Figma MCP Design Workflow",
     "previewDescription": "An AI-assisted workflow showing how design context can move between Figma, AI tools, and code without losing designer control.",
     "previewProblem": "AI can generate fast, but without structure it creates messy output, repeated tokens, and inconsistent UI.",
@@ -861,6 +863,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F4F0FF",
     "accentBorder": "#D9CCFF",
     "priority": 12,
+    "imageUrl": "/case-studies/12.html",
     "previewTitle": "AI Website Production Sprint",
     "previewDescription": "A fast website production workflow using AI for first drafts, layout exploration, copy structure, component generation, and responsive QA.",
     "previewProblem": "Small businesses need websites quickly, but rushed work often leads to weak structure, poor content, and inconsistent UI.",
@@ -925,6 +928,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F2F5F8",
     "accentBorder": "#D5DDE8",
     "priority": 13,
+    "imageUrl": "/case-studies/13.html",
     "previewTitle": "Mobile UX Wireframe + Wireflow Sprint",
     "previewDescription": "A wireframe-only pathway showing how a mobile product idea can move from client conversation into screens, flows, user decisions, and product structure.",
     "previewProblem": "Early product ideas often jump into visual design before the core flow is understood.",
@@ -989,6 +993,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F2F5F8",
     "accentBorder": "#D5DDE8",
     "priority": 14,
+    "imageUrl": "/case-studies/14.html",
     "previewTitle": "Desktop SaaS Wireframe System",
     "previewDescription": "A desktop wireframe pathway for shaping complex SaaS navigation, dashboard hierarchy, admin flows, and product logic before UI polish.",
     "previewProblem": "Desktop SaaS products can become confusing when navigation, data hierarchy, and admin actions are not planned early.",
@@ -1054,6 +1059,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#FDF4FF",
     "accentBorder": "#F5D0FE",
     "priority": 15,
+    "imageUrl": "/case-studies/15.html",
     "previewTitle": "Brand Identity + Digital System",
     "previewDescription": "A brand pathway showing how a business idea becomes a visual identity, tone direction, website style, and reusable digital system.",
     "previewProblem": "The brand needed more than a logo. It needed a clear look, voice, layout system, and digital presence that could scale.",
@@ -1119,6 +1125,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F8FAFC",
     "accentBorder": "#E2E8F0",
     "priority": 16,
+    "imageUrl": "/case-studies/16.html",
     "previewTitle": "Product Design System in Figma",
     "previewDescription": "A reusable product design system with tokens, components, variants, layout rules, and documentation to help teams design faster and stay consistent.",
     "previewProblem": "Teams were recreating UI patterns manually, causing inconsistency between screens and slowing down production.",
@@ -1184,6 +1191,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F8FAFC",
     "accentBorder": "#E2E8F0",
     "priority": 17,
+    "imageUrl": "/case-studies/17.html",
     "previewTitle": "AI-Assisted Design System Build",
     "previewDescription": "A workflow for using AI to speed up design system documentation, component cleanup, naming, and design-to-code alignment.",
     "previewProblem": "Design systems take time to document and maintain, especially when product teams move quickly.",
@@ -1387,6 +1395,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F1F5F9",
     "accentBorder": "#E2E8F0",
     "priority": 20,
+    "imageUrl": "/case-studies/20.html",
     "previewTitle": "Design-to-Development Handoff System",
     "previewDescription": "A structured handoff process that translates Figma designs into build-ready documentation with clear responsive rules and developer notes.",
     "previewProblem": "Development was stalling due to unclear spacing, missing responsive states, and undefined interactions in Figma.",
@@ -1444,6 +1453,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F1F5F9",
     "accentBorder": "#E2E8F0",
     "priority": 21,
+    "imageUrl": "/case-studies/21.html",
     "previewTitle": "Product Owner Delivery Pack",
     "previewDescription": "A comprehensive delivery package designed to align product owners, stakeholders, and engineering on MVP scope and user stories.",
     "previewProblem": "Product requirements were scattered across different docs, leading to scope creep and misaligned expectations.",
@@ -1500,6 +1510,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F1F5F9",
     "accentBorder": "#E2E8F0",
     "priority": 22,
+    "imageUrl": "/case-studies/22.html",
     "previewTitle": "Landing Page Launch Pack",
     "previewDescription": "A complete set of assets, copy, and technical guidelines delivered to the client for a smooth marketing landing page launch.",
     "previewProblem": "The client had a great design but struggled to implement it across their CMS, social channels, and email marketing.",
@@ -1556,6 +1567,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#F1F5F9",
     "accentBorder": "#E2E8F0",
     "priority": 23,
+    "imageUrl": "/case-studies/23.html",
     "previewTitle": "QA & Launch Readiness Checklist",
     "previewDescription": "A rigorous pre-launch review process that covers responsive testing, design QA, accessibility, and performance before a product goes live.",
     "previewProblem": "Products were launching with broken responsive layouts, missed design details, and unhandled error states.",
@@ -1613,6 +1625,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#EEF3FF",
     "accentBorder": "#C9DAFF",
     "priority": 24,
+    "imageUrl": "/case-studies/24.html",
     "previewTitle": "FinTech Account & Activity Flow",
     "previewDescription": "A mobile banking-style UX flow focused on account overview, transaction clarity, status feedback, and secure action confirmation.",
     "previewProblem": "Users needed a clear way to review account activity, understand transaction status, and move through financial actions without confusion.",
@@ -1674,6 +1687,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#ECFDF5",
     "accentBorder": "#A7F3D0",
     "priority": 25,
+    "imageUrl": "/case-studies/25.html",
     "previewTitle": "Portfolio Website + AI Rapid Production",
     "previewDescription": "A responsive portfolio website built through a fast AI-assisted production workflow, combining product storytelling, visual experimentation, content structure, and front-end iteration.",
     "previewProblem": "The portfolio needed to be redesigned quickly for job applications while still feeling custom, thoughtful, and different from a standard template.",
@@ -1735,6 +1749,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#ECFDF5",
     "accentBorder": "#A7F3D0",
     "priority": 26,
+    "imageUrl": "/case-studies/26.html",
     "previewTitle": "SaaS Marketing Website + CMS Structure",
     "previewDescription": "A SaaS website structure focused on product positioning, feature storytelling, lead generation, reusable CMS sections, and scalable content blocks.",
     "previewProblem": "A product-led business needed a web presence that explained value clearly while supporting reusable content and future growth.",
@@ -1796,6 +1811,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#ECFDF5",
     "accentBorder": "#A7F3D0",
     "priority": 27,
+    "imageUrl": "/case-studies/27.html",
     "previewTitle": "Local Service Website + Booking Path",
     "previewDescription": "A service-business web experience combining service pages, trust-building sections, inquiry paths, contact actions, and lightweight booking logic.",
     "previewProblem": "Small service businesses often need a simple website that builds trust quickly and turns visitors into inquiries without a complex platform.",
@@ -1857,6 +1873,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#FFF4E8",
     "accentBorder": "#FFD9AD",
     "priority": 28,
+    "imageUrl": "/case-studies/28.html",
     "previewTitle": "Subscription Plan & Checkout Flow",
     "previewDescription": "A subscription checkout journey focused on plan comparison, pricing clarity, add-on selection, confirmation states, and payment confidence.",
     "previewProblem": "Users needed to compare plans, understand what they were paying for, and complete checkout without feeling uncertain.",
@@ -1918,6 +1935,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#FFF4E8",
     "accentBorder": "#FFD9AD",
     "priority": 29,
+    "imageUrl": "/case-studies/29.html",
     "previewTitle": "Vendor Onboarding & Listing Flow",
     "previewDescription": "A seller-side marketplace flow covering onboarding, listing creation, product detail entry, verification, and publishing readiness.",
     "previewProblem": "Marketplace sellers needed a guided way to create profiles, add listings, manage product details, and understand approval status.",
@@ -1979,6 +1997,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#FDF4FF",
     "accentBorder": "#F5D0FE",
     "priority": 30,
+    "imageUrl": "/case-studies/30.html",
     "previewTitle": "Startup Brand + Launch Identity",
     "previewDescription": "A brand identity pathway covering logo direction, color system, typography, graphic language, social templates, and digital launch assets.",
     "previewProblem": "A new business needed more than a logo. It needed a practical identity system that could work across web, social, packaging, and pitch materials.",
@@ -2040,6 +2059,7 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
     "accentSoftBg": "#FEF2F2",
     "accentBorder": "#FECACA",
     "priority": 31,
+    "imageUrl": "/case-studies/31.html",
     "previewTitle": "Brand Motion & Social Cutdown System",
     "previewDescription": "A motion design system for turning brand elements into short animated content, social cutdowns, intros, outros, and reusable motion patterns.",
     "previewProblem": "Static brand assets needed to feel more alive across social content, short videos, and launch materials.",
@@ -2093,63 +2113,66 @@ export const PRODUCT_PATHWAYS: ProductPathway[] = [
   },
   {
     "id": 32,
-    "title": "Product Explainer UI Animation",
+    "title": "3D Event Booth & Stall Visualization",
     "primaryCategory": "Motion, Video & Lottie Systems" as PathwayCategory,
-    "categories": ["Motion, Video & Lottie Systems", "AI & Automation UX"],
     "mockupType": "video",
-    "accentColor": "#F87171",
+    "accentColor": "#FCA5A5",
     "accentSoftBg": "#FEF2F2",
     "accentBorder": "#FECACA",
-    "priority": 32,
-    "previewTitle": "Product Explainer UI Animation",
-    "previewDescription": "A UI animation pathway using product screens, transitions, callouts, and lightweight motion to explain how a digital product works.",
-    "previewProblem": "Some product ideas are easier to understand when the interface is shown in motion instead of as static screens.",
-    "previewOutcome": "The animation helped communicate product value, flow, and interaction logic in a faster and more engaging way.",
+    "priority": 18.5,
+    "imageUrl": "/case-studies/3d-booth.webp",
+    "previewTitle": "3D Event Booth & Stall Visualization",
+    "previewDescription": "A branded conference booth modeled in 3D before any physical build, covering structure, lighting, textures, monitor placement, brand colors, and the full spatial layout.",
+    "previewProblem": "The company had a major conference coming up and wanted a fresh, on-brand booth, but no one could picture the final setup before committing budget to production.",
+    "previewOutcome": "A complete 3D model gave everyone a clear preview of the space, so layout decisions, approvals, and the physical build moved forward with far less uncertainty.",
     "tags": [
-      "UI Animation",
-      "Product Explainer",
-      "Motion UX",
-      "Prototype",
-      "Demo Flow"
+      "3D Modeling",
+      "Event Booth",
+      "Spatial Design",
+      "Brand Environment",
+      "Stakeholder Preview"
     ],
-    "uniqueCTA": "Play UI Explainer",
-    "detailHero": "Showing how a product works by putting the interface in motion.",
-    "productStory": "Some products are hard to explain with static screens. The work turned key flows into a short UI animation, using real product screens, transitions, and callouts so a viewer can understand the value and the interaction logic in seconds.",
-    "problem": "Static screenshots cannot show flow. People do not understand how a product moves from one step to the next, so the value gets lost in a wall of images.",
+    "uniqueCTA": "Explore the 3D Booth",
+    "detailHero": "Seeing the booth in full before a single panel was built.",
+    "productStory": "For a major conference, the company wanted a booth that felt new, different, and aligned with where the brand was heading. Instead of describing it in slides, I built the entire concept in 3D first: the booth structure, lighting, textures, tables, monitor placement, wall design, brand colors, and the overall spatial layout. Everyone could see the final environment before production started.",
+    "problem": "Event booths are expensive and hard to change once fabrication begins. Stakeholders, event planners, project managers, and the marketing team each had a different picture of the space in their heads, which made approvals slow and risky. The goal was to remove that uncertainty before any budget was committed to the physical build.",
     "users": [
-      "Prospects evaluating the product",
-      "Sales and demo teams",
-      "Product owners pitching the idea",
-      "New users learning the flow"
+      "Stakeholders approving the concept",
+      "Event planners and production teams",
+      "Project managers coordinating the build",
+      "Marketing and brand team",
+      "Internal teams attending the event"
     ],
-    "solution": "Animate the product story: real screens move through the core flow, callouts highlight what matters, and lightweight motion keeps the focus on the interaction rather than decoration.",
+    "solution": "Model the full booth in 3D as a single source of truth: structure, lighting, materials, furniture, screen placement, wall graphics, and brand colors arranged in the real spatial layout. The model became the thing everyone reviewed, aligned on, and signed off, long before fabrication started.",
     "keyFeatures": [
-      "Real product screens in motion",
-      "Step-by-step flow animation",
-      "Callouts and highlights",
-      "Cursor and interaction cues",
-      "Lightweight transitions",
-      "Looping demo option",
-      "Aspect ratio variants",
-      "Export-ready delivery"
+      "Full booth structure in 3D",
+      "Lighting and material studies",
+      "Monitor and screen placement",
+      "Wall and graphic layout",
+      "Brand color application",
+      "Furniture and table arrangement",
+      "Spatial flow and visitor pathing",
+      "Multiple viewing angles",
+      "Production-ready reference views"
     ],
     "uxDecisions": [
-      "Use motion to explain flow, not to decorate.",
-      "Highlight one idea at a time.",
-      "Keep the pace fast but readable.",
-      "Show real interface, not abstract shapes."
+      "Use 3D early to align stakeholders before spending on the build.",
+      "Model the real spatial layout, not just a pretty render.",
+      "Place screens and brand moments where visitors actually look.",
+      "Show several angles so the whole team reads the same space.",
+      "Keep the booth on-brand and aligned with the brand's direction."
     ],
     "motionDirection": [
-      "Screen-to-screen flow transitions.",
-      "Callout and highlight reveals.",
-      "Cursor movement cues.",
-      "Looping demo sequence."
+      "Slow orbit around the booth to reveal the full structure.",
+      "Camera move from the entry view into the interior layout.",
+      "Lighting reveal as the scene settles.",
+      "Highlight passes on screens and brand walls."
     ],
     "visualSuggestions": [
-      "Product screen sequence.",
-      "Animated callouts.",
-      "Flow transition frames.",
-      "Looping demo preview."
+      "Hero render of the full booth.",
+      "Close-ups of screens and brand walls.",
+      "Top-down layout view.",
+      "Lighting and material studies."
     ]
   }
 ];
@@ -2246,12 +2269,3 @@ export const getPathwaysForCategory = (category: PathwayCategory): ProductPathwa
     : PRODUCT_PATHWAYS.filter((p) => pathwayInCategory(p, category)).sort(
         (a, b) => a.priority - b.priority
       );
-
-/** Live counts per category, derived from the data (never hard-coded). */
-export const getCategoryCounts = (): Record<PathwayCategory, number> => {
-  const counts = {} as Record<PathwayCategory, number>;
-  CATEGORIES.forEach((cat) => {
-    counts[cat] = PRODUCT_PATHWAYS.filter((p) => pathwayInCategory(p, cat)).length;
-  });
-  return counts;
-};

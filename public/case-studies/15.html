@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Brand Identity + Digital System</title>
+<style>
+  :root{
+    --bg:#fdf4ff;--surface:#fff;--border:#f3dbf7;--line:#f6e6f9;
+    --text:#2a1330;--muted:#9a7aa3;
+    --pink:#d946ef;--pink2:#a21caf;--pink-soft:#fdf0fe;
+    --ink:#241a2b;--cream:#fbf3ea;--lime:#bef264;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 80% 0,rgba(217,70,239,.10),transparent 32%),var(--bg);overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fffafd,#fdf4ff);border:1px solid var(--border);box-shadow:0 35px 90px rgba(120,30,130,.14);
+    padding:26px 30px;display:grid;grid-template-columns:1.15fr 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:16px}
+  .head{grid-column:1/-1;display:flex;align-items:flex-end;justify-content:space-between}
+  .head h1{margin:0;font-size:22px;letter-spacing:-.03em}
+  .head .sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .head .tag{font-size:10.5px;font-weight:760;color:var(--pink2);background:var(--pink-soft);border:1px solid var(--border);padding:7px 13px;border-radius:999px}
+  .tile{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 30px rgba(120,30,130,.07);padding:16px;position:relative;overflow:hidden;
+    animation:rise .55s ease both}
+  .tile:nth-child(3){animation-delay:.05s}.tile:nth-child(4){animation-delay:.1s}.tile:nth-child(5){animation-delay:.15s}
+  .tile:nth-child(6){animation-delay:.2s}.tile:nth-child(7){animation-delay:.25s}.tile:nth-child(8){animation-delay:.3s}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .cap{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:760;margin-bottom:12px}
+  /* logo mark */
+  .logo{grid-row:2/4;display:flex;flex-direction:column;background:linear-gradient(160deg,#2a1330,#4a1d54)}
+  .logo .cap{color:#e7b9ee}
+  .mark{flex:1;display:grid;place-items:center}
+  .mark .glyph{width:128px;height:128px;border-radius:34px;background:linear-gradient(135deg,#d946ef,#f0abfc);display:grid;place-items:center;
+    box-shadow:0 24px 50px rgba(217,70,239,.4);animation:float 5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(-2deg)}}
+  .mark .glyph b{font-size:62px;font-weight:860;color:#fff;font-style:normal;letter-spacing:-.04em}
+  .logo .marks{display:flex;gap:10px;margin-top:14px}
+  .logo .marks i{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:18px}
+  /* palette */
+  .palette .swrow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .palette .sw{aspect-ratio:1;border-radius:11px;position:relative;display:flex;align-items:flex-end;padding:6px}
+  .palette .sw small{font-size:7.5px;font-weight:700;color:rgba(255,255,255,.85)}
+  .palette .sw.lt small{color:rgba(0,0,0,.5)}
+  .palette .hexrow{display:flex;justify-content:space-between;margin-top:9px;font-size:9px;color:var(--muted)}
+  /* type */
+  .type .spec{font-weight:840;letter-spacing:-.05em;line-height:.92;color:#2a1330}
+  .type .a1{font-size:40px}
+  .type .scale{display:flex;align-items:baseline;gap:12px;margin-top:10px;flex-wrap:wrap}
+  .type .scale span{color:#3a2540;font-weight:740}
+  .type .meta{margin-top:auto;display:flex;gap:8px;font-size:9.5px;color:var(--muted)}
+  .type .meta b{padding:4px 9px;border-radius:7px;background:var(--pink-soft);color:var(--pink2);font-weight:700}
+  /* web hero */
+  .web{grid-column:1/2}
+  .web .frame{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:2px}
+  .web .bar{height:20px;background:#f8eafb;display:flex;align-items:center;gap:4px;padding:0 8px}
+  .web .bar i{width:6px;height:6px;border-radius:50%;background:#e7b9ee}
+  .web .hero{padding:14px;background:linear-gradient(135deg,#fdf0fe,#fce7fd)}
+  .web .hero .ht{height:13px;width:70%;border-radius:6px;background:#d946ef;margin-bottom:7px}
+  .web .hero .hs{height:8px;width:50%;border-radius:5px;background:#e9a8f2;margin-bottom:12px}
+  .web .hero .hb{height:26px;width:88px;border-radius:9px;background:linear-gradient(135deg,#d946ef,#a21caf)}
+  /* social tile */
+  .social .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .social .post{aspect-ratio:1;border-radius:12px;display:flex;flex-direction:column;justify-content:space-between;padding:11px;color:#fff}
+  .social .post b{font-size:13px;font-weight:840;letter-spacing:-.02em}
+  .social .post .h{height:6px;width:60%;border-radius:4px;background:rgba(255,255,255,.55)}
+  /* components */
+  .comp{grid-column:2/4}
+  .comp .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .comp .btn{height:32px;border-radius:10px;padding:0 16px;display:flex;align-items:center;font-size:11px;font-weight:740}
+  .comp .btn.solid{background:linear-gradient(135deg,#d946ef,#a21caf);color:#fff}
+  .comp .btn.soft{background:var(--pink-soft);color:var(--pink2);border:1px solid var(--border)}
+  .comp .btn.ghost{border:1.5px solid #2a1330;color:#2a1330}
+  .comp .badge{font-size:10px;font-weight:760;padding:5px 10px;border-radius:999px}
+  .comp .inp{flex:1;min-width:120px;height:32px;border-radius:10px;border:1.5px solid var(--border);background:#fff;display:flex;align-items:center;padding:0 12px}
+  .comp .inp .ph{width:60%;height:7px;border-radius:4px;background:var(--line)}
+  .comp .crd{flex:1;min-width:120px;border:1px solid var(--line);border-radius:12px;padding:11px;display:flex;flex-direction:column;gap:7px}
+  .comp .crd .ci{height:32px;border-radius:8px;background:linear-gradient(135deg,#fce7fd,#f8d4fb)}
+  .comp .crd .cl{height:7px;border-radius:4px;background:var(--line)}
+  .comp .crd .cl.s{width:55%}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .tile{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Brand identity and digital system board mockup">
+  <div class="head">
+    <div><h1>Marisol — Brand System</h1><div class="sub">Identity, color, type, and digital direction in one place.</div></div>
+    <span class="tag">Brand guidelines · v1.0</span>
+  </div>
+
+  <!-- logo -->
+  <section class="tile logo">
+    <span class="cap">Logo mark</span>
+    <div class="mark"><div class="glyph"><b>M</b></div></div>
+    <div class="marks">
+      <i style="background:#fdf0fe;color:#a21caf">M</i>
+      <i style="background:#241a2b;color:#fff">M</i>
+      <i style="background:#bef264;color:#3f6212">M</i>
+    </div>
+  </section>
+
+  <!-- palette -->
+  <section class="tile palette">
+    <span class="cap">Color palette</span>
+    <div class="swrow">
+      <div class="sw" style="background:#d946ef"><small>Primary</small></div>
+      <div class="sw" style="background:#a21caf"><small>Deep</small></div>
+      <div class="sw" style="background:#2a1330"><small>Ink</small></div>
+      <div class="sw lt" style="background:#fbf3ea"><small>Cream</small></div>
+      <div class="sw" style="background:#bef264"><small style="color:#3f6212">Lime</small></div>
+    </div>
+    <div class="hexrow"><span>#D946EF</span><span>#A21CAF</span><span>#2A1330</span><span>#FBF3EA</span><span>#BEF264</span></div>
+  </section>
+
+  <!-- type -->
+  <section class="tile type">
+    <span class="cap">Typography</span>
+    <div class="spec a1">Aa</div>
+    <div class="scale"><span style="font-size:22px">Display</span><span style="font-size:15px">Heading</span><span style="font-size:11px">Body</span></div>
+    <div class="meta"><b>Clash Display</b><b>Inter</b></div>
+  </section>
+
+  <!-- web hero -->
+  <section class="tile web">
+    <span class="cap">Website style</span>
+    <div class="frame">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <div class="hero"><div class="ht"></div><div class="hs"></div><div class="hb"></div></div>
+    </div>
+  </section>
+
+  <!-- social -->
+  <section class="tile social">
+    <span class="cap">Social tiles</span>
+    <div class="grid">
+      <div class="post" style="background:linear-gradient(135deg,#d946ef,#a21caf)"><b>New<br/>Drop</b><div class="h"></div></div>
+      <div class="post" style="background:#2a1330"><b style="color:#bef264">Story</b><div class="h"></div></div>
+    </div>
+  </section>
+
+  <!-- components -->
+  <section class="tile comp">
+    <span class="cap">Components</span>
+    <div class="row" style="margin-bottom:11px">
+      <span class="btn solid">Primary</span><span class="btn soft">Soft</span><span class="btn ghost">Ghost</span>
+      <span class="badge" style="background:#dcfce7;color:#16a34a">Active</span>
+      <span class="badge" style="background:#fef9c3;color:#a16207">Pending</span>
+      <span class="badge" style="background:var(--pink-soft);color:#a21caf">New</span>
+    </div>
+    <div class="row">
+      <div class="inp"><span class="ph"></span></div>
+      <div class="crd"><div class="ci"></div><div class="cl"></div><div class="cl s"></div></div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

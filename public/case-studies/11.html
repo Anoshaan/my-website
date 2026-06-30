@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI + Figma MCP Workflow</title>
+<style>
+  :root{
+    --bg:#0d1018;--panel:#161b27;--panel2:#1b2230;--border:#262f42;--line:#222a3b;
+    --text:#e7ecf6;--muted:#8a97b2;
+    --violet:#b69cff;--violet2:#8b6dff;--cyan:#5fd0e6;--green:#4ade80;--pink:#f472b6;--amber:#fbbf24;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:#0a0c12;overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:radial-gradient(circle at 50% 40%,#141a28,#0b0e16 70%);border:1px solid var(--border);box-shadow:0 35px 90px rgba(0,0,0,.5)}
+  .stage::before{content:"";position:absolute;inset:0;
+    background-image:linear-gradient(rgba(182,156,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(182,156,255,.05) 1px,transparent 1px);
+    background-size:38px 38px;mask-image:radial-gradient(circle at 50% 45%,#000 55%,transparent 85%)}
+  .topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--border);background:rgba(13,16,24,.7);position:relative;z-index:5}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:760;font-size:14px;letter-spacing:-.01em}
+  .brand i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#b69cff,#8b6dff);display:grid;place-items:center;color:#15101f;font-style:normal;font-weight:800}
+  .tabs{display:flex;gap:6px}
+  .tab{font-size:11.5px;font-weight:600;color:var(--muted);padding:6px 12px;border-radius:8px}
+  .tab.on{background:var(--panel2);color:var(--text)}
+  .runchip{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;color:#caffd9;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);padding:7px 13px;border-radius:999px}
+  .runchip .d{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  /* canvas */
+  .canvas{position:absolute;inset:52px 0 0;z-index:2}
+  svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .wire{fill:none;stroke-width:2;stroke-dasharray:7 9;animation:flow 14s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-320}}
+  .node{position:absolute;border:1px solid var(--border);border-radius:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));box-shadow:0 18px 40px rgba(0,0,0,.4);padding:14px;animation:pop .6s ease both}
+  @keyframes pop{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+  .nhead{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:740;margin-bottom:10px}
+  .nico{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:11px;font-weight:800;flex:0 0 auto}
+  .badge{margin-left:auto;font-size:9px;font-weight:800;letter-spacing:.05em;padding:2px 7px;border-radius:6px;color:#0b0e16}
+  /* figma node */
+  .n-figma{left:36px;top:48px;width:266px}
+  .frame{border:1px solid #2c3550;border-radius:10px;overflow:hidden;background:#0e1320}
+  .frame .fh{height:84px;background:linear-gradient(135deg,#5fd0e6,#3b82f6);position:relative}
+  .frame .fh::after{content:"";position:absolute;left:14px;top:14px;right:60px;height:12px;border-radius:6px;background:rgba(255,255,255,.55)}
+  .frame .fb{padding:11px;display:flex;flex-direction:column;gap:7px}
+  .fl{height:8px;border-radius:5px;background:#27314a}
+  .fl.s{width:60%}.fl.m{width:82%}
+  .frow{display:flex;gap:7px;margin-top:3px}
+  .fbtn{height:22px;border-radius:6px;flex:1;background:linear-gradient(135deg,#b69cff,#8b6dff)}
+  .fbtn.g{background:#222b40}
+  .layers{display:flex;gap:6px;margin-top:11px;font-size:10px;color:var(--muted)}
+  .layers span{background:#1c2335;border:1px solid var(--border);border-radius:6px;padding:4px 8px}
+  /* ai node */
+  .n-ai{right:36px;top:44px;width:278px}
+  .msg{border-radius:10px;padding:9px 11px;font-size:11px;line-height:1.45;margin-bottom:8px}
+  .msg.u{background:#222b40;color:#cdd7ee}
+  .msg.a{background:rgba(182,156,255,.12);border:1px solid rgba(182,156,255,.28);color:#e6deff}
+  .code{background:#0e1320;border:1px solid var(--border);border-radius:9px;padding:9px 11px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;line-height:1.6;color:#a9b6d6}
+  .code .k{color:#b69cff}.code .s{color:#5fd0e6}.code .t{color:#4ade80}
+  .typing{display:inline-flex;gap:3px;margin-top:7px}
+  .typing i{width:5px;height:5px;border-radius:50%;background:var(--violet);animation:blink 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+  /* mcp hub */
+  .n-mcp{left:50%;top:300px;transform:translateX(-50%);width:212px;text-align:center}
+  .hub{display:flex;align-items:center;gap:10px;justify-content:center}
+  .token-row{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+  .tok{font-size:9.5px;font-weight:700;padding:5px 9px;border-radius:7px;background:#1c2335;border:1px solid var(--border);color:#cbd5ee;display:flex;align-items:center;gap:6px}
+  .tok .sw{width:9px;height:9px;border-radius:3px}
+  /* review checkpoint */
+  .n-rev{left:60px;bottom:40px;width:228px}
+  .rev{display:flex;align-items:center;gap:10px;font-size:11px;color:#cdd7ee;padding:6px 0}
+  .rev .c{width:18px;height:18px;border-radius:6px;display:grid;place-items:center;font-size:10px;flex:0 0 auto}
+  .rev .c.ok{background:rgba(74,222,128,.16);color:var(--green)}
+  .rev .c.warn{background:rgba(251,191,36,.16);color:var(--amber)}
+  /* code out */
+  .n-code{right:60px;bottom:40px;width:236px}
+  .filetab{display:flex;gap:6px;margin-bottom:9px}
+  .filetab span{font-size:9.5px;color:var(--muted);background:#1c2335;border:1px solid var(--border);border-radius:6px 6px 0 0;padding:4px 9px}
+  .filetab span.on{color:#e6deff;background:#0e1320;border-bottom-color:#0e1320}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .node,.frame .fb .fl,.fbtn{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="AI plus Figma MCP design-to-code workflow mockup">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:22px">
+      <div class="brand"><i>◆</i>Design Flow</div>
+      <div class="tabs"><span class="tab on">Canvas</span><span class="tab">Tokens</span><span class="tab">Code</span></div>
+    </div>
+    <span class="runchip"><span class="d"></span>MCP connected</span>
+  </header>
+
+  <div class="canvas">
+    <svg class="wires" viewBox="0 0 1440 758" preserveAspectRatio="none" aria-hidden="true">
+      <path class="wire" style="stroke:#5fd0e6" d="M302 150 C480 150, 560 360, 612 388"/>
+      <path class="wire" style="stroke:#b69cff" d="M1138 150 C960 150, 880 360, 828 388"/>
+      <path class="wire" style="stroke:#4ade80" d="M650 470 C540 560, 380 580, 300 600"/>
+      <path class="wire" style="stroke:#fbbf24" d="M790 470 C900 560, 1060 580, 1140 600"/>
+    </svg>
+
+    <!-- FIGMA -->
+    <section class="node n-figma" aria-label="Figma source frame">
+      <div class="nhead"><span class="nico" style="background:linear-gradient(135deg,#5fd0e6,#3b82f6);color:#04121f">F</span>Figma<span class="badge" style="background:#5fd0e6">SOURCE</span></div>
+      <div class="frame">
+        <div class="fh"></div>
+        <div class="fb">
+          <div class="fl m"></div><div class="fl s"></div>
+          <div class="frow"><div class="fbtn"></div><div class="fbtn g"></div></div>
+        </div>
+      </div>
+      <div class="layers"><span>Hero</span><span>Card</span><span>Button</span><span>+5</span></div>
+    </section>
+
+    <!-- AI -->
+    <section class="node n-ai" aria-label="AI assistant panel">
+      <div class="nhead"><span class="nico" style="background:linear-gradient(135deg,#b69cff,#8b6dff);color:#15101f">C</span>Claude<span class="badge" style="background:#b69cff">ASSIST</span></div>
+      <div class="msg u">Turn the selected frame into a React component using our tokens.</div>
+      <div class="msg a">Mapped 6 layers. Reusing <b>Button</b> + <b>Card</b> from the system.</div>
+      <div class="code"><span class="k">export</span> <span class="k">function</span> <span class="t">Hero</span>() {<br/>&nbsp;&nbsp;<span class="k">return</span> &lt;<span class="t">Card</span> pad=<span class="s">"lg"</span>&gt;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="t">Button</span> tone=<span class="s">"brand"</span>/&gt;</div>
+      <div class="typing"><i></i><i></i><i></i></div>
+    </section>
+
+    <!-- MCP HUB -->
+    <section class="node n-mcp" aria-label="MCP server hub">
+      <div class="nhead" style="justify-content:center"><span class="nico" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#231803">M</span>MCP Server</div>
+      <div class="token-row">
+        <span class="tok"><span class="sw" style="background:#b69cff"></span>color</span>
+        <span class="tok"><span class="sw" style="background:#5fd0e6"></span>space</span>
+        <span class="tok"><span class="sw" style="background:#4ade80"></span>type</span>
+        <span class="tok"><span class="sw" style="background:#f472b6"></span>radius</span>
+      </div>
+    </section>
+
+    <!-- REVIEW -->
+    <section class="node n-rev" aria-label="Human review checkpoint">
+      <div class="nhead"><span class="nico" style="background:rgba(74,222,128,.18);color:#4ade80">✓</span>Human review</div>
+      <div class="rev"><span class="c ok">✓</span>Spacing matches grid</div>
+      <div class="rev"><span class="c ok">✓</span>Tokens, not hex</div>
+      <div class="rev"><span class="c warn">!</span>Check focus state</div>
+    </section>
+
+    <!-- CODE OUT -->
+    <section class="node n-code" aria-label="Generated code output">
+      <div class="nhead"><span class="nico" style="background:#1c2335;color:#5fd0e6">&lt;/&gt;</span>Code<span class="badge" style="background:#4ade80">READY</span></div>
+      <div class="filetab"><span class="on">Hero.tsx</span><span>tokens.css</span></div>
+      <div class="code"><span class="t">&lt;Hero</span> <span class="k">title</span>=<span class="s">"Launch"</span><br/>&nbsp;&nbsp;<span class="k">align</span>=<span class="s">"center"</span> /<span class="t">&gt;</span><br/><span style="color:#5a678a">// 0 hardcoded values</span></div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

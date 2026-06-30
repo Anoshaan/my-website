@@ -1025,9 +1025,11 @@ html[data-theme="dark"] .hero-title-shine::before {
    soft text-shadow (NOT a background) keeps it legible over the animation. */
 .idea-desc-text {
   margin: 0;
-  font-size: clamp(1rem, 0.95rem + 0.35vw, 1.18rem);
+  /* Larger, centered body that uses the wide animation area. Sized so the
+     typical step description settles at ~2–3 lines. */
+  font-size: clamp(1.18rem, 1rem + 0.6vw, 1.55rem);
   font-weight: 500;
-  line-height: 1.65;
+  line-height: 1.55;
   color: rgba(var(--c-fg-rgb), 0.82);
   text-shadow: 0 1px 10px rgba(var(--c-bg-rgb), 0.85),
     0 0 22px rgba(var(--c-bg-rgb), 0.7);
@@ -2073,23 +2075,29 @@ html[data-theme="light"] .approach-item.is-active .approach-item-label {
   filter: blur(60px);
   opacity: 0.55;
 }
-/* Absolutely positioned so the dashboard's intrinsic 1180px width never
-   dictates the grid cell width. */
+/* In-flow so the live 16:9 embed gives the stage its height and fills the
+   column width responsively. */
 .cs-dash-float {
-  position: absolute;
-  left: 0;
-  top: 0;
+  position: relative;
+  width: 100%;
   z-index: 1;
   animation: cs-float 7s ease-in-out infinite;
-}
-.cs-dash-fit {
-  transform-origin: left top;
-  will-change: transform;
 }
 /* A whisper of perspective for depth — readability preserved. */
 .cs-dash-tilt {
   transform: perspective(2400px) rotateY(2.2deg) rotateX(0.6deg);
   transform-style: preserve-3d;
+}
+/* Host for the live case-study mockup (LabsEmbed fills inset:0). */
+.cs-dash-embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: clamp(12px, 1.2vw, 20px);
+  overflow: hidden;
+  background: #0a0e1a;
+  border: 1px solid var(--color-card-border);
+  box-shadow: 0 30px 60px -28px rgba(var(--shadow-rgb), 0.5);
 }
 
 @keyframes cs-float {
@@ -4180,6 +4188,19 @@ html[data-theme="light"] .btn-secondary {
 }
 html[data-theme="light"] .btn-secondary:hover {
   background: #ffffff;
+}
+
+/* Dark theme — the default 2.5% face + 12% border read as nearly invisible on
+   the dark page (e.g. "See All Selected Work"). Give it a clearer surface,
+   border and ink so it reads as a real, premium button. */
+html[data-theme="dark"] .btn-secondary {
+  background: rgba(var(--c-fg-rgb), 0.06);
+  border-color: rgba(var(--c-fg-rgb), 0.28);
+  color: var(--c-fg);
+}
+html[data-theme="dark"] .btn-secondary:hover {
+  background: rgba(var(--c-fg-rgb), 0.11);
+  border-color: rgba(var(--c-fg-rgb), 0.42);
 }
 
 /* =========================================================
@@ -12021,4 +12042,54 @@ html[data-theme="light"] .csw-quote-accent {
   .mt-badge-c {
     stroke-dashoffset: 0 !important;
   }
+}
+
+/* =========================================================
+   SELECTED WORK — case-study card tags + CTA.
+   Both are driven by each card's accent vars (--card-accent,
+   --card-soft-bg, --card-border) set inline on the <article>.
+   Light: soft accent fill + neutral ink (unchanged look).
+   Dark: the soft pastel fill turned white-on-white and became
+   unreadable, so tags/buttons switch to transparent fills with
+   accent-coloured text + border — readable on dark, still tied
+   to the category accent.
+   ========================================================= */
+.pw-tag {
+  background-color: var(--card-soft-bg);
+  border: 1px solid var(--card-border);
+  color: var(--color-fg);
+}
+.pw-cta {
+  background-color: var(--card-soft-bg);
+  border: 1px solid var(--card-border);
+  color: var(--color-fg);
+}
+.pw-cta:hover {
+  border-color: var(--card-accent);
+}
+
+html[data-theme="dark"] .pw-tag {
+  background-color: color-mix(in oklab, var(--card-accent) 12%, transparent);
+  border-color: color-mix(in oklab, var(--card-accent) 55%, transparent);
+  color: var(--card-accent);
+}
+html[data-theme="dark"] .pw-cta {
+  /* Subtle accent-tinted gradient so it still reads as a clickable button,
+     without the heavy filled face that hurt readability. */
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--card-accent) 18%, transparent),
+    color-mix(in oklab, var(--card-accent) 7%, transparent)
+  );
+  background-color: transparent;
+  border-color: color-mix(in oklab, var(--card-accent) 60%, transparent);
+  color: var(--card-accent);
+}
+html[data-theme="dark"] .pw-cta:hover {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--card-accent) 28%, transparent),
+    color-mix(in oklab, var(--card-accent) 13%, transparent)
+  );
+  border-color: var(--card-accent);
 }

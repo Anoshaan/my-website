@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vendor Onboarding & Listing</title>
+<style>
+  :root{
+    --bg:#fdf6ef;--surface:#fff;--border:#f0e3d4;--line:#f3ece2;
+    --text:#211a13;--muted:#8c7e6d;
+    --accent:#fb923c;--accent-soft:#fff3e7;--accent-bd:#ffd9b0;--green:#16a34a;--blue:#3b82f6;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 10% 100%,rgba(251,146,60,.10),transparent 32%),var(--bg);overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fffdfa,#fdf6ef);border:1px solid var(--border);box-shadow:0 35px 90px rgba(90,55,20,.12);
+    display:grid;grid-template-columns:240px 1fr}
+  /* rail */
+  .rail{background:linear-gradient(180deg,#241c14,#3a2c1c);color:#f3e9dc;padding:30px 24px;display:flex;flex-direction:column;gap:26px}
+  .seller{display:flex;align-items:center;gap:11px}
+  .seller .av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#fb923c,#f6b25f);display:grid;place-items:center;font-weight:800;color:#241c14}
+  .seller b{font-size:13px;display:block}
+  .seller span{font-size:11px;color:#bfae97}
+  .steps{display:flex;flex-direction:column;gap:4px;position:relative}
+  .s{display:flex;align-items:center;gap:13px;padding:11px 10px;border-radius:11px;font-size:12.5px;color:#cdbfa9;position:relative}
+  .s.done{color:#eadcc8}.s.now{background:rgba(251,146,60,.16);color:#fff}
+  .s .dot{width:24px;height:24px;border-radius:50%;border:2px solid #57452f;display:grid;place-items:center;font-size:11px;font-weight:800;flex:0 0 auto;background:#241c14}
+  .s.done .dot{background:var(--green);border-color:var(--green);color:#fff}
+  .s.now .dot{background:var(--accent);border-color:var(--accent);color:#241c14}
+  .meter-card{margin-top:auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:15px}
+  .meter-card b{font-size:12px}
+  .meter-card .pct{font-size:24px;font-weight:840;letter-spacing:-.03em;margin:4px 0 9px}
+  .meter{height:7px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+  .meter i{display:block;height:100%;width:72%;border-radius:999px;background:linear-gradient(90deg,#fb923c,#fcd34d);animation:grow 1.4s cubic-bezier(.2,.9,.2,1) both}
+  @keyframes grow{from{width:0}to{width:72%}}
+  /* main */
+  .main{padding:32px 38px;overflow:hidden;display:flex;flex-direction:column}
+  .mhead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+  .mhead h1{margin:0;font-size:24px;letter-spacing:-.04em}
+  .mhead p{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+  .status{display:inline-flex;align-items:center;gap:8px;background:var(--accent-soft);border:1px solid var(--accent-bd);color:#b96a1c;font-size:11.5px;font-weight:740;padding:8px 13px;border-radius:999px}
+  .status .ld{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .cols{display:grid;grid-template-columns:1.3fr .9fr;gap:20px;flex:1}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 32px rgba(90,55,20,.08);padding:20px}
+  .panel h3{margin:0 0 16px;font-size:13.5px;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+  .field{margin-bottom:14px}
+  .lbl{font-size:11px;color:var(--muted);font-weight:650;margin-bottom:6px;display:block}
+  .inp{height:38px;border:1px solid var(--border);border-radius:10px;background:#fbf6f0;display:flex;align-items:center;padding:0 12px;font-size:12.5px;color:#3a3328;font-weight:550}
+  .inp.filled{background:#fff}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .uploads{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px}
+  .up{aspect-ratio:1;border-radius:11px;background:linear-gradient(135deg,#fff3e7,#ffe6cd);display:grid;place-items:center;color:var(--accent);border:1px solid var(--accent-bd)}
+  .up.add{background:#fbf6f0;border:1.5px dashed #d9c6ad;color:#b09a7e}
+  .pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+  .pill{font-size:11px;font-weight:680;padding:6px 11px;border-radius:999px;background:#fbf6f0;border:1px solid var(--border);color:#5c5040}
+  .pill.on{background:var(--accent-soft);border-color:var(--accent-bd);color:#b96a1c}
+  /* checklist */
+  .ck{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);font-size:12.5px;color:#3a3328}
+  .ck:last-child{border-bottom:0}
+  .ck i{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:11px;flex:0 0 auto}
+  .ck i.ok{background:#e9f8ef;color:var(--green)}
+  .ck i.no{background:#fbf6f0;border:1.5px solid #d9c6ad;color:transparent}
+  .ck .mu{margin-left:auto;font-size:10.5px;color:var(--muted)}
+  .preview{margin-top:14px;border:1px solid var(--border);border-radius:13px;overflow:hidden}
+  .preview .ph{height:74px;background:linear-gradient(135deg,#fb923c,#f6b25f)}
+  .preview .pb{padding:12px}
+  .preview .pb b{font-size:12.5px}
+  .preview .pb .row{display:flex;align-items:center;justify-content:space-between;margin-top:7px}
+  .preview .pb .pr{font-size:14px;font-weight:820}
+  .preview .pb .rt{font-size:11px;color:#f0b429}
+  .savebar{display:flex;align-items:center;gap:12px;margin-top:18px}
+  .draft{height:40px;border-radius:11px;border:1px solid var(--border);background:#fff;color:#5c5040;font-size:12.5px;font-weight:700;display:grid;place-items:center;padding:0 18px}
+  .publish{height:40px;border-radius:11px;background:linear-gradient(135deg,#fb923c,#f6a24a);color:#fff;font-size:12.5px;font-weight:780;display:flex;align-items:center;gap:8px;justify-content:center;padding:0 22px;box-shadow:0 12px 24px rgba(251,146,60,.28)}
+</style>
+<style>
+  *,*::before,*::after{animation-iteration-count:1!important;animation-fill-mode:both!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Vendor onboarding and listing creation mockup">
+  <aside class="rail">
+    <div class="seller"><div class="av">M</div><div><b>Maple Goods</b><span>Seller account</span></div></div>
+    <nav class="steps" aria-label="Onboarding steps">
+      <div class="s done"><span class="dot">✓</span>Business profile</div>
+      <div class="s done"><span class="dot">✓</span>Payouts &amp; tax</div>
+      <div class="s now"><span class="dot">3</span>Create listing</div>
+      <div class="s"><span class="dot">4</span>Verification</div>
+      <div class="s"><span class="dot">5</span>Publish</div>
+    </nav>
+    <div class="meter-card">
+      <b>Listing completeness</b>
+      <div class="pct">72%</div>
+      <div class="meter"><i></i></div>
+    </div>
+  </aside>
+
+  <section class="main">
+    <div class="mhead">
+      <div><h1>Create a listing</h1><p>Add product details so buyers see a complete, trustworthy item.</p></div>
+      <span class="status"><span class="ld"></span>In review</span>
+    </div>
+
+    <div class="cols">
+      <article class="panel">
+        <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 7 9 18l-5-5"/></svg>Product details</h3>
+        <div class="field"><span class="lbl">Product name</span><div class="inp filled">Hand-poured Soy Candle</div></div>
+        <div class="two">
+          <div class="field"><span class="lbl">Price</span><div class="inp filled">$24.00</div></div>
+          <div class="field"><span class="lbl">Stock</span><div class="inp filled">120 units</div></div>
+        </div>
+        <div class="field"><span class="lbl">Category</span>
+          <div class="pillrow"><span class="pill on">Home</span><span class="pill">Decor</span><span class="pill">Wellness</span><span class="pill">Gifts</span></div>
+        </div>
+        <div class="field" style="margin-bottom:6px"><span class="lbl">Photos · 3 of 6</span>
+          <div class="uploads">
+            <div class="up" style="background:linear-gradient(135deg,#fde68a,#f59e0b)">◳</div>
+            <div class="up" style="background:linear-gradient(135deg,#fbcfe8,#ec4899)">◳</div>
+            <div class="up" style="background:linear-gradient(135deg,#bbf7d0,#16a34a)">◳</div>
+            <div class="up add">＋</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel" style="display:flex;flex-direction:column">
+        <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Readiness check</h3>
+        <div class="ck"><i class="ok">✓</i>Title &amp; price set<span class="mu">done</span></div>
+        <div class="ck"><i class="ok">✓</i>Category selected<span class="mu">done</span></div>
+        <div class="ck"><i class="ok">✓</i>3 photos added<span class="mu">min 3</span></div>
+        <div class="ck"><i class="no">✓</i>Shipping profile<span class="mu">needed</span></div>
+        <div class="ck"><i class="no">✓</i>Description 50+ words<span class="mu">needed</span></div>
+
+        <div class="preview">
+          <div class="ph"></div>
+          <div class="pb"><b>Hand-poured Soy Candle</b>
+            <div class="row"><span class="pr">$24.00</span><span class="rt">★★★★★ 4.9</span></div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="savebar">
+      <span class="draft">Save draft</span>
+      <span class="publish"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 5 5L20 7"/></svg>Submit for approval</span>
+    </div>
+  </section>
+</main>
+</body>
+</html>

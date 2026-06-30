@@ -1,93 +1,71 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { WorkforceDashboard } from "@/components/sections/casestudy/WorkforceDashboard";
+import { LabsEmbed } from "@/components/sections/labs/LabsEmbed";
 
 /**
- * Featured Case Study — a split-layout showcase. The animated workforce
- * dashboard is the hero visual, anchored to the left edge (a few percent
- * bleeding off-screen) and suspended in space with a soft floor glow,
- * slow float, and a whisper of perspective. The right column carries the
- * label, heading, insight, tags, and navigation. Content is vertically
- * centred to the dashboard. No cards — copy reads as part of the page.
+ * Featured Case Study — a split-layout showcase. The live Workforce case study
+ * mockup (the same /case-studies/1.html rendered on the Selected Work page) is
+ * the hero visual, anchored to the left, suspended in space with a soft floor
+ * glow, slow float, and a whisper of perspective. The right column carries the
+ * label, heading, insight, and the link into Selected Work. Content is
+ * vertically centred to the dashboard. No cards — copy reads as part of the
+ * page.
+ *
+ * The visual and copy intentionally mirror the first Selected Work case study so
+ * the two areas feel connected; update them together.
  *
  * The entrance is a CSS mount animation (matching the site's Reveal /
  * SectionFade pattern), since IntersectionObserver / motion whileInView
  * don't fire reliably under the site's Lenis smooth-scroll setup.
  */
 
-const DESIGN_W = 1180;
-const DESIGN_H = 720;
-
 export function CaseStudyFeature() {
-  const stageRef = useRef<HTMLDivElement>(null);
-  const [fit, setFit] = useState(0.6);
-  const [stageH, setStageH] = useState(420);
-
-  // Scale the fixed-size dashboard to sit fully visible, anchored to the
-  // left corner of its column — slightly smaller than full width so the
-  // entire screen always stays in frame.
-  useEffect(() => {
-    const el = stageRef.current;
-    if (!el) return;
-    const compute = () => {
-      const f = (el.clientWidth * 0.96) / DESIGN_W;
-      setFit(f);
-      setStageH(DESIGN_H * f);
-    };
-    compute();
-    const ro = new ResizeObserver(compute);
-    ro.observe(el);
-    window.addEventListener("resize", compute);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", compute);
-    };
-  }, []);
-
   return (
     <section id="case-study" className="cs-section">
       <div className="cs-inner">
-        {/* LEFT — dashboard hero, anchored to the left edge */}
+        {/* LEFT — live mockup hero, anchored to the left edge */}
         <div className="cs-dash-col">
-          <div ref={stageRef} className="cs-dash-stage" style={{ height: stageH }}>
+          <div className="cs-dash-stage">
             <span className="cs-dash-glow" aria-hidden />
             <div className="cs-dash-float">
-              <div className="cs-dash-fit" style={{ transform: `scale(${fit})` }}>
-                <div className="cs-dash-tilt">
-                  <WorkforceDashboard />
+              <div className="cs-dash-tilt">
+                <div className="cs-dash-embed">
+                  <LabsEmbed
+                    src="/case-studies/1.html"
+                    title="Workforce Time & Resource Management"
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* RIGHT — case study content */}
+        {/* RIGHT — case study content (mirrors Selected Work pathway #1) */}
         <div className="cs-content">
           <p className="cs-label">Featured Work</p>
           <h2 className="text-section cs-heading">
-            Designing Clarity Across Workforce Operations
+            Workforce Time &amp; Resource Management
           </h2>
 
           <div className="cs-desc">
             <p>
-              In large organizations, work often passes through multiple layers
-              before reaching the people responsible for execution.
+              A workforce operations platform designed to help teams track time,
+              understand workload, manage project activity, and reduce
+              operational noise across departments.
             </p>
             <p>
-              This platform transformed complex project structures into focused
-              task views, helping employees quickly understand their
-              responsibilities and record time without navigating unnecessary
-              information.
+              Teams were spending too much time switching between timesheets,
+              project updates, approvals, and activity tracking.
             </p>
           </div>
 
           <div className="cs-learned">
             <span className="cs-learned-label">What I Learned</span>
             <p>
-              The challenge wasn&rsquo;t helping users track time. It was ensuring
-              they only saw what mattered, before they needed to.
+              The experience came together as a role-based dashboard where each
+              user sees the right work, the right status, and the next action,
+              without digging through unnecessary screens.
             </p>
           </div>
 

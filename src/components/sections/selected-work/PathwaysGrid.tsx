@@ -62,22 +62,49 @@ export function PathwaysGrid() {
 
   const pathways = useMemo(() => getPathwaysForCategory(activeCategory), [activeCategory]);
 
-  const handleSelectCategory = (category: PathwayCategory) => {
-    setActiveCategory(category);
+  // Filtering and scrolling are DECOUPLED. The click only updates the category;
+  // the scroll happens in an effect AFTER the new filtered list has committed to
+  // the DOM. Measuring/scrolling in the same click (as before) read a stale
+  // layout — the section height changes with the filter — which is what made the
+  // rail "jump randomly" or need a second click. A flag gates the scroll so it
+  // fires only on a real selection, not on mount.
+  const pendingScrollRef = useRef(false);
 
-    // Always glide back up to the TOP of the section (heading + filter) so a
-    // fresh selection reads from the start. This works for the top buttons and
-    // the sticky right rail alike; returning to the top also tucks the rail
-    // away, and scrolling back down brings it in again.
-    requestAnimationFrame(() => {
-      const section = sectionRef.current;
-      if (!section) return;
-      const target = window.scrollY + section.getBoundingClientRect().top - 80;
-      if (target < window.scrollY - 1) {
-        window.scrollTo({ top: Math.max(0, target), behavior: reduced ? "auto" : "smooth" });
-      }
-    });
+  const handleSelectCategory = (category: PathwayCategory) => {
+    if (category !== activeCategory) pendingScrollRef.current = true;
+    setActiveCategory(category);
   };
+
+  useEffect(() => {
+    if (!pendingScrollRef.current) return;
+    pendingScrollRef.current = false;
+    const section = sectionRef.current;
+    if (!section) return;
+    // Two rAFs so the freshly filtered cards (and the swapped featured card)
+    // have laid out before we scroll, giving one predictable glide to the
+    // heading / filter / results area regardless of which category is picked.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const lenis = typeof window !== "undefined" ? window.__lenis : undefined;
+        // On desktop the site runs Lenis smooth-scroll. A native
+        // window.scrollTo({behavior:"smooth"}) fights Lenis's own rAF loop and
+        // gets interrupted partway — that was the "lands in an awkward middle"
+        // bug (e.g. Commerce). Driving the scroll THROUGH Lenis lands cleanly
+        // every time. Touch / reduced-motion fall back to a native jump.
+        const target = Math.max(
+          0,
+          window.scrollY + section.getBoundingClientRect().top - 96
+        );
+        if (lenis && !reduced) {
+          // Pass a numeric target (not the element) so Lenis doesn't warn about
+          // offsetParent positioning and lands on an exact, stable position.
+          lenis.scrollTo(target, { duration: 0.9 });
+        } else {
+          window.scrollTo({ top: target, behavior: reduced ? "auto" : "smooth" });
+        }
+      });
+    });
+  }, [activeCategory, reduced]);
 
   const handleOpen = (pathway: ProductPathway) => {
     triggerRef.current = document.activeElement as HTMLElement | null;
@@ -98,10 +125,10 @@ export function PathwaysGrid() {
       <Container>
         <CategoryFilter activeCategory={activeCategory} onSelectCategory={handleSelectCategory} />
 
-        <div ref={gridRef} className="scroll-mt-28 lg:flex lg:items-start lg:gap-8 xl:gap-10">
-          {/* Cards column — min-w-0 lets long titles/tags wrap instead of
-              forcing the flex track wider than the viewport. */}
-          <div className="min-w-0 lg:flex-1">
+        {/* Cards stay centred in the content column — the rail no longer
+            reserves a layout track beside them. */}
+        <div ref={gridRef} className="scroll-mt-28">
+          <div className="min-w-0">
             {pathways.length > 0 ? (
               <div className="mb-24 flex flex-col gap-8 md:gap-10">
                 {/* Featured (strongest) — full-width horizontal card. Keyed by
@@ -145,16 +172,21 @@ export function PathwaysGrid() {
               </div>
             )}
           </div>
+        </div>
 
-          {/* Vertical right rail — its own layout column on lg+, so it reserves
-              real space and never overlaps card text or preview media. */}
-          <aside className="hidden lg:block lg:w-[220px] lg:flex-shrink-0 lg:self-stretch">
+        {/* Floating category rail — a FIXED overlay pinned near the right edge.
+            It reserves no layout space (cards stay centred) and floats above the
+            grid (z-40). It only becomes interactive/visible once the top filter
+            has scrolled away (railVisible) and slides off near the top. lg+ only
+            — mobile uses the sticky dropdown in CategoryFilter. */}
+        <div className="pointer-events-none fixed right-[clamp(12px,2vw,28px)] top-1/2 z-40 hidden -translate-y-1/2 lg:block">
+          <div className="pointer-events-auto">
             <PathwayRail
               activeCategory={activeCategory}
               onSelectCategory={handleSelectCategory}
               visible={railVisible}
             />
-          </aside>
+          </div>
         </div>
       </Container>
 

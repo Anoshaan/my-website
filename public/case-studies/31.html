@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Brand Motion & Social Cutdown System</title>
+<style>
+  :root{
+    --bg:#16111a;--panel:#1e1822;--panel2:#251d2c;--border:#352a3d;--line:#2c2333;
+    --text:#f4ecf6;--muted:#a991b3;
+    --red:#fb7185;--red2:#f43f5e;--coral:#fca5a5;--amber:#fbbf24;--violet:#a78bfa;--cyan:#67e8f9;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);background:#0f0b13;overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:radial-gradient(circle at 20% 10%,rgba(251,113,133,.16),transparent 36%),linear-gradient(160deg,#1c1422,#120d17);
+    border:1px solid var(--border);box-shadow:0 35px 90px rgba(0,0,0,.5);padding:26px 30px;display:flex;flex-direction:column}
+  .head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+  .head h1{margin:0;font-size:22px;letter-spacing:-.03em}
+  .head .sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .head .badge{font-size:10.5px;font-weight:760;color:#fecdd3;background:rgba(251,113,133,.14);border:1px solid rgba(251,113,133,.32);padding:8px 14px;border-radius:999px}
+  .grid{flex:1;display:grid;grid-template-columns:1.5fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:16px}
+  .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:16px;box-shadow:0 14px 34px rgba(0,0,0,.35);padding:14px;display:flex;flex-direction:column;overflow:hidden;
+    animation:rise .55s ease both}
+  .panel:nth-child(2){animation-delay:.06s}.panel:nth-child(3){animation-delay:.12s}.panel:nth-child(4){animation-delay:.18s}.panel:nth-child(5){animation-delay:.24s}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .pc{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:760;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+  .pc .d{width:7px;height:7px;border-radius:50%;background:var(--red)}
+  /* main animated logo preview */
+  .preview{grid-row:1/3;position:relative;background:radial-gradient(circle at 50% 45%,#2a1d2e,#160f1a);overflow:hidden}
+  .stagebox{flex:1;display:grid;place-items:center;position:relative}
+  .logo-anim{width:150px;height:150px;border-radius:40px;background:linear-gradient(135deg,#fb7185,#f43f5e);display:grid;place-items:center;
+    box-shadow:0 24px 56px rgba(251,113,133,.4);animation:bump 4s ease-in-out infinite}
+  @keyframes bump{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.05) rotate(-3deg)}55%{transform:scale(.97) rotate(2deg)}}
+  .logo-anim b{font-size:74px;font-weight:870;color:#fff;font-style:normal}
+  .ring{position:absolute;border:2px solid rgba(251,113,133,.4);border-radius:50%;animation:expand 3s ease-out infinite}
+  @keyframes expand{0%{width:150px;height:150px;opacity:.7}100%{width:340px;height:340px;opacity:0}}
+  .pp-bar{display:flex;align-items:center;gap:11px;margin-top:12px}
+  .pp-btn{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#160f1a;flex:0 0 auto}
+  .pp-track{flex:1;height:5px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden;position:relative}
+  .pp-track i{position:absolute;left:0;top:0;bottom:0;width:42%;border-radius:999px;background:linear-gradient(90deg,#fb7185,#fbbf24)}
+  .pp-track i::after{content:"";position:absolute;right:-5px;top:50%;transform:translateY(-50%);width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+  .pp-time{font-size:10px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+  /* social cutdowns - aspect ratio frames */
+  .cuts{align-items:stretch}
+  .cut-row{display:flex;gap:11px;align-items:flex-end;flex:1}
+  .frame{position:relative;border-radius:9px;overflow:hidden;border:1px solid var(--border)}
+  .frame .ar{position:absolute;top:5px;left:5px;font-size:8px;font-weight:800;color:#fff;background:rgba(0,0,0,.4);padding:2px 6px;border-radius:5px;z-index:3}
+  .frame .pl{position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.9)}
+  .f-916{width:62px;aspect-ratio:9/16;background:linear-gradient(160deg,#fb7185,#be123c)}
+  .f-11{width:92px;aspect-ratio:1;background:linear-gradient(135deg,#a78bfa,#7c3aed)}
+  .f-169{flex:1;aspect-ratio:16/9;background:linear-gradient(135deg,#fbbf24,#f43f5e)}
+  /* lower thirds */
+  .lt{display:flex;flex-direction:column;gap:9px;flex:1;justify-content:center}
+  .third{position:relative;border-radius:9px;padding:9px 11px;display:flex;align-items:center;gap:10px;overflow:hidden}
+  .third.a{background:linear-gradient(90deg,rgba(251,113,133,.9),rgba(244,63,94,.2))}
+  .third.b{background:linear-gradient(90deg,rgba(167,139,250,.9),rgba(124,58,237,.15))}
+  .third .bar{width:3px;height:30px;border-radius:3px;background:#fff;flex:0 0 auto}
+  .third .tt{height:8px;width:62%;border-radius:4px;background:rgba(255,255,255,.85)}
+  .third .ts{height:6px;width:40%;border-radius:4px;background:rgba(255,255,255,.5);margin-top:5px}
+  /* presets */
+  .preset{display:flex;align-items:center;gap:10px;font-size:11px;color:#ddd0e2;padding:7px 0;border-bottom:1px solid var(--line)}
+  .preset:last-child{border-bottom:0}
+  .preset .ic{width:24px;height:24px;border-radius:7px;background:rgba(251,113,133,.16);color:var(--coral);display:grid;place-items:center;flex:0 0 auto}
+  .preset .du{margin-left:auto;font-size:9px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .panel{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Brand motion and social cutdown system mockup">
+  <div class="head">
+    <div><h1>Brand Motion System</h1><div class="sub">Reusable bumpers, lower thirds, and social cutdowns from one brand kit.</div></div>
+    <span class="badge">Motion kit · 18 presets</span>
+  </div>
+
+  <div class="grid">
+    <!-- preview -->
+    <section class="panel preview">
+      <div class="pc"><span class="d"></span>Logo bumper · preview</div>
+      <div class="stagebox">
+        <span class="ring"></span>
+        <div class="logo-anim"><b>M</b></div>
+      </div>
+      <div class="pp-bar">
+        <span class="pp-btn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <div class="pp-track"><i></i></div>
+        <span class="pp-time">0:03 / 0:06</span>
+      </div>
+    </section>
+
+    <!-- social cutdowns -->
+    <section class="panel cuts">
+      <div class="pc"><span class="d"></span>Social cutdowns</div>
+      <div class="cut-row">
+        <div class="frame f-916"><span class="ar">9:16</span><span class="pl"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></div>
+        <div class="frame f-11"><span class="ar">1:1</span><span class="pl"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></div>
+        <div class="frame f-169"><span class="ar">16:9</span><span class="pl"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></div>
+      </div>
+    </section>
+
+    <!-- presets -->
+    <section class="panel">
+      <div class="pc"><span class="d"></span>Motion presets</div>
+      <div class="preset"><span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M2 12h20"/></svg></span>Logo reveal<span class="du">0:06</span></div>
+      <div class="preset"><span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>Wipe transition<span class="du">0:01</span></div>
+      <div class="preset"><span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="14" width="18" height="5" rx="1"/></svg></span>Lower third<span class="du">0:04</span></div>
+      <div class="preset"><span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/></svg></span>Outro card<span class="du">0:03</span></div>
+    </section>
+
+    <!-- lower thirds -->
+    <section class="panel">
+      <div class="pc"><span class="d"></span>Lower thirds</div>
+      <div class="lt">
+        <div class="third a"><span class="bar"></span><div><div class="tt"></div><div class="ts"></div></div></div>
+        <div class="third b"><span class="bar"></span><div><div class="tt"></div><div class="ts"></div></div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

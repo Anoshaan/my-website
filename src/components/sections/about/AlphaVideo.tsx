@@ -3,26 +3,28 @@
 import { useEffect, useState } from "react";
 
 /**
- * Transparent looping portrait for the About hero. True transparency on every
- * device, no opaque box behind the character:
+ * Transparent looping portrait for the About hero.
  *
- *   Chrome / Edge / Firefox / Android  -> VP9 alpha WebM (<video>).
- *   Safari (desktop) + every iOS browser -> animated WebP with a real alpha
- *     channel (<img>). Safari/WebKit cannot decode alpha in WebM, so the .webm
- *     would otherwise paint the portrait on a solid black box. The animated WebP
- *     keeps full transparency and loops natively.
+ *   Chrome / Edge / Firefox / Android   -> VP9-alpha WebM (<video>), animated.
+ *   Safari (desktop) + every iOS browser -> static transparent PNG (<img>).
  *
- * The source is chosen at runtime, so exactly one asset is ever downloaded.
- * Until the browser is known (and under prefers-reduced-motion) the transparent
- * poster frame is shown, so there is never a black-box flash and SSR stays
- * deterministic.
+ * WebKit cannot decode alpha WebM, and the animated alpha WebP it would
+ * otherwise fall back to is too heavy to decode smoothly on iOS (it stutters
+ * and renders frame-by-frame) and can composite onto an opaque black box.
+ * A smooth transparent VIDEO on Safari/iOS requires HEVC-with-alpha, which
+ * can't be encoded on this toolchain, so Apple devices get the clean,
+ * guaranteed-transparent still portrait instead: no black box, no stutter,
+ * instant. Animation stays on every browser where it plays well.
  *
- * Safety net: if the <video> ever fails to load the WebM (any browser, any
- * reason, including a WebKit variant that slips past detection), its onError
- * swaps to the alpha WebP. So there is no path that ends on an opaque box.
+ * Source selection is runtime-only, so exactly one asset downloads per device.
+ * SSR and the first client render both show the transparent PNG, so there is no
+ * black-box flash and no hydration mismatch.
  */
 
-type Mode = "pending" | "video" | "image" | "reduced";
+type Mode = "pending" | "video" | "png" | "reduced";
+
+const POSTER = "/videos/about-character-poster.png"; // 720x720 true-RGBA, transparent
+const ALPHA_WEBM = "/videos/about-master2.webm"; // VP9 alpha (non-WebKit only)
 
 export function AlphaVideo() {
   const [mode, setMode] = useState<Mode>("pending");
@@ -34,41 +36,26 @@ export function AlphaVideo() {
     }
 
     const ua = navigator.userAgent;
-    // iPhone/iPad (incl. iPadOS reporting as desktop Safari) + any browser that
-    // is genuinely Safari/WebKit (Apple vendor, not Chrome/Edge/Firefox on iOS).
+    // iPhone/iPad (incl. iPadOS reporting as desktop Safari) + any genuine
+    // Safari/WebKit build (Apple vendor, not Chrome/Edge/Firefox-on-iOS).
     const isIOS =
       /iP(hone|ad|od)/.test(ua) ||
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     const isSafari =
       /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(ua) &&
-      /apple/i.test(navigator.vendor);
+      /apple/i.test(navigator.vendor || "");
 
-    setMode(isIOS || isSafari ? "image" : "video");
+    // Apple/WebKit -> guaranteed-transparent static PNG. Everyone else -> WebM.
+    setMode(isIOS || isSafari ? "png" : "video");
   }, []);
 
-  // Transparent poster frame: shown before detection resolves and for reduced
-  // motion. The PNG has its own alpha, so the background stays clear.
-  if (mode === "pending" || mode === "reduced") {
+  // Static transparent portrait: SSR / pre-detection, reduced motion, Apple
+  // devices, or a WebM load failure. The PNG carries its own alpha, so the
+  // background always stays clear.
+  if (mode === "pending" || mode === "reduced" || mode === "png") {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        className="about-alpha-video"
-        src="/videos/about-character-poster.png"
-        alt=""
-        aria-hidden="true"
-      />
-    );
-  }
-
-  if (mode === "image") {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        className="about-alpha-video"
-        src="/videos/about-master2-alpha.webp"
-        alt=""
-        aria-hidden="true"
-      />
+      // eslint-disable-next-line @next/next/no-img-element -- alpha PNG, intentional <img>
+      <img className="about-alpha-video" src={POSTER} alt="" aria-hidden="true" />
     );
   }
 
@@ -80,13 +67,12 @@ export function AlphaVideo() {
       loop
       playsInline
       preload="metadata"
-      poster="/videos/about-character-poster.png"
+      poster={POSTER}
       aria-hidden="true"
-      // If the WebM cannot load/decode for any reason, fall back to the alpha
-      // WebP so we never end up on an opaque box.
-      onError={() => setMode("image")}
+      // Any WebM load/decode failure falls back to the transparent still.
+      onError={() => setMode("png")}
     >
-      <source src="/videos/about-master2.webm" type="video/webm" />
+      <source src={ALPHA_WEBM} type="video/webm" />
     </video>
   );
 }

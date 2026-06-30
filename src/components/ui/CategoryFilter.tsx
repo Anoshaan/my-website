@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useMemo, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   CATEGORY_META,
   CategoryIconKey,
   PathwayCategory,
-  getCategoryCounts,
 } from "@/lib/product-pathways";
 
 interface CategoryFilterProps {
@@ -121,29 +120,28 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const counts = useMemo(() => getCategoryCounts(), []);
-
   const renderButtons = () =>
-    CATEGORY_META.map((meta) => {
+    CATEGORY_META.flatMap((meta, idx) => {
       const isActive = activeCategory === meta.label;
-      const isAll = meta.label === "All Pathways";
 
-      // Active fills the whole button with the category's soft accent (warm
-      // neutral for "All"); dark neutral text keeps high contrast in both
-      // themes. No strong shadow on the active chip.
+      // Active: filled with the category's soft accent, dark neutral text for
+      // contrast in both themes, plus a lift + drop shadow + accent border +
+      // bolder label so the selected chip reads as raised — and the cue is
+      // structural (not colour-only) for accessibility.
       const activeStyle: React.CSSProperties = isActive
         ? {
             backgroundColor: meta.softBg,
-            borderColor: meta.border,
+            borderColor: meta.accent,
             color: "#1a1a1a",
+            boxShadow: "0 12px 30px -12px rgba(0,0,0,0.30)",
           }
         : {};
 
-      const inactiveClasses = isActive
-        ? ""
-        : "bg-[var(--color-surface)] border-[var(--color-line)] text-[var(--color-fg)] opacity-80 hover:opacity-100 hover:bg-[var(--color-surface-2)]";
+      const stateClasses = isActive
+        ? "-translate-y-0.5 font-semibold"
+        : "bg-[var(--color-surface)] border-[var(--color-line)] text-[var(--color-fg)] opacity-80 hover:opacity-100 hover:-translate-y-0.5 hover:bg-[var(--color-surface-2)] hover:shadow-[0_8px_22px_-12px_rgba(0,0,0,0.25)]";
 
-      return (
+      const btn = (
         <button
           key={meta.label}
           type="button"
@@ -153,37 +151,36 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
           className={`
             flex flex-shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full border
             px-4 py-2.5 text-sm font-medium transition-all duration-300
-            select-none focus:outline-none focus:ring-0 [-webkit-tap-highlight-color:transparent]
-            ${inactiveClasses}
+            select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]
+            [-webkit-tap-highlight-color:transparent]
+            ${stateClasses}
           `}
         >
-          <span 
+          <span
             className="flex items-center justify-center"
             style={isActive ? { color: meta.accent } : { opacity: 0.8 }}
           >
             {getCategoryIcon(meta.icon)}
           </span>
           <span>{meta.label}</span>
-          <span
-            className="flex items-center justify-center rounded-full px-2 py-0.5 text-[11px] font-bold"
-            style={
-              isActive
-                ? { backgroundColor: meta.accent, color: "#1a1a1a" }
-                : undefined
-            }
-          >
-            <span className={isActive ? "" : "rounded-full bg-[var(--color-line)] px-2 py-0.5 text-[var(--color-fg)]"}>
-              {counts[meta.label] ?? 0}
-            </span>
-          </span>
         </button>
       );
+
+      // Force a clean 5 / 4 split on HD+ (xl): after the 5th chip a full-width,
+      // zero-height break pushes the remaining four onto a second row. Below xl
+      // the break is hidden, so chips wrap naturally (two to three rows).
+      if (idx === 4) {
+        return [btn, <div key="row-break" aria-hidden className="hidden basis-full xl:block" />];
+      }
+      return [btn];
     });
 
   return (
     <>
-      <div ref={containerRef} className="relative z-20 mb-12 w-full overflow-hidden bg-transparent py-4">
-        <div className="flex flex-col items-center gap-8 text-center">
+      <div ref={containerRef} className="relative z-20 mb-12 w-full bg-transparent py-4">
+        {/* Generous gap between the title/body block and the filter row so the
+            two read as distinct, breathing zones (not cramped together). */}
+        <div className="flex flex-col items-center gap-10 text-center md:gap-16">
           <div className="px-4">
             <h3 id="category-filter-heading" className="text-3xl font-medium tracking-tight">
               Explore the range of product thinking
@@ -195,11 +192,12 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
             </p>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[1200px] px-4">
-            {/* Auto-balancing wrapped row: chips reflow across rows as the
-                viewport narrows instead of being clipped by a fixed 5/4 split.
-                Rendered once (the old slice() called renderButtons twice). */}
-            <div className="hidden md:flex flex-wrap justify-center gap-3 pb-2">
+          <div className="relative mx-auto w-full max-w-[1200px] px-4 xl:max-w-[1600px]">
+            {/* HD+ (xl): forced 5 / 4 split via the row-break injected in
+                renderButtons. Below xl: chips reflow naturally across two to
+                three rows. The wider xl track gives the five top-row chips room
+                so they never collapse into one over-long line. */}
+            <div className="hidden md:flex flex-wrap justify-center gap-2.5 pb-2">
               {renderButtons()}
             </div>
             <div className="flex md:hidden justify-center w-full">
@@ -215,7 +213,7 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
               >
                 {CATEGORY_META.map(meta => (
                   <option key={meta.label} value={meta.label}>
-                    {meta.label} ({counts[meta.label] ?? 0})
+                    {meta.label}
                   </option>
                 ))}
               </select>
@@ -252,7 +250,7 @@ export function CategoryFilter({ activeCategory, onSelectCategory }: CategoryFil
             >
               {CATEGORY_META.map((meta) => (
                 <option key={meta.label} value={meta.label}>
-                  {meta.label} ({counts[meta.label] ?? 0})
+                  {meta.label}
                 </option>
               ))}
             </select>

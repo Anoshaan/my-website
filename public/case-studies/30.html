@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Startup Brand + Launch Identity</title>
+<style>
+  :root{
+    --bg:#fdf2fb;--surface:#fff;--border:#f6d9f3;--text:#2c0f2e;--muted:#9c6b9c;
+    --fuchsia:#e3219b;--grape:#7c1d8f;--coral:#ff6b6b;--sun:#ffd23f;--mint:#2dd4bf;--ink:#1f1024;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 15% 100%,rgba(227,33,155,.10),transparent 34%),var(--bg);overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fff8fd,#fdf2fb);border:1px solid var(--border);box-shadow:0 35px 90px rgba(120,20,110,.16);
+    padding:26px 30px;display:flex;flex-direction:column}
+  .head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+  .head h1{margin:0;font-size:23px;letter-spacing:-.03em}
+  .head .sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .head .kit{font-size:10.5px;font-weight:760;color:#fff;background:linear-gradient(135deg,#e3219b,#7c1d8f);padding:8px 14px;border-radius:999px;box-shadow:0 8px 18px rgba(227,33,155,.3)}
+  .kit-grid{flex:1;display:grid;grid-template-columns:1.15fr .85fr .9fr 1.1fr;grid-template-rows:1fr 1fr;gap:16px}
+  .asset{border-radius:18px;overflow:hidden;position:relative;box-shadow:0 14px 32px rgba(120,20,110,.12);animation:rise .55s ease both}
+  .asset:nth-child(2){animation-delay:.06s}.asset:nth-child(3){animation-delay:.12s}.asset:nth-child(4){animation-delay:.18s}
+  .asset:nth-child(5){animation-delay:.24s}.asset:nth-child(6){animation-delay:.3s}.asset:nth-child(7){animation-delay:.36s}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .cap{position:absolute;top:11px;left:12px;font-size:9px;font-weight:780;letter-spacing:.06em;text-transform:uppercase;
+    background:rgba(255,255,255,.85);color:#7c1d8f;padding:4px 9px;border-radius:999px;z-index:3}
+  /* logo / app icon */
+  .a-logo{grid-row:1/3;background:linear-gradient(160deg,#1f1024,#3d1145);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;color:#fff}
+  .glyph{width:120px;height:120px;border-radius:32px;background:linear-gradient(135deg,#e3219b,#ff6b6b);display:grid;place-items:center;
+    box-shadow:0 24px 48px rgba(227,33,155,.45);animation:float 5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(3deg)}}
+  .glyph b{font-size:64px;font-weight:870;color:#fff;font-style:normal}
+  .wordmark{font-size:22px;font-weight:860;letter-spacing:.16em}
+  .wordmark span{color:#ffd23f}
+  .icon-set{display:flex;gap:11px}
+  .icon-set i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:16px;color:#fff;font-style:normal}
+  /* business card */
+  .a-card{background:#1f1024;color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:18px}
+  .a-card .top b{font-size:18px;font-weight:840;letter-spacing:.08em}
+  .a-card .top span{color:#ffd23f}
+  .a-card .ln{height:6px;border-radius:4px;background:rgba(255,255,255,.25);margin-top:9px}
+  .a-card .ln.s{width:55%}
+  .a-card .bottom{display:flex;flex-direction:column;gap:6px;font-size:9px;color:#c9a9cb}
+  /* social story 9:16 feel */
+  .a-story{background:linear-gradient(160deg,#e3219b,#7c1d8f);color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:16px}
+  .a-story .big{font-size:26px;font-weight:870;line-height:.95;letter-spacing:-.02em}
+  .a-story .sm{font-size:11px;font-weight:600;opacity:.85;margin-top:8px}
+  .a-story .cta{margin-top:12px;align-self:flex-start;background:#ffd23f;color:#7c1d8f;font-size:10px;font-weight:800;padding:7px 13px;border-radius:999px}
+  .a-story::after{content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,210,63,.3)}
+  /* website hero */
+  .a-web{background:#fff}
+  .a-web .bar{height:22px;background:#fbe7f6;display:flex;align-items:center;gap:5px;padding:0 10px}
+  .a-web .bar i{width:7px;height:7px;border-radius:50%;background:#f0a8de}
+  .a-web .hero{padding:16px 16px 0}
+  .a-web .ht{font-size:16px;font-weight:860;letter-spacing:-.03em;color:#2c0f2e}
+  .a-web .ht em{color:#e3219b;font-style:normal}
+  .a-web .hs{height:7px;width:60%;border-radius:5px;background:#f3d4ec;margin:9px 0 12px}
+  .a-web .hb{display:flex;gap:8px}
+  .a-web .hb span{height:26px;border-radius:9px}
+  .a-web .hb .p{width:84px;background:linear-gradient(135deg,#e3219b,#7c1d8f)}
+  .a-web .hb .g{width:64px;background:#fbe7f6}
+  /* merch / tote square */
+  .a-merch{background:linear-gradient(135deg,#2dd4bf,#0d9488);display:flex;align-items:center;justify-content:center}
+  .tote{width:74px;height:84px;background:#fff;border-radius:8px 8px 12px 12px;position:relative;display:grid;place-items:center;box-shadow:0 14px 30px rgba(0,0,0,.18)}
+  .tote::before,.tote::after{content:"";position:absolute;top:-20px;width:8px;height:30px;border:3px solid #fff;border-bottom:none;border-radius:12px 12px 0 0}
+  .tote::before{left:16px}.tote::after{right:16px}
+  .tote b{font-size:26px;font-weight:870;color:#e3219b;font-style:normal}
+  /* sticker pack */
+  .a-sticker{background:#fff7fc;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:14px}
+  .sticker{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;box-shadow:0 8px 16px rgba(0,0,0,.12);border:3px solid #fff}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .asset{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Startup brand and launch identity kit mockup">
+  <div class="head">
+    <div><h1>Pop — Launch Kit</h1><div class="sub">One identity, ready across web, social, print, and merch.</div></div>
+    <span class="kit">Launch assets · 24 files</span>
+  </div>
+
+  <div class="kit-grid">
+    <!-- logo + icons -->
+    <section class="asset a-logo">
+      <span class="cap" style="background:rgba(255,255,255,.15);color:#fff">Identity</span>
+      <div class="glyph"><b>P</b></div>
+      <div class="wordmark">PO<span>P</span></div>
+      <div class="icon-set">
+        <i style="background:linear-gradient(135deg,#e3219b,#ff6b6b)">P</i>
+        <i style="background:linear-gradient(135deg,#2dd4bf,#0d9488)">P</i>
+        <i style="background:linear-gradient(135deg,#ffd23f,#f59e0b);color:#7c1d8f">P</i>
+      </div>
+    </section>
+
+    <!-- business card -->
+    <section class="asset a-card">
+      <span class="cap">Card</span>
+      <div class="top"><b>PO<span>P</span></b><div class="ln"></div><div class="ln s"></div></div>
+      <div class="bottom"><span>hello@pop.studio</span><span>pop.studio</span></div>
+    </section>
+
+    <!-- story -->
+    <section class="asset a-story">
+      <span class="cap" style="background:rgba(255,255,255,.2);color:#fff">Story 9:16</span>
+      <div class="big">We're<br/>live.</div>
+      <div class="sm">Say hello to Pop.</div>
+      <span class="cta">Shop now →</span>
+    </section>
+
+    <!-- website -->
+    <section class="asset a-web">
+      <span class="cap">Web hero</span>
+      <div class="bar"><i></i><i></i><i></i></div>
+      <div class="hero">
+        <div class="ht">Make it <em>Pop.</em></div>
+        <div class="hs"></div>
+        <div class="hb"><span class="p"></span><span class="g"></span></div>
+      </div>
+    </section>
+
+    <!-- merch -->
+    <section class="asset a-merch">
+      <span class="cap" style="background:rgba(255,255,255,.85)">Merch</span>
+      <div class="tote"><b>P</b></div>
+    </section>
+
+    <!-- sticker pack -->
+    <section class="asset a-sticker">
+      <span class="cap">Stickers</span>
+      <div class="sticker" style="background:linear-gradient(135deg,#e3219b,#7c1d8f)">P</div>
+      <div class="sticker" style="background:linear-gradient(135deg,#ff6b6b,#e3219b)">★</div>
+      <div class="sticker" style="background:linear-gradient(135deg,#2dd4bf,#0d9488)">♥</div>
+      <div class="sticker" style="background:linear-gradient(135deg,#ffd23f,#f59e0b);color:#7c1d8f">!</div>
+    </section>
+  </div>
+</main>
+</body>
+</html>

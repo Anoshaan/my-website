@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI-Assisted Design System Build</title>
+<style>
+  :root{
+    --bg:#f4f6f9;--panel:#fff;--border:#e4e8ee;--line:#eef1f5;
+    --text:#1c232e;--muted:#828b9a;
+    --violet:#7c5cff;--violet-soft:#f0ecff;--violet-bd:#ddd3ff;
+    --green:#16a34a;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 90% 10%,rgba(124,92,255,.10),transparent 32%),#eef1f6;overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fbfcfe,#f4f6f9);border:1px solid var(--border);box-shadow:0 35px 90px rgba(30,40,60,.14);
+    display:grid;grid-template-columns:1fr 332px}
+  /* main */
+  .main{padding:28px 30px;overflow:hidden;display:flex;flex-direction:column}
+  .mhead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+  .mhead h1{margin:0;font-size:23px;letter-spacing:-.03em}
+  .mhead p{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+  .audit-chip{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:740;color:#6a44e0;background:var(--violet-soft);border:1px solid var(--violet-bd);padding:8px 13px;border-radius:999px}
+  .audit-chip .d{width:8px;height:8px;border-radius:50%;background:var(--violet);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(124,92,255,.4)}50%{box-shadow:0 0 0 6px rgba(124,92,255,0)}}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:18px}
+  .stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 15px;box-shadow:0 8px 22px rgba(30,40,60,.05)}
+  .stat .v{font-size:24px;font-weight:840;letter-spacing:-.03em}
+  .stat .l{font-size:11px;color:var(--muted);margin-top:2px}
+  .stat .bar{height:5px;border-radius:999px;background:var(--line);margin-top:9px;overflow:hidden}
+  .stat .bar i{display:block;height:100%;border-radius:999px}
+  /* audit table */
+  .panel{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 10px 28px rgba(30,40,60,.06);flex:1;overflow:hidden;display:flex;flex-direction:column}
+  .ptitle{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .ptitle b{font-size:13px;letter-spacing:-.02em}
+  .ptitle .leg{display:flex;gap:13px;font-size:10px;color:var(--muted)}
+  .ptitle .leg span{display:inline-flex;align-items:center;gap:6px}
+  .ptitle .leg i{width:8px;height:8px;border-radius:50%}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{text-align:left;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#9aa3b2;font-weight:760;padding:11px 18px;background:#fafbfc}
+  td{padding:11px 18px;border-bottom:1px solid var(--line);color:#3a4250}
+  tr:last-child td{border-bottom:0}
+  .cname{font-weight:700;display:flex;align-items:center;gap:9px}
+  .cname .sw{width:18px;height:18px;border-radius:5px;background:var(--violet-soft);color:var(--violet);display:grid;place-items:center;font-size:9px;font-weight:800;flex:0 0 auto}
+  .oldname{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#9aa3b2;text-decoration:line-through}
+  .newname{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--violet);font-weight:600}
+  .arrow{color:#c3c9d4;margin:0 6px}
+  .st{font-size:10.5px;font-weight:740;padding:4px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
+  .st.ok{background:#e9f8ef;color:var(--green)}
+  .st.fix{background:var(--violet-soft);color:#6a44e0}
+  .st.miss{background:#fff4e0;color:#b45309}
+  /* AI sidebar */
+  .ai{background:linear-gradient(180deg,#1b1530,#241a3e);color:#ece7fb;padding:22px 20px;display:flex;flex-direction:column;gap:14px}
+  .ai-head{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:760}
+  .ai-head .lg{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#7c5cff,#a78bfa);display:grid;place-items:center;font-weight:800;color:#1b1530}
+  .ai-head .sub{font-size:10px;color:#a99fd0;font-weight:500;display:block}
+  .bubble{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:12px 13px;font-size:11.5px;line-height:1.5}
+  .bubble.me{background:rgba(124,92,255,.16);border-color:rgba(124,92,255,.35)}
+  .bubble .lbl{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#a99fd0;font-weight:760;margin-bottom:6px}
+  .bubble b{color:#fff}
+  .doc{background:#0f0b1d;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 12px;font-size:10.5px;line-height:1.5;color:#c4bce6}
+  .doc .h{color:#a78bfa;font-weight:700}
+  .suggest{display:flex;flex-direction:column;gap:8px}
+  .srow{display:flex;align-items:center;gap:9px;font-size:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:8px 10px}
+  .srow .ic{width:18px;height:18px;border-radius:6px;background:rgba(124,92,255,.25);color:#c4b5fd;display:grid;place-items:center;font-size:10px;flex:0 0 auto}
+  .srow .apply{margin-left:auto;font-size:9.5px;font-weight:740;color:#1b1530;background:#a78bfa;border-radius:6px;padding:4px 9px}
+  .accept{margin-top:auto;display:flex;gap:9px}
+  .accept .b1{flex:1;height:38px;border-radius:11px;background:linear-gradient(135deg,#7c5cff,#a78bfa);color:#fff;font-size:12px;font-weight:760;display:flex;align-items:center;justify-content:center;gap:8px}
+  .accept .b2{width:78px;height:38px;border-radius:11px;border:1px solid rgba(255,255,255,.18);color:#cdc4ec;font-size:12px;font-weight:700;display:grid;place-items:center}
+  .review-note{font-size:10px;color:#9b91c4;text-align:center;display:flex;align-items:center;gap:7px;justify-content:center}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .stat .bar i{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="AI-assisted design system build mockup">
+  <section class="main">
+    <div class="mhead">
+      <div><h1>Design System Audit</h1><p>AI drafts docs and naming. Every change waits for a human to approve.</p></div>
+      <span class="audit-chip"><span class="d"></span>Scanning 48 components</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="v">48</div><div class="l">Components</div><div class="bar"><i style="width:100%;background:#7c5cff"></i></div></div>
+      <div class="stat"><div class="v" style="color:#16a34a">39</div><div class="l">Documented</div><div class="bar"><i style="width:81%;background:#16a34a"></i></div></div>
+      <div class="stat"><div class="v" style="color:#f59e0b">9</div><div class="l">Need attention</div><div class="bar"><i style="width:19%;background:#f59e0b"></i></div></div>
+    </div>
+
+    <article class="panel">
+      <div class="ptitle"><b>Naming &amp; documentation</b>
+        <div class="leg"><span><i style="background:#16a34a"></i>OK</span><span><i style="background:#7c5cff"></i>Suggested</span><span><i style="background:#f59e0b"></i>Missing</span></div>
+      </div>
+      <table>
+        <thead><tr><th>Component</th><th>Naming</th><th>Docs</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cname"><span class="sw">B</span>Button</span></td>
+            <td><span class="oldname">btn-main</span><span class="arrow">→</span><span class="newname">button/primary</span></td>
+            <td><span class="st fix">AI drafted</span></td></tr>
+          <tr><td><span class="cname"><span class="sw">I</span>Input</span></td>
+            <td><span class="newname">input/text</span></td>
+            <td><span class="st ok">✓ Complete</span></td></tr>
+          <tr><td><span class="cname"><span class="sw">C</span>Card</span></td>
+            <td><span class="oldname">box2</span><span class="arrow">→</span><span class="newname">card/elevated</span></td>
+            <td><span class="st fix">AI drafted</span></td></tr>
+          <tr><td><span class="cname"><span class="sw">T</span>Tag</span></td>
+            <td><span class="newname">badge/status</span></td>
+            <td><span class="st miss">Missing</span></td></tr>
+          <tr><td><span class="cname"><span class="sw">M</span>Modal</span></td>
+            <td><span class="oldname">popup</span><span class="arrow">→</span><span class="newname">dialog/center</span></td>
+            <td><span class="st fix">AI drafted</span></td></tr>
+        </tbody>
+      </table>
+    </article>
+  </section>
+
+  <!-- AI assistant -->
+  <aside class="ai">
+    <div class="ai-head"><span class="lg">C</span><div>Claude<span class="sub">Design system assistant</span></div></div>
+
+    <div class="bubble me"><div class="lbl">You</div>Clean up naming and write docs for the button component.</div>
+
+    <div class="bubble"><div class="lbl">Claude</div>Renamed <b>btn-main → button/primary</b> and drafted usage docs:</div>
+
+    <div class="doc"><span class="h">button/primary</span><br/>Main call to action. One per view. Pairs with <b>secondary</b> for cancel paths. Min width 88px.</div>
+
+    <div class="suggest">
+      <div class="srow"><span class="ic">↻</span>Map to <b style="color:#fff;margin:0 3px">&lt;Button/&gt;</b> in code<span class="apply">Apply</span></div>
+      <div class="srow"><span class="ic">✓</span>Add disabled variant note<span class="apply">Apply</span></div>
+    </div>
+
+    <div class="accept">
+      <div class="b1"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 5 5L20 7"/></svg>Approve 3 changes</div>
+      <div class="b2">Edit</div>
+    </div>
+    <div class="review-note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>Human review before publish</div>
+  </aside>
+</main>
+</body>
+</html>

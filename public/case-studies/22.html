@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Landing Page Launch Pack</title>
+<style>
+  :root{
+    --bg:#f2f5f9;--surface:#fff;--border:#e2e8f0;--line:#eef2f7;
+    --text:#1b2430;--muted:#7b8696;
+    --teal:#0ea5a5;--teal-soft:#e6faf7;--green:#16a34a;--blue:#3b82f6;--amber:#f59e0b;--pink:#ec4899;--violet:#8b5cf6;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 15% 0,rgba(14,165,165,.08),transparent 30%),#eaeff5;overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fbfdfe,#f2f5f9);border:1px solid var(--border);box-shadow:0 35px 90px rgba(30,40,60,.13);
+    padding:26px 30px;display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:auto 1fr;gap:18px}
+  .head{grid-column:1/-1;display:flex;align-items:flex-end;justify-content:space-between}
+  .head h1{margin:0;font-size:23px;letter-spacing:-.03em}
+  .head .sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .head .badge{font-size:10.5px;font-weight:760;color:#0c8a8a;background:var(--teal-soft);border:1px solid #b6ece5;padding:8px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:8px}
+  .head .badge .d{width:8px;height:8px;border-radius:50%;background:var(--teal)}
+  /* left: landing preview */
+  .preview{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:0 12px 30px rgba(30,40,60,.07);overflow:hidden;display:flex;flex-direction:column;
+    animation:rise .55s ease both}
+  .pbar{height:30px;background:#f1f5f9;display:flex;align-items:center;gap:6px;padding:0 12px}
+  .pbar i{width:8px;height:8px;border-radius:50%;background:#cbd5e1}
+  .pbar .url{flex:1;height:14px;border-radius:7px;background:#fff;margin-left:8px;display:flex;align-items:center;padding:0 9px;font-size:8px;color:#94a3b8}
+  .scroll{flex:1;overflow:hidden;position:relative}
+  .land{position:absolute;inset:0;animation:scrolly 16s ease-in-out infinite}
+  @keyframes scrolly{0%,12%{transform:translateY(0)}50%,62%{transform:translateY(-34%)}100%{transform:translateY(0)}}
+  .nav{height:42px;display:flex;align-items:center;padding:0 18px;gap:12px;border-bottom:1px solid var(--line)}
+  .nav .lg{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#0ea5a5,#0d9488)}
+  .nav .nl{height:7px;width:40px;border-radius:4px;background:#e2e8f0}
+  .nav .sp{margin-left:auto;display:flex;gap:14px}
+  .hero{padding:26px 18px;text-align:center;background:linear-gradient(180deg,#e6faf7,#fff)}
+  .hero .t{height:18px;width:66%;margin:0 auto 9px;border-radius:7px;background:#0ea5a5}
+  .hero .s{height:9px;width:46%;margin:0 auto 14px;border-radius:5px;background:#9ad7d2}
+  .hero .b{height:34px;width:130px;margin:0 auto;border-radius:10px;background:linear-gradient(135deg,#0ea5a5,#0d9488)}
+  .feats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:18px}
+  .feat{height:74px;border:1px solid var(--line);border-radius:10px;background:#fafcfe;padding:11px;display:flex;flex-direction:column;gap:7px}
+  .feat .fi{width:26px;height:26px;border-radius:8px;background:var(--teal-soft)}
+  .feat .fl{height:6px;border-radius:4px;background:#e8eef4}
+  .feat .fl.s{width:60%}
+  .cta{margin:6px 18px 18px;height:74px;border-radius:12px;background:linear-gradient(135deg,#0f172a,#1e293b);display:flex;align-items:center;justify-content:center;gap:14px}
+  .cta .ct{height:11px;width:120px;border-radius:6px;background:rgba(255,255,255,.4)}
+  .cta .cb{height:30px;width:96px;border-radius:9px;background:#0ea5a5}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  /* right: delivery */
+  .deliv{display:grid;grid-template-rows:auto auto 1fr;gap:14px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:15px;box-shadow:0 10px 24px rgba(30,40,60,.05);padding:15px;animation:rise .55s ease both}
+  .card:nth-child(2){animation-delay:.08s}.card:nth-child(3){animation-delay:.16s}
+  .ch{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+  .ch .ic{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;color:#fff;flex:0 0 auto}
+  .ch b{font-size:12.5px;letter-spacing:-.02em}
+  .ch .mu{margin-left:auto;font-size:10px;color:var(--muted);font-weight:650}
+  /* launch checklist */
+  .tk{display:flex;align-items:center;gap:10px;font-size:11px;color:#3a4350;padding:6px 0}
+  .tk i{width:17px;height:17px;border-radius:5px;display:grid;place-items:center;font-size:10px;flex:0 0 auto}
+  .tk i.ok{background:#e9f8ef;color:var(--green)}
+  .tk i.run{background:#fff4e0;color:var(--amber)}
+  .tk i.no{background:#f1f4f8;border:1.5px solid #d3dae3;color:transparent}
+  .tk .mu{margin-left:auto;font-size:9.5px;color:var(--muted)}
+  /* assets folder */
+  .files{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .file{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:10.5px;font-weight:600;color:#3a4350}
+  .file .ft{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:8px;font-weight:800;color:#fff;flex:0 0 auto}
+  .file .sz{margin-left:auto;font-size:9px;color:var(--muted);font-weight:500}
+  /* social/email assets */
+  .assets{display:flex;gap:10px}
+  .ast{flex:1;border-radius:11px;overflow:hidden;border:1px solid var(--line)}
+  .ast .top{height:50px}
+  .ast .bd{padding:8px;display:flex;flex-direction:column;gap:5px}
+  .ast .al{height:6px;border-radius:4px;background:#e8eef4}
+  .ast .al.s{width:55%}
+  .ast .tag{font-size:8px;font-weight:780;color:#fff;padding:2px 6px;border-radius:5px;position:absolute;margin:7px}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .card,.preview{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Landing page launch pack mockup">
+  <div class="head">
+    <div><h1>Launch Pack — Ready to Ship</h1><div class="sub">Everything the client needs to take the page live, in one delivery.</div></div>
+    <span class="badge"><span class="d"></span>Go-live ready</span>
+  </div>
+
+  <!-- landing preview -->
+  <section class="preview">
+    <div class="pbar"><i></i><i></i><i></i><span class="url">getluma.co</span></div>
+    <div class="scroll">
+      <div class="land">
+        <div class="nav"><span class="lg"></span><span class="nl"></span><div class="sp"><span class="nl" style="width:26px"></span><span class="nl" style="width:26px"></span><span class="nl" style="width:46px;background:#0ea5a5"></span></div></div>
+        <div class="hero"><div class="t"></div><div class="s"></div><div class="b"></div></div>
+        <div class="feats">
+          <div class="feat"><div class="fi"></div><div class="fl"></div><div class="fl s"></div></div>
+          <div class="feat"><div class="fi"></div><div class="fl"></div><div class="fl s"></div></div>
+          <div class="feat"><div class="fi"></div><div class="fl"></div><div class="fl s"></div></div>
+        </div>
+        <div class="cta"><span class="ct"></span><span class="cb"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- delivery -->
+  <section class="deliv">
+    <article class="card">
+      <div class="ch"><span class="ic" style="background:linear-gradient(135deg,#16a34a,#15803d)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 5 5L20 7"/></svg></span><b>Launch checklist</b><span class="mu">6 / 8</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 20px">
+        <div class="tk"><i class="ok">✓</i>Copy finalized<span class="mu">done</span></div>
+        <div class="tk"><i class="ok">✓</i>SEO meta<span class="mu">done</span></div>
+        <div class="tk"><i class="ok">✓</i>OG image<span class="mu">done</span></div>
+        <div class="tk"><i class="ok">✓</i>Forms wired<span class="mu">done</span></div>
+        <div class="tk"><i class="run">●</i>Analytics<span class="mu">setup</span></div>
+        <div class="tk"><i class="no">✓</i>DNS / domain<span class="mu">pending</span></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="ch"><span class="ic" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7h6l2 2h10v9a2 2 0 0 1-2 2H3z"/></svg></span><b>Export-ready files</b><span class="mu">12 files</span></div>
+      <div class="files">
+        <div class="file"><span class="ft" style="background:#8b5cf6">SVG</span>Logo set<span class="sz">8</span></div>
+        <div class="file"><span class="ft" style="background:#0ea5a5">IMG</span>Web images<span class="sz">2.1mb</span></div>
+        <div class="file"><span class="ft" style="background:#f59e0b">DOC</span>Copy.md<span class="sz">14kb</span></div>
+        <div class="file"><span class="ft" style="background:#ec4899">OG</span>Social.png<span class="sz">1200²</span></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="ch"><span class="ic" style="background:linear-gradient(135deg,#ec4899,#db2777)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><b>Social &amp; email assets</b></div>
+      <div class="assets">
+        <div class="ast" style="position:relative"><span class="tag" style="background:#3b82f6">Email</span><div class="top" style="background:linear-gradient(135deg,#dbeafe,#3b82f6)"></div><div class="bd"><div class="al"></div><div class="al s"></div></div></div>
+        <div class="ast" style="position:relative"><span class="tag" style="background:#ec4899">IG post</span><div class="top" style="background:linear-gradient(135deg,#fce7f3,#ec4899)"></div><div class="bd"><div class="al"></div><div class="al s"></div></div></div>
+        <div class="ast" style="position:relative"><span class="tag" style="background:#0ea5a5">Banner</span><div class="top" style="background:linear-gradient(135deg,#e6faf7,#0ea5a5)"></div><div class="bd"><div class="al"></div><div class="al s"></div></div></div>
+      </div>
+    </article>
+  </section>
+</main>
+</body>
+</html>

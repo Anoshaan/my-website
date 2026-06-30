@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Desktop SaaS Wireframe System</title>
+<style>
+  :root{
+    --bg:#eceff3;--paper:#fff;--ink:#52607a;--mut:#94a3b8;
+    --stroke:#cdd5e0;--fill:#e1e7ef;--fill2:#eaeff4;--accent:#5b7aa8;--accent-soft:#e5ecf5;
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--ink);background:#e6eaef;overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:var(--bg);border:1px solid #d6dde6;box-shadow:0 35px 90px rgba(40,55,80,.14);display:grid;grid-template-columns:198px 1fr}
+  .dash{stroke-dasharray:5 5}
+  /* sidebar */
+  .side{background:var(--paper);border-right:1.5px solid var(--stroke);padding:20px 16px;display:flex;flex-direction:column;gap:8px}
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .logo i{width:30px;height:30px;border-radius:9px;border:1.5px dashed var(--stroke);background:var(--fill2);display:grid;place-items:center;color:var(--mut)}
+  .logo .ln{width:78px;height:11px;border-radius:6px;background:var(--fill)}
+  .nav{height:36px;border-radius:9px;display:flex;align-items:center;gap:11px;padding:0 11px}
+  .nav i{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--stroke);background:var(--fill2);flex:0 0 auto}
+  .nav .nl{height:8px;border-radius:5px;background:var(--fill)}
+  .nav.on{background:var(--accent-soft);border:1px solid #c2d0e4}
+  .nav.on i{border-color:var(--accent);background:#d4e0f0}
+  .nav.on .nl{background:#b4c5dd;width:64px!important}
+  .annot{margin-top:auto;font-size:10px;color:var(--mut);border:1px dashed var(--stroke);border-radius:9px;padding:9px;line-height:1.5;background:var(--fill2)}
+  .annot b{color:var(--accent)}
+  /* main */
+  .main{padding:18px 22px;overflow:hidden;display:flex;flex-direction:column;gap:14px}
+  .topbar{display:flex;align-items:center;justify-content:space-between}
+  .breadcrumbs{display:flex;align-items:center;gap:8px}
+  .breadcrumbs .b{height:10px;border-radius:5px;background:var(--fill)}
+  .h{height:18px;width:170px;border-radius:6px;background:#cfd8e3}
+  .topbtns{display:flex;gap:9px}
+  .btn{height:34px;border-radius:9px;border:1.5px dashed var(--stroke);background:#fff;display:flex;align-items:center;gap:8px;padding:0 13px}
+  .btn .bl{width:50px;height:8px;border-radius:5px;background:var(--fill)}
+  .btn.solid{background:var(--accent-soft);border:1.5px solid #c2d0e4}
+  .btn.solid .bl{background:#b4c5dd}
+  /* kpi row */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .kpi{height:74px;border:1.5px solid var(--stroke);border-radius:12px;background:#fff;padding:12px;display:flex;flex-direction:column;gap:9px;position:relative;animation:rise .5s ease both}
+  .kpi:nth-child(2){animation-delay:.06s}.kpi:nth-child(3){animation-delay:.12s}.kpi:nth-child(4){animation-delay:.18s}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .kpi .k1{width:55%;height:8px;border-radius:5px;background:var(--fill)}
+  .kpi .k2{width:40%;height:18px;border-radius:6px;background:#cfd8e3}
+  .kpi .ico{position:absolute;top:11px;right:11px;width:24px;height:24px;border-radius:7px;border:1.5px dashed var(--stroke);background:var(--fill2)}
+  /* body split */
+  .split{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;flex:1}
+  .card{border:1.5px solid var(--stroke);border-radius:14px;background:#fff;padding:15px;display:flex;flex-direction:column}
+  .ctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+  .ctop .ct{width:120px;height:12px;border-radius:6px;background:#cfd8e3}
+  .filters{display:flex;gap:8px}
+  .fchip{height:26px;border-radius:999px;border:1.5px dashed var(--stroke);background:var(--fill2);display:flex;align-items:center;padding:0 11px;gap:6px}
+  .fchip .fl{width:30px;height:7px;border-radius:4px;background:var(--fill)}
+  .fchip.on{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+  /* table */
+  table{width:100%;border-collapse:collapse}
+  th{padding:9px 6px;border-bottom:1.5px solid var(--stroke)}
+  th .hl{height:8px;width:60%;border-radius:5px;background:#cfd8e3}
+  td{padding:10px 6px;border-bottom:1px solid #eef2f6}
+  .tcell{height:9px;border-radius:5px;background:var(--fill)}
+  .tcell.s{width:50%}.tcell.m{width:75%}
+  .tav{display:flex;align-items:center;gap:8px}
+  .tav i{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--stroke);background:var(--fill2);flex:0 0 auto}
+  .tpill{height:20px;width:64px;border-radius:999px;border:1.5px dashed var(--stroke);background:var(--fill2)}
+  /* roles / permission flow */
+  .roles{display:flex;flex-direction:column;gap:11px}
+  .rrow{display:flex;align-items:center;gap:11px}
+  .rrow .rn{width:62px;height:9px;border-radius:5px;background:#cfd8e3;flex:0 0 auto}
+  .perm{flex:1;display:flex;gap:7px}
+  .perm i{flex:1;height:18px;border-radius:6px;border:1.5px dashed var(--stroke);background:var(--fill2)}
+  .perm i.y{background:var(--accent-soft);border-style:solid;border-color:#c2d0e4}
+  .toggle-note{margin-top:auto;display:flex;align-items:center;gap:9px;font-size:10px;color:var(--mut);border-top:1px dashed var(--stroke);padding-top:11px}
+  .toggle-note .sw{width:30px;height:18px;border-radius:999px;border:1.5px solid var(--accent);background:var(--accent-soft);position:relative;flex:0 0 auto}
+  .toggle-note .sw::after{content:"";position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+  .callout{position:absolute;font-size:10px;font-weight:700;color:var(--accent);background:#fff;border:1px solid var(--accent-soft);border-radius:8px;padding:4px 9px;box-shadow:0 6px 14px rgba(40,55,80,.08)}
+</style>
+<style>
+  *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .kpi{animation-iteration-count:1!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Desktop SaaS wireframe system mockup">
+  <aside class="side">
+    <div class="logo"><i><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/></svg></i><span class="ln"></span></div>
+    <div class="nav on"><i></i><span class="nl" style="width:70px"></span></div>
+    <div class="nav"><i></i><span class="nl" style="width:54px"></span></div>
+    <div class="nav"><i></i><span class="nl" style="width:62px"></span></div>
+    <div class="nav"><i></i><span class="nl" style="width:48px"></span></div>
+    <div class="nav"><i></i><span class="nl" style="width:58px"></span></div>
+    <div class="nav"><i></i><span class="nl" style="width:44px"></span></div>
+    <div class="annot"><b>IA note:</b> nav stays flat to 6 items, then groups into sections.</div>
+  </aside>
+
+  <section class="main">
+    <div class="topbar">
+      <div>
+        <div class="breadcrumbs"><span class="b" style="width:34px"></span><span class="b" style="width:8px;background:#cfd8e3"></span><span class="b" style="width:52px"></span></div>
+        <div class="h" style="margin-top:9px"></div>
+      </div>
+      <div class="topbtns"><div class="btn"><span class="bl"></span></div><div class="btn solid"><span class="bl"></span></div></div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><span class="ico"></span><span class="k1"></span><span class="k2"></span></div>
+      <div class="kpi"><span class="ico"></span><span class="k1"></span><span class="k2"></span></div>
+      <div class="kpi"><span class="ico"></span><span class="k1"></span><span class="k2"></span></div>
+      <div class="kpi"><span class="ico"></span><span class="k1"></span><span class="k2"></span></div>
+    </div>
+
+    <div class="split">
+      <article class="card" style="position:relative">
+        <span class="callout" style="right:14px;top:-9px">table = decision tool</span>
+        <div class="ctop">
+          <span class="ct"></span>
+          <div class="filters"><span class="fchip on"><span class="fl"></span></span><span class="fchip"><span class="fl"></span></span><span class="fchip"><span class="fl"></span></span></div>
+        </div>
+        <table>
+          <thead><tr><th><span class="hl"></span></th><th><span class="hl"></span></th><th><span class="hl"></span></th><th><span class="hl"></span></th></tr></thead>
+          <tbody>
+            <tr><td><span class="tav"><i></i><span class="tcell m"></span></span></td><td><span class="tcell s"></span></td><td><span class="tcell s"></span></td><td><span class="tpill"></span></td></tr>
+            <tr><td><span class="tav"><i></i><span class="tcell m"></span></span></td><td><span class="tcell s"></span></td><td><span class="tcell s"></span></td><td><span class="tpill"></span></td></tr>
+            <tr><td><span class="tav"><i></i><span class="tcell m"></span></span></td><td><span class="tcell s"></span></td><td><span class="tcell s"></span></td><td><span class="tpill"></span></td></tr>
+            <tr><td><span class="tav"><i></i><span class="tcell m"></span></span></td><td><span class="tcell s"></span></td><td><span class="tcell s"></span></td><td><span class="tpill"></span></td></tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <div class="ctop"><span class="ct" style="width:90px"></span></div>
+        <div class="roles">
+          <div class="rrow"><span class="rn"></span><div class="perm"><i class="y"></i><i class="y"></i><i class="y"></i></div></div>
+          <div class="rrow"><span class="rn"></span><div class="perm"><i class="y"></i><i class="y"></i><i></i></div></div>
+          <div class="rrow"><span class="rn"></span><div class="perm"><i class="y"></i><i></i><i></i></div></div>
+          <div class="rrow"><span class="rn"></span><div class="perm"><i></i><i></i><i></i></div></div>
+        </div>
+        <div class="toggle-note"><span class="sw"></span>Permission states defined before UI polish.</div>
+      </article>
+    </div>
+  </section>
+</main>
+</body>
+</html>

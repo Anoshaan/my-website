@@ -188,9 +188,13 @@ function StageView({ width = 1920, height = 1080, time = 0, duration = 44, child
 }
 
 // ── Movie tokens ─────────────────────────────────────────────────────────────
-const ACCENT = "var(--color-accent)";
-const ACCENT_DEEP = "var(--color-accent)";
-const ACCENT_SOFT = "rgba(var(--c-accent-rgb), 0.15)";
+// This reel keeps its OWN warm gold palette (it is framed as "screen content"),
+// so the accent is fixed gold here — NOT the site's `--color-accent`, which is
+// purple and would clash with the warm scene. Both themes get the same warm
+// system; the card surfaces/text still track the theme via the vars below.
+const ACCENT = "#f5a623"; // warm gold — fills, borders, bars, arrows, glow ring
+const ACCENT_DEEP = "#b8731b"; // deeper bronze — icons + headings on light cards
+const ACCENT_SOFT = "rgba(245, 166, 35, 0.15)";
 const INK = "var(--color-fg)";
 const SUB = "var(--color-fg-muted)";
 const CARD = "var(--color-card)";
@@ -212,7 +216,10 @@ const IconSpark = ({ c = ACCENT, s = 18 }) => I(s, <path d="M12 2c.6 4.4 2.6 6.4
 const IconClock = ({ c = INK, s = 26 }) => I(s, <><circle {...SW(c)} cx="12" cy="12" r="8" /><path {...SW(c)} d="M12 8v4.2l2.6 1.8" /></>);
 const IconGrid = ({ c = INK, s = 24 }) => I(s, <><rect {...SW(c)} x="4" y="4" width="6.5" height="6.5" rx="1.6" /><rect {...SW(c)} x="13.5" y="4" width="6.5" height="6.5" rx="1.6" /><rect {...SW(c)} x="4" y="13.5" width="6.5" height="6.5" rx="1.6" /><rect {...SW(c)} x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6" /></>);
 const IconFlow = ({ c = INK, s = 24 }) => I(s, <><rect {...SW(c)} x="3" y="9" width="6" height="6" rx="1.4" /><rect {...SW(c)} x="15" y="4" width="6" height="6" rx="1.4" /><rect {...SW(c)} x="15" y="14" width="6" height="6" rx="1.4" /><path {...SW(c, 1.9)} d="M9 12h3.5M12.5 12V7H15M12.5 12v5H15" /></>);
-const IconFigma = ({ s = 24 }) => I(s, <><circle cx="9" cy="5.5" r="2.6" fill="#f24e1e" /><circle cx="9" cy="12" r="2.6" fill="#a259ff" /><circle cx="9" cy="18.5" r="2.6" fill="#0acf83" /><circle cx="15" cy="5.5" r="2.6" fill="#ff7262" /><circle cx="15" cy="12" r="2.6" fill="#1abcfe" /></>);
+// Warm-tinted Figma-style mark — the original multi-colour logo carried purple
+// (#a259ff) and blue (#1abcfe) dots that clashed with the warm scene, so the
+// five dots are re-toned across the gold/amber/bronze family.
+const IconFigma = ({ s = 24 }) => I(s, <><circle cx="9" cy="5.5" r="2.6" fill="#ed6a2c" /><circle cx="9" cy="12" r="2.6" fill="#d98324" /><circle cx="9" cy="18.5" r="2.6" fill="#c2761c" /><circle cx="15" cy="5.5" r="2.6" fill="#ff8a5b" /><circle cx="15" cy="12" r="2.6" fill="#f5b942" /></>);
 const IconMega = ({ c = INK, s = 26 }) => I(s, <path {...SW(c)} d="M4 10v4h3l8 4V6l-8 4H4Zm14 .5a3 3 0 0 1 0 3" />);
 const IconPlay = ({ c = "#fff", s = 26 }) => I(s, <path d="M8 5v14l11-7z" fill={c} />);
 const IconBug = ({ c = ACCENT_DEEP, s = 22 }) => I(s, <><rect {...SW(c)} x="8" y="8" width="8" height="11" rx="4" /><path {...SW(c)} d="M12 4v3M5 10h3M16 10h3M5 17h3M16 17h3M9 5l1 2M15 5l-1 2" /></>);
@@ -243,16 +250,20 @@ function FloatCard({ x, y, w, h, appear = 0, leave = null, phase = 0, drift = 5,
   const fl = Math.sin((clock + phase) * 1.15) * drift;
   const fr = Math.sin((clock + phase) * 0.8) * 0.7;
   return (
+    // Perf: the card surface is opaque (var(--color-card)), so the old
+    // backdrop-filter blur rendered nothing yet cost a full backdrop
+    // re-rasterization per card per frame — the main source of mobile/Safari
+    // jank. It is removed. Shadows are single-layer, and translate3d keeps each
+    // card on its own GPU layer so the per-frame float only composites.
     <div style={{
       position: "absolute", left: x, top: y, width: w, height: h,
-      transform: `translateY(${ty + fl}px) scale(${sc}) rotate(${fr}deg)`,
+      transform: `translate3d(0, ${ty + fl}px, 0) scale(${sc}) rotate(${fr}deg)`,
       opacity: op, borderRadius: r, background: tint,
-      backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
       border: "1px solid var(--color-card-border)",
       boxShadow: glow
-        ? "0 18px 46px -12px rgba(240,150,20,0.42), 0 3px 12px rgba(60,40,10,0.08), inset 0 1px 0 rgba(255,255,255,0.95)"
-        : "0 18px 40px -18px rgba(60,48,30,0.30), 0 2px 8px rgba(60,48,30,0.05), inset 0 1px 0 rgba(255,255,255,0.95)",
-      willChange: "transform, opacity", ...extra,
+        ? "0 14px 30px -16px rgba(240,150,20,0.40)"
+        : "0 12px 26px -18px rgba(60,48,30,0.26)",
+      willChange: "transform", ...extra,
     }}>
       {glow && <div style={{ position: "absolute", inset: -1, borderRadius: r, border: `1.5px solid ${ACCENT}`, opacity: 0.5, pointerEvents: "none" }} />}
       {children}
@@ -298,7 +309,12 @@ function Orbit({ bright = 0.3 }) {
 }
 function Particles() {
   const t = useClock();
-  const dots = React.useMemo(() => Array.from({ length: 22 }).map((_, i) => ({ x: (i * 61.8) % 97, base: (i * 43) % 100, sp: 3 + (i % 5), sz: 1.5 + (i % 3), ph: i })), []);
+  // Fewer ambient dots on phones — they each repaint per frame, so the count is
+  // capped low on small screens where the budget is tightest.
+  const dots = React.useMemo(() => {
+    const count = typeof window !== "undefined" && window.innerWidth < 768 ? 8 : 14;
+    return Array.from({ length: count }).map((_, i) => ({ x: (i * 61.8) % 97, base: (i * 43) % 100, sp: 3 + (i % 5), sz: 1.5 + (i % 3), ph: i }));
+  }, []);
   return <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>{dots.map((d, i) => {
     const y = (d.base - (t * d.sp * 0.45) % 110 + 110) % 110;
     const op = 0.08 + Math.sin((t + d.ph) * 0.8) * 0.06;
@@ -478,7 +494,7 @@ function SceneUX() {
 }
 
 // ══ 05 AI PROTOTYPE ══════════════════════════════════════════════════════════
-const AI_TOOLS = [["Claude", "#d97706"], ["Lovable", "#ff4d6d"], ["v0", "#2b2b2b"], ["Antigravity", "#2563eb"]];
+const AI_TOOLS = [["Claude", "#d97706"], ["Lovable", "#ff4d6d"], ["v0", "#2b2b2b"], ["Antigravity", "#b45309"]];
 const PROMPT = "Build a clean onboarding flow\nfor a fintech mobile app.\n3 steps, trust-first, fast.";
 function SceneAI() {
   return (
@@ -532,12 +548,12 @@ function SceneFrontEnd() {
       </FloatCard>
       <FloatCard x={250} y={530} w={280} h={150} appear={0.7} leave={32 - 27} phase={0.9} extra={{ padding: 16 }}>
         <Lab s={14}>Design tokens</Lab>
-        <div style={{ display: "flex", gap: 8, marginTop: 12 }}>{[ACCENT, "#23201b", "#1f9d5a", "#2563eb", "#a259ff"].map((c, i) => <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: c }} />)}</div>
+        <div style={{ display: "flex", gap: 8, marginTop: 12 }}>{[ACCENT, "#23201b", "#1f9d5a", "#d97706", "#b45309"].map((c, i) => <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: c }} />)}</div>
         <div style={{ marginTop: 12 }}><Lines n={2} w={240} /></div>
       </FloatCard>
       <FloatCard x={900} y={300} w={300} h={310} appear={1.4} leave={32 - 27} phase={1.2} extra={{ padding: 0, overflow: "hidden" }}>
         <div style={{ height: 30, display: "flex", alignItems: "center", gap: 6, padding: "0 12px", borderBottom: "1px solid rgba(0,0,0,0.08)" }}>{["#ff6159", "#ffbd2e", "#28c93f"].map((c, i) => <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", background: c }} />)}<span style={{ marginLeft: 6, color: "rgba(0,0,0,0.5)", fontFamily: MONO, fontSize: 11 }}>Product.tsx</span></div>
-        <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 9 }}>{[[70, "#7dd3fc"], [130, "#fbbf77"], [100, "#86efac"], [150, "#7dd3fc"], [80, "#c4b5fd"], [120, "#fbbf77"]].map(([w, c], i) => <At key={i} from={1.4 + i * 0.12}>{() => <div style={{ display: "flex", gap: 7, paddingLeft: i === 1 || i === 2 || i === 4 ? 14 : 0 }}><div style={{ width: 16, height: 6, background: "rgba(0,0,0,0.15)", borderRadius: 3 }} /><div style={{ width: w, height: 6, background: c, borderRadius: 3, opacity: 0.85 }} /></div>}</At>)}</div>
+        <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 9 }}>{[[70, "#e0a96d"], [130, "#fbbf77"], [100, "#d8b34a"], [150, "#e0a96d"], [80, "#d98324"], [120, "#fbbf77"]].map(([w, c], i) => <At key={i} from={1.4 + i * 0.12}>{() => <div style={{ display: "flex", gap: 7, paddingLeft: i === 1 || i === 2 || i === 4 ? 14 : 0 }}><div style={{ width: 16, height: 6, background: "rgba(0,0,0,0.15)", borderRadius: 3 }} /><div style={{ width: w, height: 6, background: c, borderRadius: 3, opacity: 0.85 }} /></div>}</At>)}</div>
       </FloatCard>
       <FloatCard x={900} y={628} w={300} h={56} appear={1.8} leave={32 - 27} phase={1.6} glow extra={{ padding: "0 16px", display: "flex", alignItems: "center", gap: 10 }}>
         <IconSpark s={18} /><span style={{ fontFamily: FONT, fontWeight: 600, fontSize: 13.5, color: ACCENT_DEEP }}>AI assists, I keep design control</span>
@@ -598,7 +614,7 @@ function SceneLaunchPrep() {
         <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#e0dcd5,#b5b0a8)", position: "relative" }}><div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}><div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center" }}><IconPlay c={ACCENT_DEEP} s={24} /></div></div><div style={{ position: "absolute", bottom: 10, left: 12, fontFamily: FONT, fontSize: 12, fontWeight: 700, color: INK }}>Launch video</div></div>
       </FloatCard>
       <FloatCard x={600} y={470} w={120} h={140} appear={0.7} leave={40.8 - 36.9} phase={1.4} extra={{ padding: 11 }}><div style={{ height: 70, borderRadius: 8, background: "linear-gradient(135deg,#ffd08a,#f59e0b)", marginBottom: 8 }} /><Lines n={2} w={92} /></FloatCard>
-      <FloatCard x={730} y={470} w={120} h={140} appear={0.9} leave={40.8 - 36.9} phase={1.8} extra={{ padding: 11 }}><div style={{ height: 70, borderRadius: 8, background: "linear-gradient(135deg,#9ec5e8,#5b8fd1)", marginBottom: 8 }} /><Lines n={2} w={92} /></FloatCard>
+      <FloatCard x={730} y={470} w={120} h={140} appear={0.9} leave={40.8 - 36.9} phase={1.8} extra={{ padding: 11 }}><div style={{ height: 70, borderRadius: 8, background: "linear-gradient(135deg,#f0c98a,#d98324)", marginBottom: 8 }} /><Lines n={2} w={92} /></FloatCard>
       <FloatCard x={880} y={300} w={300} h={120} appear={1.1} leave={40.8 - 36.9} phase={1.2} extra={{ display: "flex", alignItems: "center", gap: 16, padding: "0 22px" }}>
         <IconClock s={30} c={ACCENT_DEEP} />
         <div style={{ display: "flex", gap: 9 }}>{["02", "14", "36"].map((d, i) => <div key={i} style={{ padding: "10px 13px", borderRadius: 10, background: INK, color: "#fff", fontFamily: FONT, fontWeight: 800, fontSize: 22 }}>{d}</div>)}</div>
@@ -626,7 +642,7 @@ function SceneLaunched() {
           the final stage reads as the finished, launched output. Minimal. */}
       <At from={0}>{lt => {
         const g = 0.45 + Math.sin(lt * 1.4) * 0.18;
-        return <div style={{ position: "absolute", left: "50%", top: "50%", width: 1200, height: 1200, transform: "translate(-50%,-50%)", borderRadius: "50%", background: `radial-gradient(circle, rgba(245,166,35,${0.12 * g}) 0%, rgba(245,166,35,0) 60%)`, filter: "blur(24px)", pointerEvents: "none" }} />;
+        return <div style={{ position: "absolute", left: "50%", top: "50%", width: 1200, height: 1200, transform: "translate(-50%,-50%)", borderRadius: "50%", background: `radial-gradient(circle, rgba(245,166,35,${0.12 * g}) 0%, rgba(245,166,35,0) 60%)`, pointerEvents: "none" }} />;
       }}</At>
       <At from={0.2}>{lt => {
         const inT = Easing.easeOutBack(clamp(lt / 0.7, 0, 1));
@@ -634,7 +650,7 @@ function SceneLaunched() {
         const fade = clamp((lt - 2.0) / 1.0, 0, 1);
         return (
           <div style={{ position: "absolute", left: 750, top: 320, width: 420, height: 320, opacity: 1 - fade, transform: `scale(${0.8 + 0.2 * inT})`, transformOrigin: "50% 50%" }}>
-            <div style={{ position: "absolute", inset: -40, borderRadius: 40, background: `radial-gradient(circle, rgba(245,166,35,${0.34 * glow}), rgba(245,166,35,0) 70%)`, filter: "blur(6px)" }} />
+            <div style={{ position: "absolute", inset: -40, borderRadius: 40, background: `radial-gradient(circle, rgba(245,166,35,${0.34 * glow}), rgba(245,166,35,0) 70%)` }} />
             <div style={{ position: "absolute", inset: 0, borderRadius: 20, background: "rgba(255,255,255,0.96)", border: `1.5px solid ${ACCENT}`, boxShadow: "0 26px 60px -16px rgba(240,150,20,0.5)", overflow: "hidden" }}>
               <div style={{ height: 46, background: ACCENT, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 18px" }}><div style={{ height: 11, width: 110, borderRadius: 6, background: "rgba(255,255,255,0.75)" }} /><IconRocket s={24} c="#fff" /></div>
               <div style={{ padding: 22 }}>

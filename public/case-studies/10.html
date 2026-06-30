@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aria Store — Product Catalog</title>
+<style>
+  :root{
+    --bg:#fbf7f2; --surface:#ffffff; --soft:#fbf4ec; --border:#efe4d6;
+    --text:#1f1a14; --muted:#8a7d6d; --line:#f0e8dd;
+    --accent:#f0892f; --accent-soft:#fff2e3; --accent-bd:#ffd9ad;
+    --green:#16a34a; --shadow:0 14px 38px rgba(80,52,20,.10);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;color:var(--text);
+    background:radial-gradient(circle at 12% 0,rgba(240,137,47,.10),transparent 30%),var(--bg);overflow-x:hidden}
+  .stage{width:min(100vw,1600px);aspect-ratio:16/9;min-height:720px;position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#fffdfb,#fbf7f2);border:1px solid var(--border);box-shadow:0 35px 90px rgba(80,52,20,.12)}
+  .topbar{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:#fff}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:840;letter-spacing:.18em;font-size:17px}
+  .brand i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#f0892f,#f6b25f);display:grid;place-items:center;color:#fff;font-style:normal;font-weight:800}
+  .topnav{display:flex;gap:26px;font-size:13px;font-weight:650;color:#5c5145}
+  .topnav b{color:var(--accent)}
+  .top-right{display:flex;align-items:center;gap:14px}
+  .search{width:230px;height:38px;border:1px solid var(--border);border-radius:11px;background:var(--soft);display:flex;align-items:center;gap:9px;padding:0 13px;color:var(--muted);font-size:12.5px}
+  .iconbtn{width:38px;height:38px;border:1px solid var(--border);border-radius:11px;background:#fff;display:grid;place-items:center;color:#5c5145;position:relative}
+  .cart-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;border:2px solid #fff}
+  .crumb{display:flex;align-items:center;justify-content:space-between;padding:18px 28px 14px}
+  .crumb h1{margin:0;font-size:26px;letter-spacing:-.04em}
+  .crumb .sub{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .controls{display:flex;align-items:center;gap:10px}
+  .chip{height:32px;display:inline-flex;align-items:center;gap:7px;padding:0 12px;border-radius:999px;font-size:12px;font-weight:650;background:#fff;border:1px solid var(--border);color:#5c5145}
+  .chip.on{background:var(--accent-soft);border-color:var(--accent-bd);color:#b8651b}
+  .chip .x{opacity:.6}
+  .sort{height:36px;border:1px solid var(--border);border-radius:10px;background:#fff;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:650;color:#5c5145}
+  .layout{display:grid;grid-template-columns:218px 1fr 286px;gap:18px;padding:4px 28px 26px;height:calc(100% - 60px - 92px)}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+  /* filters */
+  .filters{padding:18px 16px;display:flex;flex-direction:column;gap:18px;overflow:hidden}
+  .fgroup h4{margin:0 0 11px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#a4937f}
+  .frow{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:#3c352c;padding:5px 0}
+  .frow span:last-child{color:var(--muted);font-size:11px}
+  .check{width:16px;height:16px;border-radius:5px;border:1.5px solid #d8c8b4;margin-right:9px;flex:0 0 auto;display:inline-grid;place-items:center}
+  .check.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .slider{height:5px;border-radius:999px;background:var(--line);position:relative;margin:14px 4px 6px}
+  .slider .fill{position:absolute;left:18%;right:32%;top:0;bottom:0;border-radius:999px;background:var(--accent)}
+  .slider .knob{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--accent);transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.15)}
+  .swatches{display:flex;gap:9px;flex-wrap:wrap}
+  .sw{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--border)}
+  .sizes{display:flex;gap:8px;flex-wrap:wrap}
+  .size{width:34px;height:30px;border-radius:8px;border:1px solid var(--border);display:grid;place-items:center;font-size:12px;font-weight:650;color:#5c5145}
+  .size.on{background:var(--text);color:#fff;border-color:var(--text)}
+  /* grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:16px;padding:0}
+  .card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;
+    animation:rise .6s ease both}
+  .card:nth-child(2){animation-delay:.06s}.card:nth-child(3){animation-delay:.12s}
+  .card:nth-child(4){animation-delay:.18s}.card:nth-child(5){animation-delay:.24s}.card:nth-child(6){animation-delay:.3s}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .thumb{position:relative;height:118px;display:grid;place-items:center;overflow:hidden}
+  .shoe{width:74%;height:62%;border-radius:14px;transform:rotate(-8deg)}
+  .tag{position:absolute;top:10px;left:10px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:#fff;color:#b8651b;box-shadow:0 4px 10px rgba(0,0,0,.08)}
+  .tag.sale{background:#ffe9e1;color:#d24a23}
+  .fav{position:absolute;top:9px;right:9px;width:28px;height:28px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#c9a;box-shadow:0 4px 10px rgba(0,0,0,.08)}
+  .cbody{padding:11px 13px 13px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .cname{font-size:13px;font-weight:740;letter-spacing:-.01em}
+  .cmeta{font-size:11px;color:var(--muted)}
+  .cdots{display:flex;gap:5px;margin-top:1px}
+  .cdots i{width:11px;height:11px;border-radius:50%;border:1px solid var(--border)}
+  .cfoot{margin-top:auto;display:flex;align-items:center;justify-content:space-between}
+  .price{font-size:14px;font-weight:820}
+  .price s{color:var(--muted);font-weight:600;font-size:11px;margin-right:5px}
+  .stars{color:#f0b429;font-size:11px;letter-spacing:1px}
+  .add{height:30px;border-radius:8px;background:var(--accent-soft);border:1px solid var(--accent-bd);color:#b8651b;font-size:11px;font-weight:750;display:grid;place-items:center}
+  /* cart */
+  .cart{padding:18px 16px;display:flex;flex-direction:column;gap:13px}
+  .cart h3{margin:0;font-size:14px;letter-spacing:-.02em;display:flex;align-items:center;justify-content:space-between}
+  .cart h3 span{font-size:11px;color:var(--muted);font-weight:600}
+  .line{display:grid;grid-template-columns:46px 1fr auto;gap:11px;align-items:center}
+  .line .lt{width:46px;height:46px;border-radius:11px}
+  .lname{font-size:12px;font-weight:700}
+  .lqty{font-size:11px;color:var(--muted);margin-top:2px}
+  .lprice{font-size:12.5px;font-weight:760}
+  .divider{height:1px;background:var(--line)}
+  .subrow{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#5c5145}
+  .subrow.total{font-size:14px;font-weight:820;color:var(--text)}
+  .checkout{height:42px;border-radius:12px;background:linear-gradient(135deg,#f0892f,#f6a24a);color:#fff;font-weight:780;font-size:13px;display:grid;place-items:center;box-shadow:0 12px 24px rgba(240,137,47,.28)}
+  .compare{height:34px;border-radius:10px;border:1px dashed var(--accent-bd);background:var(--accent-soft);color:#b8651b;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px}
+</style>
+<style>
+  *,*::before,*::after{animation-iteration-count:1!important;animation-fill-mode:both!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage" aria-label="E-commerce product catalog mockup">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:34px">
+      <div class="brand"><i>A</i>ARIA</div>
+      <nav class="topnav"><b>New</b><span>Women</span><span>Men</span><span>Sale</span></nav>
+    </div>
+    <div class="top-right">
+      <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search products</div>
+      <div class="iconbtn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 14c1.5-1.5 2-4 1-6a6 6 0 0 0-11 0c-1 2-.5 4.5 1 6l4.5 4.5z"/></svg></div>
+      <div class="iconbtn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2 3h2l2.6 13.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 2-1.6L23 7H6"/></svg><span class="cart-badge">3</span></div>
+    </div>
+  </header>
+
+  <div class="crumb">
+    <div>
+      <h1>Sneakers</h1>
+      <div class="sub">Home / Footwear / Sneakers · <b style="color:#3c352c">248 items</b></div>
+    </div>
+    <div class="controls">
+      <span class="chip on">Under $150 <span class="x">×</span></span>
+      <span class="chip on">In stock <span class="x">×</span></span>
+      <span class="chip">Free shipping</span>
+      <span class="sort">Sort: Featured <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6 9 6 6 6-6"/></svg></span>
+    </div>
+  </div>
+
+  <section class="layout">
+    <aside class="panel filters" aria-label="Filters">
+      <div class="fgroup">
+        <h4>Category</h4>
+        <div class="frow"><span><i class="check on">✓</i>Running</span><span>86</span></div>
+        <div class="frow"><span><i class="check"></i>Lifestyle</span><span>74</span></div>
+        <div class="frow"><span><i class="check"></i>Training</span><span>52</span></div>
+        <div class="frow"><span><i class="check"></i>Skate</span><span>36</span></div>
+      </div>
+      <div class="fgroup">
+        <h4>Price</h4>
+        <div class="slider"><div class="fill"></div><span class="knob" style="left:18%"></span><span class="knob" style="left:68%"></span></div>
+        <div class="subrow" style="font-size:11px"><span>$40</span><span>$220</span></div>
+      </div>
+      <div class="fgroup">
+        <h4>Color</h4>
+        <div class="swatches">
+          <i class="sw" style="background:#1f1a14"></i><i class="sw" style="background:#f0892f"></i>
+          <i class="sw" style="background:#3b82f6"></i><i class="sw" style="background:#16a34a"></i>
+          <i class="sw" style="background:#ef4444"></i><i class="sw" style="background:#e7dccd"></i>
+        </div>
+      </div>
+      <div class="fgroup">
+        <h4>Size</h4>
+        <div class="sizes"><span class="size">7</span><span class="size on">8</span><span class="size">9</span><span class="size">10</span><span class="size">11</span></div>
+      </div>
+    </aside>
+
+    <section class="grid" aria-label="Products">
+      <!-- card factory -->
+      <article class="card"><div class="thumb" style="background:linear-gradient(135deg,#fff2e3,#ffe2c4)"><div class="shoe" style="background:linear-gradient(135deg,#f0892f,#c96a16)"></div><span class="tag">New</span><span class="fav">♥</span></div>
+        <div class="cbody"><div class="cname">Cloudrunner Pro</div><div class="cmeta">Running · Unisex</div><div class="cdots"><i style="background:#1f1a14"></i><i style="background:#f0892f"></i><i style="background:#e7dccd"></i></div>
+        <div class="cfoot"><div class="price">$149</div><div class="stars">★★★★★</div></div><div class="add">Add to bag</div></div></article>
+
+      <article class="card"><div class="thumb" style="background:linear-gradient(135deg,#eef4ff,#dbe7ff)"><div class="shoe" style="background:linear-gradient(135deg,#3b82f6,#1e40af)"></div><span class="tag sale">−20%</span><span class="fav">♥</span></div>
+        <div class="cbody"><div class="cname">Atlas Lifestyle</div><div class="cmeta">Lifestyle · Low</div><div class="cdots"><i style="background:#3b82f6"></i><i style="background:#1f1a14"></i></div>
+        <div class="cfoot"><div class="price"><s>$140</s>$112</div><div class="stars">★★★★☆</div></div><div class="add">Add to bag</div></div></article>
+
+      <article class="card"><div class="thumb" style="background:linear-gradient(135deg,#ecfdf3,#d3f5e0)"><div class="shoe" style="background:linear-gradient(135deg,#16a34a,#0f7a37)"></div><span class="fav">♥</span></div>
+        <div class="cbody"><div class="cname">Terra Trail</div><div class="cmeta">Training · Mid</div><div class="cdots"><i style="background:#16a34a"></i><i style="background:#1f1a14"></i><i style="background:#e7dccd"></i></div>
+        <div class="cfoot"><div class="price">$168</div><div class="stars">★★★★★</div></div><div class="add">Add to bag</div></div></article>
+
+      <article class="card"><div class="thumb" style="background:linear-gradient(135deg,#fdf2f8,#fbdcec)"><div class="shoe" style="background:linear-gradient(135deg,#ec4899,#a21caf)"></div><span class="tag">New</span><span class="fav">♥</span></div>
+        <div class="cbody"><div class="cname">Nova Skate</div><div class="cmeta">Skate · Classic</div><div class="cdots"><i style="background:#ec4899"></i><i style="background:#1f1a14"></i></div>
+        <div class="cfoot"><div class="price">$129</div><div class="stars">★★★★☆</div></div><div class="add">Add to bag</div></div></article>
+
+      <article class="card"><div class="thumb" style="background:linear-gradient(135deg,#f6f4ff,#e7dfff)"><div class="shoe" style="background:linear-gradient(135deg,#7c3aed,#5b21b6)"></div><span class="fav">♥</span></div>
+        <div class="cbody"><div class="cname">Pulse Court</div><div class="cmeta">Lifestyle · High</div><div class="cdots"><i style="background:#7c3aed"></i><i style="background:#e7dccd"></i></div>
+        <div class="cfoot"><div class="price">$155</div><div class="stars">★★★★★</div></div><div class="add">Add to bag</div></div></article>
+
+      <article class="card"><div class="thumb" style="background:linear-gradient(135deg,#fff7e6,#ffe8b8)"><div class="shoe" style="background:linear-gradient(135deg,#f59e0b,#b45309)"></div><span class="tag sale">−15%</span><span class="fav">♥</span></div>
+        <div class="cbody"><div class="cname">Vector Run</div><div class="cmeta">Running · Knit</div><div class="cdots"><i style="background:#f59e0b"></i><i style="background:#1f1a14"></i><i style="background:#3b82f6"></i></div>
+        <div class="cfoot"><div class="price"><s>$160</s>$136</div><div class="stars">★★★★☆</div></div><div class="add">Add to bag</div></div></article>
+    </section>
+
+    <aside class="panel cart" aria-label="Shopping bag">
+      <h3>Your Bag <span>3 items</span></h3>
+      <div class="line"><span class="lt" style="background:linear-gradient(135deg,#f0892f,#c96a16)"></span><div><div class="lname">Cloudrunner Pro</div><div class="lqty">Size 8 · Qty 1</div></div><div class="lprice">$149</div></div>
+      <div class="line"><span class="lt" style="background:linear-gradient(135deg,#3b82f6,#1e40af)"></span><div><div class="lname">Atlas Lifestyle</div><div class="lqty">Size 9 · Qty 1</div></div><div class="lprice">$112</div></div>
+      <div class="line"><span class="lt" style="background:linear-gradient(135deg,#16a34a,#0f7a37)"></span><div><div class="lname">Terra Trail</div><div class="lqty">Size 8 · Qty 1</div></div><div class="lprice">$168</div></div>
+      <div class="divider"></div>
+      <div class="subrow"><span>Subtotal</span><span>$429.00</span></div>
+      <div class="subrow"><span>Shipping</span><span style="color:var(--green);font-weight:700">Free</span></div>
+      <div class="subrow total"><span>Total</span><span>$429.00</span></div>
+      <div class="checkout">Checkout</div>
+      <div class="compare"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M3 12h18M3 18h18"/></svg>Compare 2 selected</div>
+    </aside>
+  </section>
+</main>
+</body>
+</html>

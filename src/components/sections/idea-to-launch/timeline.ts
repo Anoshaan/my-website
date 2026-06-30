@@ -25,47 +25,47 @@ export const DURATION = 44;
 export const STEPS: Step[] = [
   {
     title: "Client Idea",
-    sub: "From the first call, I listen closely to understand the client's full idea, goals, and expectations. This gives me a clear foundation before I start shaping the product.",
+    sub: "It starts with listening. From the first call, I get clear on the goal, the users, and what success looks like.",
     start: 4.2,
   },
   {
     title: "Research",
-    sub: "I do a deep dive into the idea, the users, accessibility needs, and the business goals. The aim is to understand how the experience can become simpler, clearer, and more useful.",
+    sub: "I dig into the users, the problem, and the business goals, hunting for the simplest path to a clearer experience.",
     start: 8.7,
   },
   {
     title: "Competitors",
-    sub: "I study the client's domain, similar products, and existing solutions in the market. Then I look for gaps and opportunities to create something more unique for this client.",
+    sub: "I study the space and the players in it, then find the gaps where this work can feel sharper and more distinct.",
     start: 13.2,
   },
   {
     title: "UX Flow",
-    sub: "Based on the research, I create a UX flow that is accessible, unique, and easy for the end user. Every step should help users reach their goal with less friction.",
+    sub: "I shape a flow that feels effortless, where every step moves the user toward their goal with less friction.",
     start: 17.7,
   },
   {
     title: "AI Prototype",
-    sub: "AI helps us move faster through early wireframes and low-fidelity prototypes. This gives the client something clear to review early, before we invest time in high-detail design.",
+    sub: "AI lets me move fast through early prototypes, so the client has something real to react to before detailed design.",
     start: 22.4,
   },
   {
     title: "Front-End Build",
-    sub: "Once the direction is approved, I move into full design and front-end build with support from tools like Lovable, Claude Code, v0, Antigravity, Google AI Studio, Figma, and MCP servers. AI speeds up the process, but the final design and product decisions stay human-controlled.",
+    sub: "I design and build the front end with AI in the loop for speed, while the final product decisions stay human.",
     start: 27.2,
   },
   {
     title: "Dev + QA",
-    sub: "After the front-end build, I stay involved with developers and QA to answer questions, clarify interactions, and solve functional issues. I work with the team until the product feels polished and production-ready.",
+    sub: "I stay close to dev and QA, clarifying interactions and resolving issues until the product feels truly polished.",
     start: 32.2,
   },
   {
     title: "Launch Prep",
-    sub: "I can extend the design work into launch materials like motion assets, JSON/Lottie animations, marketing visuals, countdown pages, and landing pages. This helps the product feel ready before it goes live.",
+    sub: "I carry the work into launch: motion, Lottie, and landing pages that make the product feel ready before it ships.",
     start: 36.9,
   },
   {
     title: "Launched Product",
-    sub: "From the first idea to launch, I stay with the client and team through the full journey. After launch, we can run usability tests, accessibility checks, and A/B testing to improve what real users need.",
+    sub: "I stay through launch and beyond, using real usage and testing to keep refining what users actually need.",
     start: 41,
   },
 ];
@@ -132,13 +132,25 @@ export function useProcessTimeline() {
 
     const el = animationRef.current;
 
+    // Cap React state updates to ~32fps. The reel is a slow ambient piece, so a
+    // capped cadence is visually indistinguishable but roughly halves the
+    // per-frame reconciliation of the (large) animation tree on 60Hz+ screens —
+    // a major CPU saving on phones. dt still accumulates across skipped frames,
+    // so motion speed is unchanged.
+    const FRAME_MS = 1000 / 32;
+
     const step = (ts: number) => {
       if (!inViewRef.current) {
         rafRef.current = null;
         return;
       }
       if (lastRef.current == null) lastRef.current = ts;
-      const dt = Math.min((ts - lastRef.current) / 1000, 1 / 30) * RATE;
+      const elapsed = ts - lastRef.current;
+      if (elapsed < FRAME_MS) {
+        rafRef.current = requestAnimationFrame(step);
+        return;
+      }
+      const dt = Math.min(elapsed / 1000, 1 / 30) * RATE;
       lastRef.current = ts;
       setTime((t) => {
         let next = t + dt;

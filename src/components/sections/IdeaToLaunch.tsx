@@ -116,17 +116,18 @@ export function IdeaToLaunch() {
                   <ProductProcessAnimation time={time} />
                 </div>
 
-                {/* Active step description — clean right-aligned text floating
-                    over the lower portion of the visual (no card / pill / box).
-                    A soft text-shadow keeps it legible on the animation.
-                    Hovering pauses only the text switching; the visual keeps
-                    animating via its ambient clock. */}
+                {/* Active step description — clean centered text floating over
+                    the lower portion of the visual (no card / pill / box), so it
+                    reads as part of the animation composition rather than hugging
+                    a page edge. A soft text-shadow keeps it legible on the
+                    animation. Hovering pauses only the text switching; the visual
+                    keeps animating via its ambient clock. */}
                 <div
                   onMouseEnter={pause}
                   onMouseLeave={resume}
-                  className="absolute inset-x-0 bottom-0 z-10 flex justify-end p-[clamp(10px,1.6vw,22px)]"
+                  className="absolute inset-x-0 bottom-0 z-10 flex justify-center p-[clamp(12px,1.8vw,28px)]"
                 >
-                  <div className="idea-desc max-w-[50ch] text-right">
+                  <div className="idea-desc mx-auto max-w-[52ch] text-center">
                     <AnimatePresence mode="wait">
                       <motion.p
                         key={activeStep}
@@ -134,7 +135,7 @@ export function IdeaToLaunch() {
                         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                         exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
                         transition={{ duration: 0.45, ease: easeOutExpo }}
-                        className="idea-desc-text text-[1.1rem] md:text-[1.15rem] text-white/90"
+                        className="idea-desc-text text-white/90"
                       >
                         {STEPS[activeStep].sub}
                       </motion.p>
