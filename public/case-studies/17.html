@@ -77,6 +77,60 @@
   .stat .bar i{animation-iteration-count:1!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme (set via the observer
+     script below). Intentional dark surfaces, not an inversion: muted
+     borders, reduced white, readable text, accent colours preserved. The
+     AI sidebar (.ai) is already dark by design, so it stays as-is. */
+  html[data-theme="dark"]{
+    --bg:#0d111a;--panel:#151b27;--border:rgba(255,255,255,0.09);--line:rgba(255,255,255,0.06);
+    --text:#e7ecf6;--muted:#97a3ba;
+    --violet:#a78bfa;--violet-soft:rgba(167,139,250,0.16);--violet-bd:rgba(167,139,250,0.4);
+    --green:#34d399;--amber:#fbbf24;--red:#f87171;--blue:#4b8bff;
+  }
+  html[data-theme="dark"] body{background:#0a0d14}
+  html[data-theme="dark"] .stage{background:linear-gradient(180deg,#11161f,#0d111a);box-shadow:0 35px 90px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] .mhead p{color:var(--muted)}
+  html[data-theme="dark"] .audit-chip{color:#c4b5fd;background:var(--violet-soft);border-color:var(--violet-bd)}
+  html[data-theme="dark"] .stat{background:var(--panel);box-shadow:0 18px 45px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] .stat .bar{background:rgba(255,255,255,0.08)}
+  html[data-theme="dark"] .panel{background:var(--panel);box-shadow:0 18px 45px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] th{color:#6f7c92;background:#11161f}
+  html[data-theme="dark"] td{color:#c4cfe2}
+  html[data-theme="dark"] .cname .sw{background:var(--violet-soft);color:var(--violet)}
+  html[data-theme="dark"] .oldname,
+  html[data-theme="dark"] .arrow{color:#6f7c92}
+  html[data-theme="dark"] .newname{color:var(--violet)}
+  html[data-theme="dark"] .st.ok{background:rgba(52,211,153,0.15);color:var(--green)}
+  html[data-theme="dark"] .st.fix{background:var(--violet-soft);color:#c4b5fd}
+  html[data-theme="dark"] .st.miss{background:rgba(251,191,36,0.15);color:#fbbf24}
+</style>
+<script>
+  /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+     and observes <html data-theme> on the parent (set by the site's no-flash
+     script before paint, so there is no wrong-theme flash). Falls back to the
+     OS preference, then light, and also accepts a postMessage channel. */
+  (function () {
+    var root = document.documentElement;
+    function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+    var pe = null;
+    try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+    var initial = pe && pe.getAttribute("data-theme");
+    if (initial !== "dark" && initial !== "light") {
+      initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    apply(initial);
+    if (pe && "MutationObserver" in window) {
+      try {
+        new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+          .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+      } catch (e) {}
+    }
+    window.addEventListener("message", function (e) {
+      if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+    });
+  })();
+</script>
 </head>
 <body>
 <main class="stage" aria-label="AI-assisted design system build mockup">

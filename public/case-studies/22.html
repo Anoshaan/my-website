@@ -82,6 +82,58 @@
   .card,.preview{animation-iteration-count:1!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme (set via the observer
+     script below). Intentional dark surfaces, not an inversion: muted
+     borders, reduced white, readable text, accent colours preserved. The
+     .preview is a literal browser window showing a light landing page, so
+     its inner content stays light; only the surrounding chrome goes dark. */
+  html[data-theme="dark"]{
+    --bg:#0d111a;--surface:#151b27;--border:rgba(255,255,255,0.09);--line:rgba(255,255,255,0.06);
+    --text:#e7ecf6;--muted:#97a3ba;
+    --teal:#2dd4bf;--teal-soft:rgba(45,212,191,0.16);--green:#34d399;--blue:#4b8bff;--amber:#fbbf24;--pink:#f472b6;--violet:#a78bfa;
+  }
+  html[data-theme="dark"] body{background:#0a0d14}
+  html[data-theme="dark"] .stage{background:linear-gradient(180deg,#11161f,#0d111a);box-shadow:0 35px 90px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] .head .badge{color:#5fe0d4;background:var(--teal-soft);border-color:rgba(45,212,191,0.35)}
+  html[data-theme="dark"] .preview{background:var(--surface);border-color:var(--border);box-shadow:0 18px 45px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] .card{background:var(--surface);border-color:var(--border);box-shadow:0 18px 45px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] .tk{color:#c4cfe2}
+  html[data-theme="dark"] .tk i.ok{background:rgba(52,211,153,0.15);color:var(--green)}
+  html[data-theme="dark"] .tk i.run{background:rgba(251,191,36,0.15);color:var(--amber)}
+  html[data-theme="dark"] .tk i.no{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.18)}
+  html[data-theme="dark"] .file{border-color:var(--line);color:#c4cfe2}
+  html[data-theme="dark"] .file .sz{color:var(--muted)}
+  html[data-theme="dark"] .ast{border-color:var(--line)}
+  html[data-theme="dark"] .ast .bd{background:#1b2230}
+  html[data-theme="dark"] .ast .al{background:rgba(255,255,255,0.1)}
+</style>
+<script>
+  /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+     and observes <html data-theme> on the parent (set by the site's no-flash
+     script before paint, so there is no wrong-theme flash). Falls back to the
+     OS preference, then light, and also accepts a postMessage channel. */
+  (function () {
+    var root = document.documentElement;
+    function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+    var pe = null;
+    try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+    var initial = pe && pe.getAttribute("data-theme");
+    if (initial !== "dark" && initial !== "light") {
+      initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    apply(initial);
+    if (pe && "MutationObserver" in window) {
+      try {
+        new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+          .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+      } catch (e) {}
+    }
+    window.addEventListener("message", function (e) {
+      if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+    });
+  })();
+</script>
 </head>
 <body>
 <main class="stage" aria-label="Landing page launch pack mockup">

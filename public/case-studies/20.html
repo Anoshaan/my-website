@@ -70,6 +70,63 @@
   *,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme (set via the observer
+     script below). Intentional dark surfaces, not an inversion: muted
+     borders, reduced white, readable text, accent colours (redline / blue)
+     preserved. The code box (.codebox) is already dark by design. */
+  html[data-theme="dark"]{
+    --bg:#0d111a;--canvas:#11161f;--panel:#151b27;--border:rgba(255,255,255,0.09);--line:rgba(255,255,255,0.06);
+    --text:#e7ecf6;--muted:#97a3ba;
+    --red:#f87171;--redline:#fb6a90;--blue:#4b8bff;--blue-soft:rgba(75,139,255,0.16);--green:#34d399;--slate:#94a3b8;
+  }
+  html[data-theme="dark"] body{background:#0a0d14}
+  html[data-theme="dark"] .stage{box-shadow:0 35px 90px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] .toolbar{background:var(--panel)}
+  html[data-theme="dark"] .tl .mode{color:var(--blue);background:var(--blue-soft)}
+  html[data-theme="dark"] .bp.on{color:var(--blue);background:var(--blue-soft);border-color:rgba(75,139,255,0.4)}
+  html[data-theme="dark"] .canvas{background:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.06) 1px,transparent 0)}
+  html[data-theme="dark"] .spec-frame{background:var(--panel);box-shadow:0 18px 45px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] .cs{background:#1b2230;border-color:var(--line)}
+  html[data-theme="dark"] .cs .ci{background:rgba(255,255,255,0.1)}
+  html[data-theme="dark"] .cs .cl{background:rgba(255,255,255,0.07)}
+  html[data-theme="dark"] .rl .tag{background:#1b2230;border-color:rgba(251,106,144,0.45);color:var(--redline)}
+  html[data-theme="dark"] .dot-h{background:#1b2230}
+  html[data-theme="dark"] .insp{background:var(--panel)}
+  html[data-theme="dark"] .specrow{color:#97a3ba}
+  html[data-theme="dark"] .grp-h{color:#6f7c92}
+  html[data-theme="dark"] .notes{background:rgba(251,191,36,0.08);border-color:rgba(251,191,36,0.22)}
+  html[data-theme="dark"] .notes .nh{color:#fbbf24}
+  html[data-theme="dark"] .note{color:#d8c39a}
+  html[data-theme="dark"] .note i{background:rgba(251,191,36,0.2);color:#fbbf24}
+  html[data-theme="dark"] .specrow .sw{box-shadow:inset 0 0 0 1px rgba(255,255,255,0.1)}
+</style>
+<script>
+  /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+     and observes <html data-theme> on the parent (set by the site's no-flash
+     script before paint, so there is no wrong-theme flash). Falls back to the
+     OS preference, then light, and also accepts a postMessage channel. */
+  (function () {
+    var root = document.documentElement;
+    function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+    var pe = null;
+    try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+    var initial = pe && pe.getAttribute("data-theme");
+    if (initial !== "dark" && initial !== "light") {
+      initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    apply(initial);
+    if (pe && "MutationObserver" in window) {
+      try {
+        new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+          .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+      } catch (e) {}
+    }
+    window.addEventListener("message", function (e) {
+      if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+    });
+  })();
+</script>
 </head>
 <body>
 <main class="stage" aria-label="Design to development handoff redline spec mockup">

@@ -77,6 +77,67 @@
   .phone{animation-iteration-count:1!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme. Intentional dark surfaces,
+     not an inversion: muted borders, readable text, accents preserved. */
+  html[data-theme="dark"]{
+    --bg:#0d111a;--surface:#151b27;--border:rgba(255,255,255,.09);--line:rgba(255,255,255,.06);
+    --text:#e7ecf6;--muted:#97a3ba;
+    --green:#34d399;--green2:#2dd4bf;--green-soft:rgba(52,211,153,.16);--green-bd:rgba(52,211,153,.3);
+    --amber:#fbbf24;--ink:#e7ecf6;
+  }
+  html[data-theme="dark"] body{background:radial-gradient(circle at 20% 100%,rgba(52,211,153,.10),transparent 32%),var(--bg)}
+  html[data-theme="dark"] .stage{background:linear-gradient(180deg,#11161f,#0d111a);border-color:rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.5)}
+  html[data-theme="dark"] .browser{background:#151b27;border-color:rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.5)}
+  html[data-theme="dark"] .bbar{background:#1b2230}
+  html[data-theme="dark"] .bbar i{background:#3a4458}
+  html[data-theme="dark"] .bbar .url{background:#10151f;color:#97a3ba}
+  html[data-theme="dark"] .nav .nm{color:#e7ecf6}
+  html[data-theme="dark"] .nav .links{color:#97a3ba}
+  html[data-theme="dark"] .hero{background:linear-gradient(135deg,rgba(52,211,153,.08),#151b27)}
+  html[data-theme="dark"] .hero .ht{color:#e7ecf6}
+  html[data-theme="dark"] .hero .hs{background:rgba(255,255,255,.12)}
+  html[data-theme="dark"] .svc .sl{background:rgba(255,255,255,.09)}
+  html[data-theme="dark"] .trust{background:#1b2230}
+  html[data-theme="dark"] .trust .rl{background:rgba(255,255,255,.12)}
+  html[data-theme="dark"] .trust .badge{color:#97a3ba}
+  html[data-theme="dark"] .phone{background:#151b27;border-color:#06120d;box-shadow:0 18px 45px rgba(0,0,0,.5)}
+  html[data-theme="dark"] .cal-h{color:#e7ecf6}
+  html[data-theme="dark"] .cal-h .ar{background:#1b2230;color:#2dd4bf}
+  html[data-theme="dark"] .cal .d{color:#c4cfe2;background:#1b2230}
+  html[data-theme="dark"] .cal .d.mut{color:#6f7c92;background:transparent}
+  html[data-theme="dark"] .slots-h{color:#e7ecf6}
+  html[data-theme="dark"] .slot{background:#151b27;border-color:rgba(52,211,153,.3);color:#2dd4bf}
+  html[data-theme="dark"] .slot.off{color:#6f7c92;border-color:rgba(255,255,255,.09);background:#1b2230}
+  html[data-theme="dark"] .sticky{background:#151b27;border-top-color:rgba(255,255,255,.09)}
+  html[data-theme="dark"] .sticky .call2{border-color:rgba(52,211,153,.3);color:#2dd4bf}
+</style>
+<script>
+    /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+       and observes <html data-theme> on the parent (set by the site's no-flash
+       script before paint, so there is no wrong-theme flash). Falls back to the
+       OS preference, then light, and also accepts a postMessage channel. */
+    (function () {
+      var root = document.documentElement;
+      function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+      var pe = null;
+      try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+      var initial = pe && pe.getAttribute("data-theme");
+      if (initial !== "dark" && initial !== "light") {
+        initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      }
+      apply(initial);
+      if (pe && "MutationObserver" in window) {
+        try {
+          new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+            .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+        } catch (e) {}
+      }
+      window.addEventListener("message", function (e) {
+        if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+      });
+    })();
+  </script>
 </head>
 <body>
 <main class="stage" aria-label="Local service website with booking path mockup">

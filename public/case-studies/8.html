@@ -1013,6 +1013,117 @@
       }
     }
   </style>
+  <style id="cs-dark-theme">
+    /* Dark variant — follows the embedding page theme (set via the observer
+       script below). Intentional dark surfaces, not an inversion: muted
+       borders, reduced white, readable text, accent colours preserved. */
+    html[data-theme="dark"] {
+      --canvas: #0d111a;
+      --ink: #e7ecf6;
+      --soft: #97a3ba;
+      --muted: #6f7c92;
+      --line: rgba(255, 255, 255, 0.09);
+      --phone: #05070c;
+      --screen: #151b27;
+      --indigo: #8b87ff;
+      --indigo-soft: rgba(139, 135, 255, 0.16);
+      --cyan: #22d3ee;
+      --cyan-soft: rgba(34, 211, 238, 0.15);
+      --green: #34d399;
+      --green-soft: rgba(52, 211, 153, 0.15);
+      --amber: #fbbf24;
+      --amber-soft: rgba(251, 191, 36, 0.15);
+      --rose: #f87171;
+      --rose-soft: rgba(248, 113, 113, 0.15);
+      --purple: #a78bfa;
+      --purple-soft: rgba(167, 139, 250, 0.16);
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
+      --phone-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+    }
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 12% 12%, rgba(139, 135, 255, 0.12), transparent 30%),
+        radial-gradient(circle at 88% 18%, rgba(34, 211, 238, 0.10), transparent 32%),
+        radial-gradient(circle at 52% 94%, rgba(167, 139, 250, 0.08), transparent 34%),
+        linear-gradient(180deg, #11161f 0%, var(--canvas) 100%);
+    }
+    html[data-theme="dark"] .stage {
+      border-color: rgba(255, 255, 255, 0.07);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04), transparent 38%),
+        linear-gradient(90deg, rgba(126, 144, 184, 0.05) 1px, transparent 1px),
+        linear-gradient(rgba(126, 144, 184, 0.045) 1px, transparent 1px),
+        linear-gradient(145deg, #11161f, #0d111a);
+      background-size: 100% 100%, 42px 42px, 42px 42px, 100% 100%;
+    }
+    html[data-theme="dark"] .stage::before { color: rgba(139, 135, 255, 0.05); }
+    /* glass chips / labels */
+    html[data-theme="dark"] .tag,
+    html[data-theme="dark"] .step-label { background: #171e2b; }
+    html[data-theme="dark"] .app-badge::before { background: rgba(255, 255, 255, 0.85); }
+    /* phone screen surfaces (white -> dark surface) */
+    html[data-theme="dark"] .home-hero {
+      background:
+        radial-gradient(circle at 86% 0%, rgba(139, 135, 255, 0.22), transparent 42%),
+        linear-gradient(145deg, #1b2230, #151b27);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+    html[data-theme="dark"] .lesson-ring { background: conic-gradient(var(--indigo) 0deg 230deg, rgba(255, 255, 255, 0.08) 230deg 360deg); }
+    html[data-theme="dark"] .lesson-ring::after { background: var(--screen); }
+    html[data-theme="dark"] .course,
+    html[data-theme="dark"] .answer,
+    html[data-theme="dark"] .achievement,
+    html[data-theme="dark"] .bottom-nav { background: #1b2230; }
+    html[data-theme="dark"] .chapter { background: #1b2230; }
+    html[data-theme="dark"] .quiz-card {
+      background:
+        radial-gradient(circle at 84% 0%, rgba(251, 191, 36, 0.16), transparent 40%),
+        var(--screen);
+    }
+    html[data-theme="dark"] .progress-hero {
+      background:
+        radial-gradient(circle at 85% 0%, rgba(52, 211, 153, 0.16), transparent 40%),
+        var(--screen);
+    }
+    html[data-theme="dark"] .play-card { background: #1b2230; }
+    html[data-theme="dark"] .answer.active,
+    html[data-theme="dark"] .explain { border-color: rgba(52, 211, 153, 0.4); }
+    html[data-theme="dark"] .week-chart {
+      background:
+        linear-gradient(to bottom, transparent 24%, rgba(255, 255, 255, 0.06) 25%, transparent 26%),
+        linear-gradient(to bottom, transparent 49%, rgba(255, 255, 255, 0.06) 50%, transparent 51%),
+        linear-gradient(to bottom, transparent 74%, rgba(255, 255, 255, 0.06) 75%, transparent 76%),
+        var(--screen);
+    }
+    html[data-theme="dark"] .avatar { border-color: rgba(255, 255, 255, 0.14); }
+    html[data-theme="dark"] .statusbar { color: rgba(231, 236, 246, 0.78); }
+  </style>
+  <script>
+    /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+       and observes <html data-theme> on the parent (set by the site's no-flash
+       script before paint, so there is no wrong-theme flash). Falls back to the
+       OS preference, then light, and also accepts a postMessage channel. */
+    (function () {
+      var root = document.documentElement;
+      function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+      var pe = null;
+      try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+      var initial = pe && pe.getAttribute("data-theme");
+      if (initial !== "dark" && initial !== "light") {
+        initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      }
+      apply(initial);
+      if (pe && "MutationObserver" in window) {
+        try {
+          new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+            .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+        } catch (e) {}
+      }
+      window.addEventListener("message", function (e) {
+        if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+      });
+    })();
+  </script>
 </head>
 <body>
   <section class="stage">

@@ -47,7 +47,7 @@ export function PathwayCard({ pathway, featured = false, className = "", onOpen 
         <div
           className={`relative overflow-hidden rounded-2xl transition-transform duration-700 group-hover:-translate-y-1 group-hover:scale-[1.02] ${
             isCaseEmbed
-              ? "aspect-video w-full bg-[#0a0e1a]"
+              ? "pw-embed-surface aspect-video w-full"
               : isLottie
                 ? "aspect-video w-full flex items-center justify-center"
                 : "flex items-center justify-center h-full min-h-[220px]"

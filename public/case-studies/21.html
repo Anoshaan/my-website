@@ -77,6 +77,63 @@
   .panel{animation-iteration-count:1!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme (set via the observer
+     script below). Intentional dark surfaces, not an inversion: muted
+     borders, reduced white, readable text, accent colours preserved. */
+  html[data-theme="dark"]{
+    --bg:#0d111a;--surface:#151b27;--border:rgba(255,255,255,0.09);--line:rgba(255,255,255,0.06);
+    --text:#e7ecf6;--muted:#97a3ba;
+    --indigo:#8b8dff;--indigo-soft:rgba(99,102,241,0.18);--green:#34d399;--amber:#fbbf24;--red:#f87171;--blue:#4b8bff;--teal:#2dd4bf;
+  }
+  html[data-theme="dark"] body{background:#0a0d14}
+  html[data-theme="dark"] .stage{background:linear-gradient(180deg,#11161f,#0d111a);box-shadow:0 35px 90px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] .head .badge{color:#b3b4ff;background:var(--indigo-soft);border-color:rgba(99,102,241,0.4)}
+  html[data-theme="dark"] .panel{background:var(--surface);box-shadow:0 18px 45px rgba(0,0,0,0.5)}
+  html[data-theme="dark"] .story{border-color:var(--line);border-left-color:var(--indigo)}
+  html[data-theme="dark"] .story .id{color:#b3b4ff}
+  html[data-theme="dark"] .story p{color:#c4cfe2}
+  html[data-theme="dark"] .story p b{color:var(--text)}
+  html[data-theme="dark"] .ac{color:#97a3ba}
+  html[data-theme="dark"] .ac i.ok{background:rgba(52,211,153,0.15);color:var(--green)}
+  html[data-theme="dark"] .ac i.no{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.18)}
+  html[data-theme="dark"] .pts{color:#97a3ba;background:rgba(255,255,255,0.06)}
+  html[data-theme="dark"] .scope .lh.out{color:var(--muted)}
+  html[data-theme="dark"] .chip.in{background:rgba(52,211,153,0.13);color:#5fe0ad;border-color:rgba(52,211,153,0.3)}
+  html[data-theme="dark"] .chip.out{background:rgba(255,255,255,0.04);color:#97a3ba;border-color:rgba(255,255,255,0.14)}
+  html[data-theme="dark"] .q.later{background:#2a3342;color:#c4cfe2}
+  html[data-theme="dark"] .q.later .item{background:#4a5566}
+  html[data-theme="dark"] .axis{color:var(--muted)}
+  html[data-theme="dark"] .phase{border-color:var(--line)}
+  html[data-theme="dark"] .phase .pl{background:rgba(255,255,255,0.08)}
+  html[data-theme="dark"] .phase .pbar{background:rgba(255,255,255,0.08)}
+</style>
+<script>
+  /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+     and observes <html data-theme> on the parent (set by the site's no-flash
+     script before paint, so there is no wrong-theme flash). Falls back to the
+     OS preference, then light, and also accepts a postMessage channel. */
+  (function () {
+    var root = document.documentElement;
+    function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+    var pe = null;
+    try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+    var initial = pe && pe.getAttribute("data-theme");
+    if (initial !== "dark" && initial !== "light") {
+      initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    apply(initial);
+    if (pe && "MutationObserver" in window) {
+      try {
+        new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+          .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+      } catch (e) {}
+    }
+    window.addEventListener("message", function (e) {
+      if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+    });
+  })();
+</script>
 </head>
 <body>
 <main class="stage" aria-label="Product owner delivery pack mockup">

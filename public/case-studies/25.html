@@ -79,6 +79,71 @@
   .phone{animation-iteration-count:1!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme. This mockup is already a
+     dark green-on-near-black portfolio; under dark we re-tune its surfaces to
+     the shared family scale so it sits with the other previews. */
+  html[data-theme="dark"]{
+    --bg:#0d111a;
+    --text:#e7ecf6;
+    --muted:#97a3ba;
+    --green:#34d399;
+    --green2:#10b981;
+    --emerald:#34d399;
+    --ink:#0d111a;
+    --cream:#e7ecf6;
+  }
+  html[data-theme="dark"] body{background:#0d111a}
+  html[data-theme="dark"] .stage{
+    background:radial-gradient(circle at 25% 20%,rgba(52,211,153,.14),transparent 36%),linear-gradient(160deg,#151b27,#0d111a);
+    border-color:rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.5)}
+  html[data-theme="dark"] .browser{background:#151b27;border-color:rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.5)}
+  html[data-theme="dark"] .bbar{background:#1b2230;border-bottom-color:rgba(255,255,255,.09)}
+  html[data-theme="dark"] .bbar .url{background:#10151f;color:#97a3ba}
+  html[data-theme="dark"] .topnav .links{color:#97a3ba}
+  html[data-theme="dark"] .topnav .links b{color:#e7ecf6}
+  html[data-theme="dark"] .hero p{color:#97a3ba}
+  html[data-theme="dark"] .hero .btns .g{border-color:rgba(255,255,255,.16);color:#c4cfe2}
+  html[data-theme="dark"] .wt{border-color:rgba(255,255,255,.09);background:linear-gradient(135deg,#1b2230,#151b27)}
+  html[data-theme="dark"] .phone{background:#151b27;border-color:#0d111a}
+  html[data-theme="dark"] .phone .pnav{color:#e7ecf6}
+  html[data-theme="dark"] .phone .pcards .pc{border-color:rgba(255,255,255,.09);background:#1b2230}
+  html[data-theme="dark"] .ai{background:#0d111a;border-left-color:rgba(255,255,255,.09)}
+  html[data-theme="dark"] .ai-h .sub{color:#97a3ba}
+  html[data-theme="dark"] .timeline::before{background:linear-gradient(180deg,#34d399,rgba(255,255,255,.09))}
+  html[data-theme="dark"] .ev .dot{background:#0d111a}
+  html[data-theme="dark"] .ev .lbl{color:#dce3f0}
+  html[data-theme="dark"] .ev .meta{color:#6f7c92}
+  html[data-theme="dark"] .statcard{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.22)}
+  html[data-theme="dark"] .statcard .row{color:#97a3ba}
+  html[data-theme="dark"] .statcard .row b{color:#e7ecf6}
+</style>
+<script>
+    /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+       and observes <html data-theme> on the parent (set by the site's no-flash
+       script before paint, so there is no wrong-theme flash). Falls back to the
+       OS preference, then light, and also accepts a postMessage channel. */
+    (function () {
+      var root = document.documentElement;
+      function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+      var pe = null;
+      try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+      var initial = pe && pe.getAttribute("data-theme");
+      if (initial !== "dark" && initial !== "light") {
+        initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      }
+      apply(initial);
+      if (pe && "MutationObserver" in window) {
+        try {
+          new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+            .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+        } catch (e) {}
+      }
+      window.addEventListener("message", function (e) {
+        if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+      });
+    })();
+  </script>
 </head>
 <body>
 <main class="stage" aria-label="Portfolio website with AI rapid production mockup">

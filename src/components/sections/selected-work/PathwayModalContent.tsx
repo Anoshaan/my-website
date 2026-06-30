@@ -2,6 +2,7 @@ import React from "react";
 import { ProductPathway } from "@/lib/product-pathways";
 import { PathwayPlaceholder } from "./PathwayPlaceholder";
 import { LabsEmbed } from "@/components/sections/labs/LabsEmbed";
+import { CASE_STUDY_COMPONENTS } from "./caseStudyRegistry";
 
 /**
  * The shared body rendered inside CaseStudyOverlay for every pathway. All
@@ -57,6 +58,13 @@ function ListSection({
 }
 
 export function PathwayModalContent({ pathway }: { pathway: ProductPathway }) {
+  // Case studies with a bespoke, visual-first story get their own component
+  // (keyed by id); everything else uses the generic text layout below.
+  const Bespoke = CASE_STUDY_COMPONENTS[pathway.id];
+  if (Bespoke) {
+    return <Bespoke pathway={pathway} />;
+  }
+
   // The Lottie pathway (id 19) is a square animation; every other .html
   // mockup is a 16:9 interactive stage rendered through LabsEmbed.
   const isLottie = pathway.id === 19;
