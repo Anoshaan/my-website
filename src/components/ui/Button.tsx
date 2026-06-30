@@ -74,16 +74,28 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const node =
       "href" in props && props.href ? (
-        <Link
-          href={props.href}
-          target={props.target}
-          download={props.download}
-          className={inner}
-        >
-          {leadingIcon}
-          {children}
-          {icon}
-        </Link>
+        props.download ? (
+          // Static-file downloads (e.g. the resume PDF) are not app routes, so
+          // a plain <a> is correct here. Using next/link made Next prefetch the
+          // file as an RSC route, which 404s in the console (the download still
+          // worked, but it dirtied the console). Plain <a> downloads cleanly.
+          <a
+            href={props.href}
+            target={props.target}
+            download={props.download}
+            className={inner}
+          >
+            {leadingIcon}
+            {children}
+            {icon}
+          </a>
+        ) : (
+          <Link href={props.href} target={props.target} className={inner}>
+            {leadingIcon}
+            {children}
+            {icon}
+          </Link>
+        )
       ) : (
         <button
           ref={ref}

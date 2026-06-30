@@ -1,0 +1,363 @@
+- generic [active] [ref=e1]:
+  - button "Switch to dark mode" [ref=e2] [cursor=pointer]:
+    - generic [ref=e3]:
+      - img [ref=e4]
+      - img [ref=e7]
+  - banner [ref=e9]:
+    - navigation "Primary" [ref=e10]:
+      - link "Home" [ref=e11] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e12]:
+          - generic [ref=e13]: Home
+          - generic [ref=e14]: Home
+      - link "Selected Work" [ref=e16] [cursor=pointer]:
+        - /url: /selected-work
+        - generic [ref=e17]:
+          - generic [ref=e18]: Selected Work
+          - generic [ref=e19]: Selected Work
+      - link "Process" [ref=e20] [cursor=pointer]:
+        - /url: /process
+        - generic [ref=e21]:
+          - generic [ref=e22]: Process
+          - generic [ref=e23]: Process
+      - link "Branding" [ref=e24] [cursor=pointer]:
+        - /url: /branding
+        - generic [ref=e25]:
+          - generic [ref=e26]: Branding
+          - generic [ref=e27]: Branding
+      - link "About Me" [ref=e28] [cursor=pointer]:
+        - /url: /about-me
+        - generic [ref=e29]:
+          - generic [ref=e30]: About Me
+          - generic [ref=e31]: About Me
+      - link "Let's Talk" [ref=e32] [cursor=pointer]:
+        - /url: /lets-talk
+        - generic [ref=e33]:
+          - generic [ref=e34]: Let's Talk
+          - generic [ref=e35]: Let's Talk
+  - main [ref=e36]:
+    - generic [ref=e37]:
+      - generic [ref=e40]:
+        - heading "Designing product experiences shaped by human behavior." [level=1] [ref=e43]
+        - generic [ref=e44]:
+          - paragraph [ref=e46]: I design web, mobile, and AI product experiences that turn complex ideas into clear, usable, scalable products. I combine UX thinking, visual craft, motion, and product strategy to make digital products that feel simple and human.
+          - generic [ref=e48]:
+            - link "View Selected Work" [ref=e49] [cursor=pointer]:
+              - /url: /selected-work
+              - img [ref=e50]
+              - text: View Selected Work
+            - link "Build a Brand" [ref=e52] [cursor=pointer]:
+              - /url: /branding
+              - img [ref=e53]
+              - text: Build a Brand
+      - generic [ref=e57]:
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - generic [ref=e63]: ⌂
+              - generic [ref=e64]:
+                - generic [ref=e65]: ❖
+                - text: Product Experience Portfolio
+                - generic [ref=e66]: ✕
+              - generic [ref=e67]: +
+            - generic [ref=e68]:
+              - generic [ref=e69]: ‐
+              - generic [ref=e70]: □
+              - generic [ref=e71]: ✕
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - generic [ref=e74]: ☰
+              - generic [ref=e75]:
+                - generic [ref=e76]:
+                  - text: Portfolio v2.0
+                  - generic [ref=e77]: ▼
+                - generic [ref=e78]:
+                  - text: Team project
+                  - generic [ref=e79]: Pro
+            - generic [ref=e80]:
+              - generic [ref=e81]: You
+              - generic [ref=e82]: ▷
+              - button [ref=e83] [cursor=pointer]: Share
+          - generic [ref=e84]:
+            - complementary [ref=e85]:
+              - generic [ref=e86]:
+                - generic [ref=e87]: Layers
+                - generic [ref=e88]:
+                  - generic [ref=e89]: "#"
+                  - text: Desktop Viewport
+                - generic [ref=e90]:
+                  - generic [ref=e91]: "#"
+                  - text: Navigation Bar
+                - generic [ref=e92]:
+                  - generic [ref=e93]: T
+                  - text: Logo Mark
+                - generic [ref=e94]:
+                  - generic [ref=e95]: "#"
+                  - text: Hero Section
+                - generic [ref=e96]:
+                  - generic [ref=e97]: ≡
+                  - text: Content Block
+                - generic [ref=e98]:
+                  - generic [ref=e99]: ◇
+                  - text: Badge Tag
+                - generic [ref=e100]:
+                  - generic [ref=e101]: T
+                  - text: “Product Experience…”
+                - generic [ref=e102]:
+                  - generic [ref=e103]: T
+                  - text: Description Block
+                - generic [ref=e104]:
+                  - generic [ref=e105]: ≡
+                  - text: Button Auto-Layout
+                - generic [ref=e106]:
+                  - generic [ref=e107]: ◇
+                  - text: Primary CTA
+                - generic [ref=e108]:
+                  - generic [ref=e109]: "#"
+                  - text: Visual Graphic
+                - generic [ref=e110]:
+                  - generic [ref=e111]: ⚙
+                  - text: Character Component
+                - generic [ref=e112]:
+                  - generic [ref=e113]: ◐
+                  - text: Orbit Ring
+            - main [ref=e114]:
+              - generic [ref=e115]:
+                - navigation [ref=e116]:
+                  - generic [ref=e117]: ANTIGRAVITY
+                  - generic [ref=e118]:
+                    - generic [ref=e119]: Work
+                    - generic [ref=e120]: Lab
+                    - generic [ref=e121]: Profile
+                - generic [ref=e123]:
+                  - generic [ref=e124]: M3 & GSAP Integration
+                  - heading [level=2] [ref=e125]:
+                    - text: Product
+                    - text: Experience.
+                  - paragraph [ref=e127]:
+                    - strong [ref=e128]: 8 years of experience
+                    - text: crafting clear, useful digital products, using
+                    - strong [ref=e129]: AI
+                    - text: and physics-based motion to bridge static design and fluid code.
+                  - generic [ref=e130]:
+                    - generic [ref=e131]: View Projects
+                    - generic [ref=e132]: Resume
+              - generic:
+                - img
+                - generic: You
+            - complementary [ref=e141]:
+              - generic [ref=e142]:
+                - generic [ref=e143]: Design
+                - generic [ref=e144]: Prototype
+              - generic [ref=e145]:
+                - generic [ref=e147]: Text
+                - generic [ref=e148]:
+                  - generic [ref=e149]: Font
+                  - generic [ref=e150]: Inter
+                - generic [ref=e151]:
+                  - generic [ref=e152]: Size
+                  - generic [ref=e153]: "40"
+              - generic [ref=e154]:
+                - generic [ref=e156]: Fill
+                - generic [ref=e157]:
+                  - generic [ref=e160]: 0D99FF
+                  - generic [ref=e161]: 100%
+              - generic [ref=e162]:
+                - generic [ref=e164]: Animation
+                - generic [ref=e165]:
+                  - generic [ref=e166]: Float Y
+                  - generic [ref=e167]: "-14px"
+        - generic:
+          - generic:
+            - paragraph: The Problem
+            - heading "Why Great Products Need More Than Great Interfaces" [level=2]
+            - paragraph: Most products don’t fail because of bad technology or poor visuals. They fail because they overlook the people they’re built for. Great design isn’t just about making things look better. It’s about understanding how people think, feel, and make decisions.
+            - paragraph: What the product really needs
+            - paragraph: End-user mapping · Accessibility depth · First-five-second clarity · Psychology-led design · Guided attention · Friction removal · Task-first UX · Trust-building moments · Product-specific flow · Less noise, more direction
+      - generic [ref=e169]:
+        - generic [ref=e171]:
+          - paragraph [ref=e172]: Thinking Model
+          - heading "How I read the user before I design" [level=2] [ref=e173]
+          - paragraph [ref=e174]: "I begin by listening closely: what the client wants to build, what users need to understand, and where the business needs clarity. From there, I turn scattered ideas into a shared direction before touching the interface."
+        - generic [ref=e175]:
+          - generic:
+            - img
+          - generic:
+            - generic: The user
+          - generic [ref=e176]:
+            - generic [ref=e178]:
+              - img [ref=e180]
+              - heading "User Intent" [level=3] [ref=e183]
+              - paragraph [ref=e184]: What they came to do, not just what the product wants to show.
+            - generic [ref=e186]:
+              - img [ref=e188]
+              - heading "Mental Load" [level=3] [ref=e192]
+              - paragraph [ref=e193]: How much thinking, guessing, or effort the interface is asking from them.
+            - generic [ref=e195]:
+              - img [ref=e197]
+              - heading "Trust Moments" [level=3] [ref=e200]
+              - paragraph [ref=e201]: The small details that make users feel safe, clear, and confident.
+            - generic [ref=e203]:
+              - img [ref=e205]
+              - heading "Natural Next Step" [level=3] [ref=e208]
+              - paragraph [ref=e209]: The path that feels obvious without forcing the user to think too much.
+      - generic [ref=e213]:
+        - generic [ref=e214]:
+          - generic [ref=e215]:
+            - paragraph [ref=e216]: Process
+            - heading "From first idea to launch, faster with AI" [level=2] [ref=e217]
+            - paragraph [ref=e218]: "I guide the full product journey: shaping the idea, designing the experience, building fast prototypes, supporting dev, and preparing for launch."
+          - list [ref=e220]:
+            - listitem [ref=e221]:
+              - button "Client Idea" [ref=e222] [cursor=pointer]:
+                - generic [ref=e223]: Client Idea
+            - listitem [ref=e224]:
+              - button "Research" [ref=e225] [cursor=pointer]:
+                - generic [ref=e226]: Research
+            - listitem [ref=e227]:
+              - button "Competitors" [ref=e228] [cursor=pointer]:
+                - generic [ref=e229]: Competitors
+            - listitem [ref=e230]:
+              - button "UX Flow" [ref=e231] [cursor=pointer]:
+                - generic [ref=e232]: UX Flow
+            - listitem [ref=e233]:
+              - button "AI Prototype" [ref=e234] [cursor=pointer]:
+                - generic [ref=e235]: AI Prototype
+            - listitem [ref=e236]:
+              - button "Front-End Build" [ref=e237] [cursor=pointer]:
+                - generic [ref=e238]: Front-End Build
+            - listitem [ref=e239]:
+              - button "Dev + QA" [ref=e240] [cursor=pointer]:
+                - generic [ref=e241]: Dev + QA
+            - listitem [ref=e242]:
+              - button "Launch Prep" [ref=e243] [cursor=pointer]:
+                - generic [ref=e244]: Launch Prep
+            - listitem [ref=e245]:
+              - button "Launched Product" [ref=e246] [cursor=pointer]:
+                - generic [ref=e247]: Launched Product
+          - link "Build a brand with me" [ref=e250] [cursor=pointer]:
+            - /url: /branding
+        - generic [ref=e253]:
+          - 'img "Animated walkthrough of the product process: client idea, research, competitors, UX flow, AI prototype, front-end build, dev and QA, launch prep, and launched product." [ref=e254]'
+          - paragraph [ref=e258]: It starts with listening. From the first call, I get clear on the goal, the users, and what success looks like.
+      - generic [ref=e262]:
+        - generic [ref=e264]:
+          - paragraph [ref=e265]: Method
+          - heading "This Is How I Stay Ahead" [level=2] [ref=e266]
+        - generic [ref=e267]:
+          - article [ref=e270]:
+            - img [ref=e272]
+            - heading "AI-Powered Exploration" [level=3] [ref=e285]
+            - paragraph [ref=e286]: From idea to first concept in minutes, not days.
+            - paragraph [ref=e287]: Using AI to rapidly explore ideas, wireframes, flows, and design directions frees up time to focus on solving meaningful problems.
+          - article [ref=e290]:
+            - img [ref=e292]
+            - heading "Human-Guided Control" [level=3] [ref=e318]
+            - paragraph [ref=e319]: Speed means nothing without structure.
+            - paragraph [ref=e320]: AI accelerates exploration, but every decision stays intentional and editable, all guided by clear design systems.
+          - article [ref=e323]:
+            - img [ref=e325]
+            - heading "Motion-Driven Experiences" [level=3] [ref=e334]
+            - paragraph [ref=e335]: Interfaces should communicate, not just exist.
+            - paragraph [ref=e336]: Motion guides attention, provides feedback, improves understanding, and creates experiences that feel alive.
+      - generic [ref=e346]:
+        - paragraph [ref=e347]: Featured Work
+        - heading "Workforce Time & Resource Management" [level=2] [ref=e348]
+        - generic [ref=e349]:
+          - paragraph [ref=e350]: A workforce operations platform designed to help teams track time, understand workload, manage project activity, and reduce operational noise across departments.
+          - paragraph [ref=e351]: Teams were spending too much time switching between timesheets, project updates, approvals, and activity tracking.
+        - generic [ref=e352]:
+          - generic [ref=e353]: What I Learned
+          - paragraph [ref=e354]: The experience came together as a role-based dashboard where each user sees the right work, the right status, and the next action, without digging through unnecessary screens.
+        - link "See All Selected Work" [ref=e356] [cursor=pointer]:
+          - /url: /selected-work
+      - generic [ref=e360]:
+        - generic [ref=e361]:
+          - generic [ref=e363]:
+            - paragraph [ref=e364]: Testimonials
+            - heading "What People Say" [level=2] [ref=e365]
+          - generic [ref=e368]:
+            - paragraph [ref=e369]: “Anoshaan is an incredibly talented, technically savvy engineer who tackled everything from UI/UX revamps to podcast production with total dedication. If you want someone creative who you can always rely on to deliver, he's your guy.
+            - generic [ref=e370]:
+              - generic [ref=e371]: Menuke de Silva
+              - generic [ref=e372]: CEO · Aeturnum
+            - link "Open Menuke de Silva's LinkedIn profile" [ref=e373] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/menuke/
+              - img [ref=e374]
+              - generic [ref=e376]: LinkedIn
+          - tablist "Testimonial categories" [ref=e378]:
+            - tab "Founder" [selected] [ref=e379] [cursor=pointer]:
+              - generic [ref=e380]:
+                - text: Founder
+                - generic [ref=e381]: Founder
+            - tab "UI/UX" [ref=e384] [cursor=pointer]:
+              - generic [ref=e385]:
+                - text: UI/UX
+                - generic [ref=e386]: UI/UX
+            - tab "Dev" [ref=e388] [cursor=pointer]:
+              - generic [ref=e389]:
+                - text: Dev
+                - generic [ref=e390]: Dev
+            - tab "PM" [ref=e392] [cursor=pointer]:
+              - generic [ref=e393]:
+                - text: PM
+                - generic [ref=e394]: PM
+            - tab "HR" [ref=e396] [cursor=pointer]:
+              - generic [ref=e397]:
+                - text: HR
+                - generic [ref=e398]: HR
+            - tab "Client" [ref=e400] [cursor=pointer]:
+              - generic [ref=e401]:
+                - text: Client
+                - generic [ref=e402]: Client
+        - generic [ref=e405]:
+          - button "Show testimonial from Menuke de Silva" [pressed] [ref=e406]:
+            - img "Menuke de Silva" [ref=e407]
+          - button "Show testimonial from Andre Perera" [ref=e408] [cursor=pointer]:
+            - img "Andre Perera" [ref=e409]
+          - button "Show testimonial from Ayesh Dilan" [ref=e410] [cursor=pointer]:
+            - img "Ayesh Dilan" [ref=e411]
+          - button "Show testimonial from Chandima Dasanayaka" [ref=e412] [cursor=pointer]:
+            - img "Chandima Dasanayaka" [ref=e413]
+          - button "Show testimonial from Banujan Balendrakumar" [ref=e414] [cursor=pointer]:
+            - img "Banujan Balendrakumar" [ref=e415]
+          - button "Show testimonial from Nisala Thalagala" [ref=e416] [cursor=pointer]:
+            - img "Nisala Thalagala" [ref=e417]
+          - button "Show testimonial from Chandana Wijesuriya" [ref=e418] [cursor=pointer]:
+            - img "Chandana Wijesuriya" [ref=e419]
+          - button "Show testimonial from Pumudi Vidanagama" [ref=e420] [cursor=pointer]:
+            - img "Pumudi Vidanagama" [ref=e421]
+          - button "Show testimonial from Sabry Ashraff" [ref=e422] [cursor=pointer]:
+            - img "Sabry Ashraff" [ref=e423]
+          - button "Show testimonial from Hiruni Withanage" [ref=e424] [cursor=pointer]:
+            - img "Hiruni Withanage" [ref=e425]
+          - button "Show testimonial from Wije Niroshan" [ref=e426] [cursor=pointer]:
+            - img "Wije Niroshan" [ref=e427]
+      - generic [ref=e430]:
+        - paragraph [ref=e432]: Connect With Me
+        - heading "Let's Shape Something Useful." [level=2] [ref=e433]
+        - paragraph [ref=e435]: Whether you're building a new product, refining an existing experience, or exploring an ambitious idea, I'd love to hear about it. Let's turn conversations into meaningful products.
+        - link "Let's Talk" [ref=e438] [cursor=pointer]:
+          - /url: /lets-talk
+  - contentinfo "Site footer" [ref=e439]:
+    - navigation "Footer" [ref=e440]:
+      - generic [ref=e441]: Anoshaan · Product Experience Designer & UI/UX Lead
+      - generic [ref=e443]:
+        - link "Selected Work" [ref=e444] [cursor=pointer]:
+          - /url: /selected-work
+        - link "Process" [ref=e445] [cursor=pointer]:
+          - /url: /process
+        - link "Branding" [ref=e446] [cursor=pointer]:
+          - /url: /branding
+        - link "About Me" [ref=e447] [cursor=pointer]:
+          - /url: /about-me
+        - link "Let's Talk" [ref=e448] [cursor=pointer]:
+          - /url: /lets-talk
+      - button "Switch to dark mode" [ref=e450] [cursor=pointer]:
+        - generic [ref=e451]:
+          - img [ref=e452]
+          - img [ref=e455]
+      - button "Go to top" [ref=e458] [cursor=pointer]:
+        - generic [ref=e459]: Go to Top
+        - img [ref=e460]
+  - alert [ref=e462]
