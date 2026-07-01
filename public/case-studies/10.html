@@ -92,6 +92,70 @@
   *,*::before,*::after{animation-iteration-count:1!important;animation-fill-mode:both!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme (set via the observer
+     script below). Intentional dark surfaces, not an inversion: muted
+     borders, reduced white, readable text, accent colour (warm orange)
+     preserved. Product thumbnail/photo gradients are left untouched since
+     they represent photography, not UI chrome. */
+  html[data-theme="dark"]{
+    --bg:#0d111a; --surface:#151b27; --soft:#1b2230; --border:rgba(255,255,255,.09);
+    --text:#e7ecf6; --muted:#97a3ba; --line:rgba(255,255,255,.07);
+    --accent:#fb923c; --accent-soft:rgba(251,146,60,.16); --accent-bd:rgba(251,146,60,.4);
+    --green:#34d399; --shadow:0 14px 38px rgba(0,0,0,.45);
+  }
+  html[data-theme="dark"] body{background:radial-gradient(circle at 12% 0,rgba(251,146,60,.10),transparent 30%),var(--bg)}
+  html[data-theme="dark"] .stage{background:linear-gradient(180deg,#11161f,var(--bg));border-color:rgba(255,255,255,.08);box-shadow:0 35px 90px rgba(0,0,0,.5)}
+  html[data-theme="dark"] .topbar,
+  html[data-theme="dark"] .iconbtn,
+  html[data-theme="dark"] .panel,
+  html[data-theme="dark"] .chip,
+  html[data-theme="dark"] .sort,
+  html[data-theme="dark"] .card,
+  html[data-theme="dark"] .tag,
+  html[data-theme="dark"] .fav{background:var(--surface)}
+  html[data-theme="dark"] .cart-badge{border-color:var(--surface)}
+  html[data-theme="dark"] .topnav{color:var(--muted)}
+  html[data-theme="dark"] .frow{color:var(--text)}
+  html[data-theme="dark"] .crumb .sub b{color:var(--text)!important}
+  html[data-theme="dark"] .fgroup h4{color:var(--muted)}
+  html[data-theme="dark"] .check{border-color:rgba(255,255,255,.2)}
+  html[data-theme="dark"] .slider .knob{background:var(--surface)}
+  html[data-theme="dark"] .sw{border-color:var(--surface)}
+  html[data-theme="dark"] .size{color:var(--muted)}
+  html[data-theme="dark"] .size.on{background:#e7ecf6;color:#0d111a;border-color:#e7ecf6}
+  html[data-theme="dark"] .tag,
+  html[data-theme="dark"] .add,
+  html[data-theme="dark"] .compare{color:var(--accent)}
+  html[data-theme="dark"] .tag.sale{background:rgba(248,113,113,.18);color:#fca5a5}
+  html[data-theme="dark"] .subrow{color:var(--muted)}
+</style>
+<script>
+  /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+     and observes <html data-theme> on the parent (set by the site's no-flash
+     script before paint, so there is no wrong-theme flash). Falls back to the
+     OS preference, then light, and also accepts a postMessage channel. */
+  (function () {
+    var root = document.documentElement;
+    function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+    var pe = null;
+    try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+    var initial = pe && pe.getAttribute("data-theme");
+    if (initial !== "dark" && initial !== "light") {
+      initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    apply(initial);
+    if (pe && "MutationObserver" in window) {
+      try {
+        new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+          .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+      } catch (e) {}
+    }
+    window.addEventListener("message", function (e) {
+      if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+    });
+  })();
+</script>
 </head>
 <body>
 <main class="stage" aria-label="E-commerce product catalog mockup">

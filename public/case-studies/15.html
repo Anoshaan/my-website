@@ -85,6 +85,54 @@
   .tile{animation-iteration-count:1!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme (set via the observer
+     script below). This is a brand board: the magenta/lime/cream swatches,
+     logo-mark chips, and the website-style preview are CONTENT (brand
+     exploration), so they stay vivid and untouched. Only the page/tile
+     chrome around them switches to dark surfaces with readable text. */
+  html[data-theme="dark"]{
+    --bg:#0d111a;--surface:#151b27;--border:rgba(255,255,255,.09);--line:rgba(255,255,255,.07);
+    --text:#e7ecf6;--muted:#97a3ba;
+    --pink:#e879f9;--pink2:#f0abfc;--pink-soft:rgba(217,70,239,.18);
+  }
+  html[data-theme="dark"] .stage{background:linear-gradient(180deg,#11161f,var(--bg));border-color:rgba(255,255,255,.08);box-shadow:0 35px 90px rgba(0,0,0,.5)}
+  html[data-theme="dark"] .tile,
+  html[data-theme="dark"] .comp .inp{background:var(--surface)}
+  html[data-theme="dark"] .type .spec,
+  html[data-theme="dark"] .type .scale span{color:var(--text)}
+  html[data-theme="dark"] .web .bar{background:rgba(255,255,255,.04)}
+  html[data-theme="dark"] .web .bar i{background:rgba(255,255,255,.22)}
+  html[data-theme="dark"] .comp .btn.ghost{border-color:var(--text);color:var(--text)}
+  html[data-theme="dark"] .badge[style*="dcfce7"]{background:rgba(52,211,153,.18)!important;color:#6ee7b7!important}
+  html[data-theme="dark"] .badge[style*="fef9c3"]{background:rgba(251,191,36,.18)!important;color:#fde047!important}
+</style>
+<script>
+  /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+     and observes <html data-theme> on the parent (set by the site's no-flash
+     script before paint, so there is no wrong-theme flash). Falls back to the
+     OS preference, then light, and also accepts a postMessage channel. */
+  (function () {
+    var root = document.documentElement;
+    function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+    var pe = null;
+    try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+    var initial = pe && pe.getAttribute("data-theme");
+    if (initial !== "dark" && initial !== "light") {
+      initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    apply(initial);
+    if (pe && "MutationObserver" in window) {
+      try {
+        new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+          .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+      } catch (e) {}
+    }
+    window.addEventListener("message", function (e) {
+      if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+    });
+  })();
+</script>
 </head>
 <body>
 <main class="stage" aria-label="Brand identity and digital system board mockup">

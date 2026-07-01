@@ -989,6 +989,115 @@
       }
     }
   </style>
+  <style id="cs-dark-theme">
+    /* Dark variant — follows the embedding page theme (set via the observer
+       script below). Intentional dark surfaces, not an inversion: muted
+       borders, reduced white, readable text, accent colours preserved. */
+    html[data-theme="dark"] {
+      --bg: #0d111a;
+      --panel: rgba(21, 27, 39, .92);
+      --panel-soft: rgba(27, 34, 48, .86);
+      --line: rgba(255, 255, 255, 0.09);
+      --line-dark: rgba(255, 255, 255, 0.14);
+      --text: #e7ecf6;
+      --soft: #c4cfe2;
+      --muted: #97a3ba;
+      --green: #34d399;
+      --green-2: #4ee0a5;
+      --green-soft: rgba(52, 211, 153, 0.15);
+      --mint: #5eead4;
+      --blue: #4b8bff;
+      --blue-soft: rgba(75, 139, 255, 0.16);
+      --amber: #fbbf24;
+      --amber-soft: rgba(251, 191, 36, 0.15);
+      --red: #f87171;
+      --red-soft: rgba(248, 113, 113, 0.15);
+      --leaf-dark: #22a06b;
+      --leaf: #3ecb7e;
+      --leaf-light: #8ef0ab;
+      --soil: #8a6443;
+      --water: #62c7ef;
+      --shadow: 0 28px 80px rgba(0, 0, 0, .5);
+      --shadow-soft: 0 12px 30px rgba(0, 0, 0, .4);
+    }
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 14% 10%, rgba(62, 203, 126, .14), transparent 28%),
+        radial-gradient(circle at 86% 16%, rgba(98, 199, 239, .10), transparent 32%),
+        radial-gradient(circle at 54% 100%, rgba(52, 211, 153, .10), transparent 34%),
+        linear-gradient(180deg, #11161f 0%, var(--bg) 100%);
+    }
+    html[data-theme="dark"] .frame {
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+        linear-gradient(145deg, #11161f 0%, var(--bg) 100%);
+      background-size: 42px 42px, 42px 42px, 100% 100%;
+      border-color: rgba(255, 255, 255, .08);
+    }
+    html[data-theme="dark"] .status-pill,
+    html[data-theme="dark"] .zone-toggle { background: var(--panel-soft); }
+    html[data-theme="dark"] .batch,
+    html[data-theme="dark"] .tank,
+    html[data-theme="dark"] .sensor,
+    html[data-theme="dark"] .task,
+    html[data-theme="dark"] .day,
+    html[data-theme="dark"] .alert,
+    html[data-theme="dark"] .rack { background: var(--panel-soft); border-color: rgba(255, 255, 255, .1); }
+    html[data-theme="dark"] .tank { border-color: rgba(255, 255, 255, .14); }
+    html[data-theme="dark"] .greenhouse {
+      background:
+        radial-gradient(circle at 50% 20%, rgba(94, 234, 212, .14), transparent 28%),
+        linear-gradient(180deg, #151b27, #11161f);
+    }
+    html[data-theme="dark"] .greenhouse-roof {
+      border-color: rgba(255, 255, 255, .12);
+      background:
+        linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .07) 25%, transparent 26%),
+        linear-gradient(90deg, transparent 49%, rgba(255, 255, 255, .07) 50%, transparent 51%),
+        linear-gradient(90deg, transparent 74%, rgba(255, 255, 255, .07) 75%, transparent 76%);
+    }
+    html[data-theme="dark"] .grow-area {
+      border-color: rgba(255, 255, 255, .1);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .03), rgba(94, 234, 212, .05)),
+        linear-gradient(90deg, transparent 0 18%, rgba(255, 255, 255, .06) 19%, transparent 20%),
+        linear-gradient(90deg, transparent 0 39%, rgba(255, 255, 255, .06) 40%, transparent 41%),
+        linear-gradient(90deg, transparent 0 60%, rgba(255, 255, 255, .06) 61%, transparent 62%),
+        linear-gradient(90deg, transparent 0 81%, rgba(255, 255, 255, .06) 82%, transparent 83%);
+    }
+    html[data-theme="dark"] .plant-cell {
+      background: radial-gradient(circle, rgba(138, 100, 67, .35) 0 24%, transparent 25%), rgba(255, 255, 255, .05);
+      border-color: rgba(255, 255, 255, .12);
+    }
+    html[data-theme="dark"] .sensor-bar { background: rgba(255, 255, 255, .08); }
+  </style>
+  <script>
+    /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+       and observes <html data-theme> on the parent (set by the site's no-flash
+       script before paint, so there is no wrong-theme flash). Falls back to the
+       OS preference, then light, and also accepts a postMessage channel. */
+    (function () {
+      var root = document.documentElement;
+      function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+      var pe = null;
+      try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+      var initial = pe && pe.getAttribute("data-theme");
+      if (initial !== "dark" && initial !== "light") {
+        initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      }
+      apply(initial);
+      if (pe && "MutationObserver" in window) {
+        try {
+          new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+            .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+        } catch (e) {}
+      }
+      window.addEventListener("message", function (e) {
+        if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+      });
+    })();
+  </script>
 </head>
 <body>
   <section class="frame">

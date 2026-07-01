@@ -786,6 +786,97 @@
       }
     }
   </style>
+  <style id="cs-dark-theme">
+    /* Dark variant — follows the embedding page theme (set via the observer
+       script below). Intentional dark surfaces, not an inversion: muted
+       borders, reduced white, readable text, accent colours preserved. The
+       phone SCREENS also switch to a dark app UI (not just the page chrome),
+       so the booking flow itself reads as a real dark-mode product. */
+    html[data-theme="dark"] {
+      --bg: #0d111a;
+      --ink: #e7ecf6;
+      --soft: #c4cfe2;
+      --muted: #97a3ba;
+      --line: rgba(255, 255, 255, 0.09);
+      --paper: #151b27;
+      --phone: #05070c;
+      --screen: #11161f;
+      --blue: #5b86ff;
+      --blue-soft: rgba(91, 134, 255, 0.16);
+      --teal: #2dd4bf;
+      --teal-soft: rgba(45, 212, 191, 0.16);
+      --amber: #fbbf24;
+      --amber-soft: rgba(251, 191, 36, 0.15);
+      --rose: #fb7185;
+      --rose-soft: rgba(251, 113, 133, 0.15);
+      --green: #34d399;
+      --green-soft: rgba(52, 211, 153, 0.15);
+      --shadow: 0 34px 95px rgba(0, 0, 0, .5);
+      --soft-shadow: 0 18px 46px rgba(0, 0, 0, .4);
+    }
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 14% 10%, rgba(91, 134, 255, .12), transparent 28%),
+        radial-gradient(circle at 86% 18%, rgba(45, 212, 191, .10), transparent 30%),
+        radial-gradient(circle at 54% 95%, rgba(251, 191, 36, .08), transparent 34%),
+        linear-gradient(180deg, #11161f 0%, var(--bg) 100%);
+    }
+    html[data-theme="dark"] .stage {
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px),
+        linear-gradient(145deg, #11161f, var(--bg));
+      background-size: 38px 38px, 38px 38px, 100% 100%;
+      border-color: rgba(255, 255, 255, .08);
+    }
+    html[data-theme="dark"] .stage::before { background: radial-gradient(circle, rgba(255, 255, 255, .04), transparent 62%); }
+    html[data-theme="dark"] .status,
+    html[data-theme="dark"] .phone-label { background: var(--paper); }
+    html[data-theme="dark"] .mobile-top { background: rgba(21, 27, 39, .85); border-bottom-color: rgba(255, 255, 255, .08); }
+    html[data-theme="dark"] .mini-user { border-color: var(--screen); }
+    html[data-theme="dark"] .service-card,
+    html[data-theme="dark"] .calendar,
+    html[data-theme="dark"] .slot,
+    html[data-theme="dark"] .field { background: var(--paper); border-color: rgba(255, 255, 255, .09); }
+    html[data-theme="dark"] .date { background: rgba(255, 255, 255, .06); }
+    html[data-theme="dark"] .summary-card {
+      background: radial-gradient(circle at 80% 0%, rgba(91, 134, 255, .14), transparent 34%), var(--paper);
+      border-color: rgba(255, 255, 255, .09);
+    }
+    html[data-theme="dark"] .summary-row { border-bottom-color: rgba(255, 255, 255, .08); }
+    html[data-theme="dark"] .confirm-card {
+      background: radial-gradient(circle at 50% 0%, rgba(52, 211, 153, .16), transparent 34%), var(--paper);
+      border-color: rgba(255, 255, 255, .09);
+    }
+    html[data-theme="dark"] .ticket { border-color: rgba(52, 211, 153, .3); }
+    html[data-theme="dark"] .progress { background: rgba(255, 255, 255, .08); }
+  </style>
+  <script>
+    /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+       and observes <html data-theme> on the parent (set by the site's no-flash
+       script before paint, so there is no wrong-theme flash). Falls back to the
+       OS preference, then light, and also accepts a postMessage channel. */
+    (function () {
+      var root = document.documentElement;
+      function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+      var pe = null;
+      try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+      var initial = pe && pe.getAttribute("data-theme");
+      if (initial !== "dark" && initial !== "light") {
+        initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      }
+      apply(initial);
+      if (pe && "MutationObserver" in window) {
+        try {
+          new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+            .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+        } catch (e) {}
+      }
+      window.addEventListener("message", function (e) {
+        if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+      });
+    })();
+  </script>
 </head>
 <body>
   <section class="stage">

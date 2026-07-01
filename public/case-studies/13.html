@@ -68,6 +68,54 @@
   .screen,.decision{animation-iteration-count:1!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme (set via the observer
+     script below). Low-fidelity wireframe: dark canvas, light translucent
+     strokes/fills, readable labels, single accent preserved (brightened). */
+  html[data-theme="dark"]{
+    --bg:#0d111a;--paper:#151b27;--ink:#c4cfe2;--ink2:#97a3ba;--mut:#6f7c92;
+    --stroke:rgba(255,255,255,.2);--fill:rgba(255,255,255,.08);
+    --accent:#7da4e0;--accent-soft:rgba(125,164,224,.16);
+  }
+  html[data-theme="dark"] body{background:#0a0d14}
+  html[data-theme="dark"] .stage{border-color:rgba(255,255,255,.08);box-shadow:0 35px 90px rgba(0,0,0,.5)}
+  html[data-theme="dark"] .stage::before{background-image:radial-gradient(rgba(255,255,255,.1) 1.2px,transparent 1.2px)}
+  html[data-theme="dark"] .head h1{color:var(--ink)}
+  html[data-theme="dark"] .ph.t{background:rgba(255,255,255,.16)}
+  html[data-theme="dark"] .img{background:repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 7px,rgba(255,255,255,.09) 7px 14px)}
+  html[data-theme="dark"] .field,
+  html[data-theme="dark"] .btn.ghost,
+  html[data-theme="dark"] .branch-lbl{background:var(--paper)}
+  html[data-theme="dark"] .listrow{border-bottom-color:rgba(255,255,255,.08)}
+  html[data-theme="dark"] .nav{border-top-color:rgba(255,255,255,.08)}
+  html[data-theme="dark"] .decision .txt{color:var(--ink)}
+</style>
+<script>
+  /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+     and observes <html data-theme> on the parent (set by the site's no-flash
+     script before paint, so there is no wrong-theme flash). Falls back to the
+     OS preference, then light, and also accepts a postMessage channel. */
+  (function () {
+    var root = document.documentElement;
+    function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+    var pe = null;
+    try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+    var initial = pe && pe.getAttribute("data-theme");
+    if (initial !== "dark" && initial !== "light") {
+      initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    apply(initial);
+    if (pe && "MutationObserver" in window) {
+      try {
+        new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+          .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+      } catch (e) {}
+    }
+    window.addEventListener("message", function (e) {
+      if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+    });
+  })();
+</script>
 </head>
 <body>
 <main class="stage" aria-label="Mobile UX wireframe and wireflow board mockup">

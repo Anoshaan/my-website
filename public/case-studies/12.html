@@ -81,6 +81,66 @@
   .stagecol,.ftrack i,.box{animation-iteration-count:1!important}
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+<style id="cs-dark-theme">
+  /* Dark variant — follows the embedding page theme (set via the observer
+     script below). Intentional dark surfaces, not an inversion: muted
+     borders, reduced white, readable text, accent colours preserved. */
+  html[data-theme="dark"]{
+    --bg:#0d111a;--surface:#151b27;--border:rgba(255,255,255,.09);--line:rgba(255,255,255,.07);
+    --text:#e7ecf6;--muted:#97a3ba;
+    --violet:#a78bfa;--violet-soft:rgba(167,139,250,.16);--violet-bd:rgba(167,139,250,.4);
+    --green:#34d399;--cyan:#22d3ee;--amber:#fbbf24;
+  }
+  html[data-theme="dark"] body{background:radial-gradient(circle at 20% 0,rgba(167,139,250,.12),transparent 30%),var(--bg)}
+  html[data-theme="dark"] .stage{background:linear-gradient(180deg,#11161f,var(--bg));border-color:rgba(255,255,255,.08);box-shadow:0 35px 90px rgba(0,0,0,.5)}
+  html[data-theme="dark"] .box,
+  html[data-theme="dark"] .note,
+  html[data-theme="dark"] .tchild span,
+  html[data-theme="dark"] .browser,
+  html[data-theme="dark"] .tablet,
+  html[data-theme="dark"] .phone{background:var(--surface);border-color:rgba(255,255,255,.09)}
+  html[data-theme="dark"] .note b{color:var(--text)}
+  html[data-theme="dark"] .tchild span{color:var(--muted)}
+  html[data-theme="dark"] .tline{background:rgba(255,255,255,.18)}
+  html[data-theme="dark"] .bbar{background:rgba(255,255,255,.04)}
+  html[data-theme="dark"] .bbar i{background:rgba(255,255,255,.2)}
+  html[data-theme="dark"] .bbar .url,
+  html[data-theme="dark"] .bcard,
+  html[data-theme="dark"] .bline{background:rgba(255,255,255,.07)}
+  html[data-theme="dark"] .qarow{color:var(--text)}
+  html[data-theme="dark"] .c.ok{background:rgba(52,211,153,.16)}
+  html[data-theme="dark"] .c.run{background:rgba(251,191,36,.16)}
+  html[data-theme="dark"] .ftrack{background:rgba(255,255,255,.08)}
+  html[data-theme="dark"] .foot .lbl{color:var(--text)}
+  html[data-theme="dark"] .sprint{color:var(--violet)}
+  html[data-theme="dark"] .mini[style*="0e7490"]{background:rgba(34,211,238,.16)!important;color:#67e8f9!important;border-color:rgba(34,211,238,.4)!important}
+</style>
+<script>
+  /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+     and observes <html data-theme> on the parent (set by the site's no-flash
+     script before paint, so there is no wrong-theme flash). Falls back to the
+     OS preference, then light, and also accepts a postMessage channel. */
+  (function () {
+    var root = document.documentElement;
+    function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+    var pe = null;
+    try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+    var initial = pe && pe.getAttribute("data-theme");
+    if (initial !== "dark" && initial !== "light") {
+      initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    apply(initial);
+    if (pe && "MutationObserver" in window) {
+      try {
+        new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+          .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+      } catch (e) {}
+    }
+    window.addEventListener("message", function (e) {
+      if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+    });
+  })();
+</script>
 </head>
 <body>
 <main class="stage" aria-label="AI website production sprint pipeline mockup">

@@ -988,6 +988,103 @@
       }
     }
   </style>
+  <style id="cs-dark-theme">
+    /* Dark variant — follows the embedding page theme (set via the observer
+       script below). Intentional dark surfaces, not an inversion: muted
+       borders, reduced white, readable text, accent colours preserved. The
+       phone SCREENS also switch to a dark app UI, not just the page chrome. */
+    html[data-theme="dark"] {
+      --canvas: #0d111a;
+      --ink: #e7ecf6;
+      --soft: #c4cfe2;
+      --muted: #97a3ba;
+      --paper: #151b27;
+      --paper-2: #1b2230;
+      --line: rgba(255, 255, 255, 0.09);
+      --phone: #05070c;
+      --screen: #11161f;
+      --green: #34d399;
+      --green-soft: rgba(52, 211, 153, 0.15);
+      --orange: #fb923c;
+      --orange-soft: rgba(251, 146, 60, 0.16);
+      --blue: #5b86ff;
+      --blue-soft: rgba(91, 134, 255, 0.16);
+      --rose: #fb7185;
+      --rose-soft: rgba(251, 113, 133, 0.15);
+      --yellow: #fbbf24;
+      --yellow-soft: rgba(251, 191, 36, 0.15);
+      --brown: #c89b73;
+      --brown-soft: rgba(200, 155, 115, 0.16);
+      --shadow: 0 34px 95px rgba(0, 0, 0, .5);
+      --phone-shadow: 0 28px 56px rgba(0, 0, 0, .45);
+    }
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 12% 16%, rgba(251, 146, 60, .10), transparent 30%),
+        radial-gradient(circle at 86% 12%, rgba(52, 211, 153, .10), transparent 30%),
+        radial-gradient(circle at 56% 96%, rgba(251, 191, 36, .08), transparent 32%),
+        linear-gradient(180deg, #11161f 0%, var(--canvas) 100%);
+    }
+    html[data-theme="dark"] .stage {
+      background:
+        radial-gradient(circle at 50% 48%, rgba(255, 255, 255, .03), transparent 38%),
+        linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px),
+        linear-gradient(145deg, #11161f, var(--canvas));
+      background-size: 100% 100%, 40px 40px, 40px 40px, 100% 100%;
+      border-color: rgba(255, 255, 255, .08);
+    }
+    html[data-theme="dark"] .tag,
+    html[data-theme="dark"] .step-label,
+    html[data-theme="dark"] .seller-badge,
+    html[data-theme="dark"] .favorite { background: var(--paper); }
+    html[data-theme="dark"] .m-top { background: rgba(21, 27, 39, .85); border-bottom-color: rgba(255, 255, 255, .08); }
+    html[data-theme="dark"] .search-card {
+      background: radial-gradient(circle at 80% 0, rgba(52, 211, 153, .12), transparent 38%), var(--paper);
+      border-color: rgba(255, 255, 255, .09);
+    }
+    html[data-theme="dark"] .search-box { background: rgba(255, 255, 255, .05); border-color: rgba(255, 255, 255, .09); }
+    html[data-theme="dark"] .product,
+    html[data-theme="dark"] .option-card,
+    html[data-theme="dark"] .chat-card,
+    html[data-theme="dark"] .bubble.left,
+    html[data-theme="dark"] .cart-item { background: var(--paper); border-color: rgba(255, 255, 255, .09); }
+    html[data-theme="dark"] .option-row { border-bottom-color: rgba(255, 255, 255, .08); }
+    html[data-theme="dark"] .offer-box {
+      background: radial-gradient(circle at 84% 10%, rgba(251, 146, 60, .14), transparent 36%), var(--paper);
+      border-color: rgba(255, 255, 255, .09);
+    }
+    html[data-theme="dark"] .delivery-card {
+      background: radial-gradient(circle at 82% 0, rgba(52, 211, 153, .14), transparent 32%), var(--green-soft);
+      border-color: rgba(52, 211, 153, .25);
+    }
+  </style>
+  <script>
+    /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+       and observes <html data-theme> on the parent (set by the site's no-flash
+       script before paint, so there is no wrong-theme flash). Falls back to the
+       OS preference, then light, and also accepts a postMessage channel. */
+    (function () {
+      var root = document.documentElement;
+      function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+      var pe = null;
+      try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+      var initial = pe && pe.getAttribute("data-theme");
+      if (initial !== "dark" && initial !== "light") {
+        initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      }
+      apply(initial);
+      if (pe && "MutationObserver" in window) {
+        try {
+          new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+            .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+        } catch (e) {}
+      }
+      window.addEventListener("message", function (e) {
+        if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+      });
+    })();
+  </script>
 </head>
 <body>
   <section class="stage">

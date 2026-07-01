@@ -918,6 +918,101 @@
       }
     }
   </style>
+  <style id="cs-dark-theme">
+    /* Dark variant — follows the embedding page theme (set via the observer
+       script below). Intentional dark surfaces, not an inversion: muted
+       borders, reduced white, readable text, accent colours preserved. */
+    html[data-theme="dark"] {
+      --bg: #0d111a;
+      --surface: #151b27;
+      --surface-2: #1b2230;
+      --ink: #e7ecf6;
+      --soft: #c4cfe2;
+      --muted: #97a3ba;
+      --line: rgba(255, 255, 255, 0.09);
+      --line-2: rgba(255, 255, 255, 0.06);
+      --blue: #4b8bff;
+      --blue-2: #6fa3ff;
+      --blue-soft: rgba(75, 139, 255, 0.16);
+      --teal: #2dd4bf;
+      --teal-soft: rgba(45, 212, 191, 0.16);
+      --green: #34d399;
+      --green-soft: rgba(52, 211, 153, 0.15);
+      --amber: #fbbf24;
+      --amber-soft: rgba(251, 191, 36, 0.15);
+      --red: #f87171;
+      --red-soft: rgba(248, 113, 113, 0.15);
+      --violet: #a78bfa;
+      --violet-soft: rgba(167, 139, 250, 0.16);
+      --shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+      --soft-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+    }
+    html[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 14% 12%, rgba(75, 139, 255, .14), transparent 30%),
+        radial-gradient(circle at 88% 18%, rgba(45, 212, 191, .12), transparent 30%),
+        radial-gradient(circle at 60% 96%, rgba(167, 139, 250, .10), transparent 34%),
+        linear-gradient(180deg, #11161f 0%, var(--bg) 100%);
+    }
+    html[data-theme="dark"] .stage {
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+        linear-gradient(145deg, #11161f 0%, var(--bg) 100%);
+      background-size: 44px 44px, 44px 44px, 100% 100%;
+      border-color: rgba(255, 255, 255, .08);
+    }
+    html[data-theme="dark"] .report-header,
+    html[data-theme="dark"] .panel,
+    html[data-theme="dark"] .mini-report { background: rgba(21, 27, 39, .92); }
+    html[data-theme="dark"] .waterfall {
+      border-color: rgba(255, 255, 255, .08);
+      background:
+        linear-gradient(to bottom, transparent 24%, rgba(255, 255, 255, .06) 25%, transparent 26%),
+        linear-gradient(to bottom, transparent 49%, rgba(255, 255, 255, .06) 50%, transparent 51%),
+        linear-gradient(to bottom, transparent 74%, rgba(255, 255, 255, .06) 75%, transparent 76%),
+        var(--bg);
+    }
+    html[data-theme="dark"] .cell {
+      background: color-mix(in srgb, var(--tone) var(--mix), #1b2230);
+      border-color: rgba(255, 255, 255, .06);
+    }
+    html[data-theme="dark"] .scale {
+      background: color-mix(in srgb, var(--blue) var(--mix), #1b2230);
+    }
+    html[data-theme="dark"] .score-ring {
+      background: conic-gradient(var(--teal) 0deg 292deg, rgba(255, 255, 255, .08) 292deg 360deg);
+    }
+    html[data-theme="dark"] .score-ring::after { background: var(--surface); }
+    html[data-theme="dark"] .export-box { background: rgba(13, 17, 26, .6); }
+    html[data-theme="dark"] .export-row { background: var(--surface); }
+  </style>
+  <script>
+    /* Follow the embedding page's theme. The iframe is same-origin, so it reads
+       and observes <html data-theme> on the parent (set by the site's no-flash
+       script before paint, so there is no wrong-theme flash). Falls back to the
+       OS preference, then light, and also accepts a postMessage channel. */
+    (function () {
+      var root = document.documentElement;
+      function apply(t) { root.setAttribute("data-theme", t === "dark" ? "dark" : "light"); }
+      var pe = null;
+      try { if (window.parent && window.parent !== window) pe = window.parent.document.documentElement; } catch (e) { pe = null; }
+      var initial = pe && pe.getAttribute("data-theme");
+      if (initial !== "dark" && initial !== "light") {
+        initial = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      }
+      apply(initial);
+      if (pe && "MutationObserver" in window) {
+        try {
+          new MutationObserver(function () { apply(pe.getAttribute("data-theme")); })
+            .observe(pe, { attributes: true, attributeFilter: ["data-theme"] });
+        } catch (e) {}
+      }
+      window.addEventListener("message", function (e) {
+        if (e && e.data && e.data.type === "cs-theme") apply(e.data.theme);
+      });
+    })();
+  </script>
 </head>
 <body>
   <section class="stage">
