@@ -215,6 +215,16 @@ export function PathwaysGrid() {
   const [featured, ...rest] = pathways;
   const railActiveCategory = isAllView ? spyCategory : activeCategory;
 
+  // 2-col grids never leave a lone card beside an empty slot: when the count
+  // is odd, the last card leaves the grid and renders full-width horizontal
+  // (same layout as the featured card), so every row reads complete.
+  const splitOddTail = (cards: ProductPathway[]) =>
+    cards.length % 2 === 1
+      ? { grid: cards.slice(0, -1), tail: cards[cards.length - 1] }
+      : { grid: cards, tail: null };
+
+  const { grid: restGrid, tail: restTail } = splitOddTail(rest);
+
   return (
     <section ref={sectionRef} className="relative py-12 md:py-20">
       <Container>
@@ -231,7 +241,9 @@ export function PathwaysGrid() {
               <div className="mb-24 flex flex-col gap-16 md:gap-20">
                 {groups.map((group, groupIdx) => {
                   const [first, ...others] = group.pathways;
-                  const gridCards = groupIdx === 0 ? others : group.pathways;
+                  const { grid: gridCards, tail } = splitOddTail(
+                    groupIdx === 0 ? others : group.pathways
+                  );
                   return (
                     <div
                       key={group.meta.label}
@@ -276,6 +288,11 @@ export function PathwaysGrid() {
                           )}
                         </div>
                       )}
+
+                      {tail &&
+                        cardMotion(`all-${tail.id}`, gridCards.length, (
+                          <PathwayCard pathway={tail} featured onOpen={handleOpen} />
+                        ))}
                     </div>
                   );
                 })}
@@ -295,10 +312,11 @@ export function PathwaysGrid() {
                   </motion.div>
                 )}
 
-                {/* Remaining — equal-height 2-column grid */}
-                {rest.length > 0 && (
+                {/* Remaining — equal-height 2-column grid; an odd leftover
+                    renders full-width horizontal below so no slot sits empty. */}
+                {restGrid.length > 0 && (
                   <div className="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 md:gap-10">
-                    {rest.map((pathway, idx) => {
+                    {restGrid.map((pathway, idx) => {
                       return (
                         <motion.div
                           key={`${activeCategory}-${pathway.id}`}
@@ -312,6 +330,17 @@ export function PathwaysGrid() {
                       );
                     })}
                   </div>
+                )}
+
+                {restTail && (
+                  <motion.div
+                    key={`${activeCategory}-${restTail.id}`}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={cardTransition(restGrid.length + 1)}
+                  >
+                    <PathwayCard pathway={restTail} featured onOpen={handleOpen} />
+                  </motion.div>
                 )}
               </div>
             ) : (

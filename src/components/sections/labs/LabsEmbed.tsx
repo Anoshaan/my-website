@@ -21,6 +21,12 @@ export function LabsEmbed({ src, title }: { src: string; title: string }) {
   // these mount on the same page; loading them all at once is what makes the
   // page stutter. Once seen, we keep it mounted (no reload flicker on return).
   const [inView, setInView] = useState(false);
+  // Awake = currently near the viewport. Far-away embeds stay mounted but get
+  // display:none, so the browser stops rendering them and throttles their
+  // rAF-driven GSAP/CSS loops — dozens of live mockups animating at once is
+  // what made long pages feel heavy while scrolling. Toggling display on an
+  // iframe does NOT reload it, so waking up is instant and flicker-free.
+  const [awake, setAwake] = useState(false);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -41,24 +47,23 @@ export function LabsEmbed({ src, title }: { src: string; title: string }) {
     if (!host) return;
     if (typeof IntersectionObserver === "undefined") {
       setInView(true);
+      setAwake(true);
       return;
     }
-    const reveal = () => setInView(true);
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          reveal();
-          io.disconnect();
-        }
+        const near = entries.some((e) => e.isIntersecting);
+        setAwake(near);
+        if (near) setInView(true);
       },
-      { rootMargin: "400px 0px" }
+      { rootMargin: "600px 0px" }
     );
     io.observe(host);
     // Safety net: IntersectionObserver only delivers while the page is being
     // rendered, so a tab that loads in the background can starve it. Mount
-    // anyway after a short delay so a card is never permanently blank — the
-    // embeds animate once and settle, so a late mount stays cheap.
-    const fallback = window.setTimeout(reveal, 2500);
+    // anyway (asleep) after a short delay so the iframe is loaded and ready;
+    // the observer wakes it the moment it can actually be seen.
+    const fallback = window.setTimeout(() => setInView(true), 2500);
     return () => {
       io.disconnect();
       window.clearTimeout(fallback);
@@ -79,6 +84,7 @@ export function LabsEmbed({ src, title }: { src: string; title: string }) {
             height: EMBED_H,
             transform: `scale(${scale})`,
             transformOrigin: "top left",
+            display: awake ? "block" : "none",
           }}
         />
       )}
