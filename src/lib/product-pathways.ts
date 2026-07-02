@@ -2187,85 +2187,36 @@ export const pathwayCategories = (pathway: ProductPathway): PathwayCategory[] =>
 export const pathwayInCategory = (pathway: ProductPathway, category: PathwayCategory): boolean =>
   category === "All Pathways" || pathwayCategories(pathway).includes(category);
 
+/** One category section of the "All Pathways" view. */
+export interface PathwayGroup {
+  meta: CategoryMeta;
+  pathways: ProductPathway[];
+}
+
 /**
- * "All Pathways" order. Instead of grouping by category, the view leads with a
- * hand-picked, round-robin sequence so range is obvious immediately (no run of
- * dashboards or same-category cards up top), then interleaves the remaining
- * pathways across categories so the mix continues all the way down.
+ * "All Pathways" renders as category sections in CATEGORY_META order
+ * (Dashboards → Mobile → Web & CMS → Commerce → AI → Branding → Motion →
+ * Handoff) so the right rail can scroll-spy the section in view and anchor to
+ * it on click. Each pathway appears once, under its PRIMARY category, ordered
+ * by priority within the section.
  */
-const ALL_LEAD_ORDER: number[] = [
-  1, // Workforce Time & Resource Management — Dashboard
-  5, // Mobile Booking & Service Flow — Mobile
-  9, // Service Business Website + CMS — Web/CMS
-  11, // AI + Figma MCP Design Workflow — AI
-  15, // Brand Identity + Digital System — Branding
-  10, // E-Commerce Product Catalog — Commerce
-  19, // Lottie Micro Interaction System — Motion/Lottie
-  20, // Design-to-Development Handoff System — Handoff
-  2, // Enterprise Operations Command Center — Dashboard/Admin
-  6, // Marketplace Mobile Experience — Marketplace/Mobile
-  25, // Portfolio Website + AI Rapid Production — Web/AI
-  18, // Podcast Production & Video Editing — Motion/Video
-];
-
-/** Order used to interleave the remaining pathways after the lead sequence. */
-const ROUND_ROBIN_CATEGORIES: PathwayCategory[] = CATEGORIES.filter(
-  (c) => c !== "All Pathways"
-);
-
-const getAllPathwaysOrdered = (): ProductPathway[] => {
-  const byId = new Map(PRODUCT_PATHWAYS.map((p) => [p.id, p]));
-  const used = new Set<number>();
-  const ordered: ProductPathway[] = [];
-
-  // 1. Hand-picked lead sequence.
-  for (const id of ALL_LEAD_ORDER) {
-    const p = byId.get(id);
-    if (p && !used.has(p.id)) {
-      ordered.push(p);
-      used.add(p.id);
-    }
-  }
-
-  // 2. Remaining pathways, bucketed by primary category and interleaved
-  //    round-robin so adjacent cards keep switching domains.
-  const buckets = ROUND_ROBIN_CATEGORIES.map((cat) =>
-    PRODUCT_PATHWAYS.filter((p) => !used.has(p.id) && p.primaryCategory === cat).sort(
-      (a, b) => a.priority - b.priority
-    )
-  );
-
-  let added = true;
-  while (added) {
-    added = false;
-    for (const bucket of buckets) {
-      const next = bucket.shift();
-      if (next && !used.has(next.id)) {
-        ordered.push(next);
-        used.add(next.id);
-        added = true;
-      }
-    }
-  }
-
-  // 3. Safety net: anything not placed yet (shouldn't happen) by priority.
-  for (const p of [...PRODUCT_PATHWAYS].sort((a, b) => a.priority - b.priority)) {
-    if (!used.has(p.id)) {
-      ordered.push(p);
-      used.add(p.id);
-    }
-  }
-
-  return ordered;
-};
+export const getGroupedPathways = (): PathwayGroup[] =>
+  CATEGORY_META.filter((meta) => meta.label !== "All Pathways")
+    .map((meta) => ({
+      meta,
+      pathways: PRODUCT_PATHWAYS.filter(
+        (p) => p.primaryCategory === meta.label
+      ).sort((a, b) => a.priority - b.priority),
+    }))
+    .filter((group) => group.pathways.length > 0);
 
 /**
- * Pathways for a category. "All Pathways" uses the mixed round-robin order;
+ * Pathways for a category. "All Pathways" flattens the grouped order;
  * a specific category filters to its members, ordered by priority.
  */
 export const getPathwaysForCategory = (category: PathwayCategory): ProductPathway[] =>
   category === "All Pathways"
-    ? getAllPathwaysOrdered()
+    ? getGroupedPathways().flatMap((g) => g.pathways)
     : PRODUCT_PATHWAYS.filter((p) => pathwayInCategory(p, category)).sort(
         (a, b) => a.priority - b.priority
       );
